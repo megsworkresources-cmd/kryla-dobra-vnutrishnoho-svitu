@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorldRouteImport } from './routes/world'
+import { Route as ForestIndexRouteImport } from './routes/forest.index'
+import { Route as ForestIdRouteImport } from './routes/forest.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +24,49 @@ const WorldRoute = WorldRouteImport.update({
   path: '/world',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForestIndexRoute = ForestIndexRouteImport.update({
+  id: '/forest/',
+  path: '/forest/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForestIdRoute = ForestIdRouteImport.update({
+  id: '/forest/$id',
+  path: '/forest/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/world': typeof WorldRoute
+  '/forest/$id': typeof ForestIdRoute
+  '/forest/': typeof ForestIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/world': typeof WorldRoute
+  '/forest/$id': typeof ForestIdRoute
+  '/forest': typeof ForestIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/world': typeof WorldRoute
+  '/forest/$id': typeof ForestIdRoute
+  '/forest/': typeof ForestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/world'
+  fullPaths: '/' | '/world' | '/forest/$id' | '/forest/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/world'
-  id: '__root__' | '/' | '/world'
+  to: '/' | '/world' | '/forest/$id' | '/forest'
+  id: '__root__' | '/' | '/world' | '/forest/$id' | '/forest/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   WorldRoute: typeof WorldRoute
+  ForestIdRoute: typeof ForestIdRoute
+  ForestIndexRoute: typeof ForestIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +85,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorldRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forest/': {
+      id: '/forest/'
+      path: '/forest'
+      fullPath: '/forest/'
+      preLoaderRoute: typeof ForestIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forest/$id': {
+      id: '/forest/$id'
+      path: '/forest/$id'
+      fullPath: '/forest/$id'
+      preLoaderRoute: typeof ForestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   WorldRoute: WorldRoute,
+  ForestIdRoute: ForestIdRoute,
+  ForestIndexRoute: ForestIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

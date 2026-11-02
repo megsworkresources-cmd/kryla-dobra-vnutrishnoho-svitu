@@ -5,7 +5,7 @@ import { toggleFavorite, useStore } from "@/lib/store";
 
 interface SceneProps {
   image?: string;
-  night?: boolean;
+  night?: boolean | undefined;
   title?: string;
   /** Where Back goes. Defaults to browser history, falls back to /world. */
   back?: string;

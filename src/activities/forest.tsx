@@ -6,8 +6,8 @@ import { markDone, pick, useStore } from "@/lib/store";
 
 /* 1. Meet the emotions */
 export function EmotionGallery() {
-  const [sel, setSel] = useState(EMOTIONS[0]);
-  const [seen, setSeen] = useState<Set<string>>(new Set([EMOTIONS[0].id]));
+  const [sel, setSel] = useState(EMOTIONS[0]!);
+  const [seen, setSeen] = useState<Set<string>>(new Set([EMOTIONS[0]!.id]));
   const [done, setDone] = useState(false);
   if (done) return <DoneCard text="Ти познайомився з багатьма почуттями!" again={() => setDone(false)} />;
   return (
@@ -48,7 +48,7 @@ export function MixedFeelings() {
   const [chosen, setChosen] = useState<string[]>([]);
   const [reveal, setReveal] = useState(false);
   const [done, setDone] = useState(false);
-  const sc = SCENARIOS[i];
+  const sc = SCENARIOS[i]!;
   if (done) return <DoneCard text="Почуття можуть змішуватися, як фарби." again={() => { setI(0); setDone(false); }} />;
   const toggle = (id: string) => setChosen((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id]));
   const next = () => {
@@ -96,7 +96,7 @@ const ZONES = [
   { id: "legs", label: "Ноги", d: "M33 88 h14 v44 h-14z M53 88 h14 v44 h-14z" },
 ];
 export function BodyMap() {
-  const [emo, setEmo] = useState(EMOTIONS[2]);
+  const [emo, setEmo] = useState(EMOTIONS[2]!);
   const [marks, setMarks] = useState<Record<string, string[]>>({});
   const [done, setDone] = useState(false);
   const mine = marks[emo.id] ?? [];
@@ -142,7 +142,7 @@ const BASKETS = [
 export function SortGame() {
   const [i, setI] = useState(0);
   const [fb, setFb] = useState<string | null>(null);
-  const item = SORT_ITEMS[i];
+  const item = SORT_ITEMS[i]!;
   if (i >= SORT_ITEMS.length) return <DoneCard text="Ти вмієш розрізняти думки, почуття й дії!" again={() => setI(0)} />;
   const choose = (k: string) => {
     const right = k === item.kind;

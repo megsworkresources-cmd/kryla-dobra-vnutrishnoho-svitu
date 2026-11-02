@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ParentsRouteImport } from './routes/parents'
 import { Route as WorldRouteImport } from './routes/world'
 import { Route as ForestIndexRouteImport } from './routes/forest.index'
 import { Route as ForestIdRouteImport } from './routes/forest.$id'
@@ -17,6 +18,11 @@ import { Route as ForestIdRouteImport } from './routes/forest.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParentsRoute = ParentsRouteImport.update({
+  id: '/parents',
+  path: '/parents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorldRoute = WorldRouteImport.update({
@@ -37,12 +43,14 @@ const ForestIdRoute = ForestIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/parents': typeof ParentsRoute
   '/world': typeof WorldRoute
   '/forest/$id': typeof ForestIdRoute
   '/forest/': typeof ForestIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/parents': typeof ParentsRoute
   '/world': typeof WorldRoute
   '/forest/$id': typeof ForestIdRoute
   '/forest': typeof ForestIndexRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/parents': typeof ParentsRoute
   '/world': typeof WorldRoute
   '/forest/$id': typeof ForestIdRoute
   '/forest/': typeof ForestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/world' | '/forest/$id' | '/forest/'
+  fullPaths: '/' | '/parents' | '/world' | '/forest/$id' | '/forest/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/world' | '/forest/$id' | '/forest'
-  id: '__root__' | '/' | '/world' | '/forest/$id' | '/forest/'
+  to: '/' | '/parents' | '/world' | '/forest/$id' | '/forest'
+  id: '__root__' | '/' | '/parents' | '/world' | '/forest/$id' | '/forest/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ParentsRoute: typeof ParentsRoute
   WorldRoute: typeof WorldRoute
   ForestIdRoute: typeof ForestIdRoute
   ForestIndexRoute: typeof ForestIndexRoute
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parents': {
+      id: '/parents'
+      path: '/parents'
+      fullPath: '/parents'
+      preLoaderRoute: typeof ParentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/world': {
@@ -104,6 +121,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ParentsRoute: ParentsRoute,
   WorldRoute: WorldRoute,
   ForestIdRoute: ForestIdRoute,
   ForestIndexRoute: ForestIndexRoute,

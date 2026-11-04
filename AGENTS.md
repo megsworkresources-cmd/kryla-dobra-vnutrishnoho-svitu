@@ -12,3 +12,6 @@
 - Keep destination routes separate from reusable activity modules and browser-safe content data, so every exercise has its own address and completion flow.
 - Persist child-created content and preferences only in the device store; this account-free product explicitly requires private local functionality.
 - Use semantic CSS tokens and the shared Btn control for new activity interactions, preserving the storybook design system.
+- Synthesize all sounds in `src/lib/audio.ts` (no audio files) and gate every sound and voice on the saved sound settings, starting only after the first touch, to respect autoplay rules and keep the app light.
+- Characters speak through the shared `CharacterSay` component with a visible caption, so spoken instructions always have a written equivalent.
+- Back/Next order comes from one list in `src/content/sequence.ts`; add every new page there so navigation never dead-ends.

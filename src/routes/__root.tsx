@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
+  useLocation,
   Link,
   createRootRouteWithContext,
   useRouter,
@@ -12,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { ambientFor, playAmbient, sfx, unlockAudio } from "@/lib/audio";
 import { useStore } from "../lib/store";
 
 function NotFoundComponent() {
@@ -119,9 +121,30 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const reduce = useStore((s) => s.reduceMotion);
+  const textSize = useStore((s) => s.textSize);
+  const music = useStore((s) => s.sound && s.music);
+  const { pathname } = useLocation();
   useEffect(() => {
     document.documentElement.classList.toggle("reduce-motion", reduce);
   }, [reduce]);
+  useEffect(() => {
+    document.documentElement.dataset["text"] = textSize;
+  }, [textSize]);
+  // Audio only starts after the first touch (browser autoplay rules), then follows the page.
+  useEffect(() => {
+    const onDown = (e: PointerEvent) => {
+      unlockAudio();
+      playAmbient(ambientFor(window.location.pathname));
+      const el = (e.target as HTMLElement).closest("a,button");
+      if (el && !el.closest("[data-no-tap]")) sfx("tap");
+    };
+    window.addEventListener("pointerdown", onDown);
+    return () => window.removeEventListener("pointerdown", onDown);
+  }, []);
+  useEffect(() => {
+    playAmbient(music ? ambientFor(pathname) : null);
+    sfx("page");
+  }, [pathname, music]);
 
   return (
     <QueryClientProvider client={queryClient}>

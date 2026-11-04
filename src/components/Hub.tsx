@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Check, ChevronRight } from "lucide-react";
 import { Scene } from "./Scene";
 import { useStore } from "@/lib/store";
+import { CharacterSay } from "./Character";
+import { castFor, CHARACTERS } from "@/content/characters";
 
 export interface HubItem {
   id: string;
@@ -15,11 +17,15 @@ export interface HubItem {
 
 export function Hub({ image, title, intro, items, night }: { image: string; title: string; intro: string; items: HubItem[]; night?: boolean }) {
   const done = useStore((s) => s.completed);
+  const guide = castFor(items[0]?.id ?? "")[0];
+  const count = items.filter((it) => done[it.id]).length;
   return (
     <Scene image={image} night={night} back="/world" compact>
-      <div className="pt-[24vh]">
+      <div className="pt-[16vh]">
         <h1 className={`font-display text-4xl font-bold drop-shadow-sm ${night ? "text-moon" : "text-ink"}`}>{title}</h1>
-        <p className={`mt-2 max-w-md text-base ${night ? "opacity-85" : "text-muted-foreground"}`}>{intro}</p>
+        <div className="mt-3"><CharacterSay who={guide} night={night} text={`${CHARACTERS[guide].greet} ${intro}`} /></div>
+        <p className="mt-4 text-sm font-bold" aria-live="polite">Спробувано: {count} з {items.length}</p>
+        <div className="mt-1 h-2 overflow-hidden rounded-full bg-secondary"><div className="h-full rounded-full bg-sage transition-all" style={{ width: `${(count / items.length) * 100}%` }} /></div>
         <ul className="mt-6 grid gap-3 sm:grid-cols-2">
           {items.map((it, i) => (
             <li key={it.id} className="animate-fade-up" style={{ animationDelay: `${i * 60}ms` }}>

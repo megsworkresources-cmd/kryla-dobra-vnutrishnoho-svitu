@@ -1,6 +1,6 @@
 # Completion roadmap
-- [x] Complete breathing, grounding, courage and original story experiences.
-- [x] Include playable guided video experiences with playback controls.
-- [x] Build drawing, coloring, local gallery, comfort collection and sunflower garden.
-- [x] Finish navigation, optional narration, age choices and privacy controls.
-- [x] Test activity completion, saved work, all routes and mobile layouts.
+- [x] All places, exercises, stories and creative tools.
+- [x] Back/Next on every page, Home, map menu, settings.
+- [x] Character cast integrated into exercises with reactions.
+- [x] Sound effects, ambient soundscapes, voices and audio settings.
+- [ ] Optional: more poses/expressions per character (needs extra illustrations).

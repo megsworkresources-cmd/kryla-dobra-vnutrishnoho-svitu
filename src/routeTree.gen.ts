@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as GardenRouteImport } from './routes/garden'
 import { Route as ParentsRouteImport } from './routes/parents'
 import { Route as SafeRouteImport } from './routes/safe'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as WorldRouteImport } from './routes/world'
 import { Route as CloudsIndexRouteImport } from './routes/clouds.index'
 import { Route as CloudsIdRouteImport } from './routes/clouds.$id'
@@ -32,6 +34,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FriendsRoute = FriendsRouteImport.update({
+  id: '/friends',
+  path: '/friends',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GardenRoute = GardenRouteImport.update({
   id: '/garden',
   path: '/garden',
@@ -45,6 +52,11 @@ const ParentsRoute = ParentsRouteImport.update({
 const SafeRoute = SafeRouteImport.update({
   id: '/safe',
   path: '/safe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorldRoute = WorldRouteImport.update({
@@ -115,9 +127,11 @@ const StudioIdRoute = StudioIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/friends': typeof FriendsRoute
   '/garden': typeof GardenRoute
   '/parents': typeof ParentsRoute
   '/safe': typeof SafeRoute
+  '/settings': typeof SettingsRoute
   '/world': typeof WorldRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
@@ -134,9 +148,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/friends': typeof FriendsRoute
   '/garden': typeof GardenRoute
   '/parents': typeof ParentsRoute
   '/safe': typeof SafeRoute
+  '/settings': typeof SettingsRoute
   '/world': typeof WorldRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
@@ -154,9 +170,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/friends': typeof FriendsRoute
   '/garden': typeof GardenRoute
   '/parents': typeof ParentsRoute
   '/safe': typeof SafeRoute
+  '/settings': typeof SettingsRoute
   '/world': typeof WorldRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
@@ -175,9 +193,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/friends'
     | '/garden'
     | '/parents'
     | '/safe'
+    | '/settings'
     | '/world'
     | '/clouds/$id'
     | '/forest/$id'
@@ -194,9 +214,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/friends'
     | '/garden'
     | '/parents'
     | '/safe'
+    | '/settings'
     | '/world'
     | '/clouds/$id'
     | '/forest/$id'
@@ -213,9 +235,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/friends'
     | '/garden'
     | '/parents'
     | '/safe'
+    | '/settings'
     | '/world'
     | '/clouds/$id'
     | '/forest/$id'
@@ -233,9 +257,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FriendsRoute: typeof FriendsRoute
   GardenRoute: typeof GardenRoute
   ParentsRoute: typeof ParentsRoute
   SafeRoute: typeof SafeRoute
+  SettingsRoute: typeof SettingsRoute
   WorldRoute: typeof WorldRoute
   CloudsIdRoute: typeof CloudsIdRoute
   ForestIdRoute: typeof ForestIdRoute
@@ -260,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/friends': {
+      id: '/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof FriendsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/garden': {
       id: '/garden'
       path: '/garden'
@@ -279,6 +312,13 @@ declare module '@tanstack/react-router' {
       path: '/safe'
       fullPath: '/safe'
       preLoaderRoute: typeof SafeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/world': {
@@ -377,9 +417,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FriendsRoute: FriendsRoute,
   GardenRoute: GardenRoute,
   ParentsRoute: ParentsRoute,
   SafeRoute: SafeRoute,
+  SettingsRoute: SettingsRoute,
   WorldRoute: WorldRoute,
   CloudsIdRoute: CloudsIdRoute,
   ForestIdRoute: ForestIdRoute,

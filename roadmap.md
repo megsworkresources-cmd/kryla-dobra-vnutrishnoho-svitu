@@ -6,3 +6,5 @@
 - [x] UA/EN language switch (small, obvious, on every page) + full English translation.
 - [x] World map: fix overlapping place circles, spread them more evenly (verified at 3 viewports; re-verified after language work).
 - [ ] Optional: more poses/expressions per character (needs extra illustrations).
+- [x] Zoomable full world map page (/explore)
+- [x] Natural Ukrainian character voices selectable in Settings

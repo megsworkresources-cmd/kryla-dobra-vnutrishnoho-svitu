@@ -33,6 +33,7 @@ function World() {
         <Link to="/" className="paper-card flex h-12 min-w-0 items-center justify-self-start px-4 font-display text-lg font-bold"><span className="truncate">{t("Тихе Місце")}</span></Link>
         <div className="flex shrink-0 gap-2">
           <LangToggle />
+          <Link to="/explore" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Уся мапа")}>🔍<span className="hidden sm:inline">{t("Уся мапа")}</span></Link>
           <Link to="/friends" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Мої друзі-персонажі")}><Users className="h-5 w-5" /><span className="hidden sm:inline">{t("Друзі")}</span></Link>
           <Link to="/helper" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Розкажи, як ти почуваєшся")}>💬<span className="hidden sm:inline">{t("Розкажи")}</span></Link>
           <Link to="/settings" className="paper-card flex h-12 w-12 items-center justify-center" aria-label={t("Налаштування")}><Settings2 className="h-5 w-5" /></Link>

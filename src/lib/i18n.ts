@@ -611,8 +611,6 @@ const EN: Record<string, string> = {
   "Ми хочемо різного": "We want different things",
   "Ти хочеш гратися в м’яч, а друг — малювати.": "You want to play ball, and your friend wants to draw.",
   "Послухати": "Listen first",
-  "Спитай: «А чому тобі хочеться саме це?» Слухай, не перебиваючи.":
-    "Ask: “Why do you want that?” Listen without interrupting.",
   "Сказати про себе": "Speak for yourself",
   "Почни з «я»: «Я хочу побігати, бо довго сидів».":
     "Start with “I”: “I want to run around, because I've been sitting for a long time.”",

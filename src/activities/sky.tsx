@@ -6,6 +6,10 @@ import { Guided } from '@/components/Activity';
 import { markDone, useStore } from '@/lib/store';
 import { speak, stopSpeaking } from '@/lib/speak';
 import { useT } from '@/lib/i18n';
+import { sfx } from '@/lib/audio';
+import { CHARACTERS, castFor } from '@/content/characters';
+
+const FIREFLIES = [[12, 30], [30, 55], [48, 22], [64, 48], [80, 30], [88, 62]] as const;
 
 const STORIES: Record<string, string[]> = {
   lantern: [
@@ -54,6 +58,8 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   const [playing, setPlaying] = useState(false);
   const [t2, setT] = useState(0);
   const [done, setDone] = useState(false);
+  const [lit, setLit] = useState<number[]>([]);
+  const narrator = CHARACTERS[castFor('sky')[i % 2]!];
   const len = Math.max(6, Math.round((scenes[i]?.length ?? 0) / 14));
   const finish = () => { setPlaying(false); stopSpeaking(); markDone(`sky-${id}`); setDone(true); };
   const fin = useRef(finish); fin.current = finish;
@@ -78,6 +84,13 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
       <div className="relative aspect-[4/3] overflow-hidden">
         <img key={i} src={night} alt="" className={`h-full w-full object-cover ${playing ? 'animate-kenburns' : ''}`} style={{ objectPosition: `${20 + i * 15}% 50%` }} />
         {[10, 30, 55, 72, 88].map((l, k) => <span key={l} className="absolute h-1.5 w-1.5 rounded-full bg-moon animate-twinkle" style={{ left: `${l}%`, top: `${8 + k * 6}%`, animationDelay: `${k * 0.5}s` }} aria-hidden />)}
+        {FIREFLIES.map(([x, y], k) => { const on = lit.includes(k); return (
+          <button key={k} type="button" aria-label={t('Засвітити світлячка')} aria-pressed={on}
+            onClick={() => { if (!on) { sfx('select'); setLit([...lit, k]); } }}
+            className="absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full" style={{ left: `${x}%`, top: `${y}%` }}>
+            <span className={`block rounded-full ${on ? 'h-4 w-4 bg-honey shadow-lift animate-glow-on' : 'h-2.5 w-2.5 bg-moon/60 animate-twinkle'}`} />
+          </button>); })}
+        <img key={`n${i}`} src={narrator.image} alt={t(narrator.name)} className={`absolute bottom-1 left-2 h-28 w-auto drop-shadow-lg sm:h-36 ${playing ? 'animate-talk' : 'animate-pop'}`} />
       </div>
       <p key={`t${i}`} className="min-h-28 animate-fade-up px-5 pt-4 text-lg leading-relaxed" aria-live="polite">{t(scenes[i] ?? '')}</p>
       <div className="flex gap-1 p-3" aria-hidden>{scenes.map((_, k) => <span key={k} className="h-1.5 flex-1 overflow-hidden rounded-full bg-dusk"><span className="block h-full bg-honey transition-all" style={{ width: k < i ? '100%' : k === i ? `${(t2 / len) * 100}%` : '0%' }} /></span>)}</div>
@@ -87,6 +100,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
       <Btn variant="honey" onClick={() => setPlaying(!playing)} className="inline-flex items-center gap-2 px-8">{playing ? <Pause size={20} /> : <Play size={20} />}{playing ? t('Пауза') : t('Дивитися')}</Btn>
       <Btn variant="soft" aria-label={t('Наступна сцена')} onClick={() => (i === scenes.length - 1 ? finish() : go(i + 1))}><SkipForward size={20} /></Btn>
     </div>
+    <p className="text-center text-sm font-bold">{lit.length < FIREFLIES.length ? t('Торкнись світлячків на картинці: {n} з {m}', { n: lit.length, m: FIREFLIES.length }) : t('Усі світлячки світять для тебе ✨')}</p>
     <p className="text-center text-sm opacity-75">{t('Сцена {i} з {n}. Увімкни голос у налаштуваннях, щоб казку читали вголос.', { i: i + 1, n: scenes.length })}</p>
   </div>;
 }

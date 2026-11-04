@@ -6,11 +6,13 @@ import { useStore } from '@/lib/store';
 import { useT } from '@/lib/i18n';
 
 export type Mood = 'talk' | 'listen' | 'think' | 'cheer' | 'calm';
+/** Body action the character acts out so the child can copy it. */
+export type Action = 'squeeze' | 'shrug' | 'feet' | 'settle' | 'look' | 'breathe';
 const MOOD_MARK: Record<Mood, string> = { talk: '', listen: '👂', think: '💭', cheer: '✨', calm: '🌿' };
 
 /** A character with a speech bubble. The text is always written (caption) and can be read aloud. */
-export function CharacterSay({ who, text, mood = 'talk', night, side = 'left', size = 'md', autoSpeak = true }: {
-  who: CharId; text: string; mood?: Mood; night?: boolean | undefined; side?: 'left' | 'right'; size?: 'sm' | 'md' | 'lg'; autoSpeak?: boolean;
+export function CharacterSay({ who, text, mood = 'talk', night, side = 'left', size = 'md', autoSpeak = true, action }: {
+  who: CharId; text: string; mood?: Mood; night?: boolean | undefined; side?: 'left' | 'right'; size?: 'sm' | 'md' | 'lg'; autoSpeak?: boolean; action?: Action | undefined;
 }) {
   const c = CHARACTERS[who];
   const t = useT();
@@ -21,7 +23,7 @@ export function CharacterSay({ who, text, mood = 'talk', night, side = 'left', s
   return (
     <figure className={`flex items-end gap-3 ${side === 'right' ? 'flex-row-reverse' : ''}`}>
       <div className="relative shrink-0">
-        <img key={pulse} src={c.image} alt={c.name} className={`${h} w-auto object-contain drop-shadow-md ${mood === 'cheer' ? 'animate-hop' : mood === 'think' ? 'animate-sway' : 'animate-talk'}`} />
+        <img key={pulse} src={c.image} alt={c.name} className={`${h} w-auto object-contain drop-shadow-md ${action ? `animate-act-${action}` : mood === 'cheer' ? 'animate-hop' : mood === 'think' ? 'animate-sway' : 'animate-talk'}`} />
         {MOOD_MARK[mood] && <span className="absolute -top-1 right-0 text-xl animate-float" aria-hidden>{MOOD_MARK[mood]}</span>}
       </div>
       <figcaption key={`b${pulse}`} className={`speech ${night ? 'speech-night' : ''} ${side === 'right' ? 'speech-right' : ''} relative mb-6 flex-1 animate-pop p-4`}>

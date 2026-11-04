@@ -142,6 +142,24 @@
 @utility animate-hop { animation: hop 1.4s ease-out 1; }
 @utility animate-pop { animation: pop .45s ease-out both; }
 @utility animate-petal { animation: petal 3.5s ease-in 1 both; }
+@keyframes wave-x { from { transform: translateX(0) } to { transform: translateX(120px) } }
+@utility animate-wave-x { animation: wave-x 4s linear infinite; }
+@utility animate-wave-x-slow { animation: wave-x 7s linear infinite reverse; }
+/* Characters acting out a step */
+@keyframes act-squeeze { 0%,100% { transform: scale(1) } 40%,60% { transform: scale(.93, .96) } }
+@keyframes act-shrug { 0%,100% { transform: translateY(0) } 30%,45% { transform: translateY(-12px) scaleY(1.03) } 70% { transform: translateY(3px) } }
+@keyframes act-feet { 0%,100% { transform: rotate(0) } 25% { transform: rotate(-4deg) } 75% { transform: rotate(4deg) } }
+@keyframes act-settle { 0%,100% { transform: translateY(0) scale(1) } 50% { transform: translateY(6px) scale(1.02, .97) } }
+@keyframes act-look { 0%,100% { transform: scaleX(1) } 45%,55% { transform: scaleX(-1) } }
+@keyframes act-breathe { 0%,100% { transform: scale(1) } 50% { transform: scale(1.06) } }
+@utility animate-act-squeeze { animation: act-squeeze 2.4s ease-in-out infinite; transform-origin: bottom center; }
+@utility animate-act-shrug { animation: act-shrug 2.8s ease-in-out infinite; transform-origin: bottom center; }
+@utility animate-act-feet { animation: act-feet 1.6s ease-in-out infinite; transform-origin: bottom center; }
+@utility animate-act-settle { animation: act-settle 4s ease-in-out infinite; transform-origin: bottom center; }
+@utility animate-act-look { animation: act-look 4s ease-in-out infinite; }
+@utility animate-act-breathe { animation: act-breathe 5s ease-in-out infinite; transform-origin: bottom center; }
+@keyframes glow-on { 0% { transform: scale(.4); opacity: .3 } 60% { transform: scale(1.5) } 100% { transform: scale(1); opacity: 1 } }
+@utility animate-glow-on { animation: glow-on .6s ease-out both; }
 @utility speech {
   background: var(--card);
   border: 2px solid var(--border);

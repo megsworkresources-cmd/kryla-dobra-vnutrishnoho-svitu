@@ -100,3 +100,9 @@ export function growthStage(count: number) {
 export function pick<T>(age: AgeBand, v: { young: T; mid: T; older: T }) {
   return v[age];
 }
+
+export const addDrawing = (data: string) =>
+  update((s) => ({ ...s, drawings: [...s.drawings, { id: `${Date.now()}`, data, at: Date.now() }].slice(-30) }));
+export const removeDrawing = (id: string) => update((s) => ({ ...s, drawings: s.drawings.filter((d) => d.id !== id) }));
+export const addComfort = (text: string) => update((s) => ({ ...s, comfort: [...s.comfort, text] }));
+export const removeComfort = (i: number) => update((s) => ({ ...s, comfort: s.comfort.filter((_, j) => j !== i) }));

@@ -15,7 +15,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ambientFor, playAmbient, sfx, unlockAudio } from "@/lib/audio";
-import { useStore } from "../lib/store";
+import { markVisit, useStore } from "../lib/store";
 import { t, useT } from "@/lib/i18n";
 
 function NotFoundComponent() {

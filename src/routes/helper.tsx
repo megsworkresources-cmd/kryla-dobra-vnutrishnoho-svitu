@@ -1,111 +1,84 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { Scene, Btn } from "@/components/Scene";
-import { CharacterSay } from "@/components/Character";
-import { CHARACTERS } from "@/content/characters";
-import { findActivity } from "@/content/catalog";
-import { pageHead } from "@/content/journeys";
-import { askHelper } from "@/lib/suggest.functions";
-import { useStore } from "@/lib/store";
-import { sfx } from "@/lib/audio";
+import { useState } from 'react';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { Sparkles } from 'lucide-react';
+import night from '@/assets/night.jpg';
+import { Btn, Scene } from '@/components/Scene';
+import { CharacterSay } from '@/components/Character';
+import { CATALOG, KIND } from '@/content/catalog';
+import { EMOTIONS } from '@/content/emotions';
+import { suggest } from '@/lib/suggest.functions';
+import { markDone, useStore } from '@/lib/store';
+import { useT } from '@/lib/i18n';
 
-export const Route = createFileRoute("/helper")({
-  head: () => pageHead("Розкажи, як ти", "Опиши своє почуття, і друзі з Тихого Місця лагідно підкажуть вправу."),
-  component: Helper,
-});
+const QUICK = ['я сумую', 'мені страшно', 'я злюся', 'мене кривдять', 'мені нудно', 'я радію', 'у мене багато думок', 'я не можу заснути'];
 
-const AGE = { young: "5-7", mid: "8-10", older: "11-13" } as const;
-const CHIPS = ["Мені сумно", "Я злюся", "Мені страшно", "Я хвилююся", "Мені радісно", "Я втомився", "Не знаю"];
-const ERR: Record<string, string> = {
-  busy: "Друзі зараз трохи зайняті. Спробуй ще раз за хвилинку.",
-  credits: "Помічник зараз відпочиває. Можна вибрати вправу на мапі.",
-};
-
-type Result = Awaited<ReturnType<typeof askHelper>>;
-
-function Helper() {
-  const ask = useServerFn(askHelper);
+/** The Feelings Helper — the only place a child's words leave the device, sent once and never stored. */
+export default function Helper() {
+  const t = useT();
+  const navigate = useNavigate();
   const age = useStore((s) => s.age);
-  const [text, setText] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [res, setRes] = useState<Result | null>(null);
-
-  async function send() {
-    if (text.trim().length < 2 || busy) return;
-    sfx("confirm"); setBusy(true); setRes(null);
-    try { setRes(await ask({ data: { text, age: AGE[age] } })); }
-    catch { setRes({ ok: false, error: "fail" }); }
-    finally { setBusy(false); }
-  }
-
-  const s = res?.ok ? res.suggestion : null;
-  const act = s ? findActivity(s.activity) : undefined;
-
+  const [text, setText] = useState('');
+  const [state, setState] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [reply, setReply] = useState<{ text: string; picks: string[]; cheer?: string } | null>(null);
+  const ask = async (input: string) => {
+    if (!input.trim()) return;
+    sfx(); setState('loading');
+    const result = await suggest({ data: { message: input, age } });
+    if (result) setReply(result); else setState('error');
+  };
+  const sfx = () => {};
   return (
-    <Scene title="Розкажи, як ти" back="/world">
-      <div className="space-y-5">
-        {!s && (
-          <div className="paper-card p-5">
-            <CharacterSay who="lihtaryk" mood={busy ? "think" : "listen"}
-              text={busy ? "Я уважно слухаю… Шукаю для тебе щось лагідне." : "Привіт! Розкажи своїми словами, як ти зараз. Можна одним словом. Можна нічого не писати."} />
-          </div>
-        )}
-
-        {!s && (
-          <div className="paper-card space-y-4 p-5 animate-fade-up">
+    <Scene image={night} night title="Помічник почуттів" back="/world">
+      <div className="space-y-4">
+        <div className="night-card p-5 text-center">
+          <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-honey text-2xl" aria-hidden><Sparkles /></span>
+          <h2 className="mt-2 font-display text-2xl font-bold">{t('Розкажи, як ти')}</h2>
+          <p className="mt-1 text-sm opacity-80">{t('Персонажі підкажуть вправу саме для тебе. Це єдине місце, де твої слова вирушають у подорож — один раз, і ніхто їх не зберігає.')}</p>
+        </div>
+        {!reply && (
+          <div className="space-y-3">
+            <p className="font-bold">{t('Або обери:')}</p>
             <div className="flex flex-wrap gap-2">
-              {CHIPS.map((c) => (
-                <button key={c} type="button" onClick={() => { sfx("select"); setText((t) => (t ? `${t} ${c.toLowerCase()}` : c)); }}
-                  className="rounded-full bg-secondary px-4 py-2 font-bold text-secondary-foreground transition active:scale-95">{c}</button>
-              ))}
+              {QUICK.map((q) => <button key={q} onClick={() => { setText(q); ask(q); }} className="min-h-11 rounded-full bg-secondary px-4 text-sm font-bold">{t(q)}</button>)}
             </div>
-            <label className="block">
-              <span className="sr-only">Як ти почуваєшся?</span>
-              <textarea value={text} onChange={(e) => setText(e.target.value.slice(0, 500))} rows={3} placeholder="Сьогодні я…"
-                className="w-full rounded-2xl border-2 border-border bg-background p-4 text-lg focus:outline-none focus:ring-4 focus:ring-ring" />
-            </label>
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-muted-foreground">Слова не зберігаються. Їх читає Lovable AI, щоб підібрати вправу.</p>
-              <Btn onClick={send} disabled={busy || text.trim().length < 2}>{busy ? "Думаю…" : "Підкажи"}</Btn>
+            <div className="flex flex-wrap gap-2">
+              {EMOTIONS.slice(0, 6).map((e) => <button key={e.id} onClick={() => { const q = t(e.name).toLowerCase(); setText(q); ask(q); }} className="flex min-h-11 items-center gap-2 rounded-full bg-secondary px-4 text-sm font-bold"><span className={`h-3 w-3 rounded-full ${e.color}`} />{t(e.name)}</button>)}
             </div>
-            {busy && (
-              <div className="flex justify-center gap-2" aria-hidden>
-                {[0, 1, 2].map((i) => <span key={i} className="h-3 w-3 rounded-full bg-honey animate-hop" style={{ animationDelay: `${i * 0.15}s` }} />)}
-              </div>
-            )}
-            {res && !res.ok && (
-              <p role="alert" className="rounded-2xl bg-secondary p-3 font-bold">{ERR[res.error] ?? "Щось не вийшло. Спробуй ще раз або обери вправу на мапі."}</p>
-            )}
+            <div className="night-card p-4">
+              <label htmlFor="feeling" className="block font-bold">{t('Або напиши своїми словами')}</label>
+              <textarea id="feeling" value={text} onChange={(e) => setText(e.target.value)} rows={3} maxLength={300} placeholder={t('Наприклад: мені сумно, бо…')} className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring" />
+              <Btn onClick={() => ask(text)} className="mt-3 w-full" disabled={state === 'loading'}>{state === 'loading' ? t('Персонажі думають…') : t('Підказати вправу')}</Btn>
+            </div>
+            {state === 'error' && <p className="paper-card p-4 text-center" role="alert">{t('Персонажі тимчасово недоступні. Спробуй пізніше.')}</p>}
           </div>
         )}
-
-        {s && (
-          <div className="space-y-5">
-            <div className="paper-card p-5 animate-pop">
-              <p className="mb-3 text-center text-sm font-extrabold uppercase tracking-wide text-muted-foreground">Схоже на: {s.feeling}</p>
-              <CharacterSay who={s.guide} mood={s.mood} size="lg" text={s.reply} />
+        {reply && (
+          <div className="animate-fade-up space-y-4">
+            <CharacterSay who="s" night mood="talk" size="lg" text={reply.text} />
+            {reply.cheer && <CharacterSay who="h" night side="right" size="sm" mood="cheer" text={reply.cheer} />}
+            <div className="night-card p-5">
+              <p className="text-xs font-extrabold uppercase tracking-wide text-moon">{t('Спробуй це')}</p>
+              <ul className="mt-2 space-y-2">
+                {reply.picks.map((key) => {
+                  const it = CATALOG.find((x) => x.key === key);
+                  if (!it) return null;
+                  return (
+                    <li key={key} className="flex items-center justify-between gap-3 rounded-2xl bg-secondary p-3">
+                      <span className="font-bold">{t(KIND[it.kind])}: {t(it.title)}</span>
+                      <Btn onClick={() => { markDone('helper'); navigate({ to: it.to as never }); }} aria-label={t('Далі: {l}', { l: t(it.title) })}>{t('Далі')}</Btn>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="mt-3 text-xs opacity-70">{t('Схованих підказок немає — це ті самі вправи світу.')}</p>
             </div>
-            {act && (
-              <div className="paper-card space-y-3 p-5 animate-fade-up" style={{ animationDelay: ".3s" }}>
-                <div className="flex items-center gap-4">
-                  <img src={CHARACTERS[s.guide].image} alt="" className="h-20 w-auto animate-float" />
-                  <div>
-                    <p className="text-sm font-bold text-muted-foreground">{CHARACTERS[s.guide].name} пропонує:</p>
-                    <p className="font-display text-2xl">{act.title}</p>
-                    <p className="text-muted-foreground">{s.why}</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <Link to={`/${act.place}/$id` as "/meadow/$id"} params={{ id: act.id }} onClick={() => sfx("page")}
-                    className="min-h-12 rounded-full bg-primary px-6 py-3 font-bold text-primary-foreground shadow-soft transition active:scale-95">Спробувати разом</Link>
-                  <Btn variant="soft" onClick={() => { setRes(null); setText(""); }}>Розповісти ще</Btn>
-                </div>
-                <p className="text-sm text-muted-foreground">Це лише пропозиція. Можна обрати будь-що інше або просто відпочити.</p>
-              </div>
-            )}
+            <Btn variant="soft" onClick={() => { setReply(null); setText(''); setState('idle'); }} className="w-full">{t('Розказати ще раз')}</Btn>
           </div>
         )}
+        <p className="text-center text-sm opacity-70">
+          {t('Твої почуття — важливі. Якщо тобі страшно чи боляче, розкажи дорослому, якому довіряєш.')}<br />
+          <Link to="/parents" className="underline">{t('Інформація для дорослих')}</Link>
+        </p>
       </div>
     </Scene>
   );

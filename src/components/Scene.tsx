@@ -75,11 +75,11 @@ export function DoneCard({ text, again, night, who }: { text: string; again?: ()
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {[8, 22, 40, 58, 74, 90].map((l, i) => <span key={l} className="absolute top-0 text-xl animate-petal" style={{ left: `${l}%`, animationDelay: `${i * 0.25}s` }}>🌼</span>)}
       </div>
-      <CharacterSay who={hero} night={night} mood="cheer" size="lg" text={`${cheer} ${text}`} />
-      <p className={`mt-4 text-base ${night ? "opacity-80" : "text-muted-foreground"}`}>🌻 Твій соняшник у саду трохи підріс.</p>
+      <CharacterSay who={hero} night={night} mood="cheer" size="lg" text={`${t(cheer)} ${text}`} />
+      <p className={`mt-4 text-base ${night ? "opacity-80" : "text-muted-foreground"}`}>{t("🌻 Твій соняшник у саду трохи підріс.")}</p>
       <div className="mt-5 flex flex-wrap justify-center gap-2">
-        {again && <Btn variant="soft" onClick={again}>Ще раз</Btn>}
-        <Link to="/garden" className="flex min-h-12 items-center rounded-full bg-honey px-5 font-bold text-accent-foreground shadow-soft">Подивитися на соняшник</Link>
+        {again && <Btn variant="soft" onClick={again}>{t("Ще раз")}</Btn>}
+        <Link to="/garden" className="flex min-h-12 items-center rounded-full bg-honey px-5 font-bold text-accent-foreground shadow-soft">{t("Подивитися на соняшник")}</Link>
       </div>
     </div>
   );

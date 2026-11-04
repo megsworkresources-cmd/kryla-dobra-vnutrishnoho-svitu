@@ -40,7 +40,7 @@ function World() {
         {PLACES.map((p, i) => (
           <Link key={p.id} to={p.to}
             className="group absolute -translate-x-1/2 animate-fade-up"
-            style={{ left: `${Math.min(Math.max(p.x, 18), 82)}%`, top: `${p.y * 0.78 + 2}%`, animationDelay: `${i * 80}ms` }}>
+            style={{ left: `${Math.min(Math.max(p.x, 18), 82)}%`, top: `${p.y * 0.8 + 1}%`, animationDelay: `${i * 80}ms` }}>
             <span className="flex flex-col items-center">
               <span className="relative h-16 w-16 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95">
                 <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />

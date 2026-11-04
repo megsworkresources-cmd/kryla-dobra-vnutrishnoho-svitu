@@ -76,8 +76,8 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
       <div className="relative aspect-[4/3] overflow-hidden">
         <img key={i} src={night} alt="" className={`h-full w-full object-cover ${playing ? 'animate-kenburns' : ''}`} style={{ objectPosition: `${20 + i * 15}% 50%` }} />
         {[10, 30, 55, 72, 88].map((l, k) => <span key={l} className="absolute h-1.5 w-1.5 rounded-full bg-moon animate-twinkle" style={{ left: `${l}%`, top: `${8 + k * 6}%`, animationDelay: `${k * 0.5}s` }} aria-hidden />)}
-        <p key={`t${i}`} className="veil-night absolute inset-x-0 bottom-0 animate-fade-up p-5 pt-16 text-lg leading-relaxed" aria-live="polite">{scenes[i]}</p>
       </div>
+      <p key={`t${i}`} className="min-h-28 animate-fade-up px-5 pt-4 text-lg leading-relaxed" aria-live="polite">{scenes[i]}</p>
       <div className="flex gap-1 p-3" aria-hidden>{scenes.map((_, k) => <span key={k} className="h-1.5 flex-1 overflow-hidden rounded-full bg-dusk"><span className="block h-full bg-honey transition-all" style={{ width: k < i ? '100%' : k === i ? `${(t / len) * 100}%` : '0%' }} /></span>)}</div>
     </div>
     <div className="flex items-center justify-center gap-2">

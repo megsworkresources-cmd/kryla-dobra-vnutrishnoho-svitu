@@ -128,7 +128,7 @@ function RootComponent() {
     document.documentElement.classList.toggle("reduce-motion", reduce);
   }, [reduce]);
   useEffect(() => {
-    document.documentElement.dataset.text = textSize;
+    document.documentElement.dataset["text"] = textSize;
   }, [textSize]);
   // Audio only starts after the first touch (browser autoplay rules), then follows the page.
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 
 /**
- * All child data stays on this device (localStorage). Nothing is sent anywhere.
+ * All child data stays on this device (localStorage). Only the optional "Розкажи, як ти" text is sent once to Lovable AI and never stored.
  */
 export type AgeBand = "young" | "mid" | "older";
 

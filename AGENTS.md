@@ -15,3 +15,4 @@
 - Synthesize all sounds in `src/lib/audio.ts` (no audio files) and gate every sound and voice on the saved sound settings, starting only after the first touch, to respect autoplay rules and keep the app light.
 - Characters speak through the shared `CharacterSay` component with a visible caption, so spoken instructions always have a written equivalent.
 - Back/Next order comes from one list in `src/content/sequence.ts`; add every new page there so navigation never dead-ends.
+- The feelings helper (/helper) is the only feature that sends child text off-device: one Lovable AI call via a server function, nothing stored, and it may only recommend keys from `src/content/catalog.ts`.

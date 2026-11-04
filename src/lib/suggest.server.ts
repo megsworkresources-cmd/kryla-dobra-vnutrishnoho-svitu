@@ -18,7 +18,7 @@ export class SuggestError extends Error {
 }
 
 export async function suggestActivity(text: string, age: string) {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env['LOVABLE_API_KEY'];
   if (!apiKey) throw new SuggestError(500, "config");
   const provider = createOpenAI({
     baseURL: "https://ai.gateway.lovable.dev/v1",

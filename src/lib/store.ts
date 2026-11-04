@@ -13,6 +13,8 @@ export interface AppState {
   favorites: string[]; // activity hrefs
   comfort: string[]; // child's own "what helps me" list
   drawings: { id: string; data: string; at: number }[];
+  visits: Record<string, { n: number; last: number }>; // placeId -> visits
+  lastDone: Record<string, number>; // activityId -> last completion time
   voice: boolean;
   reduceMotion: boolean;
   sound: boolean; // master switch
@@ -32,6 +34,8 @@ const DEFAULTS: AppState = {
   favorites: [],
   comfort: [],
   drawings: [],
+  visits: {},
+  lastDone: {},
   voice: false,
   reduceMotion: false,
   sound: true,
@@ -93,7 +97,13 @@ export function useStore<T>(select: (s: AppState) => T): T {
 }
 
 export const markDone = (id: string) =>
-  update((s) => ({ ...s, completed: { ...s.completed, [id]: (s.completed[id] ?? 0) + 1 } }));
+  update((s) => ({ ...s, completed: { ...s.completed, [id]: (s.completed[id] ?? 0) + 1 }, lastDone: { ...s.lastDone, [id]: Date.now() } }));
+
+export const markVisit = (place: string) =>
+  update((s) => ({ ...s, visits: { ...s.visits, [place]: { n: (s.visits[place]?.n ?? 0) + 1, last: Date.now() } } }));
+
+/** Wipes only progress records (not settings or drawings). */
+export const resetProgress = () => update((s) => ({ ...s, completed: {}, lastDone: {}, visits: {} }));
 
 export const toggleFavorite = (href: string) =>
   update((s) => ({

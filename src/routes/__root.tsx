@@ -1,3 +1,4 @@
+import { PLACES } from "@/content/places";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -148,6 +149,10 @@ function RootComponent() {
     playAmbient(music ? ambientFor(pathname) : null);
     sfx("page");
   }, [pathname, music]);
+  useEffect(() => {
+    const seg = pathname.split("/")[1];
+    if (seg && PLACES.some((p) => p.id === seg)) markVisit(seg);
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>

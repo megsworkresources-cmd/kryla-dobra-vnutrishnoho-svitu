@@ -13,6 +13,12 @@ export interface AppState {
   drawings: { id: string; data: string; at: number }[];
   voice: boolean;
   reduceMotion: boolean;
+  sound: boolean; // master switch
+  music: boolean;
+  sfx: boolean;
+  volume: number; // 0..1
+  voiceURI: string;
+  textSize: "normal" | "large" | "xl";
 }
 
 const KEY = "tyhe-mistse-v1";
@@ -24,7 +30,16 @@ const DEFAULTS: AppState = {
   drawings: [],
   voice: false,
   reduceMotion: false,
+  sound: true,
+  music: false,
+  sfx: true,
+  volume: 0.5,
+  voiceURI: "",
+  textSize: "normal",
 };
+
+/** Read current state outside React (audio engine). */
+export function getState() { load(); return state; }
 
 let state: AppState = DEFAULTS;
 let loaded = false;

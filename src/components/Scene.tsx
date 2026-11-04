@@ -55,7 +55,7 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
       </header>
       {title && <h1 className="relative z-20 mx-auto mt-3 w-full max-w-3xl px-4 font-display text-2xl font-bold drop-shadow-sm sm:text-3xl">{title}</h1>}
       <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 animate-fade-up px-4 pb-6 pt-4">{children}</main>
-      <div className="sticky bottom-0 z-30"><BottomNav night={night} /></div>
+      <BottomNav night={night} />
     </div>
   );
 }

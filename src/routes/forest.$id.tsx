@@ -8,7 +8,7 @@ const MAP = { gallery: EmotionGallery, mixed: MixedFeelings, body: BodyMap, sort
 
 export const Route = createFileRoute("/forest/$id")({
   loader: ({ params }) => {
-    const item = FOREST.find((f) => f.params?.id === params.id);
+    const item = FOREST.find((f) => f.params?.["id"] === params["id"]);
     if (!item) throw notFound();
     return { title: item.title };
   },

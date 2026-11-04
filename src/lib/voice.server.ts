@@ -5,7 +5,7 @@ const URL = "https://ai.gateway.lovable.dev/v1/audio/speech";
 export class VoiceError extends Error {}
 
 export async function synthesize(text: string, voice: string, lang: "uk" | "en", style: string) {
-  const key = process.env.LOVABLE_API_KEY;
+  const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new VoiceError("config");
   const prompt = lang === "uk"
     ? `Промов українською мовою з природною теплою українською вимовою, ${style}, повільно й лагідно для дитини: ${text}`

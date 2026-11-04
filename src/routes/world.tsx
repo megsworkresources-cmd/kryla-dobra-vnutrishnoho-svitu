@@ -1,10 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Settings2 } from "lucide-react";
-import { useState } from "react";
+import { Settings2, Users } from "lucide-react";
 import map from "@/assets/world-map.jpg";
 import { PLACES } from "@/content/places";
 import { BottomNav } from "@/components/BottomNav";
-import { setAge, update, useStore, type AgeBand } from "@/lib/store";
 
 export const Route = createFileRoute("/world")({
   head: () => ({
@@ -20,17 +18,7 @@ export const Route = createFileRoute("/world")({
   component: World,
 });
 
-const AGES: { id: AgeBand; label: string }[] = [
-  { id: "young", label: "5–7" },
-  { id: "mid", label: "8–10" },
-  { id: "older", label: "11–13" },
-];
-
 function World() {
-  const [open, setOpen] = useState(false);
-  const age = useStore((s) => s.age);
-  const voice = useStore((s) => s.voice);
-  const reduce = useStore((s) => s.reduceMotion);
 
   return (
     <div className="relative h-dvh overflow-hidden bg-ink">
@@ -40,31 +28,12 @@ function World() {
 
       <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4">
         <Link to="/" className="paper-card flex h-12 items-center px-4 font-display text-lg font-bold">Тихе Місце</Link>
-        <button onClick={() => setOpen((o) => !o)} className="paper-card flex h-12 w-12 items-center justify-center" aria-label="Налаштування" aria-expanded={open}>
-          <Settings2 className="h-5 w-5" />
-        </button>
+        <div className="flex gap-2">
+          <Link to="/friends" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label="Мої друзі-персонажі"><Users className="h-5 w-5" /> Друзі</Link>
+          <Link to="/settings" className="paper-card flex h-12 w-12 items-center justify-center" aria-label="Налаштування"><Settings2 className="h-5 w-5" /></Link>
+        </div>
       </header>
 
-      {open && (
-        <div className="paper-card absolute right-4 top-20 z-30 w-72 p-4 animate-fade-up">
-          <p className="text-sm font-bold">Скільки тобі років?</p>
-          <div className="mt-2 flex gap-2">
-            {AGES.map((a) => (
-              <button key={a.id} onClick={() => setAge(a.id)} aria-pressed={age === a.id}
-                className={`h-11 flex-1 rounded-full font-bold ${age === a.id ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>{a.label}</button>
-            ))}
-          </div>
-          <label className="mt-4 flex items-center justify-between text-sm font-semibold">
-            Голос-помічник
-            <input type="checkbox" className="h-5 w-5 accent-primary" checked={voice} onChange={(e) => update((s) => ({ ...s, voice: e.target.checked }))} />
-          </label>
-          <label className="mt-3 flex items-center justify-between text-sm font-semibold">
-            Менше руху на екрані
-            <input type="checkbox" className="h-5 w-5 accent-primary" checked={reduce} onChange={(e) => update((s) => ({ ...s, reduceMotion: e.target.checked }))} />
-          </label>
-          <Link to="/parents" className="mt-4 block text-sm font-semibold text-primary underline">Для дорослих</Link>
-        </div>
-      )}
 
       <nav aria-label="Місця світу" className="absolute inset-0 z-10">
         {PLACES.map((p, i) => (

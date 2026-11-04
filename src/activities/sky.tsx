@@ -5,6 +5,7 @@ import { Btn, DoneCard } from '@/components/Scene';
 import { Guided } from '@/components/Activity';
 import { markDone, useStore } from '@/lib/store';
 import { speak, stopSpeaking } from '@/lib/speak';
+import { useT } from '@/lib/i18n';
 
 const STORIES: Record<string, string[]> = {
   lantern: [
@@ -46,11 +47,12 @@ const STORIES: Record<string, string[]> = {
 
 /** Guided video story: illustrated scenes that play on their own, with narration and controls. */
 export function Story({ id }: { id: keyof typeof STORIES }) {
+  const t = useT();
   const scenes = STORIES[id] ?? [];
   const voice = useStore((s) => s.voice);
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [t, setT] = useState(0);
+  const [t2, setT] = useState(0);
   const [done, setDone] = useState(false);
   const len = Math.max(6, Math.round((scenes[i]?.length ?? 0) / 14));
   const finish = () => { setPlaying(false); stopSpeaking(); markDone(`sky-${id}`); setDone(true); };
@@ -61,31 +63,31 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
     return () => window.clearInterval(timer);
   }, [playing]);
   useEffect(() => {
-    if (t < len) return;
+    if (t2 < len) return;
     if (i >= scenes.length - 1) fin.current();
     else { setI(i + 1); setT(0); }
-  }, [t, len, i, scenes.length]);
+  }, [t2, len, i, scenes.length]);
   useEffect(() => {
-    if (playing && voice && scenes[i]) speak(scenes[i]);
+    if (playing && voice && scenes[i]) speak(t(scenes[i]));
     return stopSpeaking;
   }, [i, playing, voice, scenes]);
-  if (done) return <DoneCard night text="Казка закінчилась. Вона залишиться з тобою." again={() => { setI(0); setT(0); setDone(false); }} />;
+  if (done) return <DoneCard night text={t('Казка закінчилась. Вона залишиться з тобою.')} again={() => { setI(0); setT(0); setDone(false); }} />;
   const go = (n: number) => { setI(Math.min(Math.max(n, 0), scenes.length - 1)); setT(0); };
   return <div className="space-y-4">
-    <div className="night-card relative overflow-hidden p-0" role="region" aria-label="Відео-казка">
+    <div className="night-card relative overflow-hidden p-0" role="region" aria-label={t('Відео-казка')}>
       <div className="relative aspect-[4/3] overflow-hidden">
         <img key={i} src={night} alt="" className={`h-full w-full object-cover ${playing ? 'animate-kenburns' : ''}`} style={{ objectPosition: `${20 + i * 15}% 50%` }} />
         {[10, 30, 55, 72, 88].map((l, k) => <span key={l} className="absolute h-1.5 w-1.5 rounded-full bg-moon animate-twinkle" style={{ left: `${l}%`, top: `${8 + k * 6}%`, animationDelay: `${k * 0.5}s` }} aria-hidden />)}
       </div>
-      <p key={`t${i}`} className="min-h-28 animate-fade-up px-5 pt-4 text-lg leading-relaxed" aria-live="polite">{scenes[i]}</p>
-      <div className="flex gap-1 p-3" aria-hidden>{scenes.map((_, k) => <span key={k} className="h-1.5 flex-1 overflow-hidden rounded-full bg-dusk"><span className="block h-full bg-honey transition-all" style={{ width: k < i ? '100%' : k === i ? `${(t / len) * 100}%` : '0%' }} /></span>)}</div>
+      <p key={`t${i}`} className="min-h-28 animate-fade-up px-5 pt-4 text-lg leading-relaxed" aria-live="polite">{t(scenes[i] ?? '')}</p>
+      <div className="flex gap-1 p-3" aria-hidden>{scenes.map((_, k) => <span key={k} className="h-1.5 flex-1 overflow-hidden rounded-full bg-dusk"><span className="block h-full bg-honey transition-all" style={{ width: k < i ? '100%' : k === i ? `${(t2 / len) * 100}%` : '0%' }} /></span>)}</div>
     </div>
     <div className="flex items-center justify-center gap-2">
-      <Btn variant="soft" aria-label="Попередня сцена" onClick={() => go(i - 1)} disabled={i === 0}><SkipBack size={20} /></Btn>
-      <Btn variant="honey" onClick={() => setPlaying(!playing)} className="inline-flex items-center gap-2 px-8">{playing ? <Pause size={20} /> : <Play size={20} />}{playing ? 'Пауза' : 'Дивитися'}</Btn>
-      <Btn variant="soft" aria-label="Наступна сцена" onClick={() => (i === scenes.length - 1 ? finish() : go(i + 1))}><SkipForward size={20} /></Btn>
+      <Btn variant="soft" aria-label={t('Попередня сцена')} onClick={() => go(i - 1)} disabled={i === 0}><SkipBack size={20} /></Btn>
+      <Btn variant="honey" onClick={() => setPlaying(!playing)} className="inline-flex items-center gap-2 px-8">{playing ? <Pause size={20} /> : <Play size={20} />}{playing ? t('Пауза') : t('Дивитися')}</Btn>
+      <Btn variant="soft" aria-label={t('Наступна сцена')} onClick={() => (i === scenes.length - 1 ? finish() : go(i + 1))}><SkipForward size={20} /></Btn>
     </div>
-    <p className="text-center text-sm opacity-75">Сцена {i + 1} з {scenes.length}. Увімкни «Голос-помічник» на мапі, щоб казку читали вголос.</p>
+    <p className="text-center text-sm opacity-75">{t('Сцена {i} з {n}. Увімкни голос у налаштуваннях, щоб казку читали вголос.', { i: i + 1, n: scenes.length })}</p>
   </div>;
 }
 
@@ -97,6 +99,7 @@ export const Reflect = () => <Guided night id="sky-reflect" ending="Твоя з�
 
 type Sound = 'rain' | 'wind' | 'crickets';
 export function Sounds() {
+  const t = useT();
   const ctx = useRef<AudioContext | null>(null);
   const nodes = useRef<{ stop: () => void } | null>(null);
   const [on, setOn] = useState<Sound | null>(null);
@@ -126,8 +129,8 @@ export function Sounds() {
   };
   const items: [Sound, string, string][] = [['rain', 'Дощ', '☂'], ['wind', 'Вітер', '≋'], ['crickets', 'Цвіркуни', '♪']];
   return <div className="space-y-4 text-center">
-    <p className="text-lg">Обери звук і просто послухай. Можна заплющити очі.</p>
-    <div className="grid grid-cols-3 gap-3">{items.map(([k, label, m]) => <Btn key={k} variant={on === k ? 'honey' : 'soft'} aria-pressed={on === k} onClick={() => (on === k ? stop() : play(k))} className="flex h-28 flex-col items-center justify-center gap-1 rounded-3xl"><span className="text-3xl" aria-hidden>{m}</span>{label}</Btn>)}</div>
-    {on && <Btn variant="ghost" onClick={stop}>Тиша</Btn>}
+    <p className="text-lg">{t('Обери звук і просто послухай. Можна заплющити очі.')}</p>
+    <div className="grid grid-cols-3 gap-3">{items.map(([k, label, m]) => <Btn key={k} variant={on === k ? 'honey' : 'soft'} aria-pressed={on === k} onClick={() => (on === k ? stop() : play(k))} className="flex h-28 flex-col items-center justify-center gap-1 rounded-3xl"><span className="text-3xl" aria-hidden>{m}</span>{t(label)}</Btn>)}</div>
+    {on && <Btn variant="ghost" onClick={stop}>{t('Тиша')}</Btn>}
   </div>;
 }

@@ -546,6 +546,7 @@ const EN: Record<string, string> = {
   "Думки — це не завжди факти. Ти вмієш подивитися на них з різних боків.":
     "Thoughts aren't always facts. You know how to look at them from different sides.",
   "Стоп": "Stop",
+  "Ступні": "Feet",
   "Зупинись. Нічого не треба вирішувати просто зараз.": "Pause. Nothing needs to be solved right now.",
   "Притисни ступні до підлоги. Відчуй, що вона тебе тримає.": "Press your feet into the floor. Feel it holding you.",
   "Зроби повільний видих, ніби дмухаєш на гарячий чай.": "Breathe out slowly, as if cooling a hot cup of tea.",

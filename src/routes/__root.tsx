@@ -1,3 +1,4 @@
+import { PLACES } from "@/content/places";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -14,7 +15,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ambientFor, playAmbient, sfx, unlockAudio } from "@/lib/audio";
-import { useStore } from "../lib/store";
+import { markVisit, useStore } from "../lib/store";
 import { t, useT } from "@/lib/i18n";
 
 function NotFoundComponent() {
@@ -148,6 +149,10 @@ function RootComponent() {
     playAmbient(music ? ambientFor(pathname) : null);
     sfx("page");
   }, [pathname, music]);
+  useEffect(() => {
+    const seg = pathname.split("/")[1];
+    if (seg && PLACES.some((p) => p.id === seg)) markVisit(seg);
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>

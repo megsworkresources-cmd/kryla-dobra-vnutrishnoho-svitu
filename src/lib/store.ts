@@ -23,6 +23,8 @@ export interface AppState {
   sfx: boolean;
   volume: number; // 0..1
   voiceURI: string;
+  voiceEngine: 'natural' | 'device';
+  narrator: string; // natural narrator voice
   textSize: "normal" | "large" | "xl";
 }
 
@@ -44,6 +46,8 @@ const DEFAULTS: AppState = {
   sfx: true,
   volume: 0.5,
   voiceURI: "",
+  voiceEngine: "natural",
+  narrator: "Leda",
   textSize: "normal",
 };
 

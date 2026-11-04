@@ -4,6 +4,7 @@ import { Face } from "@/components/Face";
 import { EMOTIONS, SCENARIOS, SORT_ITEMS } from "@/content/emotions";
 import { markDone, pick, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
+import { CHARACTERS, castFor } from "@/content/characters";
 
 /* 1. Meet the emotions */
 export function EmotionGallery() {
@@ -65,10 +66,17 @@ export function MixedFeelings() {
         <p className="mt-2 font-display text-xl">{t(sc.text)}</p>
         <p className="mt-3 text-sm text-muted-foreground">{t("Що він або вона може відчувати? Обирай скільки завгодно.")}</p>
       </div>
-      {/* the feelings jar */}
-      <div className="paper-card flex h-20 items-end gap-1 overflow-hidden p-2" aria-label={t("Банка почуттів")}>
-        {chosen.length === 0 && <span className="m-auto text-sm text-muted-foreground">{t("Банка почуттів поки порожня")}</span>}
-        {chosen.map((id) => { const e = EMOTIONS.find((x) => x.id === id)!; return <span key={id} className={`flex-1 rounded-t-xl ${e.color} animate-fade-up`} style={{ height: "100%" }} title={t(e.name)} />; })}
+      {/* the guide holds the chosen feelings like balloons */}
+      <div className="paper-card flex min-h-36 items-end gap-3 p-3" aria-label={t("Банка почуттів")} aria-live="polite">
+        <img src={CHARACTERS[castFor("forest")[0]].image} alt="" className={`h-32 w-auto shrink-0 object-contain ${chosen.length ? "animate-act-breathe" : "animate-talk"}`} />
+        <div className="flex flex-1 flex-wrap content-end items-end gap-2 self-stretch">
+          {chosen.length === 0 && <span className="m-auto text-sm text-muted-foreground">{t("Банка почуттів поки порожня")}</span>}
+          {chosen.map((id) => { const e = EMOTIONS.find((x) => x.id === id)!; return (
+            <span key={id} className="flex animate-pop flex-col items-center">
+              <span className={`flex h-14 w-14 items-center justify-center rounded-full ${e.color} shadow-soft animate-float`}><Face {...e.face} className="h-12 w-12" /></span>
+              <span className="mt-0.5 text-xs font-bold">{t(e.name)}</span>
+            </span>); })}
+        </div>
       </div>
       <div className="flex flex-wrap gap-2">
         {EMOTIONS.map((e) => (
@@ -90,13 +98,14 @@ export function MixedFeelings() {
 }
 
 /* 3. Where does the feeling live in the body */
+/** Tap spots on the guide's picture (percent of the image box). */
 const ZONES = [
-  { id: "head", label: "Голова", d: "M50 6 a14 14 0 1 1 -0.1 0z" },
-  { id: "throat", label: "Горло", d: "M44 34 h12 v8 h-12z" },
-  { id: "chest", label: "Груди", d: "M30 44 h40 v22 h-40z" },
-  { id: "belly", label: "Живіт", d: "M32 66 h36 v20 h-36z" },
-  { id: "arms", label: "Руки", d: "M14 46 h14 v40 h-14z M72 46 h14 v40 h-14z" },
-  { id: "legs", label: "Ноги", d: "M33 88 h14 v44 h-14z M53 88 h14 v44 h-14z" },
+  { id: "head", label: "Голова", spots: [[50, 15]] },
+  { id: "throat", label: "Горло", spots: [[52, 29]] },
+  { id: "chest", label: "Груди", spots: [[50, 39]] },
+  { id: "belly", label: "Живіт", spots: [[50, 52]] },
+  { id: "arms", label: "Руки", spots: [[12, 50], [88, 30]] },
+  { id: "legs", label: "Ноги", spots: [[40, 84], [58, 84]] },
 ];
 export function BodyMap() {
   const t = useT();
@@ -114,17 +123,19 @@ export function BodyMap() {
             className={`min-h-12 shrink-0 rounded-full px-4 font-bold ${emo.id === e.id ? "bg-primary text-primary-foreground" : "paper-card"}`}>{t(e.name)}</button>
         ))}
       </div>
-      <div className="paper-card flex items-center gap-4 p-4">
-        <svg viewBox="0 0 100 136" className="h-80 w-auto shrink-0" role="group" aria-label={t("Тіло")}>
+      <div className="paper-card flex items-center gap-3 p-3">
+        <div className="relative h-80 shrink-0" style={{ aspectRatio: "320 / 560" }} role="group" aria-label={t("Тіло")}>
+          <img src={CHARACTERS.solomiya.image} alt={t(CHARACTERS.solomiya.name)} className="h-full w-full object-contain" />
           {ZONES.map((z) => {
             const on = mine.includes(z.id);
-            return (
-              <path key={z.id} d={z.d} role="button" aria-label={t(z.label)} aria-pressed={on} tabIndex={0}
-                onClick={() => setMarks((m) => ({ ...m, [emo.id]: on ? mine.filter((x) => x !== z.id) : [...mine, z.id] }))}
-                className={`cursor-pointer transition ${on ? emo.color.replace("bg-", "fill-") : "fill-muted"} stroke-border`} strokeWidth="1.5" rx="6" />
-            );
+            const toggle = () => setMarks((m) => ({ ...m, [emo.id]: on ? mine.filter((x) => x !== z.id) : [...mine, z.id] }));
+            return z.spots.map(([x, y], k) => (
+              <button key={z.id + k} type="button" onClick={toggle} aria-label={t(z.label)} aria-pressed={on}
+                className={`absolute h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 transition active:scale-90 ${on ? `${emo.color} border-paper opacity-80 shadow-lift animate-glow-on` : "border-dashed border-ink/40 bg-paper/30"}`}
+                style={{ left: `${x}%`, top: `${y}%` }} />
+            ));
           })}
-        </svg>
+        </div>
         <div className="text-sm">
           <p className="font-display text-xl font-bold">{t(emo.name)}</p>
           <p className="mt-1 text-muted-foreground">{t("Часто відчувається як:")}</p>

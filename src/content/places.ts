@@ -19,14 +19,14 @@ export interface Place {
 }
 
 export const PLACES: Place[] = [
-  { id: "garden", name: "Сад соняшників", to: "/garden", image: welcome, tagline: "Тут росте твій соняшник", x: 18, y: 56 },
-  { id: "forest", name: "Ліс почуттів", to: "/forest", image: forest, tagline: "Знайомся зі своїми почуттями", x: 22, y: 30 },
-  { id: "meadow", name: "Луг дихання", to: "/meadow", image: meadow, tagline: "Дихай разом із квітами", x: 50, y: 40 },
-  { id: "clouds", name: "Королівство хмар", to: "/clouds", image: clouds, tagline: "Коли тривожно — тут легшає", x: 26, y: 2 },
-  { id: "sky", name: "Нічне небо", to: "/sky", image: night, tagline: "Казки й тиха ніч", x: 88, y: 0 },
-  { id: "studio", name: "Куточок творчості", to: "/studio", image: studio, tagline: "Малюй, що відчуваєш", x: 54, y: 64 },
-  { id: "path", name: "Стежка сміливості", to: "/path", image: path, tagline: "Маленькі кроки, великі сили", x: 82, y: 24 },
-  { id: "safe", name: "Моє безпечне місце", to: "/safe", image: safe, tagline: "Усе, що допомагає саме тобі", x: 82, y: 92 },
+  { id: "garden", name: "Сад соняшників", to: "/garden", image: welcome, tagline: "Тут росте твій соняшник", x: 26, y: 82 },
+  { id: "forest", name: "Ліс почуттів", to: "/forest", image: forest, tagline: "Знайомся зі своїми почуттями", x: 25, y: 28 },
+  { id: "meadow", name: "Луг дихання", to: "/meadow", image: meadow, tagline: "Дихай разом із квітами", x: 29, y: 55 },
+  { id: "clouds", name: "Королівство хмар", to: "/clouds", image: clouds, tagline: "Коли тривожно — тут легшає", x: 27, y: 1 },
+  { id: "sky", name: "Нічне небо", to: "/sky", image: night, tagline: "Казки й тиха ніч", x: 73, y: 8 },
+  { id: "studio", name: "Куточок творчості", to: "/studio", image: studio, tagline: "Малюй, що відчуваєш", x: 72, y: 61 },
+  { id: "path", name: "Стежка сміливості", to: "/path", image: path, tagline: "Маленькі кроки, великі сили", x: 76, y: 34 },
+  { id: "safe", name: "Моє безпечне місце", to: "/safe", image: safe, tagline: "Усе, що допомагає саме тобі", x: 75, y: 88 },
 ];
 
 export const placeImage = (id: string) => PLACES.find((p) => p.id === id)!.image;

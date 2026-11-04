@@ -17,7 +17,7 @@ export class SuggestError extends Error {
   constructor(public status: number, message: string) { super(message); }
 }
 
-export async function suggestActivity(text: string, age: string) {
+export async function suggestActivity(text: string, age: string, lang: "uk" | "en" = "uk") {
   const apiKey = process.env['LOVABLE_API_KEY'];
   if (!apiKey) throw new SuggestError(500, "config");
   const provider = createOpenAI({
@@ -37,7 +37,7 @@ ${list}
   const result = streamText({
     model: provider.responses("openai/gpt-6-astra"),
     output: Output.object({ schema: SuggestionSchema }),
-    instructions: system,
+    instructions: lang === "en" ? `${system}\nAlways answer in English (US), warmly and simply.` : system,
     messages: [{ role: "user", content: text }],
     providerOptions: { openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
   });

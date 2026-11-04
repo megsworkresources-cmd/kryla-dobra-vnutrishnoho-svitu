@@ -1,8 +1,11 @@
-import { Link, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, Heart, Map } from "lucide-react";
-import type { ReactNode } from "react";
+import { Link, useLocation, useRouter } from "@tanstack/react-router";
+import { ArrowLeft, Heart, Home, Map, Settings2 } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
+import { CharacterSay } from "./Character";
 import { toggleFavorite, useStore } from "@/lib/store";
+import { sfx } from "@/lib/audio";
+import { castFor, cheerOf, type CharId } from "@/content/characters";
 
 interface SceneProps {
   image?: string;
@@ -16,68 +19,62 @@ interface SceneProps {
   compact?: boolean;
 }
 
-/** Shared screen frame: illustrated backdrop + consistent top navigation. */
+/** Shared screen frame: illustrated backdrop, top menu (back, home, map, settings) and bottom Back/Next. */
 export function Scene({ image, night, title, back, favHref, children, compact }: SceneProps) {
   const router = useRouter();
   const favs = useStore((s) => s.favorites);
   const isFav = favHref ? favs.includes(favHref) : false;
-  const btn = night
-    ? "night-card"
-    : "paper-card";
+  const btn = `${night ? "night-card" : "paper-card"} flex h-12 items-center justify-center transition active:scale-90`;
 
   return (
-    <div className={`relative min-h-dvh overflow-hidden ${night ? "bg-night text-moon" : "bg-paper"}`}>
+    <div className={`relative flex min-h-dvh flex-col overflow-hidden ${night ? "bg-night text-moon" : "bg-paper"}`}>
       {image && (
         <div className={`absolute inset-x-0 top-0 ${compact ? "h-[46vh]" : "h-full"} overflow-hidden`} aria-hidden>
           <img src={image} alt="" className="h-full w-full object-cover animate-kenburns" />
           <div className={`absolute inset-0 ${night ? "veil-night" : "veil-bottom"}`} />
         </div>
       )}
-      <header className="relative z-20 mx-auto flex max-w-3xl items-center gap-2 px-4 pt-4">
+      <header className="relative z-20 mx-auto flex w-full max-w-3xl items-center gap-2 px-4 pt-4">
         <button
           onClick={() => (back ? router.navigate({ to: back }) : window.history.length > 1 ? router.history.back() : router.navigate({ to: "/world" }))}
-          className={`${btn} flex h-12 items-center gap-1.5 px-4 text-sm font-bold`}
+          className={`${btn} gap-1.5 px-4 text-sm font-bold`}
           aria-label="Назад"
         >
           <ArrowLeft className="h-5 w-5" /> Назад
         </button>
-        <Link to="/world" className={`${btn} flex h-12 w-12 items-center justify-center`} aria-label="До мапи світу">
-          <Map className="h-5 w-5" />
-        </Link>
-        {title && <h1 className="ml-1 flex-1 truncate text-lg font-bold drop-shadow-sm">{title}</h1>}
-        {!title && <div className="flex-1" />}
+        <Link to="/" className={`${btn} w-12`} aria-label="Додому"><Home className="h-5 w-5" /></Link>
+        <Link to="/world" className={`${btn} w-12`} aria-label="Мапа світу (головне меню)"><Map className="h-5 w-5" /></Link>
+        <div className="flex-1" />
         {favHref && (
-          <button
-            onClick={() => toggleFavorite(favHref)}
-            className={`${btn} flex h-12 w-12 items-center justify-center`}
-            aria-pressed={isFav}
-            aria-label={isFav ? "Прибрати з мого безпечного місця" : "Додати в моє безпечне місце"}
-          >
+          <button onClick={() => { sfx("confirm"); toggleFavorite(favHref); }} className={`${btn} w-12`} aria-pressed={isFav}
+            aria-label={isFav ? "Прибрати з мого безпечного місця" : "Додати в моє безпечне місце"}>
             <Heart className={`h-5 w-5 ${isFav ? "fill-rose text-rose" : ""}`} />
           </button>
         )}
+        <Link to="/settings" className={`${btn} w-12`} aria-label="Налаштування звуку й екрана"><Settings2 className="h-5 w-5" /></Link>
       </header>
-      <main className="relative z-10 mx-auto max-w-3xl px-4 pb-6 pt-4">{children}</main>
-      <BottomNav night={night} />
+      {title && <h1 className="relative z-20 mx-auto mt-3 w-full max-w-3xl px-4 font-display text-2xl font-bold drop-shadow-sm sm:text-3xl">{title}</h1>}
+      <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 animate-fade-up px-4 pb-6 pt-4">{children}</main>
+      <div className="sticky bottom-0 z-30"><BottomNav night={night} /></div>
     </div>
   );
 }
 
-export function DoneCard({ text, again, night }: { text: string; again?: () => void; night?: boolean }) {
+export function DoneCard({ text, again, night, who }: { text: string; again?: () => void; night?: boolean; who?: CharId }) {
+  const { pathname } = useLocation();
+  const hero = who ?? castFor(pathname.split("/")[1] ?? "")[0];
+  const [cheer] = useState(() => cheerOf(hero));
+  useEffect(() => { sfx("complete"); }, []);
   return (
-    <div className={`${night ? "night-card" : "paper-card"} animate-fade-up p-6 text-center`}>
-      <div className="mx-auto mb-3 text-4xl" aria-hidden>🌻</div>
-      <p className="font-display text-xl font-bold">{text}</p>
-      <p className={`mt-2 text-sm ${night ? "opacity-80" : "text-muted-foreground"}`}>Твій соняшник у саду трохи підріс.</p>
+    <div className={`${night ? "night-card" : "paper-card"} relative animate-pop overflow-hidden p-6 text-center`}>
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        {[8, 22, 40, 58, 74, 90].map((l, i) => <span key={l} className="absolute top-0 text-xl animate-petal" style={{ left: `${l}%`, animationDelay: `${i * 0.25}s` }}>🌼</span>)}
+      </div>
+      <CharacterSay who={hero} night={night} mood="cheer" size="lg" text={`${cheer} ${text}`} />
+      <p className={`mt-4 text-base ${night ? "opacity-80" : "text-muted-foreground"}`}>🌻 Твій соняшник у саду трохи підріс.</p>
       <div className="mt-5 flex flex-wrap justify-center gap-2">
-        {again && (
-          <button onClick={again} className="h-12 rounded-full bg-secondary px-5 font-bold text-secondary-foreground">
-            Ще раз
-          </button>
-        )}
-        <Link to="/world" className="flex h-12 items-center rounded-full bg-primary px-5 font-bold text-primary-foreground">
-          До мапи світу
-        </Link>
+        {again && <Btn variant="soft" onClick={again}>Ще раз</Btn>}
+        <Link to="/garden" className="flex min-h-12 items-center rounded-full bg-honey px-5 font-bold text-accent-foreground shadow-soft">Подивитися на соняшник</Link>
       </div>
     </div>
   );
@@ -93,7 +90,7 @@ export function Btn({ children, onClick, variant = "primary", disabled, classNam
     ghost: "border-2 border-current bg-transparent",
   }[variant];
   return (
-    <button onClick={onClick} disabled={disabled} className={`min-h-12 rounded-full px-5 font-bold shadow-soft transition active:scale-95 disabled:opacity-40 ${v} ${className}`} {...rest}>
+    <button type="button" onClick={onClick} disabled={disabled} className={`min-h-12 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:opacity-40 ${v} ${className}`} {...rest}>
       {children}
     </button>
   );

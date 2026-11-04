@@ -10,6 +10,13 @@ import { askHelper } from '@/lib/suggest.functions';
 import { markDone, useStore, type AgeBand } from '@/lib/store';
 import { useT, useLang } from '@/lib/i18n';
 import { sfx } from '@/lib/audio';
+import { pageHead } from '@/content/journeys';
+import { createFileRoute } from '@tanstack/react-router';
+
+export const Route = createFileRoute('/helper')({
+  head: () => pageHead('Помічник почуттів', 'Розкажи, як ти почуваєшся — персонажі підкажуть вправу.'),
+  component: Helper,
+});
 
 const AGE_ASK: Record<AgeBand, '5-7' | '8-10' | '11-13'> = { young: '5-7', mid: '8-10', older: '11-13' };
 type Reply = { activity: string; guide: 'solomiya' | 'taras' | 'olenka' | 'marko' | 'daryna' | 'lihtaryk'; mood: 'calm' | 'cheer' | 'listen' | 'think'; feeling: string; reply: string; why: string };

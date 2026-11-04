@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import welcome from "@/assets/welcome.jpg";
 import { BottomNav } from "@/components/BottomNav";
+import { LangToggle } from "@/components/LangToggle";
 import { t, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
@@ -29,6 +30,7 @@ function Welcome() {
           <span key={l} className="absolute h-2 w-2 rounded-full bg-paper/80 animate-float" style={{ left: `${l}%`, top: `${18 + i * 9}%`, animationDelay: `${i * 0.8}s` }} />
         ))}
       </div>
+      <div className="absolute right-3 top-3 z-20"><LangToggle /></div>
       <div className="relative z-10 mt-auto px-6 pb-4 text-center animate-fade-up">
         <h1 className="font-display text-6xl font-bold text-ink drop-shadow-sm sm:text-7xl">{t("Тихе Місце")}</h1>
         <p className="mt-3 font-display text-2xl text-ink">{t("Тут ти можеш бути собою")}</p>

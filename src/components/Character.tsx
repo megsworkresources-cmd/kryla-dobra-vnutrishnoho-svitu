@@ -18,7 +18,7 @@ export function CharacterSay({ who, text, mood = 'talk', night, side = 'left', s
   const t = useT();
   const voiceOn = useStore((s) => s.voice && s.sound);
   const [pulse, setPulse] = useState(0);
-  useEffect(() => { setPulse((p) => p + 1); if (autoSpeak && voiceOn) speak(text, { pitch: who === 'lihtaryk' ? 1.4 : who === 'taras' || who === 'marko' ? 0.95 : 1.15 }); }, [text, autoSpeak, voiceOn, who]);
+  useEffect(() => { setPulse((p) => p + 1); if (autoSpeak && voiceOn) speak(text, { who }); }, [text, autoSpeak, voiceOn, who]);
   const h = { sm: 'h-24', md: 'h-32 sm:h-40', lg: 'h-44 sm:h-56' }[size];
   return (
     <figure className={`flex items-end gap-3 ${side === 'right' ? 'flex-row-reverse' : ''}`}>
@@ -29,7 +29,7 @@ export function CharacterSay({ who, text, mood = 'talk', night, side = 'left', s
       <figcaption key={`b${pulse}`} className={`speech ${night ? 'speech-night' : ''} ${side === 'right' ? 'speech-right' : ''} relative mb-6 flex-1 animate-pop p-4`}>
         <span className="block text-xs font-extrabold uppercase tracking-wide opacity-70">{t(c.name)}</span>
         <span className="mt-1 block text-lg leading-snug">{text}</span>
-        <button type="button" onClick={() => speak(text, { force: true })} aria-label={t('Послухати, що каже {n}', { n: t(c.name) })} className="absolute -bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft"><Volume2 size={16} /></button>
+        <button type="button" onClick={() => speak(text, { force: true, who })} aria-label={t('Послухати, що каже {n}', { n: t(c.name) })} className="absolute -bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft"><Volume2 size={16} /></button>
       </figcaption>
     </figure>
   );

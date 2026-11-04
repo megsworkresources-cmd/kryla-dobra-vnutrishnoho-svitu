@@ -963,6 +963,18 @@ const EN: Record<string, string> = {
   "Показати весь світ": "Show the whole world",
   "Закрити": "Close",
   "Вирушити сюди": "Go here",
+  "Які голоси": "Which voices",
+  "Живі українські голоси": "Natural Ukrainian voices",
+  "Тепла природна вимова. Потрібен інтернет; надсилаються лише фрази застосунку.": "Warm, natural pronunciation. Needs internet; only the app's own lines are sent.",
+  "Голос пристрою": "Device voice",
+  "Працює без інтернету, але звучить більш механічно.": "Works offline but sounds more robotic.",
+  "Голос оповідача": "Narrator voice",
+  "Кожен персонаж має свій власний голос. Тут обери голос для казок і підказок.": "Each character has their own voice. Choose the voice for stories and hints here.",
+  "Привіт! Так звучатиме казка.": "Hello! This is how the story will sound.",
+  "Лагідна казкарка": "Gentle storyteller",
+  "Ніжна співуча": "Soft and melodic",
+  "Спокійна мама": "Calm mum",
+  "Тихий дідусь": "Quiet grandpa",
 };
 
 export type { Lang };

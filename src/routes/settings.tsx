@@ -24,6 +24,8 @@ function Toggle({ label, hint, checked, onChange, disabled }: { label: string; h
 }
 const Section = ({ title, children }: { title: string; children: ReactNode }) => <section className="paper-card space-y-3 p-5"><h2 className="font-display text-2xl font-bold">{title}</h2>{children}</section>;
 
+const NARRATORS = [["Leda", "Лагідна казкарка"], ["Aoede", "Ніжна співуча"], ["Kore", "Спокійна мама"], ["Charon", "Тихий дідусь"]] as const;
+
 function Settings() {
   const t = useT();
   const s = useStore((x) => x);
@@ -65,7 +67,31 @@ function Settings() {
         </Section>
         <Section title={t("🗣 Голоси персонажів")}>
           <Toggle label={t("Читати вголос автоматично")} hint={t("Персонажі самі промовляють інструкції. Текст завжди видно на екрані.")} checked={s.voice} disabled={off} onChange={(v) => set("voice", v)} />
-          {list.length > 0 ? (
+          <fieldset className="rounded-2xl bg-secondary px-4 py-3" disabled={off}>
+            <legend className="sr-only">{t("Які голоси")}</legend>
+            <span className="block font-bold">{t("Які голоси")}</span>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              {([["natural", "Живі українські голоси", "Тепла природна вимова. Потрібен інтернет; надсилаються лише фрази застосунку."], ["device", "Голос пристрою", "Працює без інтернету, але звучить більш механічно."]] as const).map(([k, l, h]) => (
+                <button key={k} type="button" aria-pressed={s.voiceEngine === k} onClick={() => { stopSpeaking(); set("voiceEngine", k); }}
+                  className={`rounded-2xl bg-background px-4 py-3 text-left ${s.voiceEngine === k ? "ring-4 ring-ring" : ""}`}>
+                  <span className="block font-bold">{t(l)}</span><span className="block text-sm text-muted-foreground">{t(h)}</span>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+          {s.voiceEngine === "natural" ? (
+            <div className="rounded-2xl bg-secondary px-4 py-3">
+              <p className="font-bold">{t("Голос оповідача")}</p>
+              <p className="text-sm text-muted-foreground">{t("Кожен персонаж має свій власний голос. Тут обери голос для казок і підказок.")}</p>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {NARRATORS.map(([v, l]) => (
+                  <button key={v} type="button" disabled={off} aria-pressed={s.narrator === v}
+                    onClick={() => { set("narrator", v); speak(t("Привіт! Так звучатиме казка."), { force: true, voice: v }); }}
+                    className={`min-h-12 rounded-2xl bg-background px-3 text-sm font-bold ${s.narrator === v ? "ring-4 ring-ring" : ""}`}>{t(l)}</button>
+                ))}
+              </div>
+            </div>
+          ) : list.length > 0 ? (
             <label className="block rounded-2xl bg-secondary px-4 py-3 font-bold">{t("Голос")}
               <select value={s.voiceURI} onChange={(e) => set("voiceURI", e.target.value)} disabled={off} className="mt-2 block min-h-12 w-full rounded-xl bg-paper px-3 font-normal">
                 <option value="">{t("Автоматично (український)")}</option>
@@ -73,7 +99,7 @@ function Settings() {
               </select>
             </label>
           ) : <p className="text-sm text-muted-foreground">{t("На цьому пристрої немає вбудованих голосів — інструкції завжди написані текстом.")}</p>}
-          <Btn variant="soft" disabled={off} onClick={() => speak(t("Привіт! Я Соломія. Так звучить мій голос."), { force: true })}>{t("Послухати голос")}</Btn>
+          <Btn variant="soft" disabled={off} onClick={() => speak(t("Привіт! Я Соломія. Так звучить мій голос."), { force: true, who: "solomiya" })}>{t("Послухати голос")}</Btn>
         </Section>
         <Section title={t("👀 Екран")}>
           <p className="font-bold">{t("Розмір тексту")}</p>

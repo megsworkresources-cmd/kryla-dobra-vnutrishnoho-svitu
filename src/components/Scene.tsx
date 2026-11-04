@@ -3,8 +3,10 @@ import { ArrowLeft, Heart, Home, Map, Settings2 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
 import { CharacterSay } from "./Character";
+import { LangToggle } from "./LangToggle";
 import { toggleFavorite, useStore } from "@/lib/store";
 import { sfx } from "@/lib/audio";
+import { useT } from "@/lib/i18n";
 import { castFor, cheerOf, type CharId } from "@/content/characters";
 
 interface SceneProps {

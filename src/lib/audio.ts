@@ -105,9 +105,9 @@ export function playAmbient(kind: Ambient | null) {
     if (!ctx) return; const t = ctx.currentTime;
     const chirp = (base: number, count: number, gap: number, vol: number) => { for (let k = 0; k < count; k++) { const o = ctx!.createOscillator(); const g = ctx!.createGain(); o.frequency.setValueAtTime(base, t + k * gap); o.frequency.exponentialRampToValueAtTime(base * 1.3, t + k * gap + 0.08); g.gain.setValueAtTime(0, t + k * gap); g.gain.linearRampToValueAtTime(vol, t + k * gap + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + k * gap + 0.12); o.connect(g).connect(bus); o.start(t + k * gap); o.stop(t + k * gap + 0.15); } };
     if (Math.random() > 0.5) return;
-    if (kind === 'night') chirp(4200, 6, 0.06, 0.015);
-    else if (kind === 'meadow' || kind === 'garden' || kind === 'forest') chirp(2400 + Math.random() * 1200, 3, 0.12, 0.03);
-    else chirp(1200, 1, 0, 0.02);
+    if (kind === 'night') chirp(3800, 5, 0.07, 0.006);
+    else if (kind === 'meadow' || kind === 'garden' || kind === 'forest') chirp(2400 + Math.random() * 1200, 3, 0.12, 0.012);
+    else chirp(1200, 1, 0, 0.008);
   }, 2500);
   stops.push(() => window.clearInterval(timer));
   amb = { kind, style: s.musicStyle, stop: () => { bus.gain.setTargetAtTime(0, c.currentTime, 0.4); window.setTimeout(() => { stops.forEach((x) => { try { x(); } catch { /* already stopped */ } }); bus.disconnect(); }, 1500); } };

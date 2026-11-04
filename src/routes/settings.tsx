@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Btn, Scene } from "@/components/Scene";
 import { pageHead } from "@/content/journeys";
 import { setAge, update, useStore, type AgeBand, type AppState } from "@/lib/store";
-import { playAmbient, sfx, syncVolume, unlockAudio } from "@/lib/audio";
+import { MUSIC_STYLES, playAmbient, sfx, syncVolume, unlockAudio } from "@/lib/audio";
 import { speak, stopSpeaking, voices } from "@/lib/speak";
 
 export const Route = createFileRoute("/settings")({
@@ -43,7 +43,21 @@ function Settings() {
             <input type="range" min={0} max={1} step={0.05} value={s.volume} disabled={off} aria-label="Гучність"
               onChange={(e) => set("volume", Number(e.target.value))} onPointerUp={() => sfx("select")} className="mt-2 w-full accent-primary" />
           </label>
-          <Toggle label="Фонова музика й природа" hint="Тихі звуки кожного місця" checked={s.music} disabled={off} onChange={(v) => { unlockAudio(); set("music", v); playAmbient(v ? "garden" : null); }} />
+          <Toggle label="Фонова музика й природа" hint="Легкі українські мелодії та природа" checked={s.music} disabled={off} onChange={(v) => { unlockAudio(); set("music", v); playAmbient(v ? "garden" : null); }} />
+          <fieldset className={`rounded-2xl bg-secondary px-4 py-3 ${off || !s.music ? "opacity-50" : ""}`} disabled={off || !s.music}>
+            <legend className="sr-only">Яка музика</legend>
+            <span className="block font-bold">Яка музика звучить</span>
+            <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {MUSIC_STYLES.map((m) => (
+                <button key={m.id} type="button" aria-pressed={s.musicStyle === m.id}
+                  onClick={() => { unlockAudio(); update((x) => ({ ...x, musicStyle: m.id })); playAmbient("garden"); sfx("select"); }}
+                  className={`min-w-0 rounded-2xl bg-background px-4 py-3 text-left transition active:scale-95 ${s.musicStyle === m.id ? "ring-4 ring-ring" : ""}`}>
+                  <span className="block font-bold">{m.name}</span>
+                  <span className="block text-sm text-muted-foreground">{m.hint}</span>
+                </button>
+              ))}
+            </div>
+          </fieldset>
           <Toggle label="Звуки кнопок" hint="М’які сигнали при натисканні й завершенні" checked={s.sfx} disabled={off} onChange={(v) => set("sfx", v)} />
           <Btn variant="soft" disabled={off} onClick={() => { unlockAudio(); sfx("complete"); }}>Перевірити звук</Btn>
         </Section>

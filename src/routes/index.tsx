@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import welcome from "@/assets/welcome.jpg";
+import { BottomNav } from "@/components/BottomNav";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,7 +27,7 @@ function Welcome() {
           <span key={l} className="absolute h-2 w-2 rounded-full bg-paper/80 animate-float" style={{ left: `${l}%`, top: `${18 + i * 9}%`, animationDelay: `${i * 0.8}s` }} />
         ))}
       </div>
-      <div className="relative z-10 mt-auto px-6 pb-12 text-center animate-fade-up">
+      <div className="relative z-10 mt-auto px-6 pb-4 text-center animate-fade-up">
         <h1 className="font-display text-6xl font-bold text-ink drop-shadow-sm sm:text-7xl">Тихе Місце</h1>
         <p className="mt-3 font-display text-2xl text-ink">Тут ти можеш бути собою</p>
         <p className="mx-auto mt-2 max-w-sm text-base text-muted-foreground">
@@ -44,6 +45,7 @@ function Welcome() {
           </Link>
         </div>
       </div>
+      <BottomNav />
     </div>
   );
 }

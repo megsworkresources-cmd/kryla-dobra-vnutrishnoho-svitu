@@ -1,6 +1,7 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, Heart, Map } from "lucide-react";
 import type { ReactNode } from "react";
+import { BottomNav } from "./BottomNav";
 import { toggleFavorite, useStore } from "@/lib/store";
 
 interface SceneProps {
@@ -56,7 +57,8 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
           </button>
         )}
       </header>
-      <main className="relative z-10 mx-auto max-w-3xl px-4 pb-10 pt-4">{children}</main>
+      <main className="relative z-10 mx-auto max-w-3xl px-4 pb-6 pt-4">{children}</main>
+      <BottomNav night={night} />
     </div>
   );
 }

@@ -12,8 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ParentsRouteImport } from './routes/parents'
 import { Route as WorldRouteImport } from './routes/world'
+import { Route as CloudsIndexRouteImport } from './routes/clouds.index'
+import { Route as CloudsIdRouteImport } from './routes/clouds.$id'
 import { Route as ForestIndexRouteImport } from './routes/forest.index'
 import { Route as ForestIdRouteImport } from './routes/forest.$id'
+import { Route as MeadowIndexRouteImport } from './routes/meadow.index'
+import { Route as MeadowIdRouteImport } from './routes/meadow.$id'
+import { Route as PathIndexRouteImport } from './routes/path.index'
+import { Route as PathIdRouteImport } from './routes/path.$id'
+import { Route as SkyIndexRouteImport } from './routes/sky.index'
+import { Route as SkyIdRouteImport } from './routes/sky.$id'
+import { Route as StudioIndexRouteImport } from './routes/studio.index'
+import { Route as StudioIdRouteImport } from './routes/studio.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +40,16 @@ const WorldRoute = WorldRouteImport.update({
   path: '/world',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CloudsIndexRoute = CloudsIndexRouteImport.update({
+  id: '/clouds/',
+  path: '/clouds/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CloudsIdRoute = CloudsIdRouteImport.update({
+  id: '/clouds/$id',
+  path: '/clouds/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForestIndexRoute = ForestIndexRouteImport.update({
   id: '/forest/',
   path: '/forest/',
@@ -40,43 +60,169 @@ const ForestIdRoute = ForestIdRouteImport.update({
   path: '/forest/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeadowIndexRoute = MeadowIndexRouteImport.update({
+  id: '/meadow/',
+  path: '/meadow/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeadowIdRoute = MeadowIdRouteImport.update({
+  id: '/meadow/$id',
+  path: '/meadow/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathIndexRoute = PathIndexRouteImport.update({
+  id: '/path/',
+  path: '/path/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathIdRoute = PathIdRouteImport.update({
+  id: '/path/$id',
+  path: '/path/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SkyIndexRoute = SkyIndexRouteImport.update({
+  id: '/sky/',
+  path: '/sky/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SkyIdRoute = SkyIdRouteImport.update({
+  id: '/sky/$id',
+  path: '/sky/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudioIndexRoute = StudioIndexRouteImport.update({
+  id: '/studio/',
+  path: '/studio/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudioIdRoute = StudioIdRouteImport.update({
+  id: '/studio/$id',
+  path: '/studio/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/parents': typeof ParentsRoute
   '/world': typeof WorldRoute
+  '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
+  '/meadow/$id': typeof MeadowIdRoute
+  '/path/$id': typeof PathIdRoute
+  '/sky/$id': typeof SkyIdRoute
+  '/studio/$id': typeof StudioIdRoute
+  '/clouds/': typeof CloudsIndexRoute
   '/forest/': typeof ForestIndexRoute
+  '/meadow/': typeof MeadowIndexRoute
+  '/path/': typeof PathIndexRoute
+  '/sky/': typeof SkyIndexRoute
+  '/studio/': typeof StudioIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/parents': typeof ParentsRoute
   '/world': typeof WorldRoute
+  '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
+  '/meadow/$id': typeof MeadowIdRoute
+  '/path/$id': typeof PathIdRoute
+  '/sky/$id': typeof SkyIdRoute
+  '/studio/$id': typeof StudioIdRoute
+  '/clouds': typeof CloudsIndexRoute
   '/forest': typeof ForestIndexRoute
+  '/meadow': typeof MeadowIndexRoute
+  '/path': typeof PathIndexRoute
+  '/sky': typeof SkyIndexRoute
+  '/studio': typeof StudioIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/parents': typeof ParentsRoute
   '/world': typeof WorldRoute
+  '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
+  '/meadow/$id': typeof MeadowIdRoute
+  '/path/$id': typeof PathIdRoute
+  '/sky/$id': typeof SkyIdRoute
+  '/studio/$id': typeof StudioIdRoute
+  '/clouds/': typeof CloudsIndexRoute
   '/forest/': typeof ForestIndexRoute
+  '/meadow/': typeof MeadowIndexRoute
+  '/path/': typeof PathIndexRoute
+  '/sky/': typeof SkyIndexRoute
+  '/studio/': typeof StudioIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/parents' | '/world' | '/forest/$id' | '/forest/'
+  fullPaths:
+    | '/'
+    | '/parents'
+    | '/world'
+    | '/clouds/$id'
+    | '/forest/$id'
+    | '/meadow/$id'
+    | '/path/$id'
+    | '/sky/$id'
+    | '/studio/$id'
+    | '/clouds/'
+    | '/forest/'
+    | '/meadow/'
+    | '/path/'
+    | '/sky/'
+    | '/studio/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/parents' | '/world' | '/forest/$id' | '/forest'
-  id: '__root__' | '/' | '/parents' | '/world' | '/forest/$id' | '/forest/'
+  to:
+    | '/'
+    | '/parents'
+    | '/world'
+    | '/clouds/$id'
+    | '/forest/$id'
+    | '/meadow/$id'
+    | '/path/$id'
+    | '/sky/$id'
+    | '/studio/$id'
+    | '/clouds'
+    | '/forest'
+    | '/meadow'
+    | '/path'
+    | '/sky'
+    | '/studio'
+  id:
+    | '__root__'
+    | '/'
+    | '/parents'
+    | '/world'
+    | '/clouds/$id'
+    | '/forest/$id'
+    | '/meadow/$id'
+    | '/path/$id'
+    | '/sky/$id'
+    | '/studio/$id'
+    | '/clouds/'
+    | '/forest/'
+    | '/meadow/'
+    | '/path/'
+    | '/sky/'
+    | '/studio/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ParentsRoute: typeof ParentsRoute
   WorldRoute: typeof WorldRoute
+  CloudsIdRoute: typeof CloudsIdRoute
   ForestIdRoute: typeof ForestIdRoute
+  MeadowIdRoute: typeof MeadowIdRoute
+  PathIdRoute: typeof PathIdRoute
+  SkyIdRoute: typeof SkyIdRoute
+  StudioIdRoute: typeof StudioIdRoute
+  CloudsIndexRoute: typeof CloudsIndexRoute
   ForestIndexRoute: typeof ForestIndexRoute
+  MeadowIndexRoute: typeof MeadowIndexRoute
+  PathIndexRoute: typeof PathIndexRoute
+  SkyIndexRoute: typeof SkyIndexRoute
+  StudioIndexRoute: typeof StudioIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -102,6 +248,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorldRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/clouds/': {
+      id: '/clouds/'
+      path: '/clouds'
+      fullPath: '/clouds/'
+      preLoaderRoute: typeof CloudsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clouds/$id': {
+      id: '/clouds/$id'
+      path: '/clouds/$id'
+      fullPath: '/clouds/$id'
+      preLoaderRoute: typeof CloudsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forest/': {
       id: '/forest/'
       path: '/forest'
@@ -116,6 +276,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/meadow/': {
+      id: '/meadow/'
+      path: '/meadow'
+      fullPath: '/meadow/'
+      preLoaderRoute: typeof MeadowIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meadow/$id': {
+      id: '/meadow/$id'
+      path: '/meadow/$id'
+      fullPath: '/meadow/$id'
+      preLoaderRoute: typeof MeadowIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/path/': {
+      id: '/path/'
+      path: '/path'
+      fullPath: '/path/'
+      preLoaderRoute: typeof PathIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/path/$id': {
+      id: '/path/$id'
+      path: '/path/$id'
+      fullPath: '/path/$id'
+      preLoaderRoute: typeof PathIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sky/': {
+      id: '/sky/'
+      path: '/sky'
+      fullPath: '/sky/'
+      preLoaderRoute: typeof SkyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sky/$id': {
+      id: '/sky/$id'
+      path: '/sky/$id'
+      fullPath: '/sky/$id'
+      preLoaderRoute: typeof SkyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio/': {
+      id: '/studio/'
+      path: '/studio'
+      fullPath: '/studio/'
+      preLoaderRoute: typeof StudioIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio/$id': {
+      id: '/studio/$id'
+      path: '/studio/$id'
+      fullPath: '/studio/$id'
+      preLoaderRoute: typeof StudioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -123,8 +339,18 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ParentsRoute: ParentsRoute,
   WorldRoute: WorldRoute,
+  CloudsIdRoute: CloudsIdRoute,
   ForestIdRoute: ForestIdRoute,
+  MeadowIdRoute: MeadowIdRoute,
+  PathIdRoute: PathIdRoute,
+  SkyIdRoute: SkyIdRoute,
+  StudioIdRoute: StudioIdRoute,
+  CloudsIndexRoute: CloudsIndexRoute,
   ForestIndexRoute: ForestIndexRoute,
+  MeadowIndexRoute: MeadowIndexRoute,
+  PathIndexRoute: PathIndexRoute,
+  SkyIndexRoute: SkyIndexRoute,
+  StudioIndexRoute: StudioIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

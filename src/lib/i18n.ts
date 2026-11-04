@@ -63,6 +63,15 @@ const EN: Record<string, string> = {
   "Голос недоступний": "Voice not available",
   "Послухати, що каже {n}": "Listen to {n}",
   "хв": "min",
+  "Хвиля дихання": "Breathing wave",
+  "Квітка дихання": "Breathing flower",
+  "Повторюй разом зі мною, якщо хочеш 🙂": "Copy me if you like 🙂",
+  "Твоя уявна картина: {l}": "Your imagined picture: {l}",
+  "Тепер на твоїй галявині є все, що треба для спокою.": "Now your glade has everything it needs to feel calm.",
+  "Ще {n} — і соняшник виросте далі 🌱": "{n} more — and your sunflower grows again 🌱",
+  "Засвітити світлячка": "Light up a firefly",
+  "Торкнись світлячків на картинці: {n} з {m}": "Tap the fireflies in the picture: {n} of {m}",
+  "Усі світлячки світять для тебе ✨": "All the fireflies are shining for you ✨",
   "з": "of",
 
   // ---- 404 / errors ----

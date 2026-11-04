@@ -15,6 +15,7 @@ export interface AppState {
   reduceMotion: boolean;
   sound: boolean; // master switch
   music: boolean;
+  musicStyle: 'bandura' | 'sopilka' | 'tsymbaly' | 'lullaby' | 'nature';
   sfx: boolean;
   volume: number; // 0..1
   voiceURI: string;
@@ -32,6 +33,7 @@ const DEFAULTS: AppState = {
   reduceMotion: false,
   sound: true,
   music: false,
+  musicStyle: 'bandura',
   sfx: true,
   volume: 0.5,
   voiceURI: "",

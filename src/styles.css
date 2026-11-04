@@ -158,3 +158,5 @@ html[data-text="xl"] { font-size: 125%; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
 .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation: none !important; transition-duration: .001ms !important; }
+
+@utility bg-night-bar { background: oklch(0.22 0.05 265 / 0.95); }

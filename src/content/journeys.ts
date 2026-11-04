@@ -1,4 +1,5 @@
 import type { HubItem } from '@/components/Hub';
+import { t } from '@/lib/i18n';
 
 export const JOURNEYS = {
   meadow: {
@@ -65,11 +66,13 @@ export function activityTitle(place: Journey, id: string) {
 }
 
 export function pageHead(title: string, description: string) {
+  const trTitle = `${t(title)} — ${t('Тихе Місце')}`;
+  const trDesc = t(description);
   return { meta: [
-    { title: `${title} — Тихе Місце` },
-    { name: 'description', content: description },
-    { property: 'og:title', content: `${title} — Тихе Місце` },
-    { property: 'og:description', content: description },
+    { title: trTitle },
+    { name: 'description', content: trDesc },
+    { property: 'og:title', content: trTitle },
+    { property: 'og:description', content: trDesc },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:card', content: 'summary_large_image' },
   ] };

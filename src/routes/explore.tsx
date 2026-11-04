@@ -63,7 +63,7 @@ function Explore() {
                       <button key={p.id} type="button" onClick={() => setSel(p.id)} aria-label={t(p.name)} aria-pressed={active}
                         className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
                         style={{ left: `${s.x}%`, top: `${s.y}%` }}>
-                        <span className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-paper text-lg shadow-lift transition ${active ? "scale-125 bg-primary" : "bg-paper/90 animate-pulse-soft"}`} aria-hidden>{s.icon}</span>
+                        <span className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-paper text-lg shadow-lift transition ${active ? "scale-125 bg-primary" : "bg-paper/90"}`} aria-hidden>{s.icon}</span>
                         <span className="paper-card mt-0.5 whitespace-nowrap px-2 py-0.5 text-[10px] font-extrabold leading-tight">{t(p.name)}</span>
                       </button>
                     );

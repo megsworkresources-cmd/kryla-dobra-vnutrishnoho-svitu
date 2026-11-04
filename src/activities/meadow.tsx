@@ -1,3 +1,4 @@
+import { CharacterSay } from '@/components/Character';
 import { useEffect, useState } from 'react';
 import { Pause, Play, RotateCcw } from 'lucide-react';
 import { Btn, DoneCard } from '@/components/Scene';
@@ -38,7 +39,7 @@ export function Breathing({ kind }: { kind: 'flower' | 'wave' }) {
   const reset = () => { setElapsed(0); setRunning(false); setStarted(false); setDone(false); stopSpeaking(); };
   if (done) return <DoneCard text={t('Дякую, що побув на лузі. Далі можна дихати звичайно.')} again={reset} />;
   return <div className="space-y-5 text-center">
-    <p className="mx-auto max-w-lg">{t(pick(age, { young: 'Нюхай квітку. Потім легко подуй на пелюстки. Дихай так, як зручно тобі.', mid: 'Дихай м’яко, без затримок. Якщо цей ритм незручний — зроби паузу й дихай звичайно.', older: 'Не намагайся вдихати надто глибоко. Орієнтир — комфорт, а не точне потрапляння в ритм.' }))}</p>
+    <CharacterSay who="olenka" size="sm" mood="calm" autoSpeak={!running} action={running ? 'breathe' : undefined} text={t(pick(age, { young: 'Нюхай квітку. Потім легко подуй на пелюстки. Дихай так, як зручно тобі.', mid: 'Дихай м’яко, без затримок. Якщо цей ритм незручний — зроби паузу й дихай звичайно.', older: 'Не намагайся вдихати надто глибоко. Орієнтир — комфорт, а не точне потрапляння в ритм.' }))} />
     {!started && <div className="flex justify-center gap-2" aria-label={t('Тривалість')}>{[60, 120, 180].map((seconds) => <Btn key={seconds} variant={duration === seconds ? 'primary' : 'soft'} aria-pressed={duration === seconds} onClick={() => setDuration(seconds)}>{seconds / 60} {t('хв')}</Btn>)}</div>}
     <BreathVisual kind={kind} grow={running && isInhale} seconds={isInhale ? inhale : exhale} />
     <div aria-live="polite"><p className="font-display text-3xl font-bold">{started ? (running ? phase : t('Пауза')) : t('У своєму темпі')}</p><p className="mt-1 text-lg tabular-nums">{running ? phaseLeft : t('Без затримки дихання')}</p></div>

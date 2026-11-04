@@ -1,3 +1,4 @@
+import { CharacterSay } from '@/components/Character';
 import { useEffect, useRef, useState } from 'react';
 import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 import night from '@/assets/night.jpg';
@@ -143,7 +144,7 @@ export function Sounds() {
   };
   const items: [Sound, string, string][] = [['rain', 'Дощ', '☂'], ['wind', 'Вітер', '≋'], ['crickets', 'Цвіркуни', '♪']];
   return <div className="space-y-4 text-center">
-    <p className="text-lg">{t('Обери звук і просто послухай. Можна заплющити очі.')}</p>
+    <CharacterSay who="lihtaryk" night size="sm" mood={on ? 'calm' : 'talk'} action={on ? 'settle' : undefined} text={t('Обери звук і просто послухай. Можна заплющити очі.')} />
     <div className="grid grid-cols-3 gap-3">{items.map(([k, label, m]) => <Btn key={k} variant={on === k ? 'honey' : 'soft'} aria-pressed={on === k} onClick={() => (on === k ? stop() : play(k))} className="flex h-28 flex-col items-center justify-center gap-1 rounded-3xl"><span className="text-3xl" aria-hidden>{m}</span>{t(label)}</Btn>)}</div>
     {on && <Btn variant="ghost" onClick={stop}>{t('Тиша')}</Btn>}
   </div>;

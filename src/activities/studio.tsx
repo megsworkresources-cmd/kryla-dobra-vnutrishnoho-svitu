@@ -1,3 +1,4 @@
+import { CharacterSay } from '@/components/Character';
 import { useEffect, useRef, useState } from 'react';
 import { Eraser, Trash2 } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
@@ -22,7 +23,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   const down = (e: React.PointerEvent) => { const g = ref.current?.getContext('2d'); if (!g) return; ref.current!.setPointerCapture(e.pointerId); drawing.current = true; const [x, y] = pos(e); g.beginPath(); g.moveTo(x, y); g.lineTo(x + 0.1, y); g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = eraser ? size * 3 : size; g.strokeStyle = resolve(eraser ? 'var(--paper)' : color); g.stroke(); setSaved(false); };
   const move = (e: React.PointerEvent) => { if (!drawing.current) return; const g = ref.current!.getContext('2d')!; const [x, y] = pos(e); g.lineTo(x, y); g.stroke(); };
   return <div className="space-y-3">
-    <p className="text-lg">{t(prompt)}</p>
+    <CharacterSay who="marko" size="sm" mood={saved ? 'cheer' : 'think'} text={t(prompt)} />
     <canvas ref={ref} width={900} height={700} onPointerDown={down} onPointerMove={move} onPointerUp={() => (drawing.current = false)} onPointerCancel={() => (drawing.current = false)} className="paper-card aspect-[9/7] w-full touch-none rounded-3xl" aria-label={t('Аркуш для малювання')} />
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('Кольори')}>
       {COLORS.map((c) => <button key={c} onClick={() => { setColor(c); setEraser(false); }} aria-label={t('Колір')} aria-pressed={color === c && !eraser} className={`h-10 w-10 rounded-full border-4 ${color === c && !eraser ? 'border-primary' : 'border-paper'} shadow-soft`} style={{ background: c }} />)}
@@ -46,7 +47,7 @@ export function ColorFlower() {
   const [color, setColor] = useState(COLORS[1]!);
   const paint = (k: number) => { setFills(fills.map((f, j) => (j === k ? color : f))); if (k === 12) markDone('studio-color'); };
   return <div className="space-y-4 text-center">
-    <p className="text-lg">{t('Обери колір і торкнись пелюстки. Соняшник може бути будь-якого кольору!')}</p>
+    <CharacterSay who="solomiya" size="sm" mood={fills[12] !== 'var(--paper)' ? 'cheer' : 'talk'} text={t('Обери колір і торкнись пелюстки. Соняшник може бути будь-якого кольору!')} />
     <svg viewBox="-110 -110 220 220" className="paper-card mx-auto w-full max-w-sm rounded-3xl p-3" role="img" aria-label={t('Соняшник для розфарбовування')}>
       {Array.from({ length: 12 }, (_, k) => <ellipse key={k} cx="0" cy="-62" rx="18" ry="38" transform={`rotate(${k * 30})`} fill={fills[k]} stroke="var(--ink)" strokeWidth="2" onClick={() => paint(k)} className="cursor-pointer" />)}
       <circle r="34" fill={fills[12]} stroke="var(--ink)" strokeWidth="2" onClick={() => paint(12)} className="cursor-pointer" />
@@ -60,8 +61,8 @@ export function Gallery() {
   const t = useT();
   const lang = useLang();
   const drawings = useStore((s) => s.drawings);
-  if (!drawings.length) return <div className="paper-card p-6 text-center"><p className="text-lg">{t('Тут поки порожньо. Намалюй щось — і воно з’явиться тут.')}</p><Link to={'/studio/draw' as never} className="mt-4 inline-flex min-h-12 items-center rounded-full bg-primary px-5 font-bold text-primary-foreground">{t('Малювати')}</Link></div>;
-  return <div className="space-y-3"><p>{t('Ці малюнки зберігаються лише на цьому пристрої.')}</p>
+  if (!drawings.length) return <div className="paper-card p-6 text-center"><CharacterSay who="marko" size="sm" text={t('Тут поки порожньо. Намалюй щось — і воно з’явиться тут.')} /><Link to={'/studio/draw' as never} className="mt-4 inline-flex min-h-12 items-center rounded-full bg-primary px-5 font-bold text-primary-foreground">{t('Малювати')}</Link></div>;
+  return <div className="space-y-3"><CharacterSay who="marko" size="sm" mood="cheer" autoSpeak={false} text={t('Ці малюнки зберігаються лише на цьому пристрої.')} />
     <ul className="grid grid-cols-2 gap-3">{[...drawings].reverse().map((d) => <li key={d.id} className="paper-card overflow-hidden p-2">
       <img src={d.data} alt={t('Малюнок від {d}', { d: new Date(d.at).toLocaleDateString(localeOf(lang)) })} className="w-full rounded-2xl" />
       <div className="mt-2 flex items-center justify-between px-1 text-sm"><span>{new Date(d.at).toLocaleDateString(localeOf(lang))}</span><button onClick={() => removeDrawing(d.id)} aria-label={t('Видалити малюнок')} className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary"><Trash2 size={16} /></button></div>

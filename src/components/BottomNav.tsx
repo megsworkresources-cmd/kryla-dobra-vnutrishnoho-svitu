@@ -16,7 +16,8 @@ export function BottomNav({ night }: { night?: boolean | undefined; floating?: b
     const on = () => {
       const y = window.scrollY;
       const atEnd = window.innerHeight + y >= document.documentElement.scrollHeight - 40;
-      setHidden(y > last + 6 && y > 80 && !atEnd ? true : y < last - 6 || atEnd || y < 80 ? false : hidden => hidden as never);
+      if (atEnd || y < 80 || y < last - 6) setHidden(false);
+      else if (y > last + 6) setHidden(true);
       last = y;
     };
     window.addEventListener('scroll', on, { passive: true });

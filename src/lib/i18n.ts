@@ -902,6 +902,7 @@ const EN: Record<string, string> = {
   "Персонажі тимчасово недоступні. Спробуй пізніше.": "The friends are resting for a moment. Please try again soon.",
   "Повернення": "Coming back",
   "Помічник почуттів": "Feelings Helper",
+  "Розкажи, як ти почуваєшся — персонажі підкажуть вправу.": "Tell the friends how you feel — they will suggest an activity.",
   "Прибрати: {l}": "Remove: {l}",
   "Підказати вправу": "Suggest an activity",
   "Розказати ще раз": "Tell it again",

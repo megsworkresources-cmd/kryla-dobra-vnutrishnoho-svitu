@@ -31,7 +31,7 @@ describe("UA/EN language switch", () => {
       for (const m of text.matchAll(re)) {
         const s = (m[1] ?? m[2]) as string;
         // skip JSX/markup capture artifacts and the intentional bilingual toggle labels
-        if (/[=<>]|t\('|t\("|Мова \/ Language/.test(s)) continue;
+        if (/[=<>]|t\('|t\("|Мова \/ Language/.test(s) || s === "Українська") continue;
         if (!dict.includes(`"${s}"`)) missing.push(`${file}: ${s}`);
       }
     }

@@ -12,6 +12,7 @@ import { useT, useLang } from '@/lib/i18n';
 import { sfx } from '@/lib/audio';
 
 const AGE_ASK: Record<AgeBand, '5-7' | '8-10' | '11-13'> = { young: '5-7', mid: '8-10', older: '11-13' };
+type Reply = { activity: string; guide: 'solomiya' | 'taras' | 'olenka' | 'marko' | 'daryna' | 'lihtaryk'; mood: 'calm' | 'cheer' | 'listen' | 'think'; feeling: string; reply: string; why: string };
 const QUICK = ['я сумую', 'мені страшно', 'я злюся', 'мене кривдять', 'мені нудно', 'я радію', 'у мене багато думок', 'я не можу заснути'];
 
 /** The Feelings Helper — the only place a child's words leave the device, sent once and never stored. */
@@ -22,7 +23,7 @@ export default function Helper() {
   const lang = useLang();
   const [text, setText] = useState('');
   const [state, setState] = useState<'idle' | 'loading' | 'error'>('idle');
-  const [reply, setReply] = useState<Awaited<ReturnType<typeof askHelper>> extends { ok: true; suggestion: infer S } ? S : never | null>(null);
+  const [reply, setReply] = useState<Reply | null>(null);
   const ask = async (input: string) => {
     if (!input.trim()) return;
     sfx('select');

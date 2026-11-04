@@ -41,6 +41,7 @@ const EN: Record<string, string> = {
     "A magical valley with a forest, a meadow, a cloud castle and the night sky",
   "Мова": "Language",
   "Обери мову": "Choose the language",
+  "У моєму безпечному місці": "In my safe place",
   "Прибрати з мого безпечного місця": "Remove from my safe place",
   "Додати в моє безпечне місце": "Add to my safe place",
   "🌻 Твій соняшник у саду трохи підріст.": "🌻 Your sunflower in the garden has grown a little.",

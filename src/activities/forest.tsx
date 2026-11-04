@@ -1,3 +1,4 @@
+import { CharacterSay } from '@/components/Character';
 import { useState } from "react";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Face } from "@/components/Face";
@@ -18,7 +19,7 @@ export function EmotionGallery() {
       <div className="paper-card p-5 text-center">
         <Face {...sel.face} className={`mx-auto h-36 w-36 text-ink`} />
         <h2 className="mt-2 font-display text-3xl font-bold">{t(sel.name)}</h2>
-        <p className="mt-2 text-base">{t(sel.about)}</p>
+        <div className="mt-3 text-left"><CharacterSay who="lihtaryk" size="sm" autoSpeak={false} text={t(sel.about)} /></div>
         <div className="mt-4 grid gap-3 text-left sm:grid-cols-2">
           <div className="rounded-2xl bg-secondary p-3">
             <p className="text-xs font-extrabold uppercase tracking-wide text-muted-foreground">{t("У тілі може бути")}</p>
@@ -177,7 +178,7 @@ export function SortGame() {
           </button>
         ))}
       </div>
-      {fb && <p className="paper-card animate-fade-up p-4 text-center font-semibold">{fb}</p>}
+      {fb && <CharacterSay who="taras" size="sm" mood={fb.startsWith(t("Так!")) ? "cheer" : "think"} text={fb} />}
     </div>
   );
 }
@@ -201,7 +202,7 @@ export function Express() {
   );
   return (
     <div className="space-y-4">
-      <p className="paper-card p-4">{t(pick(age, { young: "Склади речення з трьох частин. Його можна сказати мамі, татові чи вчительці.", mid: "Склади «я-речення». Воно допомагає сказати про почуття без звинувачень.", older: "«Я-повідомлення» — спосіб говорити про себе, а не нападати на іншого. Спробуй скласти своє." }))}</p>
+      <CharacterSay who="taras" size="sm" mood={f && w && n ? "cheer" : "talk"} text={t(pick(age, { young: "Склади речення з трьох частин. Його можна сказати мамі, татові чи вчительці.", mid: "Склади «я-речення». Воно допомагає сказати про почуття без звинувачень.", older: "«Я-повідомлення» — спосіб говорити про себе, а не нападати на іншого. Спробуй скласти своє." }))} />
       <div className="paper-card space-y-3 p-4">
         <p className="font-bold">{t("Я відчуваю…")}</p>
         <div className="flex flex-wrap gap-2">{EMOTIONS.map((e) => chip(e.name.toLowerCase(), f, setF))}</div>

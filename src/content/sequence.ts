@@ -6,13 +6,13 @@ export interface Stop { to: string; label: string }
 
 /** The whole app as one gentle path, used by the Back / Next buttons. */
 export const ORDER: Stop[] = (() => {
-  const list: Stop[] = [{ to: '/', label: 'Початок' }, { to: '/world', label: 'Мапа світу' }];
+  const list: Stop[] = [{ to: '/', label: 'Початок' }, { to: '/world', label: 'Мапа світу' }, { to: '/friends', label: 'Мої друзі' }];
   for (const p of PLACES) {
     list.push({ to: p.to, label: p.name });
     if (p.id === 'forest') FOREST.forEach((f) => list.push({ to: `/forest/${f.params?.['id']}`, label: f.title }));
     if (p.id in JOURNEYS) JOURNEYS[p.id as Journey].activities.forEach((a) => list.push({ to: `/${p.id}/${a[0]}`, label: a[1] }));
   }
-  list.push({ to: '/parents', label: 'Для дорослих' });
+  list.push({ to: '/settings', label: 'Налаштування' }, { to: '/parents', label: 'Для дорослих' });
   return list;
 })();
 

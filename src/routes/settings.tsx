@@ -5,6 +5,7 @@ import { pageHead } from "@/content/journeys";
 import { setAge, update, useStore, type AgeBand, type AppState } from "@/lib/store";
 import { MUSIC_STYLES, playAmbient, sfx, syncVolume, unlockAudio } from "@/lib/audio";
 import { speak, stopSpeaking, voices } from "@/lib/speak";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/settings")({
   head: () => pageHead("Налаштування", "Звук, голоси персонажів, музика, розмір тексту й рух на екрані."),
@@ -24,6 +25,7 @@ function Toggle({ label, hint, checked, onChange, disabled }: { label: string; h
 const Section = ({ title, children }: { title: string; children: ReactNode }) => <section className="paper-card space-y-3 p-5"><h2 className="font-display text-2xl font-bold">{title}</h2>{children}</section>;
 
 function Settings() {
+  const t = useT();
   const s = useStore((x) => x);
   const [list, setList] = useState<SpeechSynthesisVoice[]>([]);
   useEffect(() => {

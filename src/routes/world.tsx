@@ -42,7 +42,7 @@ function World() {
             className="group absolute -translate-x-1/2 animate-fade-up"
             style={{ left: `${Math.min(Math.max(p.x, 18), 82)}%`, top: `${p.y * 0.8 + 1}%`, animationDelay: `${i * 80}ms` }}>
             <span className="flex flex-col items-center">
-              <span className="relative h-16 w-16 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95">
+              <span className="relative h-14 w-14 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-16 sm:w-16">
                 <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />
               </span>
               <span className="paper-card mt-1 whitespace-nowrap px-3 py-1 text-xs font-extrabold">{p.name}</span>

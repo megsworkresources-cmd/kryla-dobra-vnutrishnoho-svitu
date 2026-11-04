@@ -952,6 +952,17 @@ const EN: Record<string, string> = {
   "Скасувати": "Cancel",
   "Стерти": "Erase",
   "Очистити прогрес": "Clear progress",
+  "Уся мапа — Тихе Місце": "Full map — Quiet Place",
+  "Розглянь увесь чарівний світ: наближай, рухай мапу й обирай місце.": "Explore the whole magical world: zoom, move the map and pick a place.",
+  "Наближай мапу й торкайся будь-якого місця.": "Zoom the map and tap any place.",
+  "Назад до мапи": "Back to the map",
+  "Уся мапа": "Full map",
+  "Масштаб": "Zoom",
+  "Наблизити": "Zoom in",
+  "Віддалити": "Zoom out",
+  "Показати весь світ": "Show the whole world",
+  "Закрити": "Close",
+  "Вирушити сюди": "Go here",
 };
 
 export type { Lang };

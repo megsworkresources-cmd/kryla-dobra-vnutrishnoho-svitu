@@ -30,6 +30,7 @@ function World() {
         <Link to="/" className="paper-card flex h-12 items-center px-4 font-display text-lg font-bold">Тихе Місце</Link>
         <div className="flex gap-2">
           <Link to="/friends" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label="Мої друзі-персонажі"><Users className="h-5 w-5" /> Друзі</Link>
+          <Link to="/helper" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label="Розкажи, як ти почуваєшся">💬 Розкажи</Link>
           <Link to="/settings" className="paper-card flex h-12 w-12 items-center justify-center" aria-label="Налаштування"><Settings2 className="h-5 w-5" /></Link>
         </div>
       </header>

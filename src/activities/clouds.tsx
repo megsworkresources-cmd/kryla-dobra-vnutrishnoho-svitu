@@ -20,7 +20,7 @@ export function Release() {
   const [done, setDone] = useState(false);
   if (done) return <DoneCard text={t('Хмаринка полетіла. Якщо турбота повернеться — ти знаєш, де її відпустити.')} again={() => { setText(''); setFlying(false); setDone(false); }} />;
   return <div className="space-y-5 text-center">
-    <CharacterSay who="darina" size="sm" mood="calm" action={flying ? 'look' : undefined} text={t('Напиши або просто подумай про те, що тебе турбує. Ніхто цього не побачить — навіть цей пристрій не збереже.')} />
+    <CharacterSay who="daryna" size="sm" mood="calm" action={flying ? 'look' : undefined} text={t('Напиши або просто подумай про те, що тебе турбує. Ніхто цього не побачить — навіть цей пристрій не збереже.')} />
     <div className={`paper-card mx-auto max-w-md rounded-[3rem] p-6 ${flying ? 'animate-rise-away' : ''}`} onAnimationEnd={() => { markDone('clouds-release'); setDone(true); }}>
       <span className="text-5xl" aria-hidden>☁</span>
       <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={200} rows={3} aria-label={t('Моя турбота')} placeholder={t('Мене турбує…')} className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring" />

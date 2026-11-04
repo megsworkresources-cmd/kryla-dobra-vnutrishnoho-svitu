@@ -27,7 +27,7 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
   const btn = `${night ? "night-card" : "paper-card"} flex h-12 items-center justify-center transition active:scale-90`;
 
   return (
-    <div className={`relative flex min-h-dvh flex-col overflow-hidden ${night ? "bg-night text-moon" : "bg-paper"}`}>
+    <div className={`relative flex min-h-dvh flex-col overflow-x-clip ${night ? "bg-night text-moon" : "bg-paper"}`}>
       {image && (
         <div className={`absolute inset-x-0 top-0 ${compact ? "h-[46vh]" : "h-full"} overflow-hidden`} aria-hidden>
           <img src={image} alt="" className="h-full w-full object-cover animate-kenburns" />

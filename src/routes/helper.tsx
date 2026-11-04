@@ -4,12 +4,14 @@ import { Sparkles } from 'lucide-react';
 import night from '@/assets/night.jpg';
 import { Btn, Scene } from '@/components/Scene';
 import { CharacterSay } from '@/components/Character';
-import { CATALOG, KIND } from '@/content/catalog';
+import { findActivity } from '@/content/catalog';
 import { EMOTIONS } from '@/content/emotions';
-import { suggest } from '@/lib/suggest.functions';
-import { markDone, useStore } from '@/lib/store';
-import { useT } from '@/lib/i18n';
+import { askHelper } from '@/lib/suggest.functions';
+import { markDone, useStore, type AgeBand } from '@/lib/store';
+import { useT, useLang } from '@/lib/i18n';
+import { sfx } from '@/lib/audio';
 
+const AGE_ASK: Record<AgeBand, '5-7' | '8-10' | '11-13'> = { young: '5-7', mid: '8-10', older: '11-13' };
 const QUICK = ['я сумую', 'мені страшно', 'я злюся', 'мене кривдять', 'мені нудно', 'я радію', 'у мене багато думок', 'я не можу заснути'];
 
 /** The Feelings Helper — the only place a child's words leave the device, sent once and never stored. */
@@ -17,16 +19,18 @@ export default function Helper() {
   const t = useT();
   const navigate = useNavigate();
   const age = useStore((s) => s.age);
+  const lang = useLang();
   const [text, setText] = useState('');
   const [state, setState] = useState<'idle' | 'loading' | 'error'>('idle');
-  const [reply, setReply] = useState<{ text: string; picks: string[]; cheer?: string } | null>(null);
+  const [reply, setReply] = useState<Awaited<ReturnType<typeof askHelper>> extends { ok: true; suggestion: infer S } ? S : never | null>(null);
   const ask = async (input: string) => {
     if (!input.trim()) return;
-    sfx(); setState('loading');
-    const result = await suggest({ data: { message: input, age } });
-    if (result) setReply(result); else setState('error');
+    sfx('select');
+    setState('loading');
+    const res = await askHelper({ data: { text: input, age: AGE_ASK[age], lang } });
+    if (res.ok) { setReply(res.suggestion); setState('idle'); } else setState('error');
   };
-  const sfx = () => {};
+  const act = reply && findActivity(reply.activity);
   return (
     <Scene image={night} night title="Помічник почуттів" back="/world">
       <div className="space-y-4">
@@ -39,39 +43,32 @@ export default function Helper() {
           <div className="space-y-3">
             <p className="font-bold">{t('Або обери:')}</p>
             <div className="flex flex-wrap gap-2">
-              {QUICK.map((q) => <button key={q} onClick={() => { setText(q); ask(q); }} className="min-h-11 rounded-full bg-secondary px-4 text-sm font-bold">{t(q)}</button>)}
+              {QUICK.map((q) => <button key={q} onClick={() => { setText(q); void ask(q); }} className="min-h-11 rounded-full bg-secondary px-4 text-sm font-bold">{t(q)}</button>)}
             </div>
             <div className="flex flex-wrap gap-2">
-              {EMOTIONS.slice(0, 6).map((e) => <button key={e.id} onClick={() => { const q = t(e.name).toLowerCase(); setText(q); ask(q); }} className="flex min-h-11 items-center gap-2 rounded-full bg-secondary px-4 text-sm font-bold"><span className={`h-3 w-3 rounded-full ${e.color}`} />{t(e.name)}</button>)}
+              {EMOTIONS.slice(0, 6).map((e) => <button key={e.id} onClick={() => { const q = t(e.name).toLowerCase(); setText(q); void ask(q); }} className="flex min-h-11 items-center gap-2 rounded-full bg-secondary px-4 text-sm font-bold"><span className={`h-3 w-3 rounded-full ${e.color}`} />{t(e.name)}</button>)}
             </div>
             <div className="night-card p-4">
               <label htmlFor="feeling" className="block font-bold">{t('Або напиши своїми словами')}</label>
               <textarea id="feeling" value={text} onChange={(e) => setText(e.target.value)} rows={3} maxLength={300} placeholder={t('Наприклад: мені сумно, бо…')} className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring" />
-              <Btn onClick={() => ask(text)} className="mt-3 w-full" disabled={state === 'loading'}>{state === 'loading' ? t('Персонажі думають…') : t('Підказати вправу')}</Btn>
+              <Btn onClick={() => void ask(text)} className="mt-3 w-full" disabled={state === 'loading'}>{state === 'loading' ? t('Персонажі думають…') : t('Підказати вправу')}</Btn>
             </div>
             {state === 'error' && <p className="paper-card p-4 text-center" role="alert">{t('Персонажі тимчасово недоступні. Спробуй пізніше.')}</p>}
           </div>
         )}
         {reply && (
           <div className="animate-fade-up space-y-4">
-            <CharacterSay who="s" night mood="talk" size="lg" text={reply.text} />
-            {reply.cheer && <CharacterSay who="h" night side="right" size="sm" mood="cheer" text={reply.cheer} />}
-            <div className="night-card p-5">
-              <p className="text-xs font-extrabold uppercase tracking-wide text-moon">{t('Спробуй це')}</p>
-              <ul className="mt-2 space-y-2">
-                {reply.picks.map((key) => {
-                  const it = CATALOG.find((x) => x.key === key);
-                  if (!it) return null;
-                  return (
-                    <li key={key} className="flex items-center justify-between gap-3 rounded-2xl bg-secondary p-3">
-                      <span className="font-bold">{t(KIND[it.kind])}: {t(it.title)}</span>
-                      <Btn onClick={() => { markDone('helper'); navigate({ to: it.to as never }); }} aria-label={t('Далі: {l}', { l: t(it.title) })}>{t('Далі')}</Btn>
-                    </li>
-                  );
-                })}
-              </ul>
-              <p className="mt-3 text-xs opacity-70">{t('Схованих підказок немає — це ті самі вправи світу.')}</p>
-            </div>
+            <CharacterSay who={reply.guide} night mood={reply.mood as never} size="lg" text={reply.reply} />
+            {act && (
+              <div className="night-card p-5">
+                <p className="text-xs font-extrabold uppercase tracking-wide text-moon">{t('Спробуй це')}</p>
+                <div className="mt-2 flex items-center justify-between gap-3 rounded-2xl bg-secondary p-3">
+                  <span className="font-bold">{t(act.title)}<span className="block text-xs font-normal opacity-75">{t(act.desc)}</span></span>
+                  <Btn onClick={() => { markDone('helper'); navigate({ to: `/${act.place}/${act.id}` as never }); }} aria-label={t('Далі: {l}', { l: t(act.title) })}>{t('Далі')}</Btn>
+                </div>
+                <p className="mt-3 text-sm">{t('Чому це може допомогти')} — {reply.why}</p>
+              </div>
+            )}
             <Btn variant="soft" onClick={() => { setReply(null); setText(''); setState('idle'); }} className="w-full">{t('Розказати ще раз')}</Btn>
           </div>
         )}

@@ -14,9 +14,11 @@ export function speak(text: string, opts: { force?: boolean; pitch?: number } = 
   if (!s.sound || (!s.voice && !opts.force)) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'uk-UA'; u.rate = 0.85; u.pitch = opts.pitch ?? 1.05; u.volume = Math.max(0.1, s.volume * 1.6 > 1 ? 1 : s.volume * 1.6);
+  const lang = s.lang;
+  u.lang = lang === 'uk' ? 'uk-UA' : 'en-US'; u.rate = 0.85; u.pitch = opts.pitch ?? 1.05; u.volume = Math.max(0.1, s.volume * 1.6 > 1 ? 1 : s.volume * 1.6);
   const all = window.speechSynthesis.getVoices();
-  const v = all.find((x) => x.voiceURI === s.voiceURI) ?? all.find((x) => x.lang.startsWith('uk'));
+  const sameLang = all.filter((x) => x.lang.toLowerCase().replace('_', '-').startsWith(lang));
+  const v = (s.voiceURI && sameLang.find((x) => x.voiceURI === s.voiceURI)) ?? sameLang[0] ?? all.find((x) => x.lang.startsWith('uk'));
   if (v) u.voice = v;
   window.speechSynthesis.speak(u);
 }

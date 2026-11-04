@@ -37,7 +37,8 @@ ${list}
   const result = streamText({
     model: provider.responses("openai/gpt-6-astra"),
     output: Output.object({ schema: SuggestionSchema }),
-    messages: [{ role: "system", content: system }, { role: "user", content: text }],
+    instructions: system,
+    messages: [{ role: "user", content: text }],
     providerOptions: { openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
   });
   try {

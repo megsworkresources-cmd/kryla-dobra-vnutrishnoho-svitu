@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GardenRouteImport } from './routes/garden'
 import { Route as ParentsRouteImport } from './routes/parents'
+import { Route as SafeRouteImport } from './routes/safe'
 import { Route as WorldRouteImport } from './routes/world'
 import { Route as CloudsIndexRouteImport } from './routes/clouds.index'
 import { Route as CloudsIdRouteImport } from './routes/clouds.$id'
@@ -30,9 +32,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GardenRoute = GardenRouteImport.update({
+  id: '/garden',
+  path: '/garden',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ParentsRoute = ParentsRouteImport.update({
   id: '/parents',
   path: '/parents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafeRoute = SafeRouteImport.update({
+  id: '/safe',
+  path: '/safe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorldRoute = WorldRouteImport.update({
@@ -103,7 +115,9 @@ const StudioIdRoute = StudioIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/garden': typeof GardenRoute
   '/parents': typeof ParentsRoute
+  '/safe': typeof SafeRoute
   '/world': typeof WorldRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
@@ -120,7 +134,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/garden': typeof GardenRoute
   '/parents': typeof ParentsRoute
+  '/safe': typeof SafeRoute
   '/world': typeof WorldRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
@@ -138,7 +154,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/garden': typeof GardenRoute
   '/parents': typeof ParentsRoute
+  '/safe': typeof SafeRoute
   '/world': typeof WorldRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
@@ -157,7 +175,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/garden'
     | '/parents'
+    | '/safe'
     | '/world'
     | '/clouds/$id'
     | '/forest/$id'
@@ -174,7 +194,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/garden'
     | '/parents'
+    | '/safe'
     | '/world'
     | '/clouds/$id'
     | '/forest/$id'
@@ -191,7 +213,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/garden'
     | '/parents'
+    | '/safe'
     | '/world'
     | '/clouds/$id'
     | '/forest/$id'
@@ -209,7 +233,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GardenRoute: typeof GardenRoute
   ParentsRoute: typeof ParentsRoute
+  SafeRoute: typeof SafeRoute
   WorldRoute: typeof WorldRoute
   CloudsIdRoute: typeof CloudsIdRoute
   ForestIdRoute: typeof ForestIdRoute
@@ -234,11 +260,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/garden': {
+      id: '/garden'
+      path: '/garden'
+      fullPath: '/garden'
+      preLoaderRoute: typeof GardenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/parents': {
       id: '/parents'
       path: '/parents'
       fullPath: '/parents'
       preLoaderRoute: typeof ParentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safe': {
+      id: '/safe'
+      path: '/safe'
+      fullPath: '/safe'
+      preLoaderRoute: typeof SafeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/world': {
@@ -337,7 +377,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GardenRoute: GardenRoute,
   ParentsRoute: ParentsRoute,
+  SafeRoute: SafeRoute,
   WorldRoute: WorldRoute,
   CloudsIdRoute: CloudsIdRoute,
   ForestIdRoute: ForestIdRoute,

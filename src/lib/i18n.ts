@@ -416,7 +416,7 @@ const EN: Record<string, string> = {
   "Я відчуваю…": "I feel…",
   "коли…": "when…",
   "Мені допоможе…": "What would help me…",
-  "Я відчуваю {f}, коли {w}. {n} — це допоможе мені.": "I feel {f} when {w}. {n} would help me.",
+  "Я відчуваю {f}, коли {w}. Мені допоможе {n}.": "I feel {f} when {w}. I think {n} would help me.",
   "Чудово сказано": "Nicely said",
   "Коли ти кажеш про почуття — іншим легше тебе зрозуміти.":
     "When you name your feelings, others understand you better.",

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Btn, DoneCard } from '@/components/Scene';
 import { Guided } from '@/components/Activity';
 import { markDone } from '@/lib/store';
+import { useT } from '@/lib/i18n';
 
 export const Senses = () => <Guided id="clouds-senses" ending="Ти повернувся сюди, у цю мить. Це вміння завжди з тобою." steps={[
   { title: 'П’ять речей, які бачиш', text: 'Озирнися повільно. Назви про себе п’ять речей навколо: колір, форму, світло.' },
@@ -12,17 +13,18 @@ export const Senses = () => <Guided id="clouds-senses" ending="Ти поверн
 ]} />;
 
 export function Release() {
+  const t = useT();
   const [text, setText] = useState('');
   const [flying, setFlying] = useState(false);
   const [done, setDone] = useState(false);
-  if (done) return <DoneCard text="Хмаринка полетіла. Якщо турбота повернеться — ти знаєш, де її відпустити." again={() => { setText(''); setFlying(false); setDone(false); }} />;
+  if (done) return <DoneCard text={t('Хмаринка полетіла. Якщо турбота повернеться — ти знаєш, де її відпустити.')} again={() => { setText(''); setFlying(false); setDone(false); }} />;
   return <div className="space-y-5 text-center">
-    <p className="text-lg">Напиши або просто подумай про те, що тебе турбує. Ніхто цього не побачить — навіть цей пристрій не збереже.</p>
+    <p className="text-lg">{t('Напиши або просто подумай про те, що тебе турбує. Ніхто цього не побачить — навіть цей пристрій не збереже.')}</p>
     <div className={`paper-card mx-auto max-w-md rounded-[3rem] p-6 ${flying ? 'animate-rise-away' : ''}`} onAnimationEnd={() => { markDone('clouds-release'); setDone(true); }}>
       <span className="text-5xl" aria-hidden>☁</span>
-      <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={200} rows={3} aria-label="Моя турбота" placeholder="Мене турбує…" className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring" />
+      <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={200} rows={3} aria-label={t('Моя турбота')} placeholder={t('Мене турбує…')} className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring" />
     </div>
-    {!flying && <Btn onClick={() => setFlying(true)}>Відпустити хмаринку</Btn>}
+    {!flying && <Btn onClick={() => setFlying(true)}>{t('Відпустити хмаринку')}</Btn>}
   </div>;
 }
 

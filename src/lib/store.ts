@@ -4,9 +4,11 @@ import { useSyncExternalStore } from "react";
  * All child data stays on this device (localStorage). Only the optional "Розкажи, як ти" text is sent once to Lovable AI and never stored.
  */
 export type AgeBand = "young" | "mid" | "older";
+export type Lang = "uk" | "en";
 
 export interface AppState {
   age: AgeBand;
+  lang: Lang;
   completed: Record<string, number>; // activityId -> times completed
   favorites: string[]; // activity hrefs
   comfort: string[]; // child's own "what helps me" list
@@ -25,6 +27,7 @@ export interface AppState {
 const KEY = "tyhe-mistse-v1";
 const DEFAULTS: AppState = {
   age: "mid",
+  lang: "uk",
   completed: {},
   favorites: [],
   comfort: [],

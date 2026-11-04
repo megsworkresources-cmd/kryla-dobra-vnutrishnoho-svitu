@@ -6,14 +6,14 @@ import type { CharId } from '@/content/characters';
  * (only app-written lines are sent, never anything the child types); "device" uses built-in speech.
  * Falls back to device speech if a natural voice can't be fetched. Obeys sound settings.
  */
-type Voice = { voice: string; style: string; pitch: number };
+type Voice = { voice: string; pitch: number };
 const CAST: Record<CharId, Voice> = {
-  solomiya: { voice: 'Leda', style: 'як лагідна дівчинка-оповідачка', pitch: 1.15 },
-  olenka: { voice: 'Aoede', style: 'як спокійна ніжна дівчинка', pitch: 1.15 },
-  daryna: { voice: 'Zephyr', style: 'як мрійлива тиха дівчинка', pitch: 1.15 },
-  taras: { voice: 'Puck', style: 'як веселий дружній хлопчик', pitch: 0.95 },
-  marko: { voice: 'Orus', style: 'як добрий творчий хлопчик', pitch: 0.95 },
-  lihtaryk: { voice: 'Fenrir', style: 'як маленький казковий їжачок, грайливо', pitch: 1.4 },
+  solomiya: { voice: 'Leda', pitch: 1.15 },
+  olenka: { voice: 'Aoede', pitch: 1.15 },
+  daryna: { voice: 'Zephyr', pitch: 1.15 },
+  taras: { voice: 'Puck', pitch: 0.95 },
+  marko: { voice: 'Orus', pitch: 0.95 },
+  lihtaryk: { voice: 'Fenrir', pitch: 1.4 },
 };
 export const characterVoice = (who: CharId) => CAST[who];
 
@@ -50,7 +50,7 @@ export function speak(text: string, opts: { force?: boolean; pitch?: number; who
   const pitch = opts.pitch ?? c?.pitch ?? 1.05;
   if (s.voiceEngine !== 'natural') return deviceSpeak(text, pitch);
   const voice = opts.voice ?? c?.voice ?? s.narrator ?? 'Leda';
-  const style = c?.style ?? (s.lang === 'uk' ? 'як тепла казкарка' : 'like a warm storyteller');
+  const style = opts.who ?? 'narrator';
   const key = `${s.lang}|${voice}|${text}`;
   const my = ++token;
   const play = (b64: string) => {

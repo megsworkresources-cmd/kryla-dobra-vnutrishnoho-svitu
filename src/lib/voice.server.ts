@@ -2,9 +2,21 @@
 const MODEL = "google/gemini-3.1-flash-tts-preview";
 const URL = "https://ai.gateway.lovable.dev/v1/audio/speech";
 
+const STYLES: Record<string, [string, string]> = {
+  narrator: ["як тепла казкарка", "like a warm storyteller"],
+  solomiya: ["як лагідна дівчинка-оповідачка", "like a gentle young girl"],
+  olenka: ["як спокійна ніжна дівчинка", "like a calm, soft-spoken girl"],
+  daryna: ["як мрійлива тиха дівчинка", "like a dreamy, quiet girl"],
+  taras: ["як веселий дружній хлопчик", "like a cheerful, friendly boy"],
+  marko: ["як добрий творчий хлопчик", "like a kind, creative boy"],
+  lihtaryk: ["як маленький казковий їжачок, грайливо", "like a tiny playful fairy-tale hedgehog"],
+};
+
 export class VoiceError extends Error {}
 
-export async function synthesize(text: string, voice: string, lang: "uk" | "en", style: string) {
+export async function synthesize(text: string, voice: string, lang: "uk" | "en", who: string) {
+  const [ukStyle, enStyle] = STYLES[who] ?? STYLES["narrator"]!;
+  const style = lang === "uk" ? ukStyle : enStyle;
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new VoiceError("config");
   const prompt = lang === "uk"

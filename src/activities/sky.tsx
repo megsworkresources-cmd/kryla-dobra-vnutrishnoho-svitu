@@ -59,7 +59,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   const [t2, setT] = useState(0);
   const [done, setDone] = useState(false);
   const [lit, setLit] = useState<number[]>([]);
-  const narrator = CHARACTERS[castFor('sky')[i % 2]];
+  const narrator = CHARACTERS[castFor('sky')[i % 2]!];
   const len = Math.max(6, Math.round((scenes[i]?.length ?? 0) / 14));
   const finish = () => { setPlaying(false); stopSpeaking(); markDone(`sky-${id}`); setDone(true); };
   const fin = useRef(finish); fin.current = finish;

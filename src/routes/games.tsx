@@ -4,7 +4,7 @@ import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { pageHead } from "@/content/journeys";
-import { note, sfx } from "@/lib/audio";
+import { chime, sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/games")({
@@ -63,7 +63,7 @@ function Bubbles() {
       <div className="paper-card relative h-[55vh] overflow-hidden bg-gradient-to-b from-sky/30 to-sage/30 p-0" data-no-tap>
         {list.map((b) => (
           <button key={b.id} aria-label={t("Бульбашка")}
-            onPointerDown={() => { note(SCALE[b.id % SCALE.length]!); setPopped((p) => p + 1); setList((l) => l.filter((x) => x.id !== b.id)); }}
+            onPointerDown={() => { chime(SCALE[b.id % SCALE.length]!); setPopped((p) => p + 1); setList((l) => l.filter((x) => x.id !== b.id)); }}
             onAnimationEnd={() => setList((l) => l.filter((x) => x.id !== b.id))}
             className={`absolute -bottom-24 rounded-full border-2 border-card/80 shadow-soft animate-bubble ${tints[b.hue]}`}
             style={{ left: `${b.x}%`, width: b.size, height: b.size, animationDuration: `${b.dur}s` }}>
@@ -126,10 +126,10 @@ function Stars() {
   const add = (e: React.PointerEvent) => {
     const r = box.current!.getBoundingClientRect();
     const x = ((e.clientX - r.left) / r.width) * 100, y = ((e.clientY - r.top) / r.height) * 100;
-    note(SCALE[Math.min(6, Math.floor(((100 - y) / 100) * 7))]!);
+    chime(SCALE[Math.min(6, Math.floor(((100 - y) / 100) * 7))]!);
     setStars((s) => [...s.slice(-24), { x, y }]);
   };
-  const play = () => stars.forEach((s, i) => window.setTimeout(() => note(SCALE[Math.min(6, Math.floor(((100 - s.y) / 100) * 7))]!), i * 300));
+  const play = () => stars.forEach((s, i) => window.setTimeout(() => chime(SCALE[Math.min(6, Math.floor(((100 - s.y) / 100) * 7))]!), i * 300));
   return (
     <div className="space-y-3">
       <CharacterSay who="solomiya" size="sm" text={t("Торкайся неба, щоб запалити зірки. Вище — вища нота. Склади своє сузір'я!")} />

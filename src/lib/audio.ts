@@ -174,7 +174,7 @@ export function ambientFor(pathname: string): Ambient | null {
 }
 
 /** One soft plucked note for musical games (pentatonic friendly). */
-export function note(freq: number) {
+export function chime(freq: number) {
   const s = getState(); if (!s.sound || !s.sfx) return;
   const c = ac(); if (!c || !master) return;
   pluck(freq, c.currentTime, 0.12, master, 0.3, 1.5);

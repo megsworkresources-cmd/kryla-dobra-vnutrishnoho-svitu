@@ -12,11 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FriendsRouteImport } from './routes/friends'
+import { Route as GamesRouteImport } from './routes/games'
 import { Route as GardenRouteImport } from './routes/garden'
 import { Route as HelperRouteImport } from './routes/helper'
 import { Route as ParentsRouteImport } from './routes/parents'
 import { Route as SafeRouteImport } from './routes/safe'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as WatchRouteImport } from './routes/watch'
 import { Route as WorldRouteImport } from './routes/world'
 import { Route as CloudsIndexRouteImport } from './routes/clouds.index'
 import { Route as CloudsIdRouteImport } from './routes/clouds.$id'
@@ -46,6 +48,11 @@ const FriendsRoute = FriendsRouteImport.update({
   path: '/friends',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GamesRoute = GamesRouteImport.update({
+  id: '/games',
+  path: '/games',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GardenRoute = GardenRouteImport.update({
   id: '/garden',
   path: '/garden',
@@ -69,6 +76,11 @@ const SafeRoute = SafeRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WatchRoute = WatchRouteImport.update({
+  id: '/watch',
+  path: '/watch',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorldRoute = WorldRouteImport.update({
@@ -141,11 +153,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
+  '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
   '/parents': typeof ParentsRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
+  '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
@@ -164,11 +178,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
+  '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
   '/parents': typeof ParentsRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
+  '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
@@ -188,11 +204,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
+  '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
   '/parents': typeof ParentsRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
+  '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
@@ -213,11 +231,13 @@ export interface FileRouteTypes {
     | '/'
     | '/explore'
     | '/friends'
+    | '/games'
     | '/garden'
     | '/helper'
     | '/parents'
     | '/safe'
     | '/settings'
+    | '/watch'
     | '/world'
     | '/clouds/$id'
     | '/forest/$id'
@@ -236,11 +256,13 @@ export interface FileRouteTypes {
     | '/'
     | '/explore'
     | '/friends'
+    | '/games'
     | '/garden'
     | '/helper'
     | '/parents'
     | '/safe'
     | '/settings'
+    | '/watch'
     | '/world'
     | '/clouds/$id'
     | '/forest/$id'
@@ -259,11 +281,13 @@ export interface FileRouteTypes {
     | '/'
     | '/explore'
     | '/friends'
+    | '/games'
     | '/garden'
     | '/helper'
     | '/parents'
     | '/safe'
     | '/settings'
+    | '/watch'
     | '/world'
     | '/clouds/$id'
     | '/forest/$id'
@@ -283,11 +307,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExploreRoute: typeof ExploreRoute
   FriendsRoute: typeof FriendsRoute
+  GamesRoute: typeof GamesRoute
   GardenRoute: typeof GardenRoute
   HelperRoute: typeof HelperRoute
   ParentsRoute: typeof ParentsRoute
   SafeRoute: typeof SafeRoute
   SettingsRoute: typeof SettingsRoute
+  WatchRoute: typeof WatchRoute
   WorldRoute: typeof WorldRoute
   CloudsIdRoute: typeof CloudsIdRoute
   ForestIdRoute: typeof ForestIdRoute
@@ -326,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FriendsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/games': {
+      id: '/games'
+      path: '/games'
+      fullPath: '/games'
+      preLoaderRoute: typeof GamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/garden': {
       id: '/garden'
       path: '/garden'
@@ -359,6 +392,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/watch': {
+      id: '/watch'
+      path: '/watch'
+      fullPath: '/watch'
+      preLoaderRoute: typeof WatchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/world': {
@@ -459,11 +499,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExploreRoute: ExploreRoute,
   FriendsRoute: FriendsRoute,
+  GamesRoute: GamesRoute,
   GardenRoute: GardenRoute,
   HelperRoute: HelperRoute,
   ParentsRoute: ParentsRoute,
   SafeRoute: SafeRoute,
   SettingsRoute: SettingsRoute,
+  WatchRoute: WatchRoute,
   WorldRoute: WorldRoute,
   CloudsIdRoute: CloudsIdRoute,
   ForestIdRoute: ForestIdRoute,

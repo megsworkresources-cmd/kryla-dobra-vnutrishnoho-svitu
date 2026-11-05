@@ -197,7 +197,7 @@ export function SortGame() {
           </button>
         ))}
       </div>
-      {fb && <CharacterSay who="taras" size="sm" mood={fb.startsWith(t("Так!")) ? "cheer" : "think"} action={fb.startsWith(t("Так!")) ? "jump" : undefined} text={fb} />}
+      {fb && <CharacterSay who="taras" size="sm" mood={fb.startsWith(t("Так!")) ? "cheer" : "think"} text={fb} />}
     </div>
   );
 }

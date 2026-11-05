@@ -10,3 +10,4 @@
 - [x] Natural Ukrainian character voices selectable in Settings
 - [x] Games page (/games) and cartoons page (/watch); sparkle burst on every touch
 - [x] Tappable magic strip in every step-by-step exercise and on every finish screen
+- [x] Richer drawing pages, thought-feeling-action game and stories

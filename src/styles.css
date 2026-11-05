@@ -193,3 +193,8 @@ html[data-text="xl"] { font-size: 125%; }
 @keyframes step-in { 0% { opacity: 0; transform: translateX(24px) scale(.98) } 100% { opacity: 1; transform: none } }
 @utility animate-step { animation: step-in .5s ease-out both; }
 .reduce-motion .animate-drift, .reduce-motion .animate-step { animation: none; }
+@keyframes wiggle { 0%,100% { rotate: -8deg } 50% { rotate: 8deg } }
+@utility animate-wiggle { animation: wiggle .6s ease-in-out infinite; }
+@keyframes basket-bounce { 0%,100% { transform: scale(1) } 40% { transform: scale(1.15) translateY(-6px) } 70% { transform: scale(.96) } }
+@utility animate-basket { animation: basket-bounce .6s ease-out; }
+.reduce-motion .animate-wiggle { animation: none; }

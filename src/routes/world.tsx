@@ -35,6 +35,8 @@ function World() {
           <LangToggle />
           <Link to="/explore" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Уся мапа")}>🔍<span className="hidden sm:inline">{t("Уся мапа")}</span></Link>
           <Link to="/friends" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Мої друзі-персонажі")}><Users className="h-5 w-5" /><span className="hidden sm:inline">{t("Друзі")}</span></Link>
+          <Link to="/games" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Ігри")}>🎮<span className="hidden sm:inline">{t("Ігри")}</span></Link>
+          <Link to="/watch" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Мультики")}>📺<span className="hidden sm:inline">{t("Мультики")}</span></Link>
           <Link to="/helper" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Розкажи, як ти почуваєшся")}>💬<span className="hidden sm:inline">{t("Розкажи")}</span></Link>
           <Link to="/settings" className="paper-card flex h-12 w-12 items-center justify-center" aria-label={t("Налаштування")}><Settings2 className="h-5 w-5" /></Link>
         </div>

@@ -44,13 +44,13 @@ export function MagicStage({ theme, label, night = false, count = 6 }: { theme: 
       {[12, 34, 58, 80].map((l, k) => <span key={l} className="absolute h-1.5 w-1.5 rounded-full bg-honey animate-twinkle" style={{ left: `${l}%`, top: `${15 + k * 12}%`, animationDelay: `${k * 0.5}s` }} aria-hidden />)}
       {bits.map((b) => (
         <button key={b.id} type="button" onPointerDown={(e) => tap(b, e)} aria-label={t('Торкнутися')}
-          className={`absolute bottom-0 flex h-14 w-14 items-center justify-center text-4xl drop-shadow ${calm ? 'animate-float' : 'animate-bubble'}`}
+          className={`absolute bottom-0 flex h-14 w-14 items-center justify-center text-4xl drop-shadow ${calm ? 'animate-float' : 'animate-drift'}`}
           style={{ left: `${b.left}%`, animationDuration: calm ? undefined : `${b.dur}s`, animationDelay: `${b.delay}s`, ...(calm ? { bottom: `${20 + (b.id % 3) * 22}%` } : {}) }}
           onAnimationIteration={() => setBits((all) => all.map((x) => (x.id === b.id ? { ...x, left: 6 + Math.random() * 82 } : x)))}>
           {b.icon}
         </button>
       ))}
-      {pops.map((p) => <span key={p.id} className="pointer-events-none absolute text-2xl animate-sparkle" style={{ left: p.x - 12, top: p.y - 12 }} aria-hidden>✨</span>)}
+      {pops.map((p) => <span key={p.id} className="pointer-events-none absolute text-2xl animate-stagepop" style={{ left: p.x - 12, top: p.y - 12 }} aria-hidden>✨</span>)}
       <p className="pointer-events-none absolute left-3 top-2 rounded-full bg-card/80 px-3 py-1 text-xs font-bold text-foreground" aria-live="polite">
         {score === 0 ? t('Торкайся, поки слухаєш ✨') : milestone ? t('Чудово! {n} доторків 🌟', { n: score }) : t('Доторків: {n}', { n: score })}
       </p>

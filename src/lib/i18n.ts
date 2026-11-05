@@ -7,6 +7,12 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Чарівна смужка: торкайся, поки слухаєш": "Magic strip: tap while you listen",
+  "Торкнутися": "Tap",
+  "Торкайся, поки слухаєш ✨": "Tap while you listen ✨",
+  "Чудово! {n} доторків 🌟": "Wonderful! {n} taps 🌟",
+  "Доторків: {n}": "Taps: {n}",
+  "Святкове небо: торкайся, щоб засвітити": "Celebration sky: tap to light it up",
   "Ігри": "Games",
   "Мультики": "Cartoons",
   "Спокійні ігри для сенсорного екрана: бульбашки, пари друзів і зоряна музика.": "Calm touchscreen games: bubbles, friend pairs and star music.",

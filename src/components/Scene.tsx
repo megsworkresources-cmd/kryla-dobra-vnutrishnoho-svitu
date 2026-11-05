@@ -6,6 +6,7 @@ import { CharacterSay } from "./Character";
 import { LangToggle } from "./LangToggle";
 import { toggleFavorite, useStore } from "@/lib/store";
 import { sfx } from "@/lib/audio";
+import { MagicStage } from "./MagicStage";
 import { useT } from "@/lib/i18n";
 import { castFor, cheerOf, type CharId } from "@/content/characters";
 
@@ -76,6 +77,7 @@ export function DoneCard({ text, again, night, who }: { text: string; again?: ()
         {[8, 22, 40, 58, 74, 90].map((l, i) => <span key={l} className="absolute top-0 text-xl animate-petal" style={{ left: `${l}%`, animationDelay: `${i * 0.25}s` }}>🌼</span>)}
       </div>
       <CharacterSay who={hero} night={night} mood="cheer" size="lg" text={`${t(cheer)} ${text}`} />
+      <div className="mt-4"><MagicStage theme={pathname.split("/")[1] ?? "meadow"} night={night} count={8} label={t("Святкове небо: торкайся, щоб засвітити")} /></div>
       <p className={`mt-4 text-base ${night ? "opacity-80" : "text-muted-foreground"}`}>{t("🌻 Твій соняшник у саду трохи підріс.")}</p>
       <div className="mt-5 flex flex-wrap justify-center gap-2">
         {again && <Btn variant="soft" onClick={again}>{t("Ще раз")}</Btn>}

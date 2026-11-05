@@ -6,6 +6,7 @@ import { markDone, useStore } from '@/lib/store';
 import { speak, stopSpeaking } from '@/lib/speak';
 import { sfx } from '@/lib/audio';
 import { useT } from '@/lib/i18n';
+import { MagicStage } from './MagicStage';
 import { castFor, CHARACTERS, type CharId } from '@/content/characters';
 
 export function Narration({ text }: { text: string }) {
@@ -58,7 +59,7 @@ export function Guided({ id, steps, ending, night = false }: { id: string; steps
   const selected = choices[index] ?? '';
   const speaker = step.who ?? (step.options ? friend : guide);
   const reply = selected ? (step.responses?.[selected] ?? step.response) : undefined;
-  return <section className="space-y-4" aria-label={t(step.title)}>
+  return <section key={index} className="space-y-4 animate-step" aria-label={t(step.title)}>
     <div className="flex items-center gap-3">
       <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-secondary" role="progressbar" aria-valuemin={1} aria-valuemax={steps.length} aria-valuenow={index + 1} aria-label={t('Прогрес вправи')}>
         <div className="h-full rounded-full bg-honey transition-all duration-500" style={{ width: `${((index + 1) / steps.length) * 100}%` }} />
@@ -66,6 +67,7 @@ export function Guided({ id, steps, ending, night = false }: { id: string; steps
       <p className="shrink-0 text-sm font-bold">{t('Крок {i} з {n}', { i: index + 1, n: steps.length })}</p>
     </div>
     <CharacterSay who={speaker} night={night} text={`${t(step.title)}. ${t(step.text)}`} mood={step.options ? 'think' : 'talk'} action={step.action} />
+    <MagicStage theme={id.split('-')[0] ?? 'meadow'} night={night} />
     {step.action && <p className="text-center text-sm font-bold">{t('Повторюй разом зі мною, якщо хочеш 🙂')}</p>}
     {step.options && <div className={`space-y-3 p-4 ${night ? 'night-card' : 'paper-card'}`}>
       <p className="font-bold">{t('Обери, що тобі ближче:')}</p>

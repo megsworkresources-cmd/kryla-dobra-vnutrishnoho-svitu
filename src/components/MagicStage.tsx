@@ -18,10 +18,10 @@ const NOTES = [523, 587, 659, 784, 880, 1047, 1175];
 interface Bit { id: number; icon: string; left: number; dur: number; delay: number }
 
 /** A living, tappable strip: themed things drift up; each tap plays a soft note and sparkles. */
-export function MagicStage({ theme, label, night = false, count = 6 }: { theme: string; label?: string; night?: boolean; count?: number }) {
+export function MagicStage({ theme, label, night = false, count = 6 }: { theme: string; label?: string; night?: boolean | undefined; count?: number }) {
   const t = useT();
   const calm = useStore((s) => s.reduceMotion);
-  const th = THEMES[theme] ?? THEMES.meadow!;
+  const th = THEMES[theme] ?? THEMES['meadow']!;
   const seq = useRef(0);
   const make = (): Bit => ({ id: seq.current++, icon: th.items[Math.floor(Math.random() * th.items.length)]!, left: 6 + Math.random() * 82, dur: 6 + Math.random() * 5, delay: Math.random() * 3 });
   const [bits, setBits] = useState<Bit[]>([]);

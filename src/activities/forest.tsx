@@ -1,3 +1,4 @@
+import { chime } from "@/lib/audio";
 import { CharacterSay } from '@/components/Character';
 import { useState } from "react";
 import { Btn, DoneCard } from "@/components/Scene";
@@ -155,24 +156,42 @@ const BASKETS = [
   { kind: "feel", label: "Почуття", note: "те, що відчуваєш" },
   { kind: "do", label: "Дія", note: "те, що робиш" },
 ] as const;
+const BASKET_ICON: Record<string, string> = { think: "💭", feel: "❤️", do: "🏃" };
 export function SortGame() {
   const t = useT();
   const [i, setI] = useState(0);
   const [fb, setFb] = useState<string | null>(null);
+  const [picked, setPicked] = useState<string | null>(null);
+  const [stars, setStars] = useState(0);
+  const [burst, setBurst] = useState(0);
+  if (i >= SORT_ITEMS.length) return <DoneCard text={t("Ти вмієш розрізняти думки, почуття й дії!")} again={() => { setI(0); setStars(0); }} />;
   const item = SORT_ITEMS[i]!;
-  if (i >= SORT_ITEMS.length) return <DoneCard text={t("Ти вмієш розрізняти думки, почуття й дії!")} again={() => setI(0)} />;
   const choose = (k: string) => {
     const right = k === item.kind;
+    setPicked(k);
+    if (right) { setStars((n) => n + 1); setBurst((n) => n + 1); [659, 784, 1047].forEach((f, j) => setTimeout(() => chime(f), j * 110)); } else chime(440);
     setFb((right ? t("Так!") : t("Хм, подумай ще.")) + " " + t(explain(item.kind)));
-    setTimeout(() => { setFb(null); const n = i + 1; if (n >= SORT_ITEMS.length) markDone("forest-sort"); setI(n); }, 2200);
+    setTimeout(() => { setFb(null); setPicked(null); const n = i + 1; if (n >= SORT_ITEMS.length) markDone("forest-sort"); setI(n); }, 2600);
   };
+  const target = picked ? BASKETS.findIndex((b) => b.kind === picked) : -1;
   return (
     <div className="space-y-5">
-      <p className="text-sm text-muted-foreground">{t("Картка {i} з {n}", { i: i + 1, n: SORT_ITEMS.length })}</p>
-      <div className="paper-card animate-fade-up p-8 text-center font-display text-2xl font-bold" key={i}>«{t(item.text)}»</div>
+      <div className="flex items-center justify-between text-sm">
+        <span className="text-muted-foreground">{t("Картка {i} з {n}", { i: i + 1, n: SORT_ITEMS.length })}</span>
+        <span className="font-bold" aria-label={t("Зірочки: {n}", { n: stars })}>{"⭐".repeat(Math.min(stars, 10)) || "☆"}</span>
+      </div>
+      <div className="relative h-44">
+        <div key={i} className="paper-card absolute inset-x-4 top-0 animate-fade-up p-6 text-center font-display text-2xl font-bold transition-all duration-700 ease-in"
+          style={picked ? { transform: `translate(${(target - 1) * 33}%, 150px) scale(.3) rotate(${(target - 1) * 12}deg)`, opacity: 0 } : undefined}>
+          <span className="mb-1 block text-3xl animate-float" aria-hidden>🃏</span>«{t(item.text)}»
+        </div>
+        {burst > 0 && <div key={burst} className="pointer-events-none absolute inset-0" aria-hidden>{[10, 28, 46, 64, 82].map((l, k) => <span key={l} className="absolute bottom-0 text-2xl animate-stagepop" style={{ left: `${l}%`, animationDelay: `${k * 0.08}s` }}>⭐</span>)}</div>}
+      </div>
       <div className="grid grid-cols-3 gap-2">
         {BASKETS.map((b) => (
-          <button key={b.kind} disabled={!!fb} onClick={() => choose(b.kind)} className="paper-card min-h-24 p-3 text-center active:scale-95">
+          <button key={b.kind} disabled={!!fb} onClick={() => choose(b.kind)}
+            className={`paper-card min-h-28 p-3 text-center transition-transform active:scale-95 ${picked === b.kind ? "animate-basket ring-4 ring-ring" : ""}`}>
+            <span className={`block text-4xl ${fb ? "" : "animate-float"}`} style={{ animationDelay: `${BASKETS.indexOf(b) * 0.4}s` }} aria-hidden>{BASKET_ICON[b.kind]}</span>
             <span className="block font-bold">{t(b.label)}</span>
             <span className="block text-xs text-muted-foreground">{t(b.note)}</span>
           </button>

@@ -7,6 +7,13 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Наліпки": "Stickers",
+  "Наліпка": "Sticker",
+  "🌈 Веселковий пензлик": "🌈 Rainbow brush",
+  "Торкнись аркуша, щоб поставити наліпку": "Tap the page to place the sticker",
+  "Твій соняшник розквіт! 🌻": "Your sunflower is in bloom! 🌻",
+  "Розфарбовано: {n} з {m}": "Coloured: {n} of {m}",
+  "Зірочки: {n}": "Stars: {n}",
   "Чарівна смужка: торкайся, поки слухаєш": "Magic strip: tap while you listen",
   "Торкнутися": "Tap",
   "Торкайся, поки слухаєш ✨": "Tap while you listen ✨",

@@ -76,7 +76,7 @@ export function ColorFlower() {
   return <div className="space-y-4 text-center">
     <CharacterSay who="solomiya" size="sm" mood={fills[12] !== 'var(--paper)' ? 'cheer' : 'talk'} text={t('Обери колір і торкнись пелюстки. Соняшник може бути будь-якого кольору!')} />
     <div className="relative mx-auto max-w-sm">
-    <svg viewBox="-110 -110 220 220" className={`paper-card w-full rounded-3xl p-3 ${full ? 'animate-[spin_12s_linear_infinite]' : ''}`" role="img" aria-label={t('Соняшник для розфарбовування')}>
+    <svg viewBox="-110 -110 220 220" className={`paper-card w-full rounded-3xl p-3 ${full ? 'animate-[spin_12s_linear_infinite]' : ''}`} role="img" aria-label={t('Соняшник для розфарбовування')}>
       {Array.from({ length: 12 }, (_, k) => <ellipse key={k} cx="0" cy="-62" rx="18" ry="38" transform={`rotate(${k * 30})${popped === k ? ' scale(1.12)' : ''}`} fill={fills[k]} stroke="var(--ink)" strokeWidth="2" onClick={() => paint(k)} className="cursor-pointer transition-all duration-300" style={{ transformOrigin: '0 0' }} />)}
       <circle r="34" fill={fills[12]} stroke="var(--ink)" strokeWidth="2" onClick={() => paint(12)} className="cursor-pointer" />
       {fills[12] !== 'var(--paper)' && <text textAnchor="middle" dominantBaseline="middle" fontSize="26" pointerEvents="none">😊</text>}

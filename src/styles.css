@@ -178,3 +178,11 @@ html[data-text="xl"] { font-size: 125%; }
 .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation: none !important; transition-duration: .001ms !important; }
 
 @utility bg-night-bar { background: oklch(0.22 0.05 265 / 0.95); }
+
+@keyframes sparkle-burst { 0% { transform: translate(-50%,-50%) scale(.4); opacity: 1 } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(90deg); opacity: 0 } }
+@utility animate-sparkle { animation: sparkle-burst .7s ease-out forwards; }
+@keyframes bubble-rise { 0% { transform: translateY(0) translateX(0) } 50% { transform: translateY(-50vh) translateX(18px) } 100% { transform: translateY(-110vh) translateX(-10px) } }
+@utility animate-bubble { animation: bubble-rise linear forwards; }
+@keyframes flip-in { from { transform: rotateY(90deg) } to { transform: rotateY(0) } }
+@utility animate-flip { animation: flip-in .3s ease-out both; }
+.reduce-motion .animate-sparkle { display: none; }

@@ -172,3 +172,10 @@ export function ambientFor(pathname: string): Ambient | null {
   const seg = pathname.split('/')[1] ?? '';
   return ({ meadow: 'meadow', forest: 'forest', sky: 'night', clouds: 'clouds', garden: 'garden', world: 'garden', '': 'garden', safe: 'cozy', studio: 'cozy', path: 'meadow' } as Record<string, Ambient>)[seg] ?? null;
 }
+
+/** One soft plucked note for musical games (pentatonic friendly). */
+export function note(freq: number) {
+  const s = getState(); if (!s.sound || !s.sfx) return;
+  const c = ac(); if (!c || !master) return;
+  pluck(freq, c.currentTime, 0.12, master, 0.3, 1.5);
+}

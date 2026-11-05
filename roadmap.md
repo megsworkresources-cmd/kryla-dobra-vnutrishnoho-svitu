@@ -8,3 +8,4 @@
 - [ ] Optional: more poses/expressions per character (needs extra illustrations).
 - [x] Zoomable full world map page (/explore)
 - [x] Natural Ukrainian character voices selectable in Settings
+- [x] Games page (/games) and cartoons page (/watch); sparkle burst on every touch

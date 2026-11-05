@@ -1,3 +1,4 @@
+import { TouchSparkles } from "@/components/TouchSparkles";
 import { PLACES } from "@/content/places";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -157,6 +158,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <TouchSparkles />
     </QueryClientProvider>
   );
 }

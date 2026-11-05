@@ -9,3 +9,4 @@
 - [x] Zoomable full world map page (/explore)
 - [x] Natural Ukrainian character voices selectable in Settings
 - [x] Games page (/games) and cartoons page (/watch); sparkle burst on every touch
+- [x] Tappable magic strip in every step-by-step exercise and on every finish screen

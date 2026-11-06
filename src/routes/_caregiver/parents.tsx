@@ -12,9 +12,15 @@ export const Route = createFileRoute("/_caregiver/parents")({
   head: () => ({
     meta: [
       { title: "Для дорослих — прогрес дитини — Тихе Місце" },
-      { name: "description", content: "Відвідані місця, виконані вправи та малюнки дитини — лише на цьому пристрої." },
+      {
+        name: "description",
+        content: "Відвідані місця, виконані вправи та малюнки дитини — лише на цьому пристрої.",
+      },
       { property: "og:title", content: "Для дорослих — Тихе Місце" },
-      { property: "og:description", content: "Панель для батьків: місця, вправи й малюнки дитини." },
+      {
+        property: "og:description",
+        content: "Панель для батьків: місця, вправи й малюнки дитини.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -38,11 +44,14 @@ function Parents() {
     await supabase.auth.signOut();
     navigate({ to: "/caregiver-login", search: { redirect: "/parents" }, replace: true });
   };
-  const date = (ms?: number) => (ms ? new Date(ms).toLocaleDateString(localeOf(lang), { day: "numeric", month: "short" }) : "—");
+  const date = (ms?: number) =>
+    ms ? new Date(ms).toLocaleDateString(localeOf(lang), { day: "numeric", month: "short" }) : "—";
 
   const visited = PLACES.filter((p) => visits[p.id]);
   const tried = CATALOG.filter((a) => completed[a.key]);
-  const recent = Object.entries(lastDone).sort((a, b) => b[1] - a[1]).slice(0, 5)
+  const recent = Object.entries(lastDone)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
     .map(([k, at]) => ({ at, item: CATALOG.find((c) => c.key === k), k }));
 
   const stats = [
@@ -57,10 +66,20 @@ function Parents() {
       <div className="space-y-5">
         <div className="paper-card flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
           <span>{t("Ви увійшли як дорослий: {e}", { e: caregiver.email ?? "—" })}</span>
-          <Btn variant="soft" onClick={signOut}>{t("Вийти")}</Btn>
+          <Btn variant="soft" onClick={signOut}>
+            {t("Вийти")}
+          </Btn>
         </div>
-        <p className="paper-card p-4 text-sm font-semibold">{t("Дані про заняття дитини залишаються лише на цьому пристрої й не завантажуються у ваш акаунт.")}</p>
-        <p className="paper-card p-4 text-sm">{t("Ця панель показує лише те, що збережено на цьому пристрої. Нічого не надсилається в інтернет. Це не оцінка — кожна дитина рухається у своєму темпі.")}</p>
+        <p className="paper-card p-4 text-sm font-semibold">
+          {t(
+            "Дані про заняття дитини залишаються лише на цьому пристрої й не завантажуються у ваш акаунт.",
+          )}
+        </p>
+        <p className="paper-card p-4 text-sm">
+          {t(
+            "Ця панель показує лише те, що збережено на цьому пристрої. Нічого не надсилається в інтернет. Це не оцінка — кожна дитина рухається у своєму темпі.",
+          )}
+        </p>
 
         <section aria-label={t("Підсумок")} className="grid grid-cols-2 gap-3">
           {stats.map(({ icon: I, n, l }) => (
@@ -78,12 +97,18 @@ function Parents() {
             <ul className="mt-2 divide-y divide-border">
               {recent.map(({ k, at, item }) => (
                 <li key={k} className="flex items-center justify-between gap-3 py-2 text-sm">
-                  <span className="font-semibold">{item ? t(item.title) : k === "helper" ? t("Розкажи, як ти") : k}</span>
+                  <span className="font-semibold">
+                    {item ? t(item.title) : k === "helper" ? t("Розкажи, як ти") : k}
+                  </span>
                   <span className="shrink-0 text-muted-foreground">{date(at)}</span>
                 </li>
               ))}
             </ul>
-          ) : <p className="mt-2 text-sm text-muted-foreground">{t("Поки що жодної завершеної вправи.")}</p>}
+          ) : (
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t("Поки що жодної завершеної вправи.")}
+            </p>
+          )}
         </section>
 
         <section className="paper-card p-4">
@@ -92,11 +117,20 @@ function Parents() {
             {PLACES.map((p) => {
               const v = visits[p.id];
               return (
-                <li key={p.id} className={`flex items-center gap-2 rounded-2xl p-2 ${v ? "bg-secondary" : "opacity-60"}`}>
-                  <img src={p.image} alt="" className="h-10 w-10 shrink-0 rounded-xl object-cover" />
+                <li
+                  key={p.id}
+                  className={`flex items-center gap-2 rounded-2xl p-2 ${v ? "bg-secondary" : "opacity-60"}`}
+                >
+                  <img
+                    src={p.image}
+                    alt=""
+                    className="h-10 w-10 shrink-0 rounded-xl object-cover"
+                  />
                   <div className="min-w-0 text-xs">
                     <p className="truncate font-bold">{t(p.name)}</p>
-                    <p className="text-muted-foreground">{v ? t("Востаннє: {d}", { d: date(v.last) }) : t("Ще не відвідано")}</p>
+                    <p className="text-muted-foreground">
+                      {v ? t("Востаннє: {d}", { d: date(v.last) }) : t("Ще не відвідано")}
+                    </p>
                   </div>
                 </li>
               );
@@ -113,16 +147,29 @@ function Parents() {
               <details key={p.id} className="mt-2 rounded-2xl bg-secondary p-3">
                 <summary className="flex min-h-10 cursor-pointer items-center justify-between gap-2 font-bold">
                   <span>{t(p.name)}</span>
-                  <span className="text-sm tabular-nums text-muted-foreground">{n}/{items.length}</span>
+                  <span className="text-sm tabular-nums text-muted-foreground">
+                    {n}/{items.length}
+                  </span>
                 </summary>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-background" aria-hidden>
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${(n / items.length) * 100}%` }} />
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${(n / items.length) * 100}%` }}
+                  />
                 </div>
                 <ul className="mt-2 space-y-1 text-sm">
                   {items.map((a) => (
                     <li key={a.key} className="flex items-center justify-between gap-2">
-                      <Link to={hrefOf(a.place, a.id) as never} className="underline-offset-2 hover:underline">{completed[a.key] ? "✓ " : "○ "}{t(a.title)}</Link>
-                      <span className="shrink-0 text-xs text-muted-foreground">{completed[a.key] ? `×${completed[a.key]} · ${date(lastDone[a.key])}` : ""}</span>
+                      <Link
+                        to={hrefOf(a.place, a.id) as never}
+                        className="underline-offset-2 hover:underline"
+                      >
+                        {completed[a.key] ? "✓ " : "○ "}
+                        {t(a.title)}
+                      </Link>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {completed[a.key] ? `×${completed[a.key]} · ${date(lastDone[a.key])}` : ""}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -134,36 +181,74 @@ function Parents() {
         <section className="paper-card p-4">
           <div className="flex items-center justify-between gap-2">
             <h2 className="font-display text-2xl font-bold">{t("Малюнки")}</h2>
-            {drawings.length > 0 && <Link to={"/studio/gallery" as never} className="text-sm font-bold underline">{t("Усі малюнки")}</Link>}
+            {drawings.length > 0 && (
+              <Link to={"/studio/gallery" as never} className="text-sm font-bold underline">
+                {t("Усі малюнки")}
+              </Link>
+            )}
           </div>
           {drawings.length ? (
             <ul className="mt-3 grid grid-cols-3 gap-2">
-              {[...drawings].reverse().slice(0, 9).map((d) => (
-                <li key={d.id}>
-                  <img src={d.data} alt={t("Малюнок від {d}", { d: date(d.at) })} className="aspect-[9/7] w-full rounded-xl object-cover" />
-                  <p className="mt-1 text-center text-xs text-muted-foreground">{date(d.at)}</p>
-                </li>
-              ))}
+              {[...drawings]
+                .reverse()
+                .slice(0, 9)
+                .map((d) => (
+                  <li key={d.id}>
+                    <img
+                      src={d.data}
+                      alt={t("Малюнок від {d}", { d: date(d.at) })}
+                      className="aspect-[9/7] w-full rounded-xl object-cover"
+                    />
+                    <p className="mt-1 text-center text-xs text-muted-foreground">{date(d.at)}</p>
+                  </li>
+                ))}
             </ul>
-          ) : <p className="mt-2 text-sm text-muted-foreground">{t("Малюнків поки немає.")}</p>}
+          ) : (
+            <p className="mt-2 text-sm text-muted-foreground">{t("Малюнків поки немає.")}</p>
+          )}
         </section>
 
         <section className="paper-card space-y-3 p-5 text-base">
-          <p>{t("Тихе Місце допомагає дітям 5–13 років пізнавати почуття й вчитися заспокоюватися.")}</p>
-          <p>{t("Без акаунтів, реклами й повідомлень. Усе, що робить дитина, зберігається лише на цьому пристрої.")}</p>
-          <p>{t("Застосунок не ставить діагнозів і не замінює допомогу фахівця. Якщо дитині важко тривалий час — зверніться до психолога.")}</p>
+          <p>
+            {t("Тихе Місце допомагає дітям 5–13 років пізнавати почуття й вчитися заспокоюватися.")}
+          </p>
+          <p>
+            {t(
+              "Без акаунтів, реклами й повідомлень. Усе, що робить дитина, зберігається лише на цьому пристрої.",
+            )}
+          </p>
+          <p>
+            {t(
+              "Застосунок не ставить діагнозів і не замінює допомогу фахівця. Якщо дитині важко тривалий час — зверніться до психолога.",
+            )}
+          </p>
         </section>
 
         <div className="text-center">
           {confirm ? (
             <div className="paper-card space-y-3 p-4">
-              <p className="text-sm">{t("Стерти записи про місця й вправи? Малюнки та налаштування залишаться.")}</p>
+              <p className="text-sm">
+                {t("Стерти записи про місця й вправи? Малюнки та налаштування залишаться.")}
+              </p>
               <div className="flex justify-center gap-2">
-                <Btn variant="soft" onClick={() => setConfirm(false)}>{t("Скасувати")}</Btn>
-                <Btn onClick={() => { resetProgress(); setConfirm(false); }}>{t("Стерти")}</Btn>
+                <Btn variant="soft" onClick={() => setConfirm(false)}>
+                  {t("Скасувати")}
+                </Btn>
+                <Btn
+                  onClick={() => {
+                    resetProgress();
+                    setConfirm(false);
+                  }}
+                >
+                  {t("Стерти")}
+                </Btn>
               </div>
             </div>
-          ) : <Btn variant="ghost" onClick={() => setConfirm(true)}>{t("Очистити прогрес")}</Btn>}
+          ) : (
+            <Btn variant="ghost" onClick={() => setConfirm(true)}>
+              {t("Очистити прогрес")}
+            </Btn>
+          )}
         </div>
       </div>
     </Scene>

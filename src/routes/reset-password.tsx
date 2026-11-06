@@ -28,7 +28,9 @@ function ResetPassword() {
 
   useEffect(() => {
     if (window.location.hash.includes("type=recovery")) setReady(true);
-    const { data } = supabase.auth.onAuthStateChange((ev) => { if (ev === "PASSWORD_RECOVERY") setReady(true); });
+    const { data } = supabase.auth.onAuthStateChange((ev) => {
+      if (ev === "PASSWORD_RECOVERY") setReady(true);
+    });
     return () => data.subscription.unsubscribe();
   }, []);
 
@@ -47,13 +49,31 @@ function ResetPassword() {
           <>
             <label className="block text-sm font-semibold">
               {t("Пароль")}
-              <input type="password" required minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block min-h-12 w-full rounded-2xl border-2 border-border bg-background px-4 text-base text-foreground" />
+              <input
+                type="password"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1 block min-h-12 w-full rounded-2xl border-2 border-border bg-background px-4 text-base text-foreground"
+              />
             </label>
-            {err && <p role="alert" className="text-sm font-semibold text-destructive">{err}</p>}
-            <button type="submit" className="min-h-12 w-full rounded-full bg-primary px-5 font-bold text-primary-foreground shadow-soft">{t("Зберегти пароль")}</button>
+            {err && (
+              <p role="alert" className="text-sm font-semibold text-destructive">
+                {err}
+              </p>
+            )}
+            <button
+              type="submit"
+              className="min-h-12 w-full rounded-full bg-primary px-5 font-bold text-primary-foreground shadow-soft"
+            >
+              {t("Зберегти пароль")}
+            </button>
           </>
-        ) : <p className="text-sm">{t("Відкрийте це посилання з листа для зміни пароля.")}</p>}
+        ) : (
+          <p className="text-sm">{t("Відкрийте це посилання з листа для зміни пароля.")}</p>
+        )}
       </form>
     </Scene>
   );

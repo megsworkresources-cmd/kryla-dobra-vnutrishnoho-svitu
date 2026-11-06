@@ -11,11 +11,13 @@ export function safeReturnPath(raw: unknown): string {
   return raw;
 }
 
-export interface Caregiver { userId: string; email: string | null }
+export interface Caregiver {
+  userId: string;
+  email: string | null;
+}
 
 export type GuardResult =
-  | { ok: true; caregiver: Caregiver }
-  | { ok: false; redirectTo: string; returnTo: string };
+  { ok: true; caregiver: Caregiver } | { ok: false; redirectTo: string; returnTo: string };
 
 export async function checkCaregiver(opts: {
   href: string;

@@ -5,7 +5,10 @@ import { checkCaregiver, safeReturnPath } from "@/lib/caregiver-guard";
 import { routeTree } from "@/routeTree.gen";
 
 const router = () => createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-const ids = (path: string) => router().matchRoutes(path).map((m) => m.routeId as string);
+const ids = (path: string) =>
+  router()
+    .matchRoutes(path)
+    .map((m) => m.routeId as string);
 
 describe("caregiver gate", () => {
   it("redirects to caregiver sign-in with the requested page when signed out", async () => {
@@ -28,7 +31,9 @@ describe("caregiver gate", () => {
     const res = await checkCaregiver({
       href: "/parents",
       getToken: async () => "forged.token.x",
-      verify: async () => { throw new Error("Unauthorized"); },
+      verify: async () => {
+        throw new Error("Unauthorized");
+      },
     });
     expect(res.ok).toBe(false);
   });
@@ -36,9 +41,13 @@ describe("caregiver gate", () => {
   it("after sign-out (session cleared) /parents is locked again", async () => {
     let token: string | null = "a.b.c";
     const verify = async () => ({ userId: "u1", email: null });
-    expect((await checkCaregiver({ href: "/parents", getToken: async () => token, verify })).ok).toBe(true);
+    expect(
+      (await checkCaregiver({ href: "/parents", getToken: async () => token, verify })).ok,
+    ).toBe(true);
     token = null; // supabase.auth.signOut() clears the stored session
-    expect((await checkCaregiver({ href: "/parents", getToken: async () => token, verify })).ok).toBe(false);
+    expect(
+      (await checkCaregiver({ href: "/parents", getToken: async () => token, verify })).ok,
+    ).toBe(false);
   });
 
   it("refuses off-site return targets", () => {
@@ -53,12 +62,21 @@ describe("route layout", () => {
     expect(ids("/parents")).toContain("/_caregiver");
   });
 
-  it.each(["/", "/world", "/forest", "/meadow", "/games", "/watch", "/helper", "/settings", "/studio", "/caregiver-login", "/reset-password"])(
-    "keeps %s public and account-free",
-    (p) => {
-      const m = ids(p);
-      expect(m).not.toContain("/_caregiver");
-      expect(m.at(-1)).not.toBe("__root__");
-    },
-  );
+  it.each([
+    "/",
+    "/world",
+    "/forest",
+    "/meadow",
+    "/games",
+    "/watch",
+    "/helper",
+    "/settings",
+    "/studio",
+    "/caregiver-login",
+    "/reset-password",
+  ])("keeps %s public and account-free", (p) => {
+    const m = ids(p);
+    expect(m).not.toContain("/_caregiver");
+    expect(m.at(-1)).not.toBe("__root__");
+  });
 });

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 import { Compass, Image as ImageIcon, ListChecks, Sparkles } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
 import { PLACES } from "@/content/places";
@@ -31,6 +32,12 @@ function Parents() {
   const lastDone = useStore((s) => s.lastDone);
   const drawings = useStore((s) => s.drawings);
   const [confirm, setConfirm] = useState(false);
+  const { caregiver } = Route.useRouteContext();
+  const navigate = useNavigate();
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/caregiver-login", search: { redirect: "/parents" }, replace: true });
+  };
   const date = (ms?: number) => (ms ? new Date(ms).toLocaleDateString(localeOf(lang), { day: "numeric", month: "short" }) : "—");
 
   const visited = PLACES.filter((p) => visits[p.id]);
@@ -48,6 +55,11 @@ function Parents() {
   return (
     <Scene title="Для дорослих" back="/">
       <div className="space-y-5">
+        <div className="paper-card flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
+          <span>{t("Ви увійшли як дорослий: {e}", { e: caregiver.email ?? "—" })}</span>
+          <Btn variant="soft" onClick={signOut}>{t("Вийти")}</Btn>
+        </div>
+        <p className="paper-card p-4 text-sm font-semibold">{t("Дані про заняття дитини залишаються лише на цьому пристрої й не завантажуються у ваш акаунт.")}</p>
         <p className="paper-card p-4 text-sm">{t("Ця панель показує лише те, що збережено на цьому пристрої. Нічого не надсилається в інтернет. Це не оцінка — кожна дитина рухається у своєму темпі.")}</p>
 
         <section aria-label={t("Підсумок")} className="grid grid-cols-2 gap-3">

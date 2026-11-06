@@ -11,11 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CaregiverRouteRouteImport } from './routes/_caregiver/route'
+import { Route as CaregiverLoginRouteImport } from './routes/caregiver-login'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as GardenRouteImport } from './routes/garden'
 import { Route as HelperRouteImport } from './routes/helper'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SafeRouteImport } from './routes/safe'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as WatchRouteImport } from './routes/watch'
@@ -43,6 +45,11 @@ const CaregiverRouteRoute = CaregiverRouteRouteImport.update({
   id: '/_caregiver',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CaregiverLoginRoute = CaregiverLoginRouteImport.update({
+  id: '/caregiver-login',
+  path: '/caregiver-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -66,6 +73,11 @@ const GardenRoute = GardenRouteImport.update({
 const HelperRoute = HelperRouteImport.update({
   id: '/helper',
   path: '/helper',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SafeRoute = SafeRouteImport.update({
@@ -156,11 +168,13 @@ const StudioIdRoute = StudioIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/caregiver-login': typeof CaregiverLoginRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/watch': typeof WatchRoute
@@ -181,11 +195,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/caregiver-login': typeof CaregiverLoginRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/watch': typeof WatchRoute
@@ -208,11 +224,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_caregiver': typeof CaregiverRouteRouteWithChildren
+  '/caregiver-login': typeof CaregiverLoginRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/watch': typeof WatchRoute
@@ -235,11 +253,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/caregiver-login'
     | '/explore'
     | '/friends'
     | '/games'
     | '/garden'
     | '/helper'
+    | '/reset-password'
     | '/safe'
     | '/settings'
     | '/watch'
@@ -260,11 +280,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/caregiver-login'
     | '/explore'
     | '/friends'
     | '/games'
     | '/garden'
     | '/helper'
+    | '/reset-password'
     | '/safe'
     | '/settings'
     | '/watch'
@@ -286,11 +308,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_caregiver'
+    | '/caregiver-login'
     | '/explore'
     | '/friends'
     | '/games'
     | '/garden'
     | '/helper'
+    | '/reset-password'
     | '/safe'
     | '/settings'
     | '/watch'
@@ -313,11 +337,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CaregiverRouteRoute: typeof CaregiverRouteRouteWithChildren
+  CaregiverLoginRoute: typeof CaregiverLoginRoute
   ExploreRoute: typeof ExploreRoute
   FriendsRoute: typeof FriendsRoute
   GamesRoute: typeof GamesRoute
   GardenRoute: typeof GardenRoute
   HelperRoute: typeof HelperRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SafeRoute: typeof SafeRoute
   SettingsRoute: typeof SettingsRoute
   WatchRoute: typeof WatchRoute
@@ -350,6 +376,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof CaregiverRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/caregiver-login': {
+      id: '/caregiver-login'
+      path: '/caregiver-login'
+      fullPath: '/caregiver-login'
+      preLoaderRoute: typeof CaregiverLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -385,6 +418,13 @@ declare module '@tanstack/react-router' {
       path: '/helper'
       fullPath: '/helper'
       preLoaderRoute: typeof HelperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/safe': {
@@ -524,11 +564,13 @@ const CaregiverRouteRouteWithChildren = CaregiverRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CaregiverRouteRoute: CaregiverRouteRouteWithChildren,
+  CaregiverLoginRoute: CaregiverLoginRoute,
   ExploreRoute: ExploreRoute,
   FriendsRoute: FriendsRoute,
   GamesRoute: GamesRoute,
   GardenRoute: GardenRoute,
   HelperRoute: HelperRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SafeRoute: SafeRoute,
   SettingsRoute: SettingsRoute,
   WatchRoute: WatchRoute,

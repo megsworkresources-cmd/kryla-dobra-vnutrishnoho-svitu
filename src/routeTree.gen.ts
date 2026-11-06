@@ -10,16 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CaregiverRouteRouteImport } from './routes/_caregiver/route'
+import { Route as CaregiverLoginRouteImport } from './routes/caregiver-login'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as GardenRouteImport } from './routes/garden'
 import { Route as HelperRouteImport } from './routes/helper'
-import { Route as ParentsRouteImport } from './routes/parents'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SafeRouteImport } from './routes/safe'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as WatchRouteImport } from './routes/watch'
 import { Route as WorldRouteImport } from './routes/world'
+import { Route as CaregiverParentsRouteImport } from './routes/_caregiver/parents'
 import { Route as CloudsIndexRouteImport } from './routes/clouds.index'
 import { Route as CloudsIdRouteImport } from './routes/clouds.$id'
 import { Route as ForestIndexRouteImport } from './routes/forest.index'
@@ -36,6 +39,15 @@ import { Route as StudioIdRouteImport } from './routes/studio.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaregiverRouteRoute = CaregiverRouteRouteImport.update({
+  id: '/_caregiver',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaregiverLoginRoute = CaregiverLoginRouteImport.update({
+  id: '/caregiver-login',
+  path: '/caregiver-login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -63,9 +75,9 @@ const HelperRoute = HelperRouteImport.update({
   path: '/helper',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ParentsRoute = ParentsRouteImport.update({
-  id: '/parents',
-  path: '/parents',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SafeRoute = SafeRouteImport.update({
@@ -87,6 +99,11 @@ const WorldRoute = WorldRouteImport.update({
   id: '/world',
   path: '/world',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CaregiverParentsRoute = CaregiverParentsRouteImport.update({
+  id: '/parents',
+  path: '/parents',
+  getParentRoute: () => CaregiverRouteRoute,
 } as any)
 const CloudsIndexRoute = CloudsIndexRouteImport.update({
   id: '/clouds/',
@@ -151,16 +168,18 @@ const StudioIdRoute = StudioIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/caregiver-login': typeof CaregiverLoginRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
-  '/parents': typeof ParentsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
+  '/parents': typeof CaregiverParentsRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -176,16 +195,18 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/caregiver-login': typeof CaregiverLoginRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
-  '/parents': typeof ParentsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
+  '/parents': typeof CaregiverParentsRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -202,16 +223,19 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_caregiver': typeof CaregiverRouteRouteWithChildren
+  '/caregiver-login': typeof CaregiverLoginRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
-  '/parents': typeof ParentsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
+  '/_caregiver/parents': typeof CaregiverParentsRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -229,16 +253,18 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/caregiver-login'
     | '/explore'
     | '/friends'
     | '/games'
     | '/garden'
     | '/helper'
-    | '/parents'
+    | '/reset-password'
     | '/safe'
     | '/settings'
     | '/watch'
     | '/world'
+    | '/parents'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -254,16 +280,18 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/caregiver-login'
     | '/explore'
     | '/friends'
     | '/games'
     | '/garden'
     | '/helper'
-    | '/parents'
+    | '/reset-password'
     | '/safe'
     | '/settings'
     | '/watch'
     | '/world'
+    | '/parents'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -279,16 +307,19 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_caregiver'
+    | '/caregiver-login'
     | '/explore'
     | '/friends'
     | '/games'
     | '/garden'
     | '/helper'
-    | '/parents'
+    | '/reset-password'
     | '/safe'
     | '/settings'
     | '/watch'
     | '/world'
+    | '/_caregiver/parents'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -305,12 +336,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CaregiverRouteRoute: typeof CaregiverRouteRouteWithChildren
+  CaregiverLoginRoute: typeof CaregiverLoginRoute
   ExploreRoute: typeof ExploreRoute
   FriendsRoute: typeof FriendsRoute
   GamesRoute: typeof GamesRoute
   GardenRoute: typeof GardenRoute
   HelperRoute: typeof HelperRoute
-  ParentsRoute: typeof ParentsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SafeRoute: typeof SafeRoute
   SettingsRoute: typeof SettingsRoute
   WatchRoute: typeof WatchRoute
@@ -336,6 +369,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_caregiver': {
+      id: '/_caregiver'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof CaregiverRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/caregiver-login': {
+      id: '/caregiver-login'
+      path: '/caregiver-login'
+      fullPath: '/caregiver-login'
+      preLoaderRoute: typeof CaregiverLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -373,11 +420,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelperRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/parents': {
-      id: '/parents'
-      path: '/parents'
-      fullPath: '/parents'
-      preLoaderRoute: typeof ParentsRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/safe': {
@@ -407,6 +454,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/world'
       preLoaderRoute: typeof WorldRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_caregiver/parents': {
+      id: '/_caregiver/parents'
+      path: '/parents'
+      fullPath: '/parents'
+      preLoaderRoute: typeof CaregiverParentsRouteImport
+      parentRoute: typeof CaregiverRouteRoute
     }
     '/clouds/': {
       id: '/clouds/'
@@ -495,14 +549,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface CaregiverRouteRouteChildren {
+  CaregiverParentsRoute: typeof CaregiverParentsRoute
+}
+
+const CaregiverRouteRouteChildren: CaregiverRouteRouteChildren = {
+  CaregiverParentsRoute: CaregiverParentsRoute,
+}
+
+const CaregiverRouteRouteWithChildren = CaregiverRouteRoute._addFileChildren(
+  CaregiverRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CaregiverRouteRoute: CaregiverRouteRouteWithChildren,
+  CaregiverLoginRoute: CaregiverLoginRoute,
   ExploreRoute: ExploreRoute,
   FriendsRoute: FriendsRoute,
   GamesRoute: GamesRoute,
   GardenRoute: GardenRoute,
   HelperRoute: HelperRoute,
-  ParentsRoute: ParentsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SafeRoute: SafeRoute,
   SettingsRoute: SettingsRoute,
   WatchRoute: WatchRoute,

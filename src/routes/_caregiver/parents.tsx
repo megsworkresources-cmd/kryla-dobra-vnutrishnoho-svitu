@@ -7,7 +7,7 @@ import { CATALOG } from "@/content/catalog";
 import { resetProgress, totalDone, useStore } from "@/lib/store";
 import { localeOf, useLang, useT } from "@/lib/i18n";
 
-export const Route = createFileRoute("/parents")({
+export const Route = createFileRoute("/_caregiver/parents")({
   head: () => ({
     meta: [
       { title: "Для дорослих — прогрес дитини — Тихе Місце" },

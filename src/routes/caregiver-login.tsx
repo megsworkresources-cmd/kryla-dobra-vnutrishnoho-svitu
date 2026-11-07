@@ -8,7 +8,7 @@ import { useT } from "@/lib/i18n";
 type Mode = "signin" | "signup" | "forgot";
 
 export const Route = createFileRoute("/caregiver-login")({
-  validateSearch: (s: Record<string, unknown>) => ({ redirect: safeReturnPath(s["redirect"]) }),
+  validateSearch: (s: Record<string, unknown>) => ({ redirect: safeReturnPath(s["next"] ?? s["redirect"]) }),
   head: () => ({
     meta: [
       { title: "Вхід для дорослих — Тихе Місце" },

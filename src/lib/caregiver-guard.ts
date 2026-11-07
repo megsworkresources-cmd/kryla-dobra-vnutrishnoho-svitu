@@ -2,13 +2,14 @@
  * Caregiver gate logic, kept free of framework imports so it can be unit-tested.
  * The decision trusts only the server's answer (verify), never a client flag.
  */
+import { oauthReturnPath } from "./oauth-return-path";
+
 export const SIGN_IN_PATH = "/caregiver-login";
 
 /** Only allow same-origin, path-only return targets (no open redirects). */
 export function safeReturnPath(raw: unknown): string {
-  if (typeof raw !== "string") return "/parents";
-  if (!raw.startsWith("/") || raw.startsWith("//") || raw.includes("\\")) return "/parents";
-  return raw;
+  const path = oauthReturnPath(raw);
+  return path === "/" ? "/parents" : path;
 }
 
 export interface Caregiver {

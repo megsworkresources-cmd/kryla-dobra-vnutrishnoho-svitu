@@ -1,4 +1,5 @@
 # Completion roadmap
+- [ ] OAuth-protected activity catalog MCP and browser map tools; verify consent and manifest.
 - [x] All places, exercises, stories and creative tools.
 - [x] Back/Next on every page, Home, map menu, settings.
 - [x] Character cast integrated into exercises with reactions.

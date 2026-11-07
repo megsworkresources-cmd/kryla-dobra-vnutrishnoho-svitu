@@ -35,6 +35,7 @@ import { Route as SkyIndexRouteImport } from './routes/sky.index'
 import { Route as SkyIdRouteImport } from './routes/sky.$id'
 import { Route as StudioIndexRouteImport } from './routes/studio.index'
 import { Route as StudioIdRouteImport } from './routes/studio.$id'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicMcpRouteImport } from './routes/api/public/mcp'
 import { Route as ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/api/public/[.well-known]/oauth-protected-resource'
 
@@ -167,6 +168,11 @@ const StudioIdRoute = StudioIdRouteImport.update({
   path: '/studio/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMcpRoute = ApiPublicMcpRouteImport.update({
   id: '/api/public/mcp',
   path: '/api/public/mcp',
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/path/': typeof PathIndexRoute
   '/sky/': typeof SkyIndexRoute
   '/studio/': typeof StudioIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/api/public/mcp': typeof ApiPublicMcpRoute
   '/api/public/.well-known/oauth-protected-resource': typeof ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute
 }
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/path': typeof PathIndexRoute
   '/sky': typeof SkyIndexRoute
   '/studio': typeof StudioIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/api/public/mcp': typeof ApiPublicMcpRoute
   '/api/public/.well-known/oauth-protected-resource': typeof ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute
 }
@@ -265,6 +273,7 @@ export interface FileRoutesById {
   '/path/': typeof PathIndexRoute
   '/sky/': typeof SkyIndexRoute
   '/studio/': typeof StudioIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/api/public/mcp': typeof ApiPublicMcpRoute
   '/api/public/.well-known/oauth-protected-resource': typeof ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute
 }
@@ -296,6 +305,7 @@ export interface FileRouteTypes {
     | '/path/'
     | '/sky/'
     | '/studio/'
+    | '/.lovable/oauth/consent'
     | '/api/public/mcp'
     | '/api/public/.well-known/oauth-protected-resource'
   fileRoutesByTo: FileRoutesByTo
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/path'
     | '/sky'
     | '/studio'
+    | '/.lovable/oauth/consent'
     | '/api/public/mcp'
     | '/api/public/.well-known/oauth-protected-resource'
   id:
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/path/'
     | '/sky/'
     | '/studio/'
+    | '/.lovable/oauth/consent'
     | '/api/public/mcp'
     | '/api/public/.well-known/oauth-protected-resource'
   fileRoutesById: FileRoutesById
@@ -385,6 +397,7 @@ export interface RootRouteChildren {
   PathIndexRoute: typeof PathIndexRoute
   SkyIndexRoute: typeof SkyIndexRoute
   StudioIndexRoute: typeof StudioIndexRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   ApiPublicMcpRoute: typeof ApiPublicMcpRoute
   ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute: typeof ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute
 }
@@ -573,6 +586,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudioIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/mcp': {
       id: '/api/public/mcp'
       path: '/api/public/mcp'
@@ -628,6 +648,7 @@ const rootRouteChildren: RootRouteChildren = {
   PathIndexRoute: PathIndexRoute,
   SkyIndexRoute: SkyIndexRoute,
   StudioIndexRoute: StudioIndexRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   ApiPublicMcpRoute: ApiPublicMcpRoute,
   ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute:
     ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute,

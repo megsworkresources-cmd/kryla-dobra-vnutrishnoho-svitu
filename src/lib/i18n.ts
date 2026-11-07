@@ -7,6 +7,20 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Підключення помічника": "Connect an assistant",
+  "Дозвіл дорослого на читання каталогу вправ.": "Adult permission to read the activity catalog.",
+  "Цей запит недійсний або вже завершився. Почніть підключення знову у своєму помічнику.": "This request is invalid or has expired. Start connecting again in your assistant.",
+  "Підключити {client} до Тихого Місця": "Connect {client} to Quiet Place",
+  "Помічник зможе читати назви, описи та адреси вправ. Малюнки, почуття й прогрес дитини залишаються на пристрої та недоступні помічнику.": "The assistant can read activity titles, descriptions and addresses. Children's drawings, feelings and progress stay on this device and cannot be accessed by the assistant.",
+  "Поділитися адресою пошти": "Share your email address",
+  "Поділитися основним профілем": "Share your basic profile",
+  "Підтвердити особу дорослого": "Confirm the adult's identity",
+  "Додатковий дозвіл: {scope}": "Additional permission: {scope}",
+  "Це не скасовує дозволи застосунку та захист даних.": "This does not bypass app permissions or data protection.",
+  "Не вдалося завершити дію. Спробуйте ще раз або скасуйте підключення.": "The action could not be completed. Try again or cancel the connection.",
+  "Дозволити підключення": "Allow connection",
+  "Скасувати підключення": "Cancel connection",
+  "Зачекайте…": "Please wait…",
   "Наліпки": "Stickers",
   "Наліпка": "Sticker",
   "🌈 Веселковий пензлик": "🌈 Rainbow brush",

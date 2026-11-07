@@ -35,6 +35,8 @@ import { Route as SkyIndexRouteImport } from './routes/sky.index'
 import { Route as SkyIdRouteImport } from './routes/sky.$id'
 import { Route as StudioIndexRouteImport } from './routes/studio.index'
 import { Route as StudioIdRouteImport } from './routes/studio.$id'
+import { Route as ApiPublicMcpRouteImport } from './routes/api/public/mcp'
+import { Route as ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/api/public/[.well-known]/oauth-protected-resource'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -165,6 +167,17 @@ const StudioIdRoute = StudioIdRouteImport.update({
   path: '/studio/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMcpRoute = ApiPublicMcpRouteImport.update({
+  id: '/api/public/mcp',
+  path: '/api/public/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute =
+  ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/api/public/.well-known/oauth-protected-resource',
+    path: '/api/public/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -192,6 +205,8 @@ export interface FileRoutesByFullPath {
   '/path/': typeof PathIndexRoute
   '/sky/': typeof SkyIndexRoute
   '/studio/': typeof StudioIndexRoute
+  '/api/public/mcp': typeof ApiPublicMcpRoute
+  '/api/public/.well-known/oauth-protected-resource': typeof ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -219,6 +234,8 @@ export interface FileRoutesByTo {
   '/path': typeof PathIndexRoute
   '/sky': typeof SkyIndexRoute
   '/studio': typeof StudioIndexRoute
+  '/api/public/mcp': typeof ApiPublicMcpRoute
+  '/api/public/.well-known/oauth-protected-resource': typeof ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -248,6 +265,8 @@ export interface FileRoutesById {
   '/path/': typeof PathIndexRoute
   '/sky/': typeof SkyIndexRoute
   '/studio/': typeof StudioIndexRoute
+  '/api/public/mcp': typeof ApiPublicMcpRoute
+  '/api/public/.well-known/oauth-protected-resource': typeof ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -277,6 +296,8 @@ export interface FileRouteTypes {
     | '/path/'
     | '/sky/'
     | '/studio/'
+    | '/api/public/mcp'
+    | '/api/public/.well-known/oauth-protected-resource'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -304,6 +325,8 @@ export interface FileRouteTypes {
     | '/path'
     | '/sky'
     | '/studio'
+    | '/api/public/mcp'
+    | '/api/public/.well-known/oauth-protected-resource'
   id:
     | '__root__'
     | '/'
@@ -332,6 +355,8 @@ export interface FileRouteTypes {
     | '/path/'
     | '/sky/'
     | '/studio/'
+    | '/api/public/mcp'
+    | '/api/public/.well-known/oauth-protected-resource'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -360,6 +385,8 @@ export interface RootRouteChildren {
   PathIndexRoute: typeof PathIndexRoute
   SkyIndexRoute: typeof SkyIndexRoute
   StudioIndexRoute: typeof StudioIndexRoute
+  ApiPublicMcpRoute: typeof ApiPublicMcpRoute
+  ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute: typeof ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -546,6 +573,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudioIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/mcp': {
+      id: '/api/public/mcp'
+      path: '/api/public/mcp'
+      fullPath: '/api/public/mcp'
+      preLoaderRoute: typeof ApiPublicMcpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/.well-known/oauth-protected-resource': {
+      id: '/api/public/.well-known/oauth-protected-resource'
+      path: '/api/public/.well-known/oauth-protected-resource'
+      fullPath: '/api/public/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -587,6 +628,9 @@ const rootRouteChildren: RootRouteChildren = {
   PathIndexRoute: PathIndexRoute,
   SkyIndexRoute: SkyIndexRoute,
   StudioIndexRoute: StudioIndexRoute,
+  ApiPublicMcpRoute: ApiPublicMcpRoute,
+  ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute:
+    ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

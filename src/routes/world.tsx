@@ -5,6 +5,8 @@ import { PLACES } from "@/content/places";
 import { BottomNav } from "@/components/BottomNav";
 import { LangToggle } from "@/components/LangToggle";
 import { t, useT } from "@/lib/i18n";
+import { useWebMCP } from "use-webmcp-tool";
+import { runWebMCPTool } from "@/lib/webmcp-telemetry";
 
 export const Route = createFileRoute("/world")({
   head: () => ({
@@ -22,6 +24,12 @@ export const Route = createFileRoute("/world")({
 
 function World() {
   const t = useT();
+  useWebMCP({
+    name: "list_world_places",
+    description: "Read the eight places visible on the current world map. No child data is included.",
+    annotations: { readOnlyHint: true },
+    execute: () => runWebMCPTool("list_world_places", () => PLACES.map((p) => `${p.id}: ${t(p.name)} — ${p.to}`).join("\n")),
+  });
 
   return (
     <div className="relative flex h-dvh flex-col overflow-hidden bg-ink">

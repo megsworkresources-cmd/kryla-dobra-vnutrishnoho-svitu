@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "sdk_version": "3.4.0",
+  "path": "/api/public/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://ftqdpebplmucvnzyltry.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "kryla-dobra-vnutrishnoho-svitu",
+      "version": "0.1.0",
+      "title": "Kryla Dobra Vnutrishnoho Svitu"
+    },
+    "tools": [
+      {
+        "name": "list_activities",
+        "title": "List wellbeing activities",
+        "description": "Read the app-written Ukrainian exercise catalog, optionally filtered by place; no child records are accessible.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "place": {
+              "type": "string",
+              "enum": [
+                "forest",
+                "meadow",
+                "clouds",
+                "sky",
+                "studio",
+                "path"
+              ],
+              "description": "Optional place to filter by."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_activity",
+        "title": "Look up a wellbeing activity",
+        "description": "Look up an app-written exercise by its catalog key and return its title, description and local address.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "description": "Exact activity key returned by list_activities."
+            }
+          },
+          "required": [
+            "key"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

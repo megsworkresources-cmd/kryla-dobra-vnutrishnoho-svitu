@@ -1,5 +1,6 @@
 # Completion roadmap
-- [ ] OAuth-protected activity catalog MCP and browser map tools; verify consent and manifest.
+- [x] OAuth-protected activity catalog MCP + browser map tools: manifest extracted (2 tools), signed-out consent redirects to adult login with request preserved, verified at phone size (390x844).
+- [ ] Real external MCP client authorization end to end (needs an outside agent to run the OAuth consent flow).
 - [x] All places, exercises, stories and creative tools.
 - [x] Back/Next on every page, Home, map menu, settings.
 - [x] Character cast integrated into exercises with reactions.

@@ -9,7 +9,7 @@ vi.mock("@tanstack/react-start", () => ({
     },
   }),
 }));
-vi.mock("@tanstack/react-start/server", () => ({ setResponseHeader: mocks.header }));
+vi.mock("@tanstack/react-start/server", () => ({ setResponseHeader: mocks.header, getRequestHeader: () => "Bearer validated.token.example" }));
 vi.mock("@/integrations/supabase/auth-middleware", () => ({
   requireSupabaseAuth: mocks.middleware,
 }));
@@ -36,6 +36,7 @@ describe("caregiver server identity", () => {
     });
     expect(await verify()).toEqual({ userId: "caregiver", email: "adult@example.test" });
     expect(mocks.header).toHaveBeenCalledWith("Cache-Control", "no-store");
+    expect(mocks.getUser).toHaveBeenCalledWith("validated.token.example");
   });
   it.each([
     { user: null },

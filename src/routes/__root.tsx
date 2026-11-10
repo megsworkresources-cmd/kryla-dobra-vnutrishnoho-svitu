@@ -20,6 +20,7 @@ import { markVisit, useStore } from "../lib/store";
 import { t, useT } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { authTransition, RECOVERY_KEY } from "@/lib/caregiver-session";
+import { safeReturnPath } from "@/lib/caregiver-guard";
 
 function NotFoundComponent() {
   const t = useT();
@@ -141,6 +142,13 @@ function RootComponent() {
         try { sessionStorage.removeItem(RECOVERY_KEY); } catch { /* optional storage */ }
       }
       setTimeout(() => {
+        const location = router.state.location;
+        if (transition.recovery && location.pathname !== "/reset-password") {
+          void router.navigate({ to: "/reset-password", replace: true });
+        } else if (event === "SIGNED_IN" && location.pathname === "/caregiver-login") {
+          const params = new URLSearchParams(location.searchStr);
+          void router.navigate({ to: safeReturnPath(params.get("next") ?? params.get("redirect")) as never, replace: true });
+        }
         if (transition.signedOut) {
           void queryClient.cancelQueries().then(() => {
             queryClient.clear();

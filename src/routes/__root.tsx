@@ -18,6 +18,9 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ambientFor, playAmbient, sfx, unlockAudio } from "@/lib/audio";
 import { markVisit, useStore } from "../lib/store";
 import { t, useT } from "@/lib/i18n";
+import { supabase } from "@/integrations/supabase/client";
+import { authTransition, RECOVERY_KEY } from "@/lib/caregiver-session";
+import { safeReturnPath } from "@/lib/caregiver-guard";
 
 function NotFoundComponent() {
   const t = useT();
@@ -88,7 +91,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#f7f1e3" },
       { title: "Тихе Місце" },
-      { name: "description", content: "Чарівний світ для дітей, де можна пізнавати почуття, дихати й заспокоюватися." },
+      {
+        name: "description",
+        content: "Чарівний світ для дітей, де можна пізнавати почуття, дихати й заспокоюватися.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -125,6 +131,51 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      const transition = authTransition(event);
+      if (!transition.invalidate) return;
+      // Do not call Auth again inside its synchronous subscriber (SDK lock).
+      if (transition.recovery) {
+        try {
+          sessionStorage.setItem(RECOVERY_KEY, "1");
+        } catch {
+          /* optional storage */
+        }
+        window.dispatchEvent(new Event("caregiver-recovery"));
+      }
+      if (transition.signedOut) {
+        try {
+          sessionStorage.removeItem(RECOVERY_KEY);
+        } catch {
+          /* optional storage */
+        }
+      }
+      setTimeout(() => {
+        const location = router.state.location;
+        if (transition.recovery && location.pathname !== "/reset-password") {
+          void router.navigate({ to: "/reset-password", replace: true });
+        } else if (event === "SIGNED_IN" && location.pathname === "/caregiver-login") {
+          const params = new URLSearchParams(location.searchStr);
+          void router.navigate({
+            to: safeReturnPath(params.get("next") ?? params.get("redirect")) as never,
+            replace: true,
+          });
+        }
+        if (transition.signedOut) {
+          void queryClient.cancelQueries().then(() => {
+            queryClient.clear();
+            void router.invalidate();
+          });
+        } else {
+          void router.invalidate();
+          if (transition.refetch) void queryClient.invalidateQueries();
+        }
+      }, 0);
+    });
+    return () => data.subscription.unsubscribe();
+  }, [queryClient, router]);
   const reduce = useStore((s) => s.reduceMotion);
   const textSize = useStore((s) => s.textSize);
   const music = useStore((s) => s.sound && s.music);

@@ -9,7 +9,10 @@ export const SIGN_IN_PATH = "/caregiver-login";
 /** Only allow same-origin, path-only return targets (no open redirects). */
 export function safeReturnPath(raw: unknown): string {
   const path = oauthReturnPath(raw);
-  return path === "/" ? "/parents" : path;
+  const pathname = path.split(/[?#]/)[0];
+  return path === "/" || pathname === "/caregiver-login" || pathname === "/reset-password"
+    ? "/parents"
+    : path;
 }
 
 export interface Caregiver {

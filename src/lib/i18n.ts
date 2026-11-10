@@ -7,82 +7,106 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Не вдалося вийти. Спробуйте ще раз.": "Couldn't sign out. Please try again.",
+  "Не вдалося завершити дію. Перевірте дані й спробуйте ще раз.":
+    "Couldn't complete the action. Check your details and try again.",
+  "Не вдалося зберегти пароль. Відкрийте новий лист відновлення й спробуйте ще раз.":
+    "Couldn't save the password. Open a new recovery email and try again.",
   "Підключення помічника": "Connect an assistant",
   "Дозвіл дорослого на читання каталогу вправ.": "Adult permission to read the activity catalog.",
-  "Цей запит недійсний або вже завершився. Почніть підключення знову у своєму помічнику.": "This request is invalid or has expired. Start connecting again in your assistant.",
+  "Цей запит недійсний або вже завершився. Почніть підключення знову у своєму помічнику.":
+    "This request is invalid or has expired. Start connecting again in your assistant.",
   "Підключити {client} до Тихого Місця": "Connect {client} to Quiet Place",
-  "Помічник зможе читати назви, описи та адреси вправ. Малюнки, почуття й прогрес дитини залишаються на пристрої та недоступні помічнику.": "The assistant can read activity titles, descriptions and addresses. Children's drawings, feelings and progress stay on this device and cannot be accessed by the assistant.",
+  "Помічник зможе читати назви, описи та адреси вправ. Малюнки, почуття й прогрес дитини залишаються на пристрої та недоступні помічнику.":
+    "The assistant can read activity titles, descriptions and addresses. Children's drawings, feelings and progress stay on this device and cannot be accessed by the assistant.",
   "Поділитися адресою пошти": "Share your email address",
   "Поділитися основним профілем": "Share your basic profile",
   "Підтвердити особу дорослого": "Confirm the adult's identity",
   "Додатковий дозвіл: {scope}": "Additional permission: {scope}",
-  "Це не скасовує дозволи застосунку та захист даних.": "This does not bypass app permissions or data protection.",
-  "Не вдалося завершити дію. Спробуйте ще раз або скасуйте підключення.": "The action could not be completed. Try again or cancel the connection.",
+  "Це не скасовує дозволи застосунку та захист даних.":
+    "This does not bypass app permissions or data protection.",
+  "Не вдалося завершити дію. Спробуйте ще раз або скасуйте підключення.":
+    "The action could not be completed. Try again or cancel the connection.",
   "Дозволити підключення": "Allow connection",
   "Скасувати підключення": "Cancel connection",
   "Зачекайте…": "Please wait…",
-  "Наліпки": "Stickers",
-  "Наліпка": "Sticker",
+  Наліпки: "Stickers",
+  Наліпка: "Sticker",
   "🌈 Веселковий пензлик": "🌈 Rainbow brush",
   "Торкнись аркуша, щоб поставити наліпку": "Tap the page to place the sticker",
   "Твій соняшник розквіт! 🌻": "Your sunflower is in bloom! 🌻",
   "Розфарбовано: {n} з {m}": "Coloured: {n} of {m}",
   "Зірочки: {n}": "Stars: {n}",
   "Чарівна смужка: торкайся, поки слухаєш": "Magic strip: tap while you listen",
-  "Торкнутися": "Tap",
+  Торкнутися: "Tap",
   "Торкайся, поки слухаєш ✨": "Tap while you listen ✨",
   "Чудово! {n} доторків 🌟": "Wonderful! {n} taps 🌟",
   "Доторків: {n}": "Taps: {n}",
   "Святкове небо: торкайся, щоб засвітити": "Celebration sky: tap to light it up",
-  "Ігри": "Games",
-  "Мультики": "Cartoons",
-  "Спокійні ігри для сенсорного екрана: бульбашки, пари друзів і зоряна музика.": "Calm touchscreen games: bubbles, friend pairs and star music.",
+  Ігри: "Games",
+  Мультики: "Cartoons",
+  "Спокійні ігри для сенсорного екрана: бульбашки, пари друзів і зоряна музика.":
+    "Calm touchscreen games: bubbles, friend pairs and star music.",
   "Мильні бульбашки": "Soap bubbles",
   "Пари друзів": "Friend pairs",
   "Зоряна музика": "Star music",
-  "Тут немає переможців і переможених — просто грайся, скільки хочеш.": "No winners or losers here — just play as long as you like.",
-  "Лови бульбашки пальчиком! Кожна співає свою ноту.": "Catch the bubbles with your finger! Each one sings its own note.",
-  "Бульбашка": "Bubble",
+  "Тут немає переможців і переможених — просто грайся, скільки хочеш.":
+    "No winners or losers here — just play as long as you like.",
+  "Лови бульбашки пальчиком! Кожна співає свою ноту.":
+    "Catch the bubbles with your finger! Each one sings its own note.",
+  Бульбашка: "Bubble",
   "Ти знайшов(-ла) усіх друзів! Чудова пам'ять.": "You found all your friends! Wonderful memory.",
   "Привіт! Це я, {n}!": "Hi! It's me, {n}!",
   "Відкривай картки й шукай однакових друзів.": "Turn the cards and find matching friends.",
   "Закрита картка": "Hidden card",
   "Грати ще раз": "Play again",
-  "Торкайся неба, щоб запалити зірки. Вище — вища нота. Склади своє сузір'я!": "Touch the sky to light stars. Higher means a higher note. Make your own constellation!",
+  "Торкайся неба, щоб запалити зірки. Вище — вища нота. Склади своє сузір'я!":
+    "Touch the sky to light stars. Higher means a higher note. Make your own constellation!",
   "Нічне небо для зірок": "Night sky for stars",
   "Торкнися тут ✨": "Touch here ✨",
   "▶ Заграти сузір'я": "▶ Play the constellation",
   "Очистити небо": "Clear the sky",
-  "Короткі анімовані українські мультики з героями Тихого Місця.": "Short animated Ukrainian cartoons with the Quiet Place friends.",
+  "Короткі анімовані українські мультики з героями Тихого Місця.":
+    "Short animated Ukrainian cartoons with the Quiet Place friends.",
   "Соняшник, що шукав сонце": "The Sunflower Who Looked for the Sun",
   "Біля білої хатки ріс маленький соняшник.": "By a little white house grew a small sunflower.",
   "Щоранку він повертав голівку до сонця.": "Every morning it turned its head to the sun.",
   "Одного дня хмарка сховала сонечко.": "One day a cloud hid the sun.",
-  "Соняшник зачекав, подихав спокійно — і сонце повернулося.": "The sunflower waited, breathed calmly — and the sun came back.",
+  "Соняшник зачекав, подихав спокійно — і сонце повернулося.":
+    "The sunflower waited, breathed calmly — and the sun came back.",
   "Ліхтарик і світлячки": "Lantern and the Fireflies",
-  "У нічному лісі їжачок Ліхтарик засвітив свій ліхтарик.": "In the night forest, Lantern the hedgehog lit his little lamp.",
-  "До нього злетілися світлячки — кожен зі своїм почуттям.": "Fireflies flew to him — each with its own feeling.",
+  "У нічному лісі їжачок Ліхтарик засвітив свій ліхтарик.":
+    "In the night forest, Lantern the hedgehog lit his little lamp.",
+  "До нього злетілися світлячки — кожен зі своїм почуттям.":
+    "Fireflies flew to him — each with its own feeling.",
   "Разом вони освітили стежку додому.": "Together they lit the path home.",
   "Повітряний змій Тараса": "Taras's Kite",
-  "Тарас змайстрував повітряного змія у синьо-жовту смужку.": "Taras made a kite with blue and yellow stripes.",
+  "Тарас змайстрував повітряного змія у синьо-жовту смужку.":
+    "Taras made a kite with blue and yellow stripes.",
   "Вітер підхопив його високо-високо до хмар.": "The wind carried it high, high up to the clouds.",
-  "Марко намалював змія в блокноті, щоб запам'ятати цей день.": "Marko drew the kite in his sketchbook to remember the day.",
+  "Марко намалював змія в блокноті, щоб запам'ятати цей день.":
+    "Marko drew the kite in his sketchbook to remember the day.",
   "Сміливий місток": "The Brave Little Bridge",
   "Дарина побачила місток над струмком.": "Daryna saw a little bridge over a stream.",
-  "Було трохи страшно. Вона зробила один маленький крок.": "It was a bit scary. She took one small step.",
-  "А потім ще один. І ось вона вже на іншому березі!": "Then another. And now she's on the other side!",
+  "Було трохи страшно. Вона зробила один маленький крок.":
+    "It was a bit scary. She took one small step.",
+  "А потім ще один. І ось вона вже на іншому березі!":
+    "Then another. And now she's on the other side!",
   "Чарівні фарби Марка": "Marko's Magic Paints",
   "Марко відкрив коробку чарівних фарб.": "Marko opened a box of magic paints.",
   "Синя фарба — для спокою, жовта — для радості.": "Blue paint for calm, yellow for joy.",
-  "Разом з Оленкою вони розмалювали затишну кімнату.": "Together with Olenka they painted a cosy room.",
+  "Разом з Оленкою вони розмалювали затишну кімнату.":
+    "Together with Olenka they painted a cosy room.",
   "Колискова для зірок": "A Lullaby for the Stars",
-  "Коли настає ніч, Соломія співає зіркам колискову.": "When night comes, Solomiya sings the stars a lullaby.",
+  "Коли настає ніч, Соломія співає зіркам колискову.":
+    "When night comes, Solomiya sings the stars a lullaby.",
   "Зірки мерехтять повільніше й повільніше.": "The stars twinkle slower and slower.",
   "На добраніч, Тихе Місце. На добраніч, друже.": "Good night, Quiet Place. Good night, friend.",
-  "Короткі мультики з нашими друзями. Обери, що подивитися!": "Short cartoons with our friends. Pick one to watch!",
-  "Кінець": "The end",
+  "Короткі мультики з нашими друзями. Обери, що подивитися!":
+    "Short cartoons with our friends. Pick one to watch!",
+  Кінець: "The end",
   "← Усі мультики": "← All cartoons",
-  "Грати": "Play",
+  Грати: "Play",
   // ---- brand & shared ----
   "Тихе Місце": "Quiet Place",
   "Тихе Місце — світ, де можна бути собою": "Quiet Place — a world where you can be yourself",
@@ -94,14 +118,15 @@ const EN: Record<string, string> = {
   "Чарівний світ, де можна відчувати, мріяти, дихати й відпочивати — скільки захочеш.":
     "A magical world where you can feel, dream, breathe and rest — for as long as you like.",
   "Увійти у свій світ": "Enter your world",
-  "Соняшникове поле, біла хатка й річка на світанку": "A sunflower field, a little white house and a river at dawn",
-  "Назад": "Back",
-  "Додому": "Home",
+  "Соняшникове поле, біла хатка й річка на світанку":
+    "A sunflower field, a little white house and a river at dawn",
+  Назад: "Back",
+  Додому: "Home",
   "Мапа світу (головне меню)": "World map (main menu)",
   "Налаштування звуку й екрана": "Sound and screen settings",
-  "Налаштування": "Settings",
+  Налаштування: "Settings",
   "Для дорослих": "For grown-ups",
-  "Початок": "Start",
+  Початок: "Start",
   "Мапа світу": "World map",
   "Мої друзі": "My friends",
   "Розкажи, як ти": "Tell me how you feel",
@@ -109,13 +134,13 @@ const EN: Record<string, string> = {
   "Назад: {l}": "Back: {l}",
   "Далі: {l}": "Next: {l}",
   "Мої друзі-персонажі": "My character friends",
-  "Друзі": "Friends",
+  Друзі: "Friends",
   "Розкажи, як ти почуваєшся": "Tell me how you feel",
-  "Розкажи": "Tell me",
+  Розкажи: "Tell me",
   "Місця світу": "Places in the world",
   "Чарівна долина з лісом, лугом, хмарним замком і нічним небом":
     "A magical valley with a forest, a meadow, a cloud castle and the night sky",
-  "Мова": "Language",
+  Мова: "Language",
   "Обери мову": "Choose the language",
   "У моєму безпечному місці": "In my safe place",
   "Прибрати з мого безпечного місця": "Remove from my safe place",
@@ -134,21 +159,22 @@ const EN: Record<string, string> = {
   "Можна пропустити будь-яке запитання.": "You can skip any question.",
   "Зупинити голос": "Stop the voice",
   "Послухати ще раз": "Listen again",
-  "Зупинити": "Stop",
-  "Послухати": "Listen",
+  Зупинити: "Stop",
+  Послухати: "Listen",
   "Голос недоступний": "Voice not available",
   "Послухати, що каже {n}": "Listen to {n}",
-  "хв": "min",
+  хв: "min",
   "Хвиля дихання": "Breathing wave",
   "Квітка дихання": "Breathing flower",
   "Повторюй разом зі мною, якщо хочеш 🙂": "Copy me if you like 🙂",
   "Твоя уявна картина: {l}": "Your imagined picture: {l}",
-  "Тепер на твоїй галявині є все, що треба для спокою.": "Now your glade has everything it needs to feel calm.",
+  "Тепер на твоїй галявині є все, що треба для спокою.":
+    "Now your glade has everything it needs to feel calm.",
   "Ще {n} — і соняшник виросте далі 🌱": "{n} more — and your sunflower grows again 🌱",
   "Засвітити світлячка": "Light up a firefly",
   "Торкнись світлячків на картинці: {n} з {m}": "Tap the fireflies in the picture: {n} of {m}",
   "Усі світлячки світять для тебе ✨": "All the fireflies are shining for you ✨",
-  "з": "of",
+  з: "of",
 
   // ---- 404 / errors ----
   "Такої сторінки немає": "There is no such page",
@@ -258,11 +284,11 @@ const EN: Record<string, string> = {
   "без поспіху": "no hurry",
 
   // ---- characters ----
-  "Соломія": "Solomiya",
-  "Тарас": "Taras",
-  "Оленка": "Olenka",
-  "Марко": "Marko",
-  "Дарина": "Daryna",
+  Соломія: "Solomiya",
+  Тарас: "Taras",
+  Оленка: "Olenka",
+  Марко: "Marko",
+  Дарина: "Daryna",
   "Їжачок Ліхтарик": "Likhtaryk the Hedgehog",
   "Провідниця світу": "Guide of the World",
   "Любить соняшники й нічне небо. Знає, що всі почуття — важливі.":
@@ -274,7 +300,8 @@ const EN: Record<string, string> = {
   "Якщо важко — можна зупинитися. Я поруч.": "If it's hard, you can stop anytime. I'm right here.",
   "Допитливий дослідник": "Curious Explorer",
   "Ставить безліч запитань і шукає рішення.": "He asks lots of questions and looks for solutions.",
-  "Гей! Я Тарас. Маю для тебе цікаве запитання!": "Hey! I'm Taras. I have an interesting question for you!",
+  "Гей! Я Тарас. Маю для тебе цікаве запитання!":
+    "Hey! I'm Taras. I have an interesting question for you!",
   "Ого, оце ідея!": "Wow, what an idea!",
   "Ти справжній дослідник!": "You're a real explorer!",
   "Класно придумано!": "Nicely thought up!",
@@ -292,15 +319,18 @@ const EN: Record<string, string> = {
   "Привіт, я Марко. Подивимось на це уважно?": "Hi, I'm Marko. Shall we look at this carefully?",
   "Гарно помічено.": "Well noticed.",
   "Ти подумав дуже глибоко.": "You thought about that deeply.",
-  "Думка — це ще не факт. Можна подивитися інакше.": "A thought isn't a fact yet. You can look at it another way.",
+  "Думка — це ще не факт. Можна подивитися інакше.":
+    "A thought isn't a fact yet. You can look at it another way.",
   "Смілива мандрівниця": "The Brave Traveler",
   "Не боїться пробувати нове, хоч іноді й хвилюється.":
     "She isn't afraid to try new things, even though she sometimes worries.",
-  "Привіт! Я Дарина. Готовий до маленької пригоди?": "Hi! I'm Daryna. Ready for a little adventure?",
+  "Привіт! Я Дарина. Готовий до маленької пригоди?":
+    "Hi! I'm Daryna. Ready for a little adventure?",
   "Так тримати!": "Keep it up!",
   "Це був сміливий крок!": "That was a brave step!",
   "Я пишаюся тобою!": "I'm proud of you!",
-  "Сміливість — це крок, навіть коли трохи страшно.": "Courage is a step, even when it's a little scary.",
+  "Сміливість — це крок, навіть коли трохи страшно.":
+    "Courage is a step, even when it's a little scary.",
   "Охоронець Лісу почуттів": "Keeper of the Forest of Feelings",
   "Своїм ліхтариком освітлює навіть найтемніші почуття.":
     "With his little lantern he lights up even the darkest feelings.",
@@ -313,7 +343,7 @@ const EN: Record<string, string> = {
     "Meet Solomiya, Taras, Olenka, Marko, Daryna and Likhtaryk the hedgehog.",
 
   // ---- emotions ----
-  "Радість": "Joy",
+  Радість: "Joy",
   "Радість каже: «Мені добре, хочу ще!» Нею приємно ділитися.":
     "Joy says: “I feel good, I want more!” It's nice to share it.",
   "тепло в грудях": "warmth in your chest",
@@ -321,8 +351,8 @@ const EN: Record<string, string> = {
   "усмішка сама з’являється": "a smile appears all by itself",
   "Поділитися з кимось": "Share it with someone",
   "Запам’ятати цю мить": "Remember this moment",
-  "Потанцювати": "Dance",
-  "Сум": "Sadness",
+  Потанцювати: "Dance",
+  Сум: "Sadness",
   "Сум приходить, коли щось важливе закінчилося або загубилося. Він показує, що тобі не байдуже.":
     "Sadness comes when something important ends or gets lost. It shows that you care.",
   "важкість у тілі": "heaviness in your body",
@@ -331,7 +361,7 @@ const EN: Record<string, string> = {
   "Обійняти когось або іграшку": "Hug someone or a toy",
   "Поплакати — це нормально": "Having a cry is okay",
   "Розповісти дорослому": "Tell a grown-up",
-  "Злість": "Anger",
+  Злість: "Anger",
   "Злість каже: «Це несправедливо!» або «Мені заважають». Вона дає силу захищати себе.":
     "Anger says: “That's not fair!” or “You're in my way.” It gives you strength to stand up for yourself.",
   "гаряче обличчя": "a hot face",
@@ -340,7 +370,7 @@ const EN: Record<string, string> = {
   "Потупати ногами": "Stamp your feet",
   "Повільно видихнути 5 разів": "Breathe out slowly 5 times",
   "Сказати: «Я злюся, бо…»": "Say: “I'm angry because…”",
-  "Страх": "Fear",
+  Страх: "Fear",
   "Страх — твій охоронець. Він попереджає про небезпеку, але іноді тривожиться зайве.":
     "Fear is your guard. It warns you about danger, but sometimes worries more than it needs to.",
   "холодні руки": "cold hands",
@@ -349,7 +379,7 @@ const EN: Record<string, string> = {
   "Притиснутися до когось": "Snuggle up to someone",
   "Подихати «кулькою»": "Breathe like a “balloon”",
   "Назвати 5 речей навколо": "Name 5 things around you",
-  "Тривога": "Worry",
+  Тривога: "Worry",
   "Тривога думає про те, що може статися. Вона хоче все передбачити.":
     "Worry thinks about what might happen. It wants to predict everything.",
   "тісно в грудях": "tightness in your chest",
@@ -358,7 +388,7 @@ const EN: Record<string, string> = {
   "Записати турботу й «відпустити» її": "Write the worry down and “let it go”",
   "Запитати: що я можу зробити зараз?": "Ask: what can I do right now?",
   "Заземлитися 5-4-3-2-1": "Ground yourself 5-4-3-2-1",
-  "Спокій": "Calm",
+  Спокій: "Calm",
   "Спокій — як тихе озеро. У ньому легко думати й відпочивати.":
     "Calm is like a still lake. It's easy to think and rest in it.",
   "розслаблені плечі": "relaxed shoulders",
@@ -367,7 +397,7 @@ const EN: Record<string, string> = {
   "Помітити, як тобі зараз": "Notice how you feel right now",
   "Посидіти тихо": "Sit quietly",
   "Згадати це відчуття потім": "Remember this feeling later",
-  "Сором": "Shame",
+  Сором: "Shame",
   "Сором хоче, щоб нас приймали. Помилки роблять усі — це не робить тебе поганим.":
     "Shame wants us to be accepted. Everyone makes mistakes — it doesn't make you bad.",
   "червоніють щоки": "red cheeks",
@@ -376,7 +406,7 @@ const EN: Record<string, string> = {
   "Сказати собі: «Я вчуся»": "Tell yourself: “I'm learning”",
   "Поговорити з тим, кому довіряєш": "Talk to someone you trust",
   "Згадати, що всі помиляються": "Remember everyone makes mistakes",
-  "Здивування": "Surprise",
+  Здивування: "Surprise",
   "Здивування приходить, коли стається щось несподіване — приємне чи ні.":
     "Surprise comes when something unexpected happens — pleasant or not.",
   "брови злітають угору": "eyebrows shoot up",
@@ -385,7 +415,7 @@ const EN: Record<string, string> = {
   "Зупинитися й роздивитися": "Stop and take a look",
   "Запитати: що сталося?": "Ask: what happened?",
   "Дати собі хвилинку": "Give yourself a minute",
-  "Гордість": "Pride",
+  Гордість: "Pride",
   "Гордість каже: «Я це зміг!» Вона додає сміливості пробувати знову.":
     "Pride says: “I did it!” It gives you courage to try again.",
   "пряма спина": "a straight back",
@@ -394,7 +424,7 @@ const EN: Record<string, string> = {
   "Розповісти комусь": "Tell someone",
   "Помітити свої зусилля": "Notice your own effort",
   "Подякувати собі": "Thank yourself",
-  "Самотність": "Loneliness",
+  Самотність: "Loneliness",
   "Самотність нагадує, що нам потрібні інші люди. Це сигнал шукати зв’язок.":
     "Loneliness reminds us we need other people. It's a signal to look for connection.",
   "порожнеча всередині": "an empty feeling inside",
@@ -403,9 +433,16 @@ const EN: Record<string, string> = {
   "Написати або подзвонити рідним": "Write or call someone close",
   "Погратися з тваринкою": "Play with a pet",
   "Підійти до когось і привітатися": "Walk up to someone and say hello",
-  "радість": "joy", "сум": "sadness", "злість": "anger", "страх": "fear",
-  "тривога": "worry", "спокій": "calm", "сором": "shame", "здивування": "surprise",
-  "гордість": "pride", "самотність": "loneliness",
+  радість: "joy",
+  сум: "sadness",
+  злість: "anger",
+  страх: "fear",
+  тривога: "worry",
+  спокій: "calm",
+  сором: "shame",
+  здивування: "surprise",
+  гордість: "pride",
+  самотність: "loneliness",
 
   // ---- scenarios & sorting ----
   "Остап довго будував вежу з кубиків. Молодша сестричка випадково її розвалила.":
@@ -453,32 +490,42 @@ const EN: Record<string, string> = {
     "What might they feel? Choose as many as you like.",
   "Банка почуттів": "Jar of feelings",
   "Банка почуттів поки порожня": "The feelings jar is empty for now",
-  "Готово": "Done",
+  Готово: "Done",
   "Так, кілька почуттів одночасно — це звично.": "Yes — several feelings at once is very common.",
   "Можливо, є й інші почуття поруч.": "There may be other feelings nearby too.",
-  "Далі": "Next",
+  Далі: "Next",
   "Обери почуття. Потім торкнися місць, де ти його відчуваєш. Правильних відповідей немає — у кожного по-своєму.":
     "Pick a feeling. Then touch the places where you feel it. There are no right answers — everyone is different.",
-  "Тіло": "Body",
-  "Голова": "Head", "Горло": "Throat", "Груди": "Chest", "Живіт": "Belly",
-  "Руки": "Arms", "Ноги": "Legs",
-  "голова": "head", "горло": "throat", "груди": "chest", "живіт": "belly",
-  "руки": "arms", "ноги": "legs",
+  Тіло: "Body",
+  Голова: "Head",
+  Горло: "Throat",
+  Груди: "Chest",
+  Живіт: "Belly",
+  Руки: "Arms",
+  Ноги: "Legs",
+  голова: "head",
+  горло: "throat",
+  груди: "chest",
+  живіт: "belly",
+  руки: "arms",
+  ноги: "legs",
   "Часто відчувається як:": "Often feels like:",
   "Ти позначив: {z}": "You marked: {z}",
-  "Завершити": "Finish",
+  Завершити: "Finish",
   "Тіло часто першим підказує, що ти відчуваєш.": "The body often knows first what you feel.",
-  "Думка": "Thought",
+  Думка: "Thought",
   "те, що каже голова": "what the head says",
-  "Почуття": "Feeling",
+  Почуття: "Feeling",
   "те, що відчуваєш": "what you feel",
-  "Дія": "Action",
+  Дія: "Action",
   "те, що робиш": "what you do",
   "Картка {i} з {n}": "Card {i} of {n}",
   "Так!": "Yes!",
   "Хм, подумай ще.": "Hmm, think again.",
-  "Це почуття — його можна назвати одним словом.": "That's a feeling — you can name it with one word.",
-  "Це думка — її можна перевірити: чи це точно правда?": "That's a thought — you can check it: is it really true?",
+  "Це почуття — його можна назвати одним словом.":
+    "That's a feeling — you can name it with one word.",
+  "Це думка — її можна перевірити: чи це точно правда?":
+    "That's a thought — you can check it: is it really true?",
   "Це дія — це те, що можна побачити збоку.": "That's an action — something others can see you do.",
   "Ти вмієш розрізняти думки, почуття й дії!": "You can tell thoughts, feelings and actions apart!",
   "Склади речення з трьох частин. Його можна сказати мамі, татові чи вчительці.":
@@ -493,10 +540,10 @@ const EN: Record<string, string> = {
   "мене не беруть у гру": "I'm not asked to join the game",
   "я сам удома": "I'm home alone",
   "мене хвалять": "someone praises me",
-  "обійми": "a hug",
+  обійми: "a hug",
   "трохи тиші": "a little quiet",
   "щоб мене вислухали": "someone to listen",
-  "допомога": "some help",
+  допомога: "some help",
   "побути разом": "time together",
   "ще трохи часу": "a little more time",
   "Я відчуваю…": "I feel…",
@@ -508,8 +555,8 @@ const EN: Record<string, string> = {
     "When you name your feelings, others understand you better.",
 
   // ---- meadow ----
-  "Вдих": "Breathe in",
-  "Видих": "Breathe out",
+  Вдих: "Breathe in",
+  Видих: "Breathe out",
   "М’який вдих": "Soft breath in",
   "Повільний видих": "Slow breath out",
   "Нюхай квітку. Потім легко подуй на пелюстки. Дихай так, як зручно тобі.":
@@ -518,11 +565,11 @@ const EN: Record<string, string> = {
     "Breathe softly, without holding your breath. If this rhythm feels awkward — pause and breathe normally.",
   "Не намагайся вдихати надто глибоко. Орієнтир — комфорт, а не точне потрапляння в ритм.":
     "No need to breathe in very deeply. Aim for comfort, not for matching the rhythm exactly.",
-  "Тривалість": "Duration",
+  Тривалість: "Duration",
   "У своєму темпі": "At your own pace",
   "Без затримки дихання": "No breath-holding",
-  "Почати": "Start",
-  "Продовжити": "Continue",
+  Почати: "Start",
+  Продовжити: "Continue",
   "На сьогодні досить": "That's enough for today",
   "Почати спочатку": "Start over",
   "Дякую, що побув на лузі. Далі можна дихати звичайно.":
@@ -546,7 +593,7 @@ const EN: Record<string, string> = {
   "Ноги мають опору": "Your feet have support",
   "Поміть, як ноги торкаються підлоги чи ліжка. Можеш поворушити пальцями. Уяви, що вся зайва напруга повільно стікає вниз.":
     "Notice how your feet touch the floor or the bed. You can wiggle your toes. Imagine all the extra tension slowly flowing down and away.",
-  "Повертаємося": "Coming back",
+  Повертаємося: "Coming back",
   "Озирнися. Знайди одну приємну річ поруч. Не потрібно почуватися інакше — ця пауза вже була турботою про себе.":
     "Look around. Find one pleasant thing nearby. You don't need to feel any different — this pause was already a way of caring for yourself.",
   "Ще побуду тут": "I'll stay a little longer",
@@ -570,7 +617,8 @@ const EN: Record<string, string> = {
   "Щось, що я бачу": "Something I can see",
   "Щось, що я чую": "Something I can hear",
   "Щось у собі": "Something inside me",
-  "Гарний вибір. Можеш затриматися поглядом на ній.": "A lovely choice. You can rest your eyes on it for a while.",
+  "Гарний вибір. Можеш затриматися поглядом на ній.":
+    "A lovely choice. You can rest your eyes on it for a while.",
   "Ти повернувся сюди, у цю мить. Це вміння завжди з тобою.":
     "You came back here, to this moment. This skill is always with you.",
   "Напиши або просто подумай про те, що тебе турбує. Ніхто цього не побачить — навіть цей пристрій не збереже.":
@@ -585,10 +633,10 @@ const EN: Record<string, string> = {
     "Imagine a soft path between tall grasses. Warm earth under your feet, fluffy clouds drifting overhead.",
   "Яка твоя галявина?": "What is your glade like?",
   "Обери, що там є.": "Choose what's there.",
-  "Соняшники": "Sunflowers",
-  "Струмок": "A stream",
+  Соняшники: "Sunflowers",
+  Струмок: "A stream",
   "Велике дерево": "A big tree",
-  "Світлячки": "Fireflies",
+  Світлячки: "Fireflies",
   "Чудово. Уяви це якомога ясніше — кольори, звуки, тепло.":
     "Wonderful. Picture it as clearly as you can — the colours, the sounds, the warmth.",
   "Хто поруч?": "Who is with you?",
@@ -597,7 +645,7 @@ const EN: Record<string, string> = {
   "Я сам": "Just me",
   "Улюблена тварина": "A favourite animal",
   "Близька людина": "Someone close to me",
-  "Відпочинок": "Resting",
+  Відпочинок: "Resting",
   "Сядь на теплу траву. Послухай, як шелестить листя. Тут нічого не треба робити.":
     "Sit on the warm grass. Listen to the leaves rustling. There's nothing you need to do here.",
   "Повільно поверни увагу в кімнату. Поворуши пальцями. Галявина нікуди не зникне.":
@@ -620,7 +668,8 @@ const EN: Record<string, string> = {
   "Так, був": "Yes, there was",
   "Не впевнений": "Not sure",
   "Поки не пригадую": "I can't remember one yet",
-  "Навіть маленький приклад — уже інший бік історії.": "Even one small example is already the other side of the story.",
+  "Навіть маленький приклад — уже інший бік історії.":
+    "Even one small example is already the other side of the story.",
   "Що сказав би друг?": "What would a friend say?",
   "Якби твій друг мав таку думку, що б ти йому сказав? Можеш сказати це й собі.":
     "If your friend had this thought, what would you say to them? You can say it to yourself too.",
@@ -631,15 +680,19 @@ const EN: Record<string, string> = {
   "Я не знаю, що буде, і це нормально": "I don't know what will happen, and that's okay",
   "Думки — це не завжди факти. Ти вмієш подивитися на них з різних боків.":
     "Thoughts aren't always facts. You know how to look at them from different sides.",
-  "Стоп": "Stop",
-  "Ступні": "Feet",
-  "Зупинись. Нічого не треба вирішувати просто зараз.": "Pause. Nothing needs to be solved right now.",
-  "Притисни ступні до підлоги. Відчуй, що вона тебе тримає.": "Press your feet into the floor. Feel it holding you.",
-  "Зроби повільний видих, ніби дмухаєш на гарячий чай.": "Breathe out slowly, as if cooling a hot cup of tea.",
-  "Поруч": "You're not alone",
+  Стоп: "Stop",
+  Ступні: "Feet",
+  "Зупинись. Нічого не треба вирішувати просто зараз.":
+    "Pause. Nothing needs to be solved right now.",
+  "Притисни ступні до підлоги. Відчуй, що вона тебе тримає.":
+    "Press your feet into the floor. Feel it holding you.",
+  "Зроби повільний видих, ніби дмухаєш на гарячий чай.":
+    "Breathe out slowly, as if cooling a hot cup of tea.",
+  Поруч: "You're not alone",
   "Скажи собі: «Мені зараз важко, і я дбаю про себе». Можна покликати дорослого, якому довіряєш.":
     "Tell yourself: “This is hard right now, and I'm taking care of me.” You can call a grown-up you trust.",
-  "Одна хвилина — і ти вже трохи ближче до себе.": "One minute — and you're a little closer to yourself.",
+  "Одна хвилина — і ти вже трохи ближче до себе.":
+    "One minute — and you're a little closer to yourself.",
 
   // ---- path ----
   "Що хочеться спробувати?": "What would you like to try?",
@@ -650,9 +703,9 @@ const EN: Record<string, string> = {
   "Щось інше": "Something else",
   "Наскільки страшно?": "How scary is it?",
   "Обери, як це відчувається.": "Choose how it feels.",
-  "Трішки": "A little",
-  "Середньо": "Medium",
-  "Дуже": "A lot",
+  Трішки: "A little",
+  Середньо: "Medium",
+  Дуже: "A lot",
   "Дарина каже: «Мені теж буває дуже страшно. Тоді я роблю крок ще меншим». Це нормально.":
     "Daryna says: “Sometimes I feel very scared too. Then I make the step even smaller.” That's normal.",
   "Будь-яке відчуття нормальне. Сміливість — це діяти, навіть коли трохи страшно.":
@@ -661,10 +714,11 @@ const EN: Record<string, string> = {
   "Яким може бути найменший крок? Наприклад, просто сказати «привіт» або підняти руку на пів хвилини.":
     "What could the smallest step be? For example, just saying “hi”, or raising your hand for half a minute.",
   "Хто підтримає?": "Who will cheer you on?",
-  "Подумай, кому можна розповісти про свій план.": "Think of someone you could tell about your plan.",
+  "Подумай, кому можна розповісти про свій план.":
+    "Think of someone you could tell about your plan.",
   "Мама чи тато": "Mum or dad",
-  "Вчитель": "A teacher",
-  "Друг": "A friend",
+  Вчитель: "A teacher",
+  Друг: "A friend",
   "Поки ніхто": "No one yet",
   "Обіцянка собі": "A promise to yourself",
   "Скажи: «Я спробую у своєму темпі. Навіть якщо не вийде одразу — я молодець, що пробую».":
@@ -675,10 +729,11 @@ const EN: Record<string, string> = {
     "Imagine: someone took your thing without asking. Something hot rises inside.",
   "Поміть почуття": "Notice the feeling",
   "Що ти відчуваєш?": "What are you feeling?",
-  "Образу": "Hurt feelings",
+  Образу: "Hurt feelings",
   "Все разом": "All of them",
   "Так, це почуття має право бути.": "Yes, this feeling has a right to be here.",
-  "Зроби три повільні видихи або порахуй до п’яти.": "Take three slow breaths out, or count to five.",
+  "Зроби три повільні видихи або порахуй до п’яти.":
+    "Take three slow breaths out, or count to five.",
   "Реакція чи відповідь?": "React or respond?",
   "Подивись: Тарас міг би одразу закричати й вихопити річ — це реакція. А можна зупинитися й обрати — це відповідь. Що обереш ти?":
     "Look: Taras could shout and grab the thing right away — that's a reaction. Or he could stop and choose — that's a response. What will you choose?",
@@ -691,10 +746,12 @@ const EN: Record<string, string> = {
   "Чудово! Ти сказав про себе чесно й спокійно — і тебе легше почути.":
     "Wonderful! You spoke up for yourself calmly and honestly — and people can hear you better that way.",
   "Мудрий вибір. Просити допомоги — це сила.": "A wise choice. Asking for help is a strength.",
-  "Гарно! Коли злість стихне, буде легше домовитися.": "Nicely done! Once the anger settles, it's easier to work things out.",
+  "Гарно! Коли злість стихне, буде легше домовитися.":
+    "Nicely done! Once the anger settles, it's easier to work things out.",
   "Пауза дає тобі силу обирати.": "The pause gives you the power to choose.",
   "Ми хочемо різного": "We want different things",
-  "Ти хочеш гратися в м’яч, а друг — малювати.": "You want to play ball, and your friend wants to draw.",
+  "Ти хочеш гратися в м’яч, а друг — малювати.":
+    "You want to play ball, and your friend wants to draw.",
   "Спитай: «А чому тобі хочеться саме це?» Слухай, не перебиваючи.":
     "Ask: “Why do you want that?” Listen without interrupting.",
   "Сказати про себе": "Speak for yourself",
@@ -706,36 +763,40 @@ const EN: Record<string, string> = {
   "Придумати гру разом": "Invent a game together",
   "Наполягти на своєму": "Insist on your own way",
   "Справедливо! Тарас усміхається: «Домовились!»": "Fair enough! Taras smiles: “Deal!”",
-  "Ого — малювати м’яч, а потім пограти! Обоє раді.": "Wow — drawing a ball, then playing ball! You're both happy.",
+  "Ого — малювати м’яч, а потім пограти! Обоє раді.":
+    "Wow — drawing a ball, then playing ball! You're both happy.",
   "Тарас засмутився й пішов. Буває… Спробуй інший варіант — що буде тоді?":
     "Taras got upset and walked away. It happens… Try a different option — what happens then?",
-  "Слухати й говорити про себе — це міст між людьми.": "Listening and speaking for yourself is a bridge between people.",
+  "Слухати й говорити про себе — це міст між людьми.":
+    "Listening and speaking for yourself is a bridge between people.",
   "Яка проблема?": "What's the problem?",
   "Назви її коротко. Наприклад: «Я забув зошит удома».":
     "Name it briefly. For example: “I forgot my workbook at home.”",
-  "Ідеї": "Ideas",
+  Ідеї: "Ideas",
   "Придумай три можливості — навіть смішні. Тут немає поганих ідей.":
     "Think of three possibilities — even silly ones. There are no bad ideas here.",
   "Що буде далі?": "What happens next?",
   "Для кожної ідеї подумай: що станеться, якщо так зробити?":
     "For each idea, think: what would happen if you did that?",
-  "Обираю": "I choose",
+  Обираю: "I choose",
   "Яка ідея найкраща зараз?": "Which idea is best right now?",
-  "Перша": "The first one",
-  "Друга": "The second one",
-  "Третя": "The third one",
+  Перша: "The first one",
+  Друга: "The second one",
+  Третя: "The third one",
   "Спитаю поради": "I'll ask for advice",
-  "Спробуй. Якщо не спрацює — є інші стежки.": "Give it a try. If it doesn't work — there are other paths.",
-  "Коли є кілька стежок — глухого кута немає.": "When there are several paths, there's no dead end.",
+  "Спробуй. Якщо не спрацює — є інші стежки.":
+    "Give it a try. If it doesn't work — there are other paths.",
+  "Коли є кілька стежок — глухого кута немає.":
+    "When there are several paths, there's no dead end.",
   "Так буває": "It happens",
   "Згадай невелику помилку. Усі люди помиляються — навіть дорослі.":
     "Think of a small mistake. Everyone makes mistakes — even grown-ups.",
   "Як ти себе почуваєш?": "How do you feel?",
   "Обери.": "Choose.",
-  "Соромно": "Ashamed",
-  "Сумно": "Sad",
+  Соромно: "Ashamed",
+  Сумно: "Sad",
   "Злюся на себе": "Angry at myself",
-  "Нормально": "Okay",
+  Нормально: "Okay",
   "Ці почуття показують, що тобі не байдуже.": "These feelings show that you care.",
   "Чого навчився?": "What did you learn?",
   "Що ти тепер знаєш, чого не знав раніше?": "What do you know now that you didn't know before?",
@@ -796,7 +857,7 @@ const EN: Record<string, string> = {
   "Місяць дивиться згори й береже сон усієї долини. І твій теж. На добраніч.":
     "The moon watches from above and keeps watch over the whole valley's sleep. Over yours too. Good night.",
   "Казка закінчилась. Вона залишиться з тобою.": "The story is over. It will stay with you.",
-  "Дивитися": "Watch",
+  Дивитися: "Watch",
   "Попередня сцена": "Previous scene",
   "Наступна сцена": "Next scene",
   "Відео-казка": "Story video",
@@ -804,7 +865,8 @@ const EN: Record<string, string> = {
     "Scene {i} of {n}. Turn on the voice in Settings to hear the story read aloud.",
   "Твоя зірочка засвітилась на небі.": "Your little star has lit up in the sky.",
   "Згадай свій день": "Remember your day",
-  "Подумай про сьогодні — без оцінок, просто згадай.": "Think about today — no judging, just remembering.",
+  "Подумай про сьогодні — без оцінок, просто згадай.":
+    "Think about today — no judging, just remembering.",
   "Маленька мить": "A small moment",
   "Яка мить була теплою або цікавою?": "Which moment was warm or interesting?",
   "Щось смачне": "Something tasty",
@@ -812,27 +874,30 @@ const EN: Record<string, string> = {
   "Я щось зробив сам": "I did something by myself",
   "Просто тиша": "Just quiet",
   "Нехай ця мить стане твоєю зірочкою.": "Let this moment become your little star.",
-  "Дякую": "Thank you",
-  "Кому або чому хочеться сказати «дякую» сьогодні?": "Who or what would you like to say “thank you” to today?",
-  "Обери звук і просто послухай. Можна заплющити очі.": "Pick a sound and simply listen. You can close your eyes.",
-  "Дощ": "Rain",
-  "Вітер": "Wind",
-  "Цвіркуни": "Crickets",
-  "Тиша": "Silence",
+  Дякую: "Thank you",
+  "Кому або чому хочеться сказати «дякую» сьогодні?":
+    "Who or what would you like to say “thank you” to today?",
+  "Обери звук і просто послухай. Можна заплющити очі.":
+    "Pick a sound and simply listen. You can close your eyes.",
+  Дощ: "Rain",
+  Вітер: "Wind",
+  Цвіркуни: "Crickets",
+  Тиша: "Silence",
 
   // ---- studio ----
   "Аркуш для малювання": "Drawing sheet",
-  "Кольори": "Colours",
-  "Колір": "Colour",
-  "Гумка": "Eraser",
-  "Тонкий": "Thin",
-  "Середній": "Medium",
-  "Товстий": "Thick",
-  "Очистити": "Clear",
-  "Зберегти": "Save",
+  Кольори: "Colours",
+  Колір: "Colour",
+  Гумка: "Eraser",
+  Тонкий: "Thin",
+  Середній: "Medium",
+  Товстий: "Thick",
+  Очистити: "Clear",
+  Зберегти: "Save",
   "Збережено лише на цьому пристрої.": "Saved on this device only.",
-  "Малювати": "Draw",
-  "Малюй усе, що хочеш. Тут немає неправильних ліній.": "Draw anything you like. There are no wrong lines here.",
+  Малювати: "Draw",
+  "Малюй усе, що хочеш. Тут немає неправильних ліній.":
+    "Draw anything you like. There are no wrong lines here.",
   "Якби твоє почуття зараз було кольором чи формою — яким би воно було? Намалюй його.":
     "If your feeling were a colour or a shape right now — what would it be? Draw it.",
   "Обери колір і торкнись пелюстки. Соняшник може бути будь-якого кольору!":
@@ -864,13 +929,13 @@ const EN: Record<string, string> = {
   "Що допомагає саме мені": "What helps me",
   "Мені допомагає…": "What helps me is…",
   "Що мені допомагає": "What helps me",
-  "Додати": "Add",
+  Додати: "Add",
   "Обійняти іграшку": "Hug a toy",
   "Поговорити з мамою": "Talk to mum",
   "Послухати музику": "Listen to music",
   "Випити теплого чаю": "Drink warm tea",
   "Погладити кота": "Pet the cat",
-  "Помалювати": "Draw a little",
+  Помалювати: "Draw a little",
   "Прибрати: {c}": "Remove: {c}",
   "Мої улюблені вправи": "My favourite exercises",
   "Торкнись ♥ у будь-якій вправі, і вона з’явиться тут.":
@@ -884,18 +949,18 @@ const EN: Record<string, string> = {
   "🔊 Звук": "🔊 Sound",
   "Увесь звук": "All sound",
   "Головний вимикач": "The master switch",
-  "Гучність": "Volume",
+  Гучність: "Volume",
   "Фонова музика й природа": "Background music and nature",
   "Легкі українські мелодії та природа": "Light Ukrainian melodies and nature",
   "Яка музика": "Which music",
   "Яка музика звучить": "Which music plays",
-  "Бандура": "Bandura",
+  Бандура: "Bandura",
   "Ніжні перебори струн": "Gentle string plucks",
-  "Сопілка": "Sopilka",
+  Сопілка: "Sopilka",
   "Легка дерев’яна флейта над бандурою": "A light wooden flute over the bandura",
-  "Цимбали": "Tsymbaly",
+  Цимбали: "Tsymbaly",
   "Дзвінкі, грайливі молоточки": "Bright, playful hammered dulcimer",
-  "Колискова": "Lullaby",
+  Колискова: "Lullaby",
   "Повільно й тихо, як перед сном": "Slow and soft, like before sleep",
   "Лише природа": "Nature only",
   "Вітерець і пташки, без мелодії": "A breeze and birds, no melody",
@@ -906,25 +971,28 @@ const EN: Record<string, string> = {
   "Читати вголос автоматично": "Read aloud automatically",
   "Персонажі самі промовляють інструкції. Текст завжди видно на екрані.":
     "Characters speak the instructions themselves. The text is always on screen.",
-  "Голос": "Voice",
-  "Автоматично": "Automatic",
+  Голос: "Voice",
+  Автоматично: "Automatic",
   "На цьому пристрої немає вбудованих голосів — інструкції завжди написані текстом.":
     "This device has no built-in voices — the instructions are always written as text.",
-  "Привіт! Я Соломія. Так звучить мій голос.": "Hi! I'm Solomiya. This is what my voice sounds like.",
+  "Привіт! Я Соломія. Так звучить мій голос.":
+    "Hi! I'm Solomiya. This is what my voice sounds like.",
   "Послухати голос": "Listen to the voice",
   "👀 Екран": "👀 Screen",
   "Розмір тексту": "Text size",
-  "Звичайний": "Normal",
-  "Більший": "Bigger",
-  "Великий": "Large",
+  Звичайний: "Normal",
+  Більший: "Bigger",
+  Великий: "Large",
   "Менше руху на екрані": "Less motion on screen",
   "🎂 Мій вік": "🎂 My age",
-  "Від віку залежать слова в деяких вправах.": "Some exercises use different words depending on age.",
+  "Від віку залежать слова в деяких вправах.":
+    "Some exercises use different words depending on age.",
   "📍 Мій шлях": "📍 My path",
   "Вже зроблено маленьких справ: {n}": "Little acts of self-care done: {n}",
 
   // ---- parents ----
-  "Як Тихе Місце дбає про приватність і безпеку дітей.": "How Quiet Place cares about children's privacy and safety.",
+  "Як Тихе Місце дбає про приватність і безпеку дітей.":
+    "How Quiet Place cares about children's privacy and safety.",
   "Приватність, безпека та призначення застосунку.": "Privacy, safety and what the app is for.",
   "Тихе Місце допомагає дітям 5–13 років пізнавати почуття й вчитися заспокоюватися.":
     "Quiet Place helps children ages 5–13 learn about feelings and practice calming down.",
@@ -944,7 +1012,8 @@ const EN: Record<string, string> = {
     "The friends are a little busy right now. Try again in a minute.",
   "Помічник зараз відпочиває. Можна вибрати вправу на мапі.":
     "The helper is resting right now. You can pick an exercise on the map.",
-  "Я уважно слухаю… Шукаю для тебе щось лагідне.": "I'm listening carefully… Looking for something gentle for you.",
+  "Я уважно слухаю… Шукаю для тебе щось лагідне.":
+    "I'm listening carefully… Looking for something gentle for you.",
   "Привіт! Розкажи своїми словами, як ти зараз. Можна одним словом. Можна нічого не писати.":
     "Hi! Tell me in your own words how you feel right now. One word is fine. You don't have to write anything.",
   "Як ти почуваєшся?": "How do you feel?",
@@ -952,7 +1021,7 @@ const EN: Record<string, string> = {
   "Слова не зберігаються. Їх читає Lovable AI, щоб підібрати вправу.":
     "Your words are not saved. Lovable AI reads them once to pick an exercise.",
   "Думаю…": "Thinking…",
-  "Підкажи": "Suggest",
+  Підкажи: "Suggest",
   "Щось не вийшло. Спробуй ще раз або обери вправу на мапі.":
     "That didn't work. Try again, or pick an exercise on the map.",
   "Схоже на: {f}": "Sounds like: {f}",
@@ -975,26 +1044,32 @@ const EN: Record<string, string> = {
   "Або обери:": "Or pick one:",
   "Автоматично (український)": "Automatic",
   "Вже зроблено маленьких справ:": "Little acts of self-care done:",
-  "Вісім чарівних місць: ліс почуттів, луг дихання, королівство хмар, нічне небо та інші.": "Eight magical places: the forest of feelings, the breathing meadow, the cloud kingdom, the night sky and more.",
+  "Вісім чарівних місць: ліс почуттів, луг дихання, королівство хмар, нічне небо та інші.":
+    "Eight magical places: the forest of feelings, the breathing meadow, the cloud kingdom, the night sky and more.",
   "Дихальний ритм": "Breathing rhythm",
   "Для дорослих — Тихе Місце": "For grown-ups — Quiet Place",
   "Ліс почуттів — Тихе Місце": "Forest of Feelings — Quiet Place",
   "Мапа світу — Тихе Місце": "World map — Quiet Place",
   "Обери, куди вирушити сьогодні.": "Choose where to go today.",
-  "Пауза": "Pause",
+  Пауза: "Pause",
   "Персонажі думають…": "The friends are thinking…",
-  "Персонажі підкажуть вправу саме для тебе. Це єдине місце, де твої слова вирушають у подорож — один раз, і ніхто їх не зберігає.": "The friends will suggest an activity just for you. This is the only place where your words go on a journey — once, and nobody keeps them.",
-  "Персонажі тимчасово недоступні. Спробуй пізніше.": "The friends are resting for a moment. Please try again soon.",
-  "Повернення": "Coming back",
+  "Персонажі підкажуть вправу саме для тебе. Це єдине місце, де твої слова вирушають у подорож — один раз, і ніхто їх не зберігає.":
+    "The friends will suggest an activity just for you. This is the only place where your words go on a journey — once, and nobody keeps them.",
+  "Персонажі тимчасово недоступні. Спробуй пізніше.":
+    "The friends are resting for a moment. Please try again soon.",
+  Повернення: "Coming back",
   "Помічник почуттів": "Feelings Helper",
-  "Розкажи, як ти почуваєшся — персонажі підкажуть вправу.": "Tell the friends how you feel — they will suggest an activity.",
+  "Розкажи, як ти почуваєшся — персонажі підкажуть вправу.":
+    "Tell the friends how you feel — they will suggest an activity.",
   "Прибрати: {l}": "Remove: {l}",
   "Підказати вправу": "Suggest an activity",
   "Розказати ще раз": "Tell it again",
   "Спробуй це": "Try this",
-  "Твої почуття — важливі. Якщо тобі страшно чи боляче, розкажи дорослому, якому довіряєш.": "Your feelings matter. If you feel scared or hurt, tell a grown-up you trust.",
-  "Торкнись": "Tap",
-  "Усі налаштування зберігаються лише на цьому пристрої.": "All settings are saved only on this device.",
+  "Твої почуття — важливі. Якщо тобі страшно чи боляче, розкажи дорослому, якому довіряєш.":
+    "Your feelings matter. If you feel scared or hurt, tell a grown-up you trust.",
+  Торкнись: "Tap",
+  "Усі налаштування зберігаються лише на цьому пристрої.":
+    "All settings are saved only on this device.",
   "Чому це може допомогти": "Why this may help",
   "у будь-якій вправі, і вона з’явиться тут.": "the heart in any activity and it will appear here.",
   "мене кривдять": "someone is being mean to me",
@@ -1007,43 +1082,54 @@ const EN: Record<string, string> = {
   "я сумую": "I feel sad",
   "🌻 Твій соняшник у саду трохи підріс.": "🌻 Your sunflower in the garden has grown a little.",
   "Для дорослих — прогрес дитини — Тихе Місце": "For grown-ups — child's progress — Quiet Place",
-  "Відвідані місця, виконані вправи та малюнки дитини — лише на цьому пристрої.": "The child's visited places, completed exercises and drawings — on this device only.",
-  "Панель для батьків: місця, вправи й малюнки дитини.": "Parent dashboard: the child's places, exercises and drawings.",
-  "Ця панель показує лише те, що збережено на цьому пристрої. Нічого не надсилається в інтернет. Це не оцінка — кожна дитина рухається у своєму темпі.": "This dashboard only shows what is saved on this device. Nothing is sent online. It isn't a score — every child moves at their own pace.",
-  "Підсумок": "Summary",
+  "Відвідані місця, виконані вправи та малюнки дитини — лише на цьому пристрої.":
+    "The child's visited places, completed exercises and drawings — on this device only.",
+  "Панель для батьків: місця, вправи й малюнки дитини.":
+    "Parent dashboard: the child's places, exercises and drawings.",
+  "Ця панель показує лише те, що збережено на цьому пристрої. Нічого не надсилається в інтернет. Це не оцінка — кожна дитина рухається у своєму темпі.":
+    "This dashboard only shows what is saved on this device. Nothing is sent online. It isn't a score — every child moves at their own pace.",
+  Підсумок: "Summary",
   "Відвідані місця": "Places visited",
   "Спробувані вправи": "Exercises tried",
   "Усього завершень": "Total completions",
   "Збережені малюнки": "Saved drawings",
   "Останні вправи": "Recent exercises",
   "Поки що жодної завершеної вправи.": "No exercises completed yet.",
-  "Місця": "Places",
+  Місця: "Places",
   "Востаннє: {d}": "Last: {d}",
   "Ще не відвідано": "Not visited yet",
-  "Вправи": "Exercises",
-  "Малюнки": "Drawings",
+  Вправи: "Exercises",
+  Малюнки: "Drawings",
   "Усі малюнки": "All drawings",
   "Малюнків поки немає.": "No drawings yet.",
-  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться.": "Erase the records of places and exercises? Drawings and settings will stay.",
-  "Скасувати": "Cancel",
-  "Стерти": "Erase",
+  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться.":
+    "Erase the records of places and exercises? Drawings and settings will stay.",
+  Скасувати: "Cancel",
+  Стерти: "Erase",
   "Очистити прогрес": "Clear progress",
   "Ви увійшли як дорослий: {e}": "Signed in as an adult: {e}",
-  "Вийти": "Sign out",
-  "Дані про заняття дитини залишаються лише на цьому пристрої й не завантажуються у ваш акаунт.": "The child's activity data stays on this device only and is not uploaded to your account.",
+  Вийти: "Sign out",
+  "Дані про заняття дитини залишаються лише на цьому пристрої й не завантажуються у ваш акаунт.":
+    "The child's activity data stays on this device only and is not uploaded to your account.",
   "Вхід для дорослих — Тихе Місце": "Adult sign-in — Quiet Place",
-  "Вхід лише для батьків і опікунів. Дітям акаунт не потрібен.": "Sign-in for parents and caregivers only. Children don't need an account.",
-  "Вхід для батьків і опікунів до панелі прогресу.": "Parent and caregiver sign-in to the progress dashboard.",
-  "Перевірте пошту й підтвердьте адресу, потім увійдіть.": "Check your email and confirm your address, then sign in.",
-  "Якщо такий акаунт є, ми надіслали лист для зміни пароля.": "If that account exists, we've sent a password reset email.",
-  "Не вдалося увійти. Перевірте пошту й пароль.": "Couldn't sign in. Check your email and password.",
+  "Вхід лише для батьків і опікунів. Дітям акаунт не потрібен.":
+    "Sign-in for parents and caregivers only. Children don't need an account.",
+  "Вхід для батьків і опікунів до панелі прогресу.":
+    "Parent and caregiver sign-in to the progress dashboard.",
+  "Перевірте пошту й підтвердьте адресу, потім увійдіть.":
+    "Check your email and confirm your address, then sign in.",
+  "Якщо такий акаунт є, ми надіслали лист для зміни пароля.":
+    "If that account exists, we've sent a password reset email.",
+  "Не вдалося увійти. Перевірте пошту й пароль.":
+    "Couldn't sign in. Check your email and password.",
   "Вхід для дорослих": "Adult sign-in",
   "Створити акаунт дорослого": "Create an adult account",
   "Відновити пароль": "Reset password",
-  "Цей вхід лише для батьків і опікунів. Дітям акаунт не потрібен — уся гра працює без нього. Дані дитини залишаються на цьому пристрої.": "This sign-in is for parents and caregivers only. Children don't need an account — the whole app works without one. The child's data stays on this device.",
+  "Цей вхід лише для батьків і опікунів. Дітям акаунт не потрібен — уся гра працює без нього. Дані дитини залишаються на цьому пристрої.":
+    "This sign-in is for parents and caregivers only. Children don't need an account — the whole app works without one. The child's data stays on this device.",
   "Електронна пошта дорослого": "Adult's email",
-  "Пароль": "Password",
-  "Увійти": "Sign in",
+  Пароль: "Password",
+  Увійти: "Sign in",
   "Створити акаунт": "Create account",
   "Надіслати лист": "Send email",
   "Маю акаунт — увійти": "I have an account — sign in",
@@ -1054,25 +1140,29 @@ const EN: Record<string, string> = {
   "Відновлення пароля для батьків і опікунів.": "Password recovery for parents and caregivers.",
   "Новий пароль": "New password",
   "Зберегти пароль": "Save password",
-  "Відкрийте це посилання з листа для зміни пароля.": "Open this page from the link in your password reset email.",
+  "Відкрийте це посилання з листа для зміни пароля.":
+    "Open this page from the link in your password reset email.",
   "Уся мапа — Тихе Місце": "Full map — Quiet Place",
-  "Розглянь увесь чарівний світ: наближай, рухай мапу й обирай місце.": "Explore the whole magical world: zoom, move the map and pick a place.",
+  "Розглянь увесь чарівний світ: наближай, рухай мапу й обирай місце.":
+    "Explore the whole magical world: zoom, move the map and pick a place.",
   "Наближай мапу й торкайся будь-якого місця.": "Zoom the map and tap any place.",
   "Назад до мапи": "Back to the map",
   "Уся мапа": "Full map",
-  "Масштаб": "Zoom",
-  "Наблизити": "Zoom in",
-  "Віддалити": "Zoom out",
+  Масштаб: "Zoom",
+  Наблизити: "Zoom in",
+  Віддалити: "Zoom out",
   "Показати весь світ": "Show the whole world",
-  "Закрити": "Close",
+  Закрити: "Close",
   "Вирушити сюди": "Go here",
   "Які голоси": "Which voices",
   "Живі українські голоси": "Natural Ukrainian voices",
-  "Тепла природна вимова. Потрібен інтернет; надсилаються лише фрази застосунку.": "Warm, natural pronunciation. Needs internet; only the app's own lines are sent.",
+  "Тепла природна вимова. Потрібен інтернет; надсилаються лише фрази застосунку.":
+    "Warm, natural pronunciation. Needs internet; only the app's own lines are sent.",
   "Голос пристрою": "Device voice",
   "Працює без інтернету, але звучить більш механічно.": "Works offline but sounds more robotic.",
   "Голос оповідача": "Narrator voice",
-  "Кожен персонаж має свій власний голос. Тут обери голос для казок і підказок.": "Each character has their own voice. Choose the voice for stories and hints here.",
+  "Кожен персонаж має свій власний голос. Тут обери голос для казок і підказок.":
+    "Each character has their own voice. Choose the voice for stories and hints here.",
   "Привіт! Так звучатиме казка.": "Hello! This is how the story will sound.",
   "Лагідна казкарка": "Gentle storyteller",
   "Ніжна співуча": "Soft and melodic",
@@ -1084,7 +1174,7 @@ export type { Lang };
 
 /** Translate one string for an explicit language (usable on the server). */
 export function tr(s: string, lang: Lang, vars?: Record<string, string | number>): string {
-  let out = lang === "en" ? EN[s] ?? s : s;
+  let out = lang === "en" ? (EN[s] ?? s) : s;
   if (vars) out = out.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
   return out;
 }
@@ -1097,7 +1187,10 @@ export function t(s: string, vars?: Record<string, string | number>): string {
 /** Reactive translate: components re-render when the child switches language. */
 export function useT() {
   const lang = useStore((s) => s.lang);
-  return useCallback((s: string, vars?: Record<string, string | number>) => tr(s, lang, vars), [lang]);
+  return useCallback(
+    (s: string, vars?: Record<string, string | number>) => tr(s, lang, vars),
+    [lang],
+  );
 }
 
 export function useLang(): Lang {

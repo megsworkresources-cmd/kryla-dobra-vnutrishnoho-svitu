@@ -31,64 +31,156 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
   const btn = `${night ? "night-card" : "paper-card"} flex h-12 items-center justify-center transition active:scale-90`;
 
   return (
-    <div className={`relative flex min-h-dvh flex-col overflow-x-clip ${night ? "bg-night text-moon" : "bg-paper"}`}>
+    <div
+      className={`relative flex min-h-dvh flex-col overflow-x-clip ${night ? "bg-night text-moon" : "bg-paper"}`}
+    >
       {image && (
-        <div className={`absolute inset-x-0 top-0 ${compact ? "h-[46vh]" : "h-full"} overflow-hidden`} aria-hidden>
+        <div
+          className={`absolute inset-x-0 top-0 ${compact ? "h-[46vh]" : "h-full"} overflow-hidden`}
+          aria-hidden
+        >
           <img src={image} alt="" className="h-full w-full object-cover animate-kenburns" />
           <div className={`absolute inset-0 ${night ? "veil-night" : "veil-bottom"}`} />
         </div>
       )}
       <header className="relative z-20 mx-auto flex w-full max-w-3xl items-center gap-2 px-4 pt-4">
         <button
-          onClick={() => (back ? router.navigate({ to: back }) : window.history.length > 1 ? router.history.back() : router.navigate({ to: "/world" }))}
+          onClick={() =>
+            back
+              ? router.navigate({ to: back })
+              : window.history.length > 1
+                ? router.history.back()
+                : router.navigate({ to: "/world" })
+          }
           className={`${btn} gap-1.5 px-3 text-sm font-bold sm:px-4`}
           aria-label={t("Назад")}
         >
-          <ArrowLeft className="h-5 w-5" /><span className="hidden min-[480px]:inline">{t("Назад")}</span>
+          <ArrowLeft className="h-5 w-5" />
+          <span className="hidden min-[480px]:inline">{t("Назад")}</span>
         </button>
-        <Link to="/" className={`${btn} w-12`} aria-label={t("Додому")}><Home className="h-5 w-5" /></Link>
-        <Link to="/world" className={`${btn} w-12`} aria-label={t("Мапа світу (головне меню)")}><Map className="h-5 w-5" /></Link>
+        <Link to="/" className={`${btn} w-12`} aria-label={t("Додому")}>
+          <Home className="h-5 w-5" />
+        </Link>
+        <Link to="/world" className={`${btn} w-12`} aria-label={t("Мапа світу (головне меню)")}>
+          <Map className="h-5 w-5" />
+        </Link>
         <div className="flex-1" />
         {favHref && (
-          <button onClick={() => { sfx("confirm"); toggleFavorite(favHref); }} className={`${btn} w-12`} aria-pressed={isFav}
-            aria-label={isFav ? t("Прибрати з мого безпечного місця") : t("Додати в моє безпечне місце")}>
+          <button
+            onClick={() => {
+              sfx("confirm");
+              toggleFavorite(favHref);
+            }}
+            className={`${btn} w-12`}
+            aria-pressed={isFav}
+            aria-label={
+              isFav ? t("Прибрати з мого безпечного місця") : t("Додати в моє безпечне місце")
+            }
+          >
             <Heart className={`h-5 w-5 ${isFav ? "fill-rose text-rose" : ""}`} />
           </button>
         )}
         <LangToggle night={night} />
-        <Link to="/settings" className={`${btn} w-12`} aria-label={t("Налаштування звуку й екрана")}><Settings2 className="h-5 w-5" /></Link>
+        <Link
+          to="/settings"
+          className={`${btn} w-12`}
+          aria-label={t("Налаштування звуку й екрана")}
+        >
+          <Settings2 className="h-5 w-5" />
+        </Link>
       </header>
-      {title && <h1 className="relative z-20 mx-auto mt-3 w-full max-w-3xl px-4 font-display text-2xl font-bold drop-shadow-sm sm:text-3xl">{t(title)}</h1>}
-      <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 animate-fade-up px-4 pb-6 pt-4">{children}</main>
+      {title && (
+        <h1 className="relative z-20 mx-auto mt-3 w-full max-w-3xl px-4 font-display text-2xl font-bold drop-shadow-sm sm:text-3xl">
+          {t(title)}
+        </h1>
+      )}
+      <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 animate-fade-up px-4 pb-6 pt-4">
+        {children}
+      </main>
       <BottomNav night={night} />
     </div>
   );
 }
 
-export function DoneCard({ text, again, night, who }: { text: string; again?: () => void; night?: boolean; who?: CharId }) {
+export function DoneCard({
+  text,
+  again,
+  night,
+  who,
+}: {
+  text: string;
+  again?: () => void;
+  night?: boolean;
+  who?: CharId;
+}) {
   const { pathname } = useLocation();
   const t = useT();
   const hero = who ?? castFor(pathname.split("/")[1] ?? "")[0];
   const [cheer] = useState(() => cheerOf(hero));
-  useEffect(() => { sfx("complete"); }, []);
+  useEffect(() => {
+    sfx("complete");
+  }, []);
   return (
-    <div className={`${night ? "night-card" : "paper-card"} relative animate-pop overflow-hidden p-6 text-center`}>
+    <div
+      className={`${night ? "night-card" : "paper-card"} relative animate-pop overflow-hidden p-6 text-center`}
+    >
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        {[8, 22, 40, 58, 74, 90].map((l, i) => <span key={l} className="absolute top-0 text-xl animate-petal" style={{ left: `${l}%`, animationDelay: `${i * 0.25}s` }}>🌼</span>)}
+        {[8, 22, 40, 58, 74, 90].map((l, i) => (
+          <span
+            key={l}
+            className="absolute top-0 text-xl animate-petal"
+            style={{ left: `${l}%`, animationDelay: `${i * 0.25}s` }}
+          >
+            🌼
+          </span>
+        ))}
       </div>
       <CharacterSay who={hero} night={night} mood="cheer" size="lg" text={`${t(cheer)} ${text}`} />
-      <div className="mt-4"><MagicStage theme={pathname.split("/")[1] ?? "meadow"} night={night} count={8} label={t("Святкове небо: торкайся, щоб засвітити")} /></div>
-      <p className={`mt-4 text-base ${night ? "opacity-80" : "text-muted-foreground"}`}>{t("🌻 Твій соняшник у саду трохи підріс.")}</p>
+      <div className="mt-4">
+        <MagicStage
+          theme={pathname.split("/")[1] ?? "meadow"}
+          night={night}
+          count={8}
+          label={t("Святкове небо: торкайся, щоб засвітити")}
+        />
+      </div>
+      <p className={`mt-4 text-base ${night ? "opacity-80" : "text-muted-foreground"}`}>
+        {t("🌻 Твій соняшник у саду трохи підріс.")}
+      </p>
       <div className="mt-5 flex flex-wrap justify-center gap-2">
-        {again && <Btn variant="soft" onClick={again}>{t("Ще раз")}</Btn>}
-        <Link to="/garden" className="flex min-h-12 items-center rounded-full bg-honey px-5 font-bold text-accent-foreground shadow-soft">{t("Подивитися на соняшник")}</Link>
+        {again && (
+          <Btn variant="soft" onClick={again}>
+            {t("Ще раз")}
+          </Btn>
+        )}
+        <Link
+          to="/garden"
+          className="flex min-h-12 items-center rounded-full bg-honey px-5 font-bold text-accent-foreground shadow-soft"
+        >
+          {t("Подивитися на соняшник")}
+        </Link>
       </div>
     </div>
   );
 }
 
-export function Btn({ children, onClick, variant = "primary", disabled, className = "", ...rest }: {
-  children: ReactNode; onClick?: () => void; variant?: "primary" | "soft" | "honey" | "ghost"; disabled?: boolean; className?: string; "aria-label"?: string; "aria-pressed"?: boolean;
+export function Btn({
+  children,
+  onClick,
+  variant = "primary",
+  disabled,
+  className = "",
+  type = "button",
+  ...rest
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+  variant?: "primary" | "soft" | "honey" | "ghost";
+  disabled?: boolean;
+  className?: string;
+  "aria-label"?: string;
+  "aria-pressed"?: boolean;
+  type?: "button" | "submit" | "reset";
 }) {
   const v = {
     primary: "bg-primary text-primary-foreground",
@@ -97,7 +189,13 @@ export function Btn({ children, onClick, variant = "primary", disabled, classNam
     ghost: "border-2 border-current bg-transparent",
   }[variant];
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className={`min-h-12 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:opacity-40 ${v} ${className}`} {...rest}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`min-h-12 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:opacity-40 ${v} ${className}`}
+      {...rest}
+    >
       {children}
     </button>
   );

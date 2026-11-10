@@ -1,4 +1,5 @@
 # Completion roadmap
+- [ ] Audit and complete caregiver authentication, session handling, recovery and regression checks.
 - [x] OAuth-protected activity catalog MCP + browser map tools: manifest extracted (2 tools), signed-out consent redirects to adult login with request preserved, verified at phone size (390x844).
 - [ ] Real external MCP client authorization end to end (needs an outside agent to run the OAuth consent flow).
 - [x] All places, exercises, stories and creative tools.

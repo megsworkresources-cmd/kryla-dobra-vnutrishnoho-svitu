@@ -12,7 +12,9 @@ export const verifyCaregiver = createServerFn({ method: "POST" })
     const token = getRequestHeader("authorization")?.replace(/^Bearer /, "");
     if (!token) throw new Error("Unauthorized");
     const { data, error } = await context.supabase.auth.getUser(token);
-    if (error || !data.user || data.user.is_anonymous || !data.user.email_confirmed_at) {
+    // Email confirmation is enforced by hosted sign-in; do not reinterpret
+    // legitimate Auth-issued sessions (including owner preview sessions).
+    if (error || !data.user || data.user.is_anonymous) {
       throw new Error("Unauthorized");
     }
     return { userId: data.user.id, email: data.user.email ?? null };

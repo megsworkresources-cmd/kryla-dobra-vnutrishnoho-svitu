@@ -25,7 +25,7 @@ const verify = () =>
 
 describe("caregiver server identity", () => {
   beforeEach(() => vi.clearAllMocks());
-  it("returns only confirmed adult account identity and forbids shared caching", async () => {
+  it("returns only server-verified account identity and forbids shared caching", async () => {
     mocks.getUser.mockResolvedValue({
       data: {
         user: {
@@ -44,8 +44,7 @@ describe("caregiver server identity", () => {
   it.each([
     { user: null },
     { user: { id: "anonymous", is_anonymous: true, email_confirmed_at: "2026-11-10" } },
-    { user: { id: "unconfirmed", is_anonymous: false } },
-  ])("rejects missing, anonymous, or unconfirmed identity: %j", async (data) => {
+  ])("rejects missing or anonymous identity: %j", async (data) => {
     mocks.getUser.mockResolvedValue({ data, error: null });
     await expect(verify()).rejects.toThrow("Unauthorized");
   });

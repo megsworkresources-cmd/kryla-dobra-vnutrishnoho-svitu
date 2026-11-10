@@ -10,7 +10,9 @@ export const SIGN_IN_PATH = "/caregiver-login";
 export function safeReturnPath(raw: unknown): string {
   const path = oauthReturnPath(raw);
   const pathname = path.split(/[?#]/)[0];
-  return path === "/" || pathname === "/caregiver-login" || pathname === "/reset-password" ? "/parents" : path;
+  return path === "/" || pathname === "/caregiver-login" || pathname === "/reset-password"
+    ? "/parents"
+    : path;
 }
 
 export interface Caregiver {

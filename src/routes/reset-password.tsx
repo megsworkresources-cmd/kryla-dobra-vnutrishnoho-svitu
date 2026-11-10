@@ -32,7 +32,11 @@ function ResetPassword() {
     let active = true;
     const check = async () => {
       let saved: string | null = null;
-      try { saved = sessionStorage.getItem(RECOVERY_KEY); } catch { /* optional storage */ }
+      try {
+        saved = sessionStorage.getItem(RECOVERY_KEY);
+      } catch {
+        /* optional storage */
+      }
       if (!recoveryRequested(window.location.hash, saved)) return;
       try {
         const { data, error } = await supabase.auth.getUser();
@@ -40,13 +44,22 @@ function ResetPassword() {
         const valid = !error && !!data.user;
         setReady(valid);
         if (valid) {
-          try { sessionStorage.setItem(RECOVERY_KEY, "1"); } catch { /* optional storage */ }
+          try {
+            sessionStorage.setItem(RECOVERY_KEY, "1");
+          } catch {
+            /* optional storage */
+          }
         }
-      } catch { if (active) setReady(false); }
+      } catch {
+        if (active) setReady(false);
+      }
     };
     void check();
     window.addEventListener("caregiver-recovery", check);
-    return () => { active = false; window.removeEventListener("caregiver-recovery", check); };
+    return () => {
+      active = false;
+      window.removeEventListener("caregiver-recovery", check);
+    };
   }, []);
 
   async function submit(e: FormEvent) {
@@ -57,10 +70,17 @@ function ResetPassword() {
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      try { sessionStorage.removeItem(RECOVERY_KEY); } catch { /* optional storage */ }
+      try {
+        sessionStorage.removeItem(RECOVERY_KEY);
+      } catch {
+        /* optional storage */
+      }
       await navigate({ to: "/parents", replace: true });
-    } catch { setErr(t("Не вдалося зберегти пароль. Відкрийте новий лист відновлення й спробуйте ще раз.")); }
-    finally { setBusy(false); }
+    } catch {
+      setErr(t("Не вдалося зберегти пароль. Відкрийте новий лист відновлення й спробуйте ще раз."));
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -86,11 +106,7 @@ function ResetPassword() {
                 {err}
               </p>
             )}
-            <Btn
-              type="submit"
-              disabled={busy}
-              className="w-full"
-            >
+            <Btn type="submit" disabled={busy} className="w-full">
               {t("Зберегти пароль")}
             </Btn>
           </>

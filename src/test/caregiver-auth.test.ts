@@ -56,9 +56,23 @@ describe("caregiver gate", () => {
     expect(safeReturnPath("/parents")).toBe("/parents");
   });
   it("rejects expired sessions and token lookup failures", async () => {
-    const verify = vi.fn(async () => { throw new Error("expired"); });
-    expect(await checkCaregiver({ href: "/parents", getToken: async () => "expired.token.x", verify })).toEqual({ ok: false, redirectTo: "/caregiver-login", returnTo: "/parents" });
-    expect((await checkCaregiver({ href: "/parents", getToken: async () => { throw new Error("offline"); }, verify })).ok).toBe(false);
+    const verify = vi.fn(async () => {
+      throw new Error("expired");
+    });
+    expect(
+      await checkCaregiver({ href: "/parents", getToken: async () => "expired.token.x", verify }),
+    ).toEqual({ ok: false, redirectTo: "/caregiver-login", returnTo: "/parents" });
+    expect(
+      (
+        await checkCaregiver({
+          href: "/parents",
+          getToken: async () => {
+            throw new Error("offline");
+          },
+          verify,
+        })
+      ).ok,
+    ).toBe(false);
   });
   it("avoids redirect loops back into sign-in or recovery", () => {
     expect(safeReturnPath("/caregiver-login?redirect=/parents")).toBe("/parents");

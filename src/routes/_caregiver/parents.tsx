@@ -53,10 +53,14 @@ function Parents() {
         cancel: () => queryClient.cancelQueries(),
         clear: () => queryClient.clear(),
         signOut: () => supabase.auth.signOut(),
-        navigate: () => navigate({ to: "/caregiver-login", search: { redirect: "/parents" }, replace: true }),
+        navigate: () =>
+          navigate({ to: "/caregiver-login", search: { redirect: "/parents" }, replace: true }),
       });
-    } catch { setSignOutError(true); }
-    finally { setSigningOut(false); }
+    } catch {
+      setSignOutError(true);
+    } finally {
+      setSigningOut(false);
+    }
   };
   const date = (ms?: number) =>
     ms ? new Date(ms).toLocaleDateString(localeOf(lang), { day: "numeric", month: "short" }) : "—";
@@ -84,7 +88,11 @@ function Parents() {
             {t("Вийти")}
           </Btn>
         </div>
-        {signOutError && <p role="alert" className="text-destructive">{t("Не вдалося вийти. Спробуйте ще раз.")}</p>}
+        {signOutError && (
+          <p role="alert" className="text-destructive">
+            {t("Не вдалося вийти. Спробуйте ще раз.")}
+          </p>
+        )}
         <p className="paper-card p-4 text-sm font-semibold">
           {t(
             "Дані про заняття дитини залишаються лише на цьому пристрої й не завантажуються у ваш акаунт.",

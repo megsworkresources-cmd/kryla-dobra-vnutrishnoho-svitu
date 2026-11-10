@@ -9,7 +9,9 @@ import { RECOVERY_KEY, recoveryRequested } from "@/lib/caregiver-session";
 type Mode = "signin" | "signup" | "forgot";
 
 export const Route = createFileRoute("/caregiver-login")({
-  validateSearch: (s: Record<string, unknown>) => ({ redirect: safeReturnPath(s["next"] ?? s["redirect"]) }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    redirect: safeReturnPath(s["next"] ?? s["redirect"]),
+  }),
   head: () => ({
     meta: [
       { title: "Вхід для дорослих — Тихе Місце" },
@@ -44,15 +46,24 @@ function CaregiverLogin() {
   useEffect(() => {
     let active = true;
     let saved: string | null = null;
-    try { saved = sessionStorage.getItem(RECOVERY_KEY); } catch { /* optional storage */ }
+    try {
+      saved = sessionStorage.getItem(RECOVERY_KEY);
+    } catch {
+      /* optional storage */
+    }
     if (recoveryRequested(window.location.hash, saved)) {
       void navigate({ to: "/reset-password", replace: true });
       return;
     }
-    void supabase.auth.getUser().then(({ data }) => {
-      if (active && data.user) void navigate({ to: redirect as never, replace: true });
-    }).catch(() => {});
-    return () => { active = false; };
+    void supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (active && data.user) void navigate({ to: redirect as never, replace: true });
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
   }, [navigate, redirect]);
 
   async function submit(e: FormEvent) {
@@ -147,11 +158,7 @@ function CaregiverLogin() {
               {msg.text}
             </p>
           )}
-          <Btn
-            type="submit"
-            disabled={busy}
-            className="w-full"
-          >
+          <Btn type="submit" disabled={busy} className="w-full">
             {t({ signin: "Увійти", signup: "Створити акаунт", forgot: "Надіслати лист" }[mode])}
           </Btn>
           <div className="flex flex-wrap justify-center gap-2 text-sm">

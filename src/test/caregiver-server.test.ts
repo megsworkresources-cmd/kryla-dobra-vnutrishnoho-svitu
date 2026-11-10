@@ -2,23 +2,38 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ getUser: vi.fn(), header: vi.fn(), middleware: {} }));
 vi.mock("@tanstack/react-start", () => ({
-  createServerFn: () => ({ middleware: (items: unknown[]) => {
-    expect(items).toEqual([mocks.middleware]);
-    return { handler: (handler: (args: unknown) => unknown) => handler };
-  } }),
+  createServerFn: () => ({
+    middleware: (items: unknown[]) => {
+      expect(items).toEqual([mocks.middleware]);
+      return { handler: (handler: (args: unknown) => unknown) => handler };
+    },
+  }),
 }));
 vi.mock("@tanstack/react-start/server", () => ({ setResponseHeader: mocks.header }));
-vi.mock("@/integrations/supabase/auth-middleware", () => ({ requireSupabaseAuth: mocks.middleware }));
+vi.mock("@/integrations/supabase/auth-middleware", () => ({
+  requireSupabaseAuth: mocks.middleware,
+}));
 import { verifyCaregiver } from "@/lib/caregiver.functions";
 
-const verify = () => (verifyCaregiver as unknown as (args: unknown) => Promise<unknown>)({
-  context: { supabase: { auth: { getUser: mocks.getUser } } },
-});
+const verify = () =>
+  (verifyCaregiver as unknown as (args: unknown) => Promise<unknown>)({
+    context: { supabase: { auth: { getUser: mocks.getUser } } },
+  });
 
 describe("caregiver server identity", () => {
   beforeEach(() => vi.clearAllMocks());
   it("returns only confirmed adult account identity and forbids shared caching", async () => {
-    mocks.getUser.mockResolvedValue({ data: { user: { id: "caregiver", email: "adult@example.test", email_confirmed_at: "2026-11-10", is_anonymous: false } }, error: null });
+    mocks.getUser.mockResolvedValue({
+      data: {
+        user: {
+          id: "caregiver",
+          email: "adult@example.test",
+          email_confirmed_at: "2026-11-10",
+          is_anonymous: false,
+        },
+      },
+      error: null,
+    });
     expect(await verify()).toEqual({ userId: "caregiver", email: "adult@example.test" });
     expect(mocks.header).toHaveBeenCalledWith("Cache-Control", "no-store");
   });

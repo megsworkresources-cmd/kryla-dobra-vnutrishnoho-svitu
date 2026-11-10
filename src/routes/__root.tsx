@@ -91,7 +91,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#f7f1e3" },
       { title: "Тихе Місце" },
-      { name: "description", content: "Чарівний світ для дітей, де можна пізнавати почуття, дихати й заспокоюватися." },
+      {
+        name: "description",
+        content: "Чарівний світ для дітей, де можна пізнавати почуття, дихати й заспокоюватися.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -135,11 +138,19 @@ function RootComponent() {
       if (!transition.invalidate) return;
       // Do not call Auth again inside its synchronous subscriber (SDK lock).
       if (transition.recovery) {
-        try { sessionStorage.setItem(RECOVERY_KEY, "1"); } catch { /* optional storage */ }
+        try {
+          sessionStorage.setItem(RECOVERY_KEY, "1");
+        } catch {
+          /* optional storage */
+        }
         window.dispatchEvent(new Event("caregiver-recovery"));
       }
       if (transition.signedOut) {
-        try { sessionStorage.removeItem(RECOVERY_KEY); } catch { /* optional storage */ }
+        try {
+          sessionStorage.removeItem(RECOVERY_KEY);
+        } catch {
+          /* optional storage */
+        }
       }
       setTimeout(() => {
         const location = router.state.location;
@@ -147,7 +158,10 @@ function RootComponent() {
           void router.navigate({ to: "/reset-password", replace: true });
         } else if (event === "SIGNED_IN" && location.pathname === "/caregiver-login") {
           const params = new URLSearchParams(location.searchStr);
-          void router.navigate({ to: safeReturnPath(params.get("next") ?? params.get("redirect")) as never, replace: true });
+          void router.navigate({
+            to: safeReturnPath(params.get("next") ?? params.get("redirect")) as never,
+            replace: true,
+          });
         }
         if (transition.signedOut) {
           void queryClient.cancelQueries().then(() => {

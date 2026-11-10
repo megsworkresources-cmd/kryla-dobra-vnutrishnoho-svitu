@@ -9,7 +9,10 @@ vi.mock("@tanstack/react-start", () => ({
     },
   }),
 }));
-vi.mock("@tanstack/react-start/server", () => ({ setResponseHeader: mocks.header, getRequestHeader: () => "Bearer validated.token.example" }));
+vi.mock("@tanstack/react-start/server", () => ({
+  setResponseHeader: mocks.header,
+  getRequestHeader: () => "Bearer validated.token.example",
+}));
 vi.mock("@/integrations/supabase/auth-middleware", () => ({
   requireSupabaseAuth: mocks.middleware,
 }));

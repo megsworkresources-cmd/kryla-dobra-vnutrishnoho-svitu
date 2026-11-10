@@ -7,6 +7,9 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Не вдалося вийти. Спробуйте ще раз.": "Couldn't sign out. Please try again.",
+  "Не вдалося завершити дію. Перевірте дані й спробуйте ще раз.": "Couldn't complete the action. Check your details and try again.",
+  "Не вдалося зберегти пароль. Відкрийте новий лист відновлення й спробуйте ще раз.": "Couldn't save the password. Open a new recovery email and try again.",
   "Підключення помічника": "Connect an assistant",
   "Дозвіл дорослого на читання каталогу вправ.": "Adult permission to read the activity catalog.",
   "Цей запит недійсний або вже завершився. Почніть підключення знову у своєму помічнику.": "This request is invalid or has expired. Start connecting again in your assistant.",

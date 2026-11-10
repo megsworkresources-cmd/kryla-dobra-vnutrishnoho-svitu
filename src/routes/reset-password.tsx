@@ -1,8 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Scene } from "@/components/Scene";
+import { Btn, Scene } from "@/components/Scene";
 import { supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
+import { RECOVERY_KEY, recoveryRequested } from "@/lib/caregiver-session";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
@@ -25,20 +26,41 @@ function ResetPassword() {
   const [ready, setReady] = useState(false);
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (window.location.hash.includes("type=recovery")) setReady(true);
-    const { data } = supabase.auth.onAuthStateChange((ev) => {
-      if (ev === "PASSWORD_RECOVERY") setReady(true);
-    });
-    return () => data.subscription.unsubscribe();
+    let active = true;
+    const check = async () => {
+      let saved: string | null = null;
+      try { saved = sessionStorage.getItem(RECOVERY_KEY); } catch { /* optional storage */ }
+      if (!recoveryRequested(window.location.hash, saved)) return;
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (!active) return;
+        const valid = !error && !!data.user;
+        setReady(valid);
+        if (valid) {
+          try { sessionStorage.setItem(RECOVERY_KEY, "1"); } catch { /* optional storage */ }
+        }
+      } catch { if (active) setReady(false); }
+    };
+    void check();
+    window.addEventListener("caregiver-recovery", check);
+    return () => { active = false; window.removeEventListener("caregiver-recovery", check); };
   }, []);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    const { error } = await supabase.auth.updateUser({ password });
-    if (error) return setErr(error.message);
-    navigate({ to: "/parents", replace: true });
+    if (!ready || busy) return;
+    setBusy(true);
+    setErr("");
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+      try { sessionStorage.removeItem(RECOVERY_KEY); } catch { /* optional storage */ }
+      await navigate({ to: "/parents", replace: true });
+    } catch { setErr(t("Не вдалося зберегти пароль. Відкрийте новий лист відновлення й спробуйте ще раз.")); }
+    finally { setBusy(false); }
   }
 
   return (
@@ -64,12 +86,13 @@ function ResetPassword() {
                 {err}
               </p>
             )}
-            <button
+            <Btn
               type="submit"
-              className="min-h-12 w-full rounded-full bg-primary px-5 font-bold text-primary-foreground shadow-soft"
+              disabled={busy}
+              className="w-full"
             >
               {t("Зберегти пароль")}
-            </button>
+            </Btn>
           </>
         ) : (
           <p className="text-sm">{t("Відкрийте це посилання з листа для зміни пароля.")}</p>

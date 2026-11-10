@@ -135,6 +135,7 @@ function RootComponent() {
       // Do not call Auth again inside its synchronous subscriber (SDK lock).
       if (transition.recovery) {
         try { sessionStorage.setItem(RECOVERY_KEY, "1"); } catch { /* optional storage */ }
+        window.dispatchEvent(new Event("caregiver-recovery"));
       }
       if (transition.signedOut) {
         try { sessionStorage.removeItem(RECOVERY_KEY); } catch { /* optional storage */ }

@@ -1,10 +1,17 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { setResponseHeader } from "@tanstack/react-start/server";
 
 /** Server-side check: the bearer token is validated by the auth server before anything is returned. */
 export const verifyCaregiver = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const email = typeof context.claims.email === "string" ? context.claims.email : null;
-    return { userId: context.userId, email };
+    setResponseHeader("Cache-Control", "no-store");
+    // Claims validate signature/expiry; getUser also checks the current account
+    // with Auth rather than trusting an old identity or an anonymous account.
+    const { data, error } = await context.supabase.auth.getUser();
+    if (error || !data.user || data.user.is_anonymous || !data.user.email_confirmed_at) {
+      throw new Error("Unauthorized");
+    }
+    return { userId: data.user.id, email: data.user.email ?? null };
   });

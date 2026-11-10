@@ -7,6 +7,7 @@ import { PLACES } from "@/content/places";
 import { CATALOG } from "@/content/catalog";
 import { resetProgress, totalDone, useStore } from "@/lib/store";
 import { localeOf, useLang, useT } from "@/lib/i18n";
+import { signOutCaregiver } from "@/lib/caregiver-session";
 
 export const Route = createFileRoute("/_caregiver/parents")({
   head: () => ({
@@ -39,10 +40,23 @@ function Parents() {
   const drawings = useStore((s) => s.drawings);
   const [confirm, setConfirm] = useState(false);
   const { caregiver } = Route.useRouteContext();
+  const { queryClient } = Route.useRouteContext();
   const navigate = useNavigate();
+  const [signingOut, setSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState(false);
   const signOut = async () => {
-    await supabase.auth.signOut();
-    navigate({ to: "/caregiver-login", search: { redirect: "/parents" }, replace: true });
+    if (signingOut) return;
+    setSigningOut(true);
+    setSignOutError(false);
+    try {
+      await signOutCaregiver({
+        cancel: () => queryClient.cancelQueries(),
+        clear: () => queryClient.clear(),
+        signOut: () => supabase.auth.signOut(),
+        navigate: () => navigate({ to: "/caregiver-login", search: { redirect: "/parents" }, replace: true }),
+      });
+    } catch { setSignOutError(true); }
+    finally { setSigningOut(false); }
   };
   const date = (ms?: number) =>
     ms ? new Date(ms).toLocaleDateString(localeOf(lang), { day: "numeric", month: "short" }) : "—";
@@ -66,10 +80,11 @@ function Parents() {
       <div className="space-y-5">
         <div className="paper-card flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
           <span>{t("Ви увійшли як дорослий: {e}", { e: caregiver.email ?? "—" })}</span>
-          <Btn variant="soft" onClick={signOut}>
+          <Btn variant="soft" disabled={signingOut} onClick={signOut}>
             {t("Вийти")}
           </Btn>
         </div>
+        {signOutError && <p role="alert" className="text-destructive">{t("Не вдалося вийти. Спробуйте ще раз.")}</p>}
         <p className="paper-card p-4 text-sm font-semibold">
           {t(
             "Дані про заняття дитини залишаються лише на цьому пристрої й не завантажуються у ваш акаунт.",

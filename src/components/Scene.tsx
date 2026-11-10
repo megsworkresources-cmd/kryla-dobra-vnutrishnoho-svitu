@@ -87,8 +87,8 @@ export function DoneCard({ text, again, night, who }: { text: string; again?: ()
   );
 }
 
-export function Btn({ children, onClick, variant = "primary", disabled, className = "", ...rest }: {
-  children: ReactNode; onClick?: () => void; variant?: "primary" | "soft" | "honey" | "ghost"; disabled?: boolean; className?: string; "aria-label"?: string; "aria-pressed"?: boolean;
+export function Btn({ children, onClick, variant = "primary", disabled, className = "", type = "button", ...rest }: {
+  children: ReactNode; onClick?: () => void; variant?: "primary" | "soft" | "honey" | "ghost"; disabled?: boolean; className?: string; "aria-label"?: string; "aria-pressed"?: boolean; type?: "button" | "submit" | "reset";
 }) {
   const v = {
     primary: "bg-primary text-primary-foreground",
@@ -97,7 +97,7 @@ export function Btn({ children, onClick, variant = "primary", disabled, classNam
     ghost: "border-2 border-current bg-transparent",
   }[variant];
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className={`min-h-12 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:opacity-40 ${v} ${className}`} {...rest}>
+    <button type={type} onClick={onClick} disabled={disabled} className={`min-h-12 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:opacity-40 ${v} ${className}`} {...rest}>
       {children}
     </button>
   );

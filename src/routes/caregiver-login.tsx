@@ -4,6 +4,7 @@ import { Btn, Scene } from "@/components/Scene";
 import { supabase } from "@/integrations/supabase/client";
 import { safeReturnPath } from "@/lib/caregiver-guard";
 import { useT } from "@/lib/i18n";
+import { RECOVERY_KEY, recoveryRequested } from "@/lib/caregiver-session";
 
 type Mode = "signin" | "signup" | "forgot";
 
@@ -41,13 +42,22 @@ function CaregiverLogin() {
 
   // Already signed in → go straight back.
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: redirect as never, replace: true });
-    });
+    let active = true;
+    let saved: string | null = null;
+    try { saved = sessionStorage.getItem(RECOVERY_KEY); } catch { /* optional storage */ }
+    if (recoveryRequested(window.location.hash, saved)) {
+      void navigate({ to: "/reset-password", replace: true });
+      return;
+    }
+    void supabase.auth.getUser().then(({ data }) => {
+      if (active && data.user) void navigate({ to: redirect as never, replace: true });
+    }).catch(() => {});
+    return () => { active = false; };
   }, [navigate, redirect]);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+    if (busy) return;
     setBusy(true);
     setMsg(null);
     try {
@@ -73,13 +83,13 @@ function CaregiverLogin() {
         if (error) throw error;
         setMsg({ kind: "ok", text: t("Якщо такий акаунт є, ми надіслали лист для зміни пароля.") });
       }
-    } catch (err) {
+    } catch {
       setMsg({
         kind: "err",
         text:
           mode === "signin"
             ? t("Не вдалося увійти. Перевірте пошту й пароль.")
-            : (err as Error).message,
+            : t("Не вдалося завершити дію. Перевірте дані й спробуйте ще раз."),
       });
     } finally {
       setBusy(false);
@@ -121,7 +131,7 @@ function CaregiverLogin() {
               <input
                 type="password"
                 required
-                minLength={8}
+                minLength={mode === "signup" ? 8 : undefined}
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -137,16 +147,17 @@ function CaregiverLogin() {
               {msg.text}
             </p>
           )}
-          <button
+          <Btn
             type="submit"
             disabled={busy}
-            className="min-h-12 w-full rounded-full bg-primary px-5 font-bold text-primary-foreground shadow-soft disabled:opacity-40"
+            className="w-full"
           >
             {t({ signin: "Увійти", signup: "Створити акаунт", forgot: "Надіслати лист" }[mode])}
-          </button>
+          </Btn>
           <div className="flex flex-wrap justify-center gap-2 text-sm">
             {mode !== "signin" && (
               <Btn
+                disabled={busy}
                 variant="ghost"
                 onClick={() => {
                   setMode("signin");
@@ -158,6 +169,7 @@ function CaregiverLogin() {
             )}
             {mode !== "signup" && (
               <Btn
+                disabled={busy}
                 variant="ghost"
                 onClick={() => {
                   setMode("signup");
@@ -169,6 +181,7 @@ function CaregiverLogin() {
             )}
             {mode !== "forgot" && (
               <Btn
+                disabled={busy}
                 variant="ghost"
                 onClick={() => {
                   setMode("forgot");

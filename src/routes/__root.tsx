@@ -18,6 +18,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ambientFor, playAmbient, sfx, unlockAudio } from "@/lib/audio";
 import { markVisit, useStore } from "../lib/store";
 import { t, useT } from "@/lib/i18n";
+import { supabase } from "@/integrations/supabase/client";
+import { authTransition, RECOVERY_KEY } from "@/lib/caregiver-session";
 
 function NotFoundComponent() {
   const t = useT();
@@ -125,6 +127,32 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      const transition = authTransition(event);
+      if (!transition.invalidate) return;
+      // Do not call Auth again inside its synchronous subscriber (SDK lock).
+      if (transition.recovery) {
+        try { sessionStorage.setItem(RECOVERY_KEY, "1"); } catch { /* optional storage */ }
+      }
+      if (transition.signedOut) {
+        try { sessionStorage.removeItem(RECOVERY_KEY); } catch { /* optional storage */ }
+      }
+      setTimeout(() => {
+        if (transition.signedOut) {
+          void queryClient.cancelQueries().then(() => {
+            queryClient.clear();
+            void router.invalidate();
+          });
+        } else {
+          void router.invalidate();
+          if (transition.refetch) void queryClient.invalidateQueries();
+        }
+      }, 0);
+    });
+    return () => data.subscription.unsubscribe();
+  }, [queryClient, router]);
   const reduce = useStore((s) => s.reduceMotion);
   const textSize = useStore((s) => s.textSize);
   const music = useStore((s) => s.sound && s.music);

@@ -88,7 +88,7 @@ function Explore() {
                         onClick={() => setSel(p.id)}
                         aria-label={t(p.name)}
                         aria-pressed={active}
-                        className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
+                        className="absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center"
                         style={{ left: `${s.x}%`, top: `${s.y}%` }}
                       >
                         <span
@@ -154,7 +154,7 @@ function Explore() {
               <button
                 type="button"
                 onClick={() => setSel(null)}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary"
                 aria-label={t("Закрити")}
               >
                 <X className="h-4 w-4" />

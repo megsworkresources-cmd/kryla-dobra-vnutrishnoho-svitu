@@ -117,7 +117,7 @@ function World() {
           <Link
             key={p.id}
             to={p.to}
-            className="group absolute -translate-x-1/2 animate-fade-up"
+            className="group absolute flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center justify-center animate-fade-up"
             style={{
               left: `${Math.min(Math.max(p.x, 18), 82)}%`,
               top: `${p.y * 0.8 + 1}%`,

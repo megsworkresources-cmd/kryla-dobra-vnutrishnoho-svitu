@@ -16,6 +16,11 @@ export function Breathing({ kind }: { kind: 'flower' | 'wave' }) {
   const [started, setStarted] = useState(false);
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
+  useEffect(() => {
+    const pauseWhenHidden = () => { if (document.hidden) setRunning(false); };
+    document.addEventListener("visibilitychange", pauseWhenHidden);
+    return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
+  }, []);
   const inhale = age === 'young' ? 3 : 4;
   const exhale = kind === 'flower' ? inhale + 2 : inhale;
   const period = inhale + exhale;

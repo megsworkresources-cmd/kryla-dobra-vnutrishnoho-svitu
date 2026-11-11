@@ -220,6 +220,11 @@ function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
   const shot = clip.shots[i];
   const done = i >= clip.shots.length;
   useEffect(() => {
+    const pauseWhenHidden = () => { if (document.hidden) setPlaying(false); };
+    document.addEventListener("visibilitychange", pauseWhenHidden);
+    return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
+  }, []);
+  useEffect(() => {
     if (!playing || done) return;
     if (voice && shot) speak(t(shot.text), { who: shot.who });
     const id = window.setTimeout(() => setI((x) => x + 1), SHOT_MS);
@@ -233,15 +238,17 @@ function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
       <h2 className="font-display text-2xl font-bold">{t(clip.title)}</h2>
       <div
         className="relative aspect-video overflow-hidden rounded-3xl bg-night shadow-soft"
+        data-playing={playing && !done}
         role="img"
         aria-label={t(clip.title)}
       >
         {shot ? (
-          <div key={i} className="absolute inset-0 animate-fade-up">
+          <div key={i} className="absolute inset-0 animate-fade-up" style={{ animationPlayState: playing ? "running" : "paused" }}>
             <img
               src={shot.img}
               alt=""
-              className={`h-full w-full object-cover ${playing ? "animate-kenburns" : ""}`}
+              className="h-full w-full object-cover animate-kenburns"
+              style={{ animationPlayState: playing ? "running" : "paused" }}
             />
             {[12, 30, 52, 70, 88].map((l, k) => (
               <span
@@ -251,6 +258,7 @@ function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
                   left: `${l}%`,
                   top: `${15 + (k % 3) * 18}%`,
                   animationDelay: `${k * 0.5}s`,
+                  animationPlayState: playing ? "running" : "paused",
                 }}
                 aria-hidden
               >
@@ -261,6 +269,7 @@ function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
               src={CHARACTERS[shot.who].image}
               alt=""
               className="absolute bottom-0 left-2 h-[62%] w-auto animate-talk drop-shadow-lg"
+              style={{ animationPlayState: playing ? "running" : "paused" }}
             />
           </div>
         ) : (

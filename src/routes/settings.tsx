@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Btn, Scene } from "@/components/Scene";
 import { pageHead } from "@/content/journeys";
 import { setAge, update, useStore, type AgeBand, type AppState } from "@/lib/store";
-import { MUSIC_STYLES, playAmbient, sfx, syncVolume, unlockAudio } from "@/lib/audio";
+import { MUSIC_STYLES, playAmbient, sfx, stopAmbient, syncVolume, unlockAudio, useMusicStatus } from "@/lib/audio";
 import { speak, stopSpeaking, voices } from "@/lib/speak";
 import { useT } from "@/lib/i18n";
 
@@ -29,6 +29,7 @@ const NARRATORS = [["Leda", "Лагідна казкарка"], ["Aoede", "Ні�
 function Settings() {
   const t = useT();
   const s = useStore((x) => x);
+  const musicStatus = useMusicStatus();
   const [list, setList] = useState<SpeechSynthesisVoice[]>([]);
   useEffect(() => {
     const load = () => setList(voices());
@@ -48,6 +49,21 @@ function Settings() {
               onChange={(e) => set("volume", Number(e.target.value))} onPointerUp={() => sfx("select")} className="mt-2 w-full accent-primary" />
           </label>
           <Toggle label={t("Фонова музика й природа")} hint={t("Ніжні записи українських інструментів і звуки природи")} checked={s.music} disabled={off} onChange={(v) => { unlockAudio(); set("music", v); playAmbient(v ? "garden" : null); }} />
+          {([
+            ["musicVolume", "Гучність музики"],
+            ["voiceVolume", "Гучність голосів"],
+            ["effectsVolume", "Гучність звуків кнопок"],
+          ] as const).map(([key, label]) => (
+            <label key={key} className="block rounded-2xl bg-secondary px-4 py-3">
+              <span className="flex justify-between gap-2 font-bold">{t(label)} <span>{Math.round(s[key] * 100)}%</span></span>
+              <input type="range" min={0} max={1} step={0.05} value={s[key]} disabled={off} aria-label={t(label)}
+                onChange={(e) => { set(key, Number(e.target.value)); if (key === "musicVolume") playAmbient("garden"); }} className="mt-2 w-full accent-primary" />
+            </label>
+          ))}
+          {musicStatus !== "idle" && <p role={musicStatus === "error" ? "alert" : "status"} className="text-sm">
+            {t(musicStatus === "loading" ? "Музика завантажується…" : musicStatus === "playing" ? "Музика звучить" : "Музика недоступна. Перевір інтернет і спробуй ще раз.")}
+          </p>}
+          {musicStatus === "error" && <Btn variant="soft" onClick={() => { unlockAudio(); stopAmbient(); playAmbient("garden"); }}>{t("Спробувати музику ще раз")}</Btn>}
           <fieldset className={`rounded-2xl bg-secondary px-4 py-3 ${off || !s.music ? "opacity-50" : ""}`} disabled={off || !s.music}>
             <legend className="sr-only">{t("Яка музика")}</legend>
             <span className="block font-bold">{t("Яка музика звучить")}</span>

@@ -107,6 +107,11 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   const [playing, setPlaying] = useState(false);
   const [t2, setT] = useState(0);
   const [done, setDone] = useState(false);
+  useEffect(() => {
+    const pauseWhenHidden = () => { if (document.hidden) setPlaying(false); };
+    document.addEventListener("visibilitychange", pauseWhenHidden);
+    return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
+  }, []);
   const [lit, setLit] = useState<number[]>([]);
   const [hop, setHop] = useState<string | null>(null);
   const fx = STORY_FX[id]?.[i] ?? ["✨"];
@@ -361,7 +366,7 @@ export function Sounds() {
     if (!sound || volume === 0 || !("AudioContext" in window)) return;
     const ac = ctx.current ?? new AudioContext();
     ctx.current = ac;
-    void ac.resume();
+    void ac.resume().catch(() => stop());
     const gain = ac.createGain();
     gainRef.current = gain;
     gain.gain.value = volume * 0.25;

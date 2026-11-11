@@ -1,5 +1,8 @@
 # Completion roadmap
-- [ ] Current repair pass: playback status/channel volume, stop/start races, cartoon pause/background behavior, sunflower completion integrity and corrupted progress; automated and browser checks.
+- [x] Current repair pass: recorded music loading/error/retry and independent volumes; synchronous exit cancellation; bounded media caches; paused/background cartoons and breathing; one-time full coloring rewards; non-destructive malformed progress recovery; storage failure feedback; timer cleanup; 58 tests and repaired-file lint passed. 48 routes checked at three widths; eleven guided flows, two breathing flows, four recordings and local garden reload checked.
+- [ ] Physical iPhone/Android checks: listening quality, Safari/Chrome autoplay, interruptions and device voices require actual devices.
+- [ ] Shared community garden: no shared feature exists; private device-only garden retained. Requires an explicit privacy-safe specification before cloud functionality.
+- [ ] Exact requested box breathing, Magic Jar and «Як твоє серденько сьогодні?» experiences: no matching named implementations found; existing no-hold flower/wave breathing and feelings jar preserved rather than misrepresented.
 - [x] Follow-up repairs: shared magic keyboard activation, pending sparkle cleanup, non-destructive saved-setting recovery and large-text character layout; regression/browser checks passed.
 - [x] In-place targeted repairs and browser audit: 35 routes at three sizes; audio decoding, cartoon controls, drawing persistence, reduced-motion release, keyboard games and public/caregiver separation checked.
 - [x] Existing recorded tracks verified: all four return 200 and decode; physical iPhone listening remains manual.

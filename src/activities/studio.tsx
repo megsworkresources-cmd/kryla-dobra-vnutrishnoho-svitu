@@ -28,7 +28,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   const tid = useRef(0); const last = useRef(0);
   const [party, setParty] = useState(0);
   const spark = (e: React.PointerEvent, g: string) => { const r = ref.current!.getBoundingClientRect(); const id = tid.current++; setTrail((a) => [...a.slice(-14), { id, x: e.clientX - r.left, y: e.clientY - r.top, g }]); setTimeout(() => setTrail((a) => a.filter((q) => q.id !== id)), 700); };
-  const fill = () => { const c = ref.current; const g = c?.getContext('2d'); if (!c || !g) return; g.fillStyle = resolve('var(--paper)'); g.fillRect(0, 0, c.width, c.height); };
+  const fill = () => { const c = ref.current; const g = c?.getContext('2d'); if (!c || !g) return; g.fillStyle = resolve('var(--paper)'); g.fillRect(0, 0, c.width, c.height); setSaved(false); };
   useEffect(fill, []);
   const pos = (e: React.PointerEvent) => { const c = ref.current!; const r = c.getBoundingClientRect(); return [(e.clientX - r.left) * (c.width / r.width), (e.clientY - r.top) * (c.height / r.height)] as const; };
   const down = (e: React.PointerEvent) => { const g = ref.current?.getContext('2d'); if (!g) return;
@@ -51,7 +51,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
     </div>
     {stamp && <p className="text-center text-sm font-bold">{t('Торкнись аркуша, щоб поставити наліпку')}</p>}
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('Кольори')}>
-      {COLORS.map((c) => <button key={c} onClick={() => { setColor(c); setEraser(false); setStamp(null); setRainbow(false); }} aria-label={t('Колір')} aria-pressed={color === c && !eraser} className={`h-10 w-10 rounded-full border-4 ${color === c && !eraser ? 'border-primary' : 'border-paper'} shadow-soft`} style={{ background: c }} />)}
+      {COLORS.map((c) => <button key={c} onClick={() => { setColor(c); setEraser(false); setStamp(null); setRainbow(false); }} aria-label={t('Колір')} aria-pressed={color === c && !eraser} className={`h-11 w-11 rounded-full border-4 ${color === c && !eraser ? 'border-primary' : 'border-paper'} shadow-soft`} style={{ background: c }} />)}
       <Btn variant={eraser ? 'primary' : 'soft'} aria-label={t('Гумка')} aria-pressed={eraser} onClick={() => { setEraser(!eraser); setStamp(null); }}><Eraser size={18} /></Btn>
     </div>
     <div className="flex flex-wrap items-center gap-2">
@@ -76,9 +76,9 @@ export function ColorFlower() {
   return <div className="space-y-4 text-center">
     <CharacterSay who="solomiya" size="sm" mood={fills[12] !== 'var(--paper)' ? 'cheer' : 'talk'} text={t('Обери колір і торкнись пелюстки. Соняшник може бути будь-якого кольору!')} />
     <div className="relative mx-auto max-w-sm">
-    <svg viewBox="-110 -110 220 220" className={`paper-card w-full rounded-3xl p-3 ${full ? 'animate-[spin_12s_linear_infinite]' : ''}`} role="img" aria-label={t('Соняшник для розфарбовування')}>
-      {Array.from({ length: 12 }, (_, k) => <ellipse key={k} cx="0" cy="-62" rx="18" ry="38" transform={`rotate(${k * 30})${popped === k ? ' scale(1.12)' : ''}`} fill={fills[k]} stroke="var(--ink)" strokeWidth="2" onClick={() => paint(k)} className="cursor-pointer transition-all duration-300" style={{ transformOrigin: '0 0' }} />)}
-      <circle r="34" fill={fills[12]} stroke="var(--ink)" strokeWidth="2" onClick={() => paint(12)} className="cursor-pointer" />
+    <svg viewBox="-110 -110 220 220" className={`paper-card w-full rounded-3xl p-3 ${full ? 'animate-[spin_12s_linear_infinite]' : ''}`} role="group" aria-label={t('Соняшник для розфарбовування')}>
+      {Array.from({ length: 12 }, (_, k) => <ellipse key={k} cx="0" cy="-62" rx="18" ry="38" transform={`rotate(${k * 30})${popped === k ? ' scale(1.12)' : ''}`} fill={fills[k]} stroke="var(--ink)" strokeWidth="2" role="button" tabIndex={0} aria-label={`${t("Соняшник для розфарбовування")} ${k + 1}`} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); paint(k); } }} onClick={() => paint(k)} className="cursor-pointer transition-all duration-300" style={{ transformOrigin: '0 0' }} />)}
+      <circle r="34" fill={fills[12]} stroke="var(--ink)" strokeWidth="2" role="button" tabIndex={0} aria-label={`${t("Соняшник для розфарбовування")} 13`} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); paint(12); } }} onClick={() => paint(12)} className="cursor-pointer" />
       {fills[12] !== 'var(--paper)' && <text textAnchor="middle" dominantBaseline="middle" fontSize="26" pointerEvents="none">😊</text>}
     </svg>
     {full && <div className="pointer-events-none absolute inset-0" aria-hidden>{['🐝', '🦋', '🐞', '🐝'].map((g, k) => <span key={k} className="absolute text-3xl animate-float" style={{ left: `${[5, 80, 10, 75][k]}%`, top: `${[8, 15, 78, 72][k]}%`, animationDelay: `${k * 0.6}s` }}>{g}</span>)}</div>}
@@ -97,6 +97,6 @@ export function Gallery() {
   return <div className="space-y-3"><CharacterSay who="marko" size="sm" mood="cheer" autoSpeak={false} text={t('Ці малюнки зберігаються лише на цьому пристрої.')} />
     <ul className="grid grid-cols-2 gap-3">{[...drawings].reverse().map((d) => <li key={d.id} className="paper-card overflow-hidden p-2">
       <img src={d.data} alt={t('Малюнок від {d}', { d: new Date(d.at).toLocaleDateString(localeOf(lang)) })} className="w-full rounded-2xl" />
-      <div className="mt-2 flex items-center justify-between px-1 text-sm"><span>{new Date(d.at).toLocaleDateString(localeOf(lang))}</span><button onClick={() => removeDrawing(d.id)} aria-label={t('Видалити малюнок')} className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary"><Trash2 size={16} /></button></div>
+      <div className="mt-2 flex items-center justify-between px-1 text-sm"><span>{new Date(d.at).toLocaleDateString(localeOf(lang))}</span><button onClick={() => removeDrawing(d.id)} aria-label={t('Видалити малюнок')} className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary"><Trash2 size={16} /></button></div>
     </li>)}</ul></div>;
 }

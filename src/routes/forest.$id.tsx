@@ -18,6 +18,8 @@ export const Route = createFileRoute("/forest/$id")({
       { name: "description", content: "Вправа з Лісу почуттів." },
       { property: "og:title", content: `${loaderData?.title ?? "Ліс почуттів"} — Тихе Місце` },
       { property: "og:description", content: "Вправа з Лісу почуттів." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Page,

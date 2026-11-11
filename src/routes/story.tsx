@@ -29,14 +29,16 @@ const FEELINGS = [
   ["curious", "Мені цікаво", "✨"],
 ] as const;
 type Feeling = (typeof FEELINGS)[number][0];
+type StoryPlace = "garden" | "forest" | "meadow" | "clouds" | "sky" | "studio" | "path" | "safe";
+const isStoryPlace = (id: string): id is StoryPlace => ["garden", "forest", "meadow", "clouds", "sky", "studio", "path", "safe"].includes(id);
 type Story = { title: string; scenes: { text: string }[]; closing: string };
 
 function Choice({ selected, onClick, children, label }: { selected: boolean; onClick: () => void; children: React.ReactNode; label: string }) {
   return (
-    <button type="button" aria-label={label} aria-pressed={selected} onClick={onClick}
+    <Btn variant="soft" aria-label={label} aria-pressed={selected} onClick={onClick}
       className={`min-h-12 rounded-2xl bg-secondary px-3 py-2 text-sm font-bold text-secondary-foreground transition active:scale-95 ${selected ? "ring-4 ring-ring" : ""}`}>
       {children}
-    </button>
+    </Btn>
   );
 }
 
@@ -45,7 +47,7 @@ function StoryCompanion() {
   const lang = useLang();
   const age = useStore((s) => s.age);
   const [who, setWho] = useState<CharId>("solomiya");
-  const [place, setPlace] = useState("sky");
+  const [place, setPlace] = useState<StoryPlace>("sky");
   const [feeling, setFeeling] = useState<Feeling>("calm");
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(false);
@@ -61,7 +63,7 @@ function StoryCompanion() {
     setLoading(true);
     setError("");
     try {
-      const res = await createStory({ data: { who, place: place as "sky", feeling, age: AGE_ASK[age], lang } });
+      const res = await createStory({ data: { who, place, feeling, age: AGE_ASK[age], lang } });
       if (mine !== request.current) return;
       if (res.ok) {
         setStory(res.story);
@@ -107,7 +109,7 @@ function StoryCompanion() {
               <legend className="font-display text-xl font-bold">{t("2. Куди вирушимо?")}</legend>
               <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {PLACES.map((p) => (
-                  <Choice key={p.id} selected={place === p.id} onClick={() => setPlace(p.id)} label={t("Обрати місце: {n}", { n: t(p.name) })}>
+                  <Choice key={p.id} selected={place === p.id} onClick={() => { if (isStoryPlace(p.id)) setPlace(p.id); }} label={t("Обрати місце: {n}", { n: t(p.name) })}>
                     <span className="block leading-tight">{t(p.name)}</span>
                   </Choice>
                 ))}

@@ -32,9 +32,9 @@ export function EmotionGallery() {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap gap-2" role="listbox" aria-label={t("Список почуттів")}>
+      <div className="flex flex-wrap gap-2" role="group" aria-label={t("Список почуттів")}>
         {EMOTIONS.map((e) => (
-          <button key={e.id} role="option" aria-selected={sel.id === e.id}
+          <button key={e.id} aria-pressed={sel.id === e.id}
             onClick={() => { setSel(e); setSeen((s) => new Set(s).add(e.id)); }}
             className={`flex min-h-12 items-center gap-2 rounded-full px-4 font-bold transition ${sel.id === e.id ? "bg-primary text-primary-foreground" : "paper-card"}`}>
             <span className={`h-3 w-3 rounded-full ${e.color}`} />{t(e.name)}
@@ -55,7 +55,7 @@ export function MixedFeelings() {
   const [reveal, setReveal] = useState(false);
   const [done, setDone] = useState(false);
   const sc = SCENARIOS[i]!;
-  if (done) return <DoneCard text={t("Почуття можуть змішуватися, як фарби.")} again={() => { setI(0); setDone(false); }} />;
+  if (done) return <DoneCard text={t("Почуття можуть змішуватися, як фарби.")} again={() => { setI(0); setChosen([]); setReveal(false); setDone(false); }} />;
   const toggle = (id: string) => setChosen((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id]));
   const next = () => {
     if (i + 1 >= SCENARIOS.length) { markDone("forest-mixed"); setDone(true); return; }
@@ -125,8 +125,8 @@ export function BodyMap() {
             className={`min-h-12 shrink-0 rounded-full px-4 font-bold ${emo.id === e.id ? "bg-primary text-primary-foreground" : "paper-card"}`}>{t(e.name)}</button>
         ))}
       </div>
-      <div className="paper-card flex items-center gap-3 p-3">
-        <div className="relative h-80 shrink-0" style={{ aspectRatio: "320 / 560" }} role="group" aria-label={t("Тіло")}>
+      <div className="paper-card grid grid-cols-1 items-center gap-3 p-3 sm:grid-cols-[auto_minmax(0,1fr)]">
+        <div className="relative mx-auto h-80 shrink-0" style={{ aspectRatio: "320 / 560" }} role="group" aria-label={t("Тіло")}>
           <img src={CHARACTERS.solomiya.image} alt={t(CHARACTERS.solomiya.name)} className="h-full w-full object-contain" />
           {ZONES.map((z) => {
             const on = mine.includes(z.id);
@@ -138,7 +138,7 @@ export function BodyMap() {
             ));
           })}
         </div>
-        <div className="text-sm">
+        <div className="min-w-0 text-sm">
           <p className="font-display text-xl font-bold">{t(emo.name)}</p>
           <p className="mt-1 text-muted-foreground">{t("Часто відчувається як:")}</p>
           <ul className="mt-1">{emo.body.map((b) => <li key={b}>• {t(b)}</li>)}</ul>

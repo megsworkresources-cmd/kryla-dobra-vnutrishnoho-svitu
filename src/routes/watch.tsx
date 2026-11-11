@@ -6,7 +6,7 @@ import { CHARACTERS, type CharId } from "@/content/characters";
 import { pageHead } from "@/content/journeys";
 import { useStore } from "@/lib/store";
 import { speak, stopSpeaking } from "@/lib/speak";
-import { useT } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 import welcome from "@/assets/welcome.jpg";
 import meadow from "@/assets/meadow.jpg";
 import night from "@/assets/night.jpg";
@@ -96,6 +96,7 @@ function Watch() {
 function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
   const t = useT();
   const voice = useStore((s) => s.voice && s.sound);
+  const lang = useLang();
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(true);
   const shot = clip.shots[i];
@@ -105,17 +106,17 @@ function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
     if (voice && shot) speak(t(shot.text), { who: shot.who });
     const id = window.setTimeout(() => setI((x) => x + 1), SHOT_MS);
     return () => { window.clearTimeout(id); stopSpeaking(); };
-  }, [i, playing, done, voice]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [i, playing, done, voice, lang]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="space-y-3">
       <h2 className="font-display text-2xl font-bold">{t(clip.title)}</h2>
-      <div className="relative aspect-video overflow-hidden rounded-3xl bg-night shadow-soft" role="img" aria-label={shot ? t(shot.text) : t("Кінець")}>
+      <div className="relative aspect-video overflow-hidden rounded-3xl bg-night shadow-soft" role="img" aria-label={t(clip.title)}>
         {shot ? (
           <div key={i} className="absolute inset-0 animate-fade-up">
             <img src={shot.img} alt="" className={`h-full w-full object-cover ${playing ? "animate-kenburns" : ""}`} />
             {[12, 30, 52, 70, 88].map((l, k) => <span key={l} className="absolute text-2xl animate-float" style={{ left: `${l}%`, top: `${15 + (k % 3) * 18}%`, animationDelay: `${k * 0.5}s` }} aria-hidden>{shot.fx}</span>)}
             <img src={CHARACTERS[shot.who].image} alt="" className="absolute bottom-0 left-2 h-[62%] w-auto animate-talk drop-shadow-lg" />
-            <p className="absolute bottom-2 right-2 max-w-[62%] rounded-2xl bg-card/95 px-3 py-2 text-sm font-bold text-card-foreground shadow-soft sm:text-base">{t(shot.text)}</p>
+
           </div>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-moon">
@@ -123,6 +124,7 @@ function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
           </div>
         )}
       </div>
+      {shot && <p className="paper-card p-4 font-bold text-card-foreground" aria-live="polite">{t(shot.text)}</p>}
       <div className="flex gap-1" aria-hidden>{clip.shots.map((_, k) => <span key={k} className={`h-2 flex-1 rounded-full ${k <= i ? "bg-honey" : "bg-secondary"}`} />)}</div>
       <div className="flex flex-wrap justify-center gap-2">
         <Btn variant="soft" onClick={onClose}>{t("← Усі мультики")}</Btn>

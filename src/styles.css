@@ -79,22 +79,48 @@
   --moon: oklch(0.93 0.07 95);
   --shadow-soft: 0 10px 30px -12px oklch(0.3 0.05 60 / 0.35);
   --shadow-lift: 0 18px 40px -16px oklch(0.3 0.05 60 / 0.45);
-  --veil-bottom: linear-gradient(to top, oklch(0.975 0.018 85) 0%, oklch(0.975 0.018 85 / 0.85) 35%, transparent 75%);
-  --veil-night: linear-gradient(to top, oklch(0.2 0.05 265 / 0.95) 0%, oklch(0.2 0.05 265 / 0.55) 45%, transparent 80%);
+  --veil-bottom: linear-gradient(
+    to top,
+    oklch(0.975 0.018 85) 0%,
+    oklch(0.975 0.018 85 / 0.85) 35%,
+    transparent 75%
+  );
+  --veil-night: linear-gradient(
+    to top,
+    oklch(0.2 0.05 265 / 0.95) 0%,
+    oklch(0.2 0.05 265 / 0.55) 45%,
+    transparent 80%
+  );
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html, body { height: 100%; }
+  * {
+    border-color: var(--color-border);
+  }
+  html,
+  body {
+    height: 100%;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-tap-highlight-color: transparent;
   }
-  h1, h2, h3 { font-family: var(--font-display); letter-spacing: 0.005em; }
-  button { cursor: pointer; }
-  :focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; border-radius: 12px; }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: 0.005em;
+  }
+  button {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 12px;
+  }
 }
 
 @utility paper-card {
@@ -111,90 +137,472 @@
   color: var(--moon);
   backdrop-filter: blur(6px);
 }
-@utility veil-bottom { background: var(--veil-bottom); }
-@utility veil-night { background: var(--veil-night); }
-@utility shadow-soft { box-shadow: var(--shadow-soft); }
-@utility shadow-lift { box-shadow: var(--shadow-lift); }
+@utility veil-bottom {
+  background: var(--veil-bottom);
+}
+@utility veil-night {
+  background: var(--veil-night);
+}
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+@utility shadow-lift {
+  box-shadow: var(--shadow-lift);
+}
 
-@keyframes float-slow { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
-@keyframes drift { 0% { transform: translateX(-10vw) } 100% { transform: translateX(110vw) } }
-@keyframes sway { 0%,100% { transform: rotate(-3deg) } 50% { transform: rotate(3deg) } }
-@keyframes rise-away { 0% { transform: translateY(0) scale(1); opacity: 1 } 100% { transform: translateY(-70vh) scale(.6); opacity: 0 } }
-@keyframes fade-up { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
-@keyframes twinkle { 0%,100% { opacity: .3 } 50% { opacity: 1 } }
-@keyframes kenburns { from { transform: scale(1.04) } to { transform: scale(1.12) translateY(-1.5%) } }
-@keyframes flutter { 0%,100% { transform: translate(0,0) rotate(0) } 25% { transform: translate(30px,-20px) rotate(8deg) } 50% { transform: translate(60px,5px) rotate(-6deg) } 75% { transform: translate(25px,20px) rotate(4deg) } }
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes drift {
+  0% {
+    transform: translateX(-10vw);
+  }
+  100% {
+    transform: translateX(110vw);
+  }
+}
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+@keyframes rise-away {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-70vh) scale(0.6);
+    opacity: 0;
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes kenburns {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1.12) translateY(-1.5%);
+  }
+}
+@keyframes flutter {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  25% {
+    transform: translate(30px, -20px) rotate(8deg);
+  }
+  50% {
+    transform: translate(60px, 5px) rotate(-6deg);
+  }
+  75% {
+    transform: translate(25px, 20px) rotate(4deg);
+  }
+}
 
-@utility animate-float { animation: float-slow 5s ease-in-out infinite; }
-@utility animate-sway { animation: sway 4s ease-in-out infinite; transform-origin: bottom center; }
-@utility animate-rise-away { animation: rise-away 3.5s ease-in forwards; }
-@utility animate-fade-up { animation: fade-up .6s ease-out both; }
-@utility animate-twinkle { animation: twinkle 3s ease-in-out infinite; }
-@utility animate-kenburns { animation: kenburns 30s ease-in-out infinite alternate; }
-@utility animate-flutter { animation: flutter 9s ease-in-out infinite; }
-@utility animate-cloud-drift { animation: drift 60s linear infinite; }
+@utility animate-float {
+  animation: float-slow 5s ease-in-out infinite;
+}
+@utility animate-sway {
+  animation: sway 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+@utility animate-rise-away {
+  animation: rise-away 3.5s ease-in forwards;
+}
+@utility animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
+}
+@utility animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+@utility animate-kenburns {
+  animation: kenburns 30s ease-in-out infinite alternate;
+}
+@utility animate-flutter {
+  animation: flutter 9s ease-in-out infinite;
+}
+@utility animate-cloud-drift {
+  animation: drift 60s linear infinite;
+}
 
-@keyframes talk { 0%,100% { transform: translateY(0) rotate(0) } 30% { transform: translateY(-4px) rotate(-1.5deg) } 60% { transform: translateY(0) rotate(1deg) } }
-@keyframes hop { 0%,100% { transform: translateY(0) } 20% { transform: translateY(-16px) } 40% { transform: translateY(0) } 55% { transform: translateY(-8px) } 70% { transform: translateY(0) } }
-@keyframes pop { 0% { opacity: 0; transform: scale(.85) } 70% { transform: scale(1.03) } 100% { opacity: 1; transform: none } }
-@keyframes petal { 0% { transform: translateY(-20px) rotate(0); opacity: 0 } 10% { opacity: 1 } 100% { transform: translateY(420px) rotate(260deg); opacity: 0 } }
-@utility animate-talk { animation: talk 3.2s ease-in-out infinite; transform-origin: bottom center; }
-@utility animate-hop { animation: hop 1.4s ease-out 1; }
-@utility animate-pop { animation: pop .45s ease-out both; }
-@utility animate-petal { animation: petal 3.5s ease-in 1 both; }
-@keyframes wave-x { from { transform: translateX(0) } to { transform: translateX(120px) } }
-@utility animate-wave-x { animation: wave-x 4s linear infinite; }
-@utility animate-wave-x-slow { animation: wave-x 7s linear infinite reverse; }
+@keyframes talk {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  30% {
+    transform: translateY(-4px) rotate(-1.5deg);
+  }
+  60% {
+    transform: translateY(0) rotate(1deg);
+  }
+}
+@keyframes hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-16px);
+  }
+  40% {
+    transform: translateY(0);
+  }
+  55% {
+    transform: translateY(-8px);
+  }
+  70% {
+    transform: translateY(0);
+  }
+}
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  70% {
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes petal {
+  0% {
+    transform: translateY(-20px) rotate(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(420px) rotate(260deg);
+    opacity: 0;
+  }
+}
+@utility animate-talk {
+  animation: talk 3.2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+@utility animate-hop {
+  animation: hop 1.4s ease-out 1;
+}
+@utility animate-pop {
+  animation: pop 0.45s ease-out both;
+}
+@utility animate-petal {
+  animation: petal 3.5s ease-in 1 both;
+}
+@keyframes wave-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(120px);
+  }
+}
+@utility animate-wave-x {
+  animation: wave-x 4s linear infinite;
+}
+@utility animate-wave-x-slow {
+  animation: wave-x 7s linear infinite reverse;
+}
 /* Characters acting out a step */
-@keyframes act-squeeze { 0%,100% { transform: scale(1) } 40%,60% { transform: scale(.93, .96) } }
-@keyframes act-shrug { 0%,100% { transform: translateY(0) } 30%,45% { transform: translateY(-12px) scaleY(1.03) } 70% { transform: translateY(3px) } }
-@keyframes act-feet { 0%,100% { transform: rotate(0) } 25% { transform: rotate(-4deg) } 75% { transform: rotate(4deg) } }
-@keyframes act-settle { 0%,100% { transform: translateY(0) scale(1) } 50% { transform: translateY(6px) scale(1.02, .97) } }
-@keyframes act-look { 0%,100% { transform: scaleX(1) } 45%,55% { transform: scaleX(-1) } }
-@keyframes act-breathe { 0%,100% { transform: scale(1) } 50% { transform: scale(1.06) } }
-@utility animate-act-squeeze { animation: act-squeeze 2.4s ease-in-out infinite; transform-origin: bottom center; }
-@utility animate-act-shrug { animation: act-shrug 2.8s ease-in-out infinite; transform-origin: bottom center; }
-@utility animate-act-feet { animation: act-feet 1.6s ease-in-out infinite; transform-origin: bottom center; }
-@utility animate-act-settle { animation: act-settle 4s ease-in-out infinite; transform-origin: bottom center; }
-@utility animate-act-look { animation: act-look 4s ease-in-out infinite; }
-@utility animate-act-breathe { animation: act-breathe 5s ease-in-out infinite; transform-origin: bottom center; }
-@keyframes glow-on { 0% { transform: scale(.4); opacity: .3 } 60% { transform: scale(1.5) } 100% { transform: scale(1); opacity: 1 } }
-@utility animate-glow-on { animation: glow-on .6s ease-out both; }
+@keyframes act-squeeze {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40%,
+  60% {
+    transform: scale(0.93, 0.96);
+  }
+}
+@keyframes act-shrug {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30%,
+  45% {
+    transform: translateY(-12px) scaleY(1.03);
+  }
+  70% {
+    transform: translateY(3px);
+  }
+}
+@keyframes act-feet {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-4deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+}
+@keyframes act-settle {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(6px) scale(1.02, 0.97);
+  }
+}
+@keyframes act-look {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  45%,
+  55% {
+    transform: scaleX(-1);
+  }
+}
+@keyframes act-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+@utility animate-act-squeeze {
+  animation: act-squeeze 2.4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+@utility animate-act-shrug {
+  animation: act-shrug 2.8s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+@utility animate-act-feet {
+  animation: act-feet 1.6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+@utility animate-act-settle {
+  animation: act-settle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+@utility animate-act-look {
+  animation: act-look 4s ease-in-out infinite;
+}
+@utility animate-act-breathe {
+  animation: act-breathe 5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+@keyframes glow-on {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.3;
+  }
+  60% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@utility animate-glow-on {
+  animation: glow-on 0.6s ease-out both;
+}
 @utility speech {
   background: var(--card);
   border: 2px solid var(--border);
-  border-radius: 1.5rem 1.5rem 1.5rem .4rem;
+  border-radius: 1.5rem 1.5rem 1.5rem 0.4rem;
   box-shadow: var(--shadow-soft);
   color: var(--ink);
 }
-@utility speech-night { background: oklch(0.32 0.06 265 / 0.92); color: var(--moon); border-color: oklch(0.6 0.06 265 / 0.5); }
-@utility speech-right { border-radius: 1.5rem 1.5rem .4rem 1.5rem; }
-html[data-text="large"] { font-size: 112.5%; }
-html[data-text="xl"] { font-size: 125%; }
+@utility speech-night {
+  background: oklch(0.32 0.06 265 / 0.92);
+  color: var(--moon);
+  border-color: oklch(0.6 0.06 265 / 0.5);
+}
+@utility speech-right {
+  border-radius: 1.5rem 1.5rem 0.4rem 1.5rem;
+}
+html[data-text="large"] {
+  font-size: 112.5%;
+}
+html[data-text="xl"] {
+  font-size: 125%;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
-.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation: none !important; transition-duration: .001ms !important; }
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition-duration: 0.001ms !important;
+}
 
-@utility bg-night-bar { background: oklch(0.22 0.05 265 / 0.95); }
+@utility bg-night-bar {
+  background: oklch(0.22 0.05 265 / 0.95);
+}
 
-@keyframes sparkle-burst { 0% { transform: translate(-50%,-50%) scale(.4); opacity: 1 } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(90deg); opacity: 0 } }
-@utility animate-sparkle { animation: sparkle-burst .7s ease-out forwards; }
-@keyframes bubble-rise { 0% { transform: translateY(0) translateX(0) } 50% { transform: translateY(-50vh) translateX(18px) } 100% { transform: translateY(-110vh) translateX(-10px) } }
-@utility animate-bubble { animation: bubble-rise linear forwards; }
-@keyframes flip-in { from { transform: rotateY(90deg) } to { transform: rotateY(0) } }
-@utility animate-flip { animation: flip-in .3s ease-out both; }
-.reduce-motion .animate-sparkle { display: none; }
-@keyframes stage-drift { 0% { transform: translateY(20px) rotate(-6deg); opacity: 0 } 10% { opacity: 1 } 50% { transform: translateY(-70px) translateX(14px) rotate(6deg) } 90% { opacity: 1 } 100% { transform: translateY(-170px) translateX(-8px) rotate(-4deg); opacity: 0 } }
-@utility animate-drift { animation: stage-drift 8s ease-in-out infinite; }
-@keyframes stage-pop { 0% { transform: scale(.3); opacity: 1 } 100% { transform: scale(1.8) translateY(-20px); opacity: 0 } }
-@utility animate-stagepop { animation: stage-pop .8s ease-out forwards; }
-@keyframes step-in { 0% { opacity: 0; transform: translateX(24px) scale(.98) } 100% { opacity: 1; transform: none } }
-@utility animate-step { animation: step-in .5s ease-out both; }
-.reduce-motion .animate-drift, .reduce-motion .animate-step { animation: none; }
-@keyframes wiggle { 0%,100% { rotate: -8deg } 50% { rotate: 8deg } }
-@utility animate-wiggle { animation: wiggle .6s ease-in-out infinite; }
-@keyframes basket-bounce { 0%,100% { transform: scale(1) } 40% { transform: scale(1.15) translateY(-6px) } 70% { transform: scale(.96) } }
-@utility animate-basket { animation: basket-bounce .6s ease-out; }
-.reduce-motion .animate-wiggle { animation: none; }
+@keyframes sparkle-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(90deg);
+    opacity: 0;
+  }
+}
+@utility animate-sparkle {
+  animation: sparkle-burst 0.7s ease-out forwards;
+}
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-50vh) translateX(18px);
+  }
+  100% {
+    transform: translateY(-110vh) translateX(-10px);
+  }
+}
+@utility animate-bubble {
+  animation: bubble-rise linear forwards;
+}
+@keyframes flip-in {
+  from {
+    transform: rotateY(90deg);
+  }
+  to {
+    transform: rotateY(0);
+  }
+}
+@utility animate-flip {
+  animation: flip-in 0.3s ease-out both;
+}
+.reduce-motion .animate-sparkle {
+  display: none;
+}
+@keyframes stage-drift {
+  0% {
+    transform: translateY(20px) rotate(-6deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-70px) translateX(14px) rotate(6deg);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-170px) translateX(-8px) rotate(-4deg);
+    opacity: 0;
+  }
+}
+@utility animate-drift {
+  animation: stage-drift 8s ease-in-out infinite;
+}
+@keyframes stage-pop {
+  0% {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8) translateY(-20px);
+    opacity: 0;
+  }
+}
+@utility animate-stagepop {
+  animation: stage-pop 0.8s ease-out forwards;
+}
+@keyframes step-in {
+  0% {
+    opacity: 0;
+    transform: translateX(24px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@utility animate-step {
+  animation: step-in 0.5s ease-out both;
+}
+.reduce-motion .animate-drift,
+.reduce-motion .animate-step {
+  animation: none;
+}
+@keyframes wiggle {
+  0%,
+  100% {
+    rotate: -8deg;
+  }
+  50% {
+    rotate: 8deg;
+  }
+}
+@utility animate-wiggle {
+  animation: wiggle 0.6s ease-in-out infinite;
+}
+@keyframes basket-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.15) translateY(-6px);
+  }
+  70% {
+    transform: scale(0.96);
+  }
+}
+@utility animate-basket {
+  animation: basket-bounce 0.6s ease-out;
+}
+.reduce-motion .animate-wiggle {
+  animation: none;
+}

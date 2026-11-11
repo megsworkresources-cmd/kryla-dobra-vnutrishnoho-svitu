@@ -1,4 +1,5 @@
 # Completion roadmap
+- [ ] Current repair pass: playback status/channel volume, stop/start races, cartoon pause/background behavior, sunflower completion integrity and corrupted progress; automated and browser checks.
 - [x] Follow-up repairs: shared magic keyboard activation, pending sparkle cleanup, non-destructive saved-setting recovery and large-text character layout; regression/browser checks passed.
 - [x] In-place targeted repairs and browser audit: 35 routes at three sizes; audio decoding, cartoon controls, drawing persistence, reduced-motion release, keyboard games and public/caregiver separation checked.
 - [x] Existing recorded tracks verified: all four return 200 and decode; physical iPhone listening remains manual.

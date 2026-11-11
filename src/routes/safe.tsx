@@ -27,8 +27,8 @@ function Safe() {
         <section className="paper-card space-y-3 p-5">
           <h2 className="font-display text-2xl font-bold">{t("Що допомагає саме мені")}</h2>
           <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); add(text); }}>
-            <input value={text} onChange={(e) => setText(e.target.value)} maxLength={60} placeholder={t("Мені допомагає…")} aria-label={t("Що мені допомагає")} className="min-h-12 flex-1 rounded-full bg-secondary px-4 outline-none focus:ring-2 focus:ring-ring" />
-            <button type="submit" className="min-h-12 rounded-full bg-primary px-5 font-bold text-primary-foreground">{t("Додати")}</button>
+            <input value={text} onChange={(e) => setText(e.target.value)} maxLength={60} placeholder={t("Мені допомагає…")} aria-label={t("Що мені допомагає")} className="min-h-12 min-w-0 flex-1 rounded-full bg-secondary px-4 outline-none focus:ring-2 focus:ring-ring" />
+            <Btn type="submit" disabled={!text.trim()}>{t("Додати")}</Btn>
           </form>
           <div className="flex flex-wrap gap-2">{IDEAS.filter((i) => !comfort.includes(i)).map((i) => <Btn key={i} variant="soft" className="text-sm" onClick={() => add(i)}>+ {t(i)}</Btn>)}</div>
           {comfort.length > 0 && <ul className="space-y-2">{comfort.map((c, i) => <li key={c} className="flex items-center justify-between rounded-2xl bg-secondary px-4 py-2"><span>{t(c)}</span><button onClick={() => removeComfort(i)} aria-label={t("Прибрати: {l}", { l: t(c) })} className="flex h-10 w-10 items-center justify-center"><X size={18} /></button></li>)}</ul>}

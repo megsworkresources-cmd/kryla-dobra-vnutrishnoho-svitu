@@ -131,10 +131,11 @@ export function sfx(kind: Sfx) {
       pluck(440, t, 0.12, master, 0.3, 1.2);
       pluck(659, t + 0.1, 0.1, master, 0.3, 1.2);
       break;
-    case "complete":
+    case "complete": {
       const output = master;
       [440, 523, 659, 880].forEach((f, i) => pluck(f, t + i * 0.16, 0.14, output, 0.35, 2));
       break;
+    }
   }
 }
 

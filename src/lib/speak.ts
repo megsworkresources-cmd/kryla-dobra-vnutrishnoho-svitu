@@ -32,6 +32,7 @@ let token = 0;
 function deviceSpeak(text: string, pitch: number) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
   const s = getState();
+  if (!s.sound || s.volume === 0 || s.voiceVolume === 0) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = s.lang === "uk" ? "uk-UA" : "en-US";

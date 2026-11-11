@@ -1,4 +1,7 @@
 # Completion roadmap
+- [ ] Current request: replace repeated listening-strip tapping with purposeful tracing, memory and garden-building interactions.
+- [ ] Current request: replace illustrated story slides with recorded moving scenes and accessible playback.
+- [ ] Current request: verify browser media interruptions and checks; real iPhone testing requires a physical device.
 - [x] Current follow-up: formatted source-owned lint findings without editing generated clients; full lint has 0 errors and 6 Fast Refresh warnings in shared UI primitives.
 - [x] Current follow-up: regression-tested caregiver pending/error/recovery states, media lifecycle/failure handling and paused-scene visibility.
 - [x] Current follow-up: 70 tests passed; representative activity/story/cartoon/garden/settings/caregiver flows passed at 320px, 390px and desktop; physical-device/email/external-OAuth blockers retained.

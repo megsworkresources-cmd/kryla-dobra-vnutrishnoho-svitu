@@ -97,7 +97,7 @@ function Explore() {
                         >
                           {s.icon}
                         </span>
-                        <span className="paper-card mt-0.5 whitespace-nowrap px-2 py-0.5 text-[10px] font-extrabold leading-tight">
+                        <span className="paper-card mt-0.5 whitespace-nowrap px-2 py-0.5 text-xs font-extrabold leading-tight">
                           {t(p.name)}
                         </span>
                       </button>

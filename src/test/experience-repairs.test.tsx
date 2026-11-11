@@ -4,6 +4,7 @@ import { Release } from "@/activities/clouds";
 import { Sounds } from "@/activities/sky";
 import { speak } from "@/lib/speak";
 import { update } from "@/lib/store";
+import { MagicStage } from "@/components/MagicStage";
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
 vi.mock("@/components/Scene", () => ({
@@ -20,6 +21,12 @@ afterEach(() => {
 });
 
 describe("experience repair regressions", () => {
+  it("activates shared magic controls with a keyboard-generated click", () => {
+    update((s) => ({ ...s, lang: "uk", reduceMotion: true }));
+    render(<MagicStage theme="meadow" count={1} />);
+    fireEvent.click(screen.getByRole("button", { name: "Торкнутися" }), { detail: 0 });
+    expect(screen.getByText("Доторків: 1")).toBeInTheDocument();
+  });
   it("finishes cloud release even when animations are disabled", () => {
     vi.useFakeTimers();
     update((s) => ({ ...s, reduceMotion: true, lang: "uk" }));

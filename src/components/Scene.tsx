@@ -1,6 +1,6 @@
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, Heart, Home, Map, Settings2 } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode, type CSSProperties } from "react";
 import { BottomNav } from "./BottomNav";
 import { CharacterSay } from "./Character";
 import { LangToggle } from "./LangToggle";
@@ -178,6 +178,7 @@ export function Btn({
   variant?: "primary" | "soft" | "honey" | "ghost";
   disabled?: boolean;
   className?: string;
+  style?: CSSProperties;
   "aria-label"?: string;
   "aria-pressed"?: boolean;
   type?: "button" | "submit" | "reset";

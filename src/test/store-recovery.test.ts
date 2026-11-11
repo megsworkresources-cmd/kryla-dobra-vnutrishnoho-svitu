@@ -5,7 +5,9 @@ describe("saved device settings recovery", () => {
     vi.resetModules();
     localStorage.clear();
     const { addDrawing, getState } = await import("@/lib/store");
-    const spy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("quota"); });
+    const spy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("quota");
+    });
     expect(addDrawing("data:image/jpeg;base64,example")).toBe(false);
     expect(getState().drawings).toHaveLength(1);
     spy.mockRestore();

@@ -1,8 +1,9 @@
 # Completion roadmap
-- [ ] Replace synthesized background tunes with high-quality soothing Ukrainian instrumental recordings, preserving all settings and autoplay safeguards.
-- [ ] Add a choice-based Claude story companion with no free-text collection, no server storage and visible privacy guidance.
-- [ ] Audit every screen, fix discovered runtime/component errors and clear the existing lint errors.
-- [ ] Audit and complete caregiver authentication, session handling, recovery and regression checks.
+- [x] In-place targeted repairs and browser audit: 35 routes at three sizes; audio decoding, cartoon controls, drawing persistence, reduced-motion release, keyboard games and public/caregiver separation checked.
+- [x] Existing recorded tracks verified: all four return 200 and decode; physical iPhone listening remains manual.
+- [x] Choice-based Claude story companion verified with a real Ukrainian story response; no typed child text or story storage.
+- [ ] Broader lint cleanup: untouched files have existing formatting errors; kept outside targeted repairs to avoid unrelated mass edits.
+- [ ] Caregiver email delivery, recovery and device-session acceptance checks require manual email interaction; existing 43 auth/redirect tests pass.
 - [x] OAuth-protected activity catalog MCP + browser map tools: manifest extracted (2 tools), signed-out consent redirects to adult login with request preserved, verified at phone size (390x844).
 - [ ] Real external MCP client authorization end to end (needs an outside agent to run the OAuth consent flow).
 - [x] All places, exercises, stories and creative tools.

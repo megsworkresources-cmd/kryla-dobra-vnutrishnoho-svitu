@@ -4,7 +4,13 @@ import { placeImage } from "@/content/places";
 import { FOREST } from "@/content/hubs";
 import { BodyMap, EmotionGallery, Express, MixedFeelings, SortGame } from "@/activities/forest";
 
-const MAP = { gallery: EmotionGallery, mixed: MixedFeelings, body: BodyMap, sort: SortGame, express: Express } as const;
+const MAP = {
+  gallery: EmotionGallery,
+  mixed: MixedFeelings,
+  body: BodyMap,
+  sort: SortGame,
+  express: Express,
+} as const;
 
 export const Route = createFileRoute("/forest/$id")({
   loader: ({ params }) => {
@@ -18,6 +24,8 @@ export const Route = createFileRoute("/forest/$id")({
       { name: "description", content: "Вправа з Лісу почуттів." },
       { property: "og:title", content: `${loaderData?.title ?? "Ліс почуттів"} — Тихе Місце` },
       { property: "og:description", content: "Вправа з Лісу почуттів." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Page,
@@ -28,8 +36,16 @@ function Page() {
   const { title } = Route.useLoaderData();
   const C = MAP[id as keyof typeof MAP];
   return (
-    <Scene title={title} back="/forest" favHref={`/forest/${id}`} image={placeImage("forest")} compact>
-      <div className="pt-[8vh]"><C /></div>
+    <Scene
+      title={title}
+      back="/forest"
+      favHref={`/forest/${id}`}
+      image={placeImage("forest")}
+      compact
+    >
+      <div className="pt-[8vh]">
+        <C />
+      </div>
     </Scene>
   );
 }

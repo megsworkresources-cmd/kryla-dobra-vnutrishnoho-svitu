@@ -21,11 +21,12 @@ import { t, useT } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { authTransition, RECOVERY_KEY } from "@/lib/caregiver-session";
 import { safeReturnPath } from "@/lib/caregiver-guard";
+import { stopSpeaking, syncSpeechVolume } from "@/lib/speak";
 
 function NotFoundComponent() {
   const t = useT();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">{t("Такої сторінки немає")}</h2>
@@ -54,7 +55,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           {t("Щось пішло не так")}
@@ -179,6 +180,10 @@ function RootComponent() {
   const reduce = useStore((s) => s.reduceMotion);
   const textSize = useStore((s) => s.textSize);
   const music = useStore((s) => s.sound && s.music);
+  const volume = useStore((s) => s.volume);
+  const sound = useStore((s) => s.sound);
+  const musicStyle = useStore((s) => s.musicStyle);
+  const lang = useStore((s) => s.lang);
   const { pathname } = useLocation();
   useEffect(() => {
     document.documentElement.classList.toggle("reduce-motion", reduce);
@@ -186,6 +191,13 @@ function RootComponent() {
   useEffect(() => {
     document.documentElement.dataset["text"] = textSize;
   }, [textSize]);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+  useEffect(syncSpeechVolume, [sound, volume]);
+  useEffect(() => {
+    stopSpeaking();
+  }, [pathname]);
   // Audio only starts after the first touch (browser autoplay rules), then follows the page.
   useEffect(() => {
     const onDown = (e: PointerEvent) => {
@@ -195,12 +207,22 @@ function RootComponent() {
       if (el && !el.closest("[data-no-tap]")) sfx("tap");
     };
     window.addEventListener("pointerdown", onDown);
-    return () => window.removeEventListener("pointerdown", onDown);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        unlockAudio();
+        playAmbient(ambientFor(window.location.pathname));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
   }, []);
   useEffect(() => {
     playAmbient(music ? ambientFor(pathname) : null);
     sfx("page");
-  }, [pathname, music]);
+  }, [pathname, music, musicStyle]);
   useEffect(() => {
     const seg = pathname.split("/")[1];
     if (seg && PLACES.some((p) => p.id === seg)) markVisit(seg);
@@ -208,7 +230,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <main>
+        <Outlet />
+      </main>
       <TouchSparkles />
     </QueryClientProvider>
   );

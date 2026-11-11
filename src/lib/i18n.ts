@@ -7,6 +7,7 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Наприклад: мені сумно, бо…": "For example: I feel sad because…",
   "Не вдалося вийти. Спробуйте ще раз.": "Couldn't sign out. Please try again.",
   "Не вдалося завершити дію. Перевірте дані й спробуйте ще раз.":
     "Couldn't complete the action. Check your details and try again.",

@@ -1,4 +1,5 @@
 # Completion roadmap
+- [ ] In-place repair audit: audio/settings, media playback, exercises, navigation, accessibility, phone layout and regression checks; preserve data and integrations.
 - [ ] Replace synthesized background tunes with high-quality soothing Ukrainian instrumental recordings, preserving all settings and autoplay safeguards.
 - [ ] Add a choice-based Claude story companion with no free-text collection, no server storage and visible privacy guidance.
 - [ ] Audit every screen, fix discovered runtime/component errors and clear the existing lint errors.

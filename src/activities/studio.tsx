@@ -27,6 +27,8 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   const t = useT();
   const ref = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
   const [color, setColor] = useState(COLORS[0]!);
   const [size, setSize] = useState(8);
   const [eraser, setEraser] = useState(false);
@@ -43,7 +45,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
     const r = ref.current!.getBoundingClientRect();
     const id = tid.current++;
     setTrail((a) => [...a.slice(-14), { id, x: e.clientX - r.left, y: e.clientY - r.top, g }]);
-    setTimeout(() => setTrail((a) => a.filter((q) => q.id !== id)), 700);
+    timers.current.push(setTimeout(() => setTrail((a) => a.filter((q) => q.id !== id)), 700));
   };
   const fill = () => {
     const c = ref.current;
@@ -240,7 +242,9 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
             setSaved(persisted);
             setSaveFailed(!persisted);
             setParty((n) => n + 1);
-            [523, 659, 784, 1047].forEach((f, k) => setTimeout(() => chime(f), k * 140));
+            [523, 659, 784, 1047].forEach((f, k) =>
+              timers.current.push(setTimeout(() => chime(f), k * 140)),
+            );
           }}
         >
           {t("Зберегти")}
@@ -279,6 +283,8 @@ export function ColorFlower() {
   const t = useT();
   const [fills, setFills] = useState<string[]>(Array(13).fill("var(--paper)"));
   const [color, setColor] = useState(COLORS[1]!);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
   const [popped, setPopped] = useState<number | null>(null);
   const paint = (k: number) => {
     const next = fills.map((f, j) => (j === k ? color : f));
@@ -287,7 +293,9 @@ export function ColorFlower() {
     chime(NOTES[k % NOTES.length]!);
     if (!fills.every((f) => f !== "var(--paper)") && next.every((f) => f !== "var(--paper)")) {
       markDone("studio-color");
-      [523, 659, 784, 1047].forEach((f, j) => setTimeout(() => chime(f), 300 + j * 140));
+      [523, 659, 784, 1047].forEach((f, j) =>
+        timers.current.push(setTimeout(() => chime(f), 300 + j * 140)),
+      );
     }
   };
   const full = fills.every((f) => f !== "var(--paper)");

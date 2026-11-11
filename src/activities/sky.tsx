@@ -114,6 +114,8 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
     document.addEventListener("visibilitychange", pauseWhenHidden);
     return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
   }, []);
+  const effects = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => effects.current.forEach(clearTimeout), []);
   const [lit, setLit] = useState<number[]>([]);
   const [hop, setHop] = useState<string | null>(null);
   const fx = STORY_FX[id]?.[i] ?? ["✨"];
@@ -196,7 +198,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
                     chime(STAR_NOTES[lit.length % STAR_NOTES.length]!);
                     if (lit.length + 1 === FIREFLIES.length)
                       [523, 659, 784, 1047, 1319].forEach((f, j) =>
-                        setTimeout(() => chime(f), 250 + j * 130),
+                        effects.current.push(setTimeout(() => chime(f), 250 + j * 130)),
                       );
                     setLit([...lit, k]);
                   } else sfx("select");
@@ -220,7 +222,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
                 onClick={() => {
                   setHop(key);
                   chime(STAR_NOTES[(k + i) % STAR_NOTES.length]!);
-                  setTimeout(() => setHop(null), 600);
+                  effects.current.push(setTimeout(() => setHop(null), 600));
                 }}
                 className={`absolute flex h-14 w-14 items-center justify-center text-4xl drop-shadow-lg ${hop === key ? "animate-pop" : "animate-float"}`}
                 style={{

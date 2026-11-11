@@ -50,7 +50,7 @@ function Toggle({
       <input
         type="checkbox"
         role="switch"
-        className="h-7 w-7 accent-primary"
+        className="h-11 w-11 shrink-0 accent-primary"
         checked={checked}
         disabled={disabled}
         onChange={(e) => {
@@ -118,7 +118,7 @@ function Settings() {
               aria-label={t("Гучність")}
               onChange={(e) => set("volume", Number(e.target.value))}
               onPointerUp={() => sfx("select")}
-              className="mt-2 w-full accent-primary"
+              className="mt-1 h-11 w-full accent-primary"
             />
           </label>
           <Toggle
@@ -155,7 +155,7 @@ function Settings() {
                   set(key, Number(e.target.value));
                   if (key === "musicVolume") playAmbient("garden");
                 }}
-                className="mt-2 w-full accent-primary"
+                className="mt-1 h-11 w-full accent-primary"
               />
             </label>
           ))}

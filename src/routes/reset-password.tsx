@@ -24,6 +24,7 @@ function ResetPassword() {
   const t = useT();
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
+  const [checking, setChecking] = useState(true);
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
@@ -31,13 +32,17 @@ function ResetPassword() {
   useEffect(() => {
     let active = true;
     const check = async () => {
+      setChecking(true);
       let saved: string | null = null;
       try {
         saved = sessionStorage.getItem(RECOVERY_KEY);
       } catch {
         /* optional storage */
       }
-      if (!recoveryRequested(window.location.hash, saved)) return;
+      if (!recoveryRequested(window.location.hash, saved)) {
+        if (active) setChecking(false);
+        return;
+      }
       try {
         const { data, error } = await supabase.auth.getUser();
         if (!active) return;
@@ -52,6 +57,8 @@ function ResetPassword() {
         }
       } catch {
         if (active) setReady(false);
+      } finally {
+        if (active) setChecking(false);
       }
     };
     void check();
@@ -85,9 +92,17 @@ function ResetPassword() {
 
   return (
     <Scene title="Для дорослих" back="/">
-      <form onSubmit={submit} className="paper-card mx-auto max-w-md space-y-4 p-5">
+      <form
+        onSubmit={submit}
+        className="paper-card mx-auto max-w-md space-y-4 p-5"
+        aria-busy={busy || checking}
+      >
         <h2 className="font-display text-2xl font-bold">{t("Новий пароль")}</h2>
-        {ready ? (
+        {checking ? (
+          <p role="status" className="text-sm">
+            {t("Перевіряємо посилання…")}
+          </p>
+        ) : ready ? (
           <>
             <label className="block text-sm font-semibold">
               {t("Пароль")}
@@ -107,11 +122,13 @@ function ResetPassword() {
               </p>
             )}
             <Btn type="submit" disabled={busy} className="w-full">
-              {t("Зберегти пароль")}
+              {busy ? t("Зберігаємо…") : t("Зберегти пароль")}
             </Btn>
           </>
         ) : (
-          <p className="text-sm">{t("Відкрийте це посилання з листа для зміни пароля.")}</p>
+          <p role="alert" className="text-sm">
+            {t("Відкрийте це посилання з листа для зміни пароля.")}
+          </p>
         )}
       </form>
     </Scene>

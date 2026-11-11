@@ -8,8 +8,11 @@ describe("OAuth local return paths", () => {
     expect(oauthReturnPath(path)).toBe(path);
     expect(safeReturnPath(path)).toBe(path);
   });
-  it.each(["//evil.invalid", "/\\evil.invalid", "/parents\n", "https://evil.invalid", null])("rejects unsafe target %s", (path) => {
-    expect(oauthReturnPath(path)).toBe("/");
-    expect(safeReturnPath(path)).toBe("/parents");
-  });
+  it.each(["//evil.invalid", "/\\evil.invalid", "/parents\n", "https://evil.invalid", null])(
+    "rejects unsafe target %s",
+    (path) => {
+      expect(oauthReturnPath(path)).toBe("/");
+      expect(safeReturnPath(path)).toBe("/parents");
+    },
+  );
 });

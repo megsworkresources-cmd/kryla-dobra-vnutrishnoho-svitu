@@ -8,7 +8,11 @@ import { sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/friends")({
-  head: () => pageHead("Мої друзі", "Познайомся з Соломією, Тарасом, Оленкою, Марком, Дариною та їжачком Ліхтариком."),
+  head: () =>
+    pageHead(
+      "Мої друзі",
+      "Познайомся з Соломією, Тарасом, Оленкою, Марком, Дариною та їжачком Ліхтариком.",
+    ),
   component: Friends,
 });
 
@@ -27,10 +31,25 @@ function Friends() {
         <ul className="grid grid-cols-3 gap-3 sm:grid-cols-6">
           {ids.map((id) => (
             <li key={id}>
-              <button type="button" onClick={() => { sfx("select"); setWho(id); }} aria-pressed={who === id} aria-label={t("Послухати, що каже {n}", { n: t(CHARACTERS[id].name) })}
-                className={`paper-card flex w-full flex-col items-center p-2 transition active:scale-95 ${who === id ? "ring-4 ring-ring" : ""}`}>
-                <img src={CHARACTERS[id].image} alt="" className="h-24 w-auto object-contain" loading="lazy" />
-                <span className="mt-1 text-sm font-bold">{t(CHARACTERS[id].name).replace(t("Їжачок "), "")}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  sfx("select");
+                  setWho(id);
+                }}
+                aria-pressed={who === id}
+                aria-label={t("Послухати, що каже {n}", { n: t(CHARACTERS[id].name) })}
+                className={`paper-card flex w-full flex-col items-center p-2 transition active:scale-95 ${who === id ? "ring-4 ring-ring" : ""}`}
+              >
+                <img
+                  src={CHARACTERS[id].image}
+                  alt=""
+                  className="h-24 w-auto object-contain"
+                  loading="lazy"
+                />
+                <span className="mt-1 text-sm font-bold">
+                  {t(CHARACTERS[id].name).replace(t("Їжачок "), "")}
+                </span>
               </button>
             </li>
           ))}

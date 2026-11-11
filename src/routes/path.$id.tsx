@@ -8,7 +8,8 @@ export const Route = createFileRoute("/path/$id")({
     if (!title) throw notFound();
     return { title };
   },
-  head: ({ loaderData }) => pageHead(loaderData?.title ?? JOURNEYS.path.title, `Вправа: ${JOURNEYS.path.title}.`),
+  head: ({ loaderData }) =>
+    pageHead(loaderData?.title ?? JOURNEYS.path.title, `Вправа: ${JOURNEYS.path.title}.`),
   component: Page,
 });
 

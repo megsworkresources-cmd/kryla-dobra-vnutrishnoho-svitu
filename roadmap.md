@@ -1,4 +1,7 @@
 # Completion roadmap
+- [x] Current follow-up: formatted source-owned lint findings without editing generated clients; full lint has 0 errors and 6 Fast Refresh warnings in shared UI primitives.
+- [x] Current follow-up: regression-tested caregiver pending/error/recovery states, media lifecycle/failure handling and paused-scene visibility.
+- [x] Current follow-up: 70 tests passed; representative activity/story/cartoon/garden/settings/caregiver flows passed at 320px, 390px and desktop; physical-device/email/external-OAuth blockers retained.
 - [x] Current repair pass: recorded music loading/error/retry and independent volumes; synchronous exit cancellation; bounded media caches; paused/background cartoons and breathing; one-time full coloring rewards; non-destructive malformed progress recovery; storage failure feedback; timer cleanup; 58 tests and repaired-file lint passed. 48 routes checked at three widths; eleven guided flows, two breathing flows, four recordings and local garden reload checked.
 - [ ] Physical iPhone/Android checks: listening quality, Safari/Chrome autoplay, interruptions and device voices require actual devices.
 - [ ] Shared community garden: no shared feature exists; private device-only garden retained. Requires an explicit privacy-safe specification before cloud functionality.
@@ -7,7 +10,7 @@
 - [x] In-place targeted repairs and browser audit: 35 routes at three sizes; audio decoding, cartoon controls, drawing persistence, reduced-motion release, keyboard games and public/caregiver separation checked.
 - [x] Existing recorded tracks verified: all four return 200 and decode; physical iPhone listening remains manual.
 - [x] Choice-based Claude story companion verified with a real Ukrainian story response; no typed child text or story storage.
-- [ ] Broader lint cleanup: untouched files have existing formatting errors; kept outside targeted repairs to avoid unrelated mass edits.
+- [x] Broader lint cleanup: source-owned Prettier findings resolved; generated backend clients untouched; only 6 non-blocking Fast Refresh warnings remain.
 - [ ] Caregiver email delivery, recovery and device-session acceptance checks require manual email interaction; existing 43 auth/redirect tests pass.
 - [x] OAuth-protected activity catalog MCP + browser map tools: manifest extracted (2 tools), signed-out consent redirects to adult login with request preserved, verified at phone size (390x844).
 - [ ] Real external MCP client authorization end to end (needs an outside agent to run the OAuth consent flow).

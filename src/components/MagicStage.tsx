@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { chime } from '@/lib/audio';
 import { useT } from '@/lib/i18n';
 import { useStore } from '@/lib/store';
+import { Btn } from './Scene';
 
 const THEMES: Record<string, { items: string[]; bg: string }> = {
   forest: { items: ['🍃', '🌰', '🍄', '🦔', '🌿'], bg: 'from-sage/50 to-honey/20' },
@@ -23,17 +24,19 @@ export function MagicStage({ theme, label, night = false, count = 6 }: { theme: 
   const calm = useStore((s) => s.reduceMotion);
   const th = THEMES[theme] ?? THEMES['meadow']!;
   const seq = useRef(0);
-  const make = (): Bit => ({ id: seq.current++, icon: th.items[Math.floor(Math.random() * th.items.length)]!, left: 6 + Math.random() * 82, dur: 6 + Math.random() * 5, delay: Math.random() * 3 });
+  const make = (): Bit => ({ id: seq.current++, icon: th.items[Math.floor(Math.random() * th.items.length)] ?? '✨', left: 6 + Math.random() * 70, dur: 6 + Math.random() * 5, delay: Math.random() * 3 });
   const [bits, setBits] = useState<Bit[]>([]);
   const [pops, setPops] = useState<{ id: number; x: number; y: number }[]>([]);
   const [score, setScore] = useState(0);
-  useEffect(() => { setBits(Array.from({ length: count }, make)); setScore(0); }, [theme]); // eslint-disable-line react-hooks/exhaustive-deps
-  const tap = (b: Bit, e: React.PointerEvent) => {
-    const r = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+  const timers = useRef<Set<number>>(new Set());
+  useEffect(() => () => { timers.current.forEach(window.clearTimeout); }, []);
+  useEffect(() => { setBits(Array.from({ length: count }, make)); setScore(0); }, [theme, count]); // eslint-disable-line react-hooks/exhaustive-deps
+  const tap = (b: Bit) => {
     const id = seq.current++;
-    setPops((p) => [...p, { id, x: e.clientX - r.left, y: e.clientY - r.top }]);
-    setTimeout(() => setPops((p) => p.filter((q) => q.id !== id)), 900);
-    chime(NOTES[score % NOTES.length]!);
+    setPops((p) => [...p, { id, x: b.left, y: 70 }]);
+    const timer = window.setTimeout(() => { timers.current.delete(timer); setPops((p) => p.filter((q) => q.id !== id)); }, 900);
+    timers.current.add(timer);
+    chime(NOTES[score % NOTES.length] ?? 523);
     setScore((s) => s + 1);
     setBits((all) => all.map((x) => (x.id === b.id ? { ...make(), delay: 0.3 } : x)));
   };
@@ -43,14 +46,14 @@ export function MagicStage({ theme, label, night = false, count = 6 }: { theme: 
       <div className="absolute inset-x-0 bottom-0 h-1/4 rounded-t-[50%] bg-sage/40" aria-hidden />
       {[12, 34, 58, 80].map((l, k) => <span key={l} className="absolute h-1.5 w-1.5 rounded-full bg-honey animate-twinkle" style={{ left: `${l}%`, top: `${15 + k * 12}%`, animationDelay: `${k * 0.5}s` }} aria-hidden />)}
       {bits.map((b) => (
-        <button key={b.id} type="button" onPointerDown={(e) => tap(b, e)} aria-label={t('Торкнутися')}
-          className={`absolute bottom-0 flex h-14 w-14 items-center justify-center text-4xl drop-shadow ${calm ? 'animate-float' : 'animate-drift'}`}
+        <Btn variant="ghost" key={b.id} onClick={() => tap(b)} aria-label={t('Торкнутися')}
+          className={`absolute bottom-0 flex h-14 w-14 items-center justify-center border-0 p-0 text-4xl shadow-none drop-shadow ${calm ? 'animate-float' : 'animate-drift'}`}
           style={{ left: `${b.left}%`, animationDuration: calm ? undefined : `${b.dur}s`, animationDelay: `${b.delay}s`, ...(calm ? { bottom: `${20 + (b.id % 3) * 22}%` } : {}) }}
-          onAnimationIteration={() => setBits((all) => all.map((x) => (x.id === b.id ? { ...x, left: 6 + Math.random() * 82 } : x)))}>
+          >
           {b.icon}
-        </button>
+        </Btn>
       ))}
-      {pops.map((p) => <span key={p.id} className="pointer-events-none absolute text-2xl animate-stagepop" style={{ left: p.x - 12, top: p.y - 12 }} aria-hidden>✨</span>)}
+      {pops.map((p) => <span key={p.id} className="pointer-events-none absolute text-2xl animate-stagepop" style={{ left: `${p.x}%`, top: p.y }} aria-hidden>✨</span>)}
       <p className="pointer-events-none absolute left-3 top-2 rounded-full bg-card/80 px-3 py-1 text-xs font-bold text-foreground" aria-live="polite">
         {score === 0 ? t('Торкайся, поки слухаєш ✨') : milestone ? t('Чудово! {n} доторків 🌟', { n: score }) : t('Доторків: {n}', { n: score })}
       </p>

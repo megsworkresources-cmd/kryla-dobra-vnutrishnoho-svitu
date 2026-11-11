@@ -63,7 +63,30 @@ function load() {
   loaded = true;
   try {
     const raw = window.localStorage.getItem(KEY);
-    if (raw) state = { ...DEFAULTS, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed: unknown = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return;
+      const saved = parsed as Partial<AppState>;
+      state = { ...DEFAULTS, ...saved };
+      for (const key of ['favorites', 'comfort', 'drawings'] as const) {
+        if (!Array.isArray(saved[key])) Object.assign(state, { [key]: DEFAULTS[key] });
+      }
+      for (const key of ['completed', 'visits', 'lastDone'] as const) {
+        const value = saved[key];
+        if (!value || typeof value !== 'object' || Array.isArray(value)) Object.assign(state, { [key]: DEFAULTS[key] });
+      }
+      for (const key of ['sound', 'music', 'sfx', 'voice', 'reduceMotion'] as const) {
+        if (typeof saved[key] !== 'boolean') state[key] = DEFAULTS[key];
+      }
+      state.volume = typeof saved.volume === 'number' && Number.isFinite(saved.volume) ? Math.min(1, Math.max(0, saved.volume)) : DEFAULTS.volume;
+      state.age = ['young', 'mid', 'older'].includes(String(saved.age)) ? saved.age as AgeBand : DEFAULTS.age;
+      state.lang = saved.lang === 'en' ? 'en' : 'uk';
+      state.musicStyle = ['bandura', 'sopilka', 'tsymbaly', 'lullaby', 'nature'].includes(String(saved.musicStyle)) ? saved.musicStyle as AppState['musicStyle'] : DEFAULTS.musicStyle;
+      state.voiceEngine = saved.voiceEngine === 'device' ? 'device' : 'natural';
+      state.textSize = ['normal', 'large', 'xl'].includes(String(saved.textSize)) ? saved.textSize as AppState['textSize'] : DEFAULTS.textSize;
+      state.voiceURI = typeof saved.voiceURI === 'string' ? saved.voiceURI : DEFAULTS.voiceURI;
+      state.narrator = typeof saved.narrator === 'string' ? saved.narrator : DEFAULTS.narrator;
+    }
   } catch {
     state = DEFAULTS;
   }

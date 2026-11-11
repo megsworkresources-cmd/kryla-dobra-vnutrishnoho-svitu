@@ -1,4 +1,7 @@
 # Completion roadmap
+- [ ] Current follow-up: classify and format source-owned lint findings without editing generated clients; recheck full lint.
+- [ ] Current follow-up: regression-test caregiver pending/error/recovery states and media lifecycle/failure handling.
+- [ ] Current follow-up: rerun automated checks and representative 320px, 390px and desktop browser flows; retain physical-device/email/external-OAuth blockers.
 - [x] Current repair pass: recorded music loading/error/retry and independent volumes; synchronous exit cancellation; bounded media caches; paused/background cartoons and breathing; one-time full coloring rewards; non-destructive malformed progress recovery; storage failure feedback; timer cleanup; 58 tests and repaired-file lint passed. 48 routes checked at three widths; eleven guided flows, two breathing flows, four recordings and local garden reload checked.
 - [ ] Physical iPhone/Android checks: listening quality, Safari/Chrome autoplay, interruptions and device voices require actual devices.
 - [ ] Shared community garden: no shared feature exists; private device-only garden retained. Requires an explicit privacy-safe specification before cloud functionality.

@@ -121,7 +121,12 @@ function CaregiverLogin() {
             "Цей вхід лише для батьків і опікунів. Дітям акаунт не потрібен — уся гра працює без нього. Дані дитини залишаються на цьому пристрої.",
           )}
         </p>
-        <form onSubmit={submit} className="paper-card space-y-4 p-5" aria-labelledby="cg-h">
+        <form
+          onSubmit={submit}
+          className="paper-card space-y-4 p-5"
+          aria-labelledby="cg-h"
+          aria-busy={busy}
+        >
           <h2 id="cg-h" className="font-display text-2xl font-bold">
             {t(heading)}
           </h2>
@@ -159,7 +164,11 @@ function CaregiverLogin() {
             </p>
           )}
           <Btn type="submit" disabled={busy} className="w-full">
-            {t({ signin: "Увійти", signup: "Створити акаунт", forgot: "Надіслати лист" }[mode])}
+            {busy
+              ? t({ signin: "Входимо…", signup: "Створюємо акаунт…", forgot: "Надсилаємо лист…" }[
+                  mode
+                ])
+              : t({ signin: "Увійти", signup: "Створити акаунт", forgot: "Надіслати лист" }[mode])}
           </Btn>
           <div className="flex flex-wrap justify-center gap-2 text-sm">
             {mode !== "signin" && (

@@ -23,6 +23,13 @@ const EN: Record<string, string> = {
     "Couldn't complete the action. Check your details and try again.",
   "Не вдалося зберегти пароль. Відкрийте новий лист відновлення й спробуйте ще раз.":
     "Couldn't save the password. Open a new recovery email and try again.",
+  "Входимо…": "Signing in…",
+  "Створюємо акаунт…": "Creating your account…",
+  "Надсилаємо лист…": "Sending the email…",
+  "Перевіряємо посилання…": "Checking your link…",
+  "Зберігаємо…": "Saving…",
+  "Не вдалося завантажити ілюстрацію. Спробуй інший мультик.":
+    "The picture couldn't load. Try another cartoon.",
   "Підключення помічника": "Connect an assistant",
   "Дозвіл дорослого на читання каталогу вправ.": "Adult permission to read the activity catalog.",
   "Цей запит недійсний або вже завершився. Почніть підключення знову у своєму помічнику.":

@@ -211,13 +211,15 @@ function Watch() {
   );
 }
 
-function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
+export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
   const t = useT();
   const voice = useStore((s) => s.voice && s.sound);
   const lang = useLang();
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(true);
+  const [failedShot, setFailedShot] = useState<number | null>(null);
   const shot = clip.shots[i];
+  const mediaFailed = failedShot === i;
   const done = i >= clip.shots.length;
   useEffect(() => {
     const pauseWhenHidden = () => {
@@ -250,10 +252,16 @@ function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
             className="absolute inset-0 animate-fade-up"
             style={{ animationPlayState: playing ? "running" : "paused" }}
           >
+            {mediaFailed && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-night p-6 text-center text-moon">
+                <p role="alert">{t("Не вдалося завантажити ілюстрацію. Спробуй інший мультик.")}</p>
+              </div>
+            )}
             <img
               src={shot.img}
               alt=""
               className="h-full w-full object-cover animate-kenburns"
+              onError={() => setFailedShot(i)}
               style={{ animationPlayState: playing ? "running" : "paused" }}
             />
             {[12, 30, 52, 70, 88].map((l, k) => (

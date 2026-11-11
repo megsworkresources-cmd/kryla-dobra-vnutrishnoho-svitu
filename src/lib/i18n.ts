@@ -1231,6 +1231,13 @@ const EN: Record<string, string> = {
 
 export type { Lang };
 
+let APP_LINES: Set<string> | null = null;
+/** True only for app-written lines (dictionary sources or translations). */
+export function isAppLine(s: string): boolean {
+  if (!APP_LINES) APP_LINES = new Set([...Object.keys(EN), ...Object.values(EN)].map((x) => x.trim()));
+  return APP_LINES.has(s.trim());
+}
+
 /** Translate one string for an explicit language (usable on the server). */
 export function tr(s: string, lang: Lang, vars?: Record<string, string | number>): string {
   let out = lang === "en" ? (EN[s] ?? s) : s;

@@ -31,6 +31,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   const [size, setSize] = useState(8);
   const [eraser, setEraser] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
   const [stamp, setStamp] = useState<string | null>(null);
   const [rainbow, setRainbow] = useState(false);
   const hue = useRef(0);
@@ -51,6 +52,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
     g.fillStyle = resolve("var(--paper)");
     g.fillRect(0, 0, c.width, c.height);
     setSaved(false);
+    setSaveFailed(false);
   };
   useEffect(fill, []);
   const pos = (e: React.PointerEvent) => {
@@ -231,9 +233,12 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
         <Btn
           variant="honey"
           onClick={() => {
-            addDrawing(ref.current!.toDataURL("image/jpeg", 0.7));
-            markDone(id);
-            setSaved(true);
+            const canvas = ref.current;
+            if (!canvas || saved) return;
+            const persisted = addDrawing(canvas.toDataURL("image/jpeg", 0.7));
+            if (persisted) markDone(id);
+            setSaved(persisted);
+            setSaveFailed(!persisted);
             setParty((n) => n + 1);
             [523, 659, 784, 1047].forEach((f, k) => setTimeout(() => chime(f), k * 140));
           }}
@@ -249,6 +254,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
           </Link>
         </p>
       )}
+      {saveFailed && <p role="alert">{t("Не вдалося зберегти на пристрої. Малюнок поки доступний тут; перевір вільне місце й спробуй ще раз.")}</p>}
     </div>
   );
 }
@@ -273,9 +279,10 @@ export function ColorFlower() {
     setFills(next);
     setPopped(k);
     chime(NOTES[k % NOTES.length]!);
-    if (k === 12) markDone("studio-color");
-    if (next.every((f) => f !== "var(--paper)"))
+    if (!fills.every((f) => f !== "var(--paper)") && next.every((f) => f !== "var(--paper)")) {
+      markDone("studio-color");
       [523, 659, 784, 1047].forEach((f, j) => setTimeout(() => chime(f), 300 + j * 140));
+    }
   };
   const full = fills.every((f) => f !== "var(--paper)");
   return (

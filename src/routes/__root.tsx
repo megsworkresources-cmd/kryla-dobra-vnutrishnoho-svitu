@@ -182,6 +182,7 @@ function RootComponent() {
   const music = useStore((s) => s.sound && s.music);
   const volume = useStore((s) => s.volume);
   const sound = useStore((s) => s.sound);
+  const voiceVolume = useStore((s) => s.voiceVolume);
   const musicStyle = useStore((s) => s.musicStyle);
   const lang = useStore((s) => s.lang);
   const { pathname } = useLocation();
@@ -194,7 +195,7 @@ function RootComponent() {
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
-  useEffect(syncSpeechVolume, [sound, volume]);
+  useEffect(syncSpeechVolume, [sound, volume, voiceVolume]);
   useEffect(() => {
     stopSpeaking();
   }, [pathname]);

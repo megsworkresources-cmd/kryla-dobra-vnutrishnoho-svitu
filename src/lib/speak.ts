@@ -37,7 +37,7 @@ function deviceSpeak(text: string, pitch: number) {
   u.lang = s.lang === "uk" ? "uk-UA" : "en-US";
   u.rate = 0.85;
   u.pitch = pitch;
-  u.volume = s.volume;
+  u.volume = s.volume * s.voiceVolume;
   const all = window.speechSynthesis.getVoices();
   const sameLang = all.filter((x) => x.lang.toLowerCase().replace("_", "-").startsWith(s.lang));
   const v =
@@ -54,7 +54,7 @@ export function speak(
 ) {
   if (typeof window === "undefined") return;
   const s = getState();
-  if (!s.sound || s.volume === 0 || !isAudioUnlocked() || (!s.voice && !opts.force)) return;
+  if (!s.sound || s.volume === 0 || s.voiceVolume === 0 || !isAudioUnlocked() || (!s.voice && !opts.force)) return;
   stopSpeaking();
   const c = opts.who ? CAST[opts.who] : null;
   const pitch = opts.pitch ?? c?.pitch ?? 1.05;
@@ -66,7 +66,9 @@ export function speak(
   const play = (b64: string) => {
     if (my !== token) return;
     audio = new Audio(`data:audio/wav;base64,${b64}`);
-    audio.volume = getState().volume;
+    const current = getState();
+    if (!current.sound || current.volume === 0 || current.voiceVolume === 0) return;
+    audio.volume = current.volume * current.voiceVolume;
     void audio.play().catch(() => {
       if (my === token) deviceSpeak(text, pitch);
     });
@@ -80,6 +82,10 @@ export function speak(
     .then((r) => {
       if (r.ok) {
         cache.set(key, r.audio);
+        if (cache.size > 24) {
+          const oldest = cache.keys().next().value;
+          if (oldest) cache.delete(oldest);
+        }
         play(r.audio);
       } else if (my === token) deviceSpeak(text, pitch);
     })
@@ -93,6 +99,8 @@ export function pauseSpeaking() {
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.pause();
 }
 export function resumeSpeaking() {
+  const s = getState();
+  if (!s.sound || s.volume === 0 || s.voiceVolume === 0 || !isAudioUnlocked()) return;
   void audio?.play().catch(() => {});
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.resume();
 }
@@ -107,9 +115,9 @@ export function stopSpeaking() {
 
 export function syncSpeechVolume() {
   const s = getState();
-  if (!s.sound || s.volume === 0) {
+  if (!s.sound || s.volume === 0 || s.voiceVolume === 0) {
     stopSpeaking();
     return;
   }
-  if (audio) audio.volume = s.volume;
+  if (audio) audio.volume = s.volume * s.voiceVolume;
 }

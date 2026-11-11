@@ -7,6 +7,14 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Гучність музики": "Music volume",
+  "Гучність голосів": "Voice volume",
+  "Гучність звуків кнопок": "Button sound volume",
+  "Музика завантажується…": "Music is loading…",
+  "Музика звучить": "Music is playing",
+  "Музика недоступна. Перевір інтернет і спробуй ще раз.": "Music is unavailable. Check your connection and try again.",
+  "Спробувати музику ще раз": "Retry music",
+  "Не вдалося зберегти на пристрої. Малюнок поки доступний тут; перевір вільне місце й спробуй ще раз.": "Couldn't save on this device. Your drawing is still available here; check free space and try again.",
   "Наприклад: мені сумно, бо…": "For example: I feel sad because…",
   "Не вдалося вийти. Спробуйте ще раз.": "Couldn't sign out. Please try again.",
   "Не вдалося завершити дію. Перевірте дані й спробуйте ще раз.":

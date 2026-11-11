@@ -433,6 +433,7 @@ export function ambientFor(pathname: string): Ambient | null {
         clouds: "clouds",
         garden: "garden",
         world: "garden",
+        settings: "garden",
         "": "garden",
         safe: "cozy",
         studio: "cozy",

@@ -39,7 +39,7 @@ function World() {
 
       <header className="relative z-20 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-3">
         <Link to="/" className="paper-card flex h-12 min-w-0 items-center justify-self-start px-4 font-display text-lg font-bold"><span className="truncate">{t("Тихе Місце")}</span></Link>
-        <div className="flex shrink-0 gap-2">
+        <div className="col-span-2 grid grid-cols-[auto_repeat(6,minmax(0,1fr))] gap-1 sm:col-span-1 sm:flex sm:shrink-0 sm:gap-2">
           <LangToggle />
           <Link to="/explore" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Уся мапа")}>🔍<span className="hidden sm:inline">{t("Уся мапа")}</span></Link>
           <Link to="/friends" className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold" aria-label={t("Мої друзі-персонажі")}><Users className="h-5 w-5" /><span className="hidden sm:inline">{t("Друзі")}</span></Link>

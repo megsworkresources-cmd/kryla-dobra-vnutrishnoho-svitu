@@ -135,7 +135,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   useEffect(() => {
     if (playing && voice && scenes[i]) speak(t(scenes[i]));
     return stopSpeaking;
-  }, [i, playing, voice, scenes]);
+  }, [i, playing, voice, scenes, t]);
   if (done)
     return (
       <DoneCard

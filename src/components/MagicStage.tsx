@@ -1,131 +1,69 @@
-import { useEffect, useRef, useState } from "react";
-import { chime } from "@/lib/audio";
+import { useState } from "react";
+import { RotateCcw } from "lucide-react";
+import { sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
-import { useStore } from "@/lib/store";
 import { Btn } from "./Scene";
 
-const THEMES: Record<string, { items: string[]; bg: string }> = {
-  forest: { items: ["🍃", "🌰", "🍄", "🦔", "🌿"], bg: "from-sage/50 to-honey/20" },
-  meadow: { items: ["🦋", "🌼", "🐝", "🌸", "🌾"], bg: "from-sky/40 to-sage/40" },
-  clouds: { items: ["☁️", "🌈", "🕊️", "💧", "🎈"], bg: "from-sky/50 to-lavender/30" },
-  sky: { items: ["⭐", "🌙", "✨", "💫", "🌟"], bg: "from-lavender/50 to-sky/30" },
-  path: { items: ["🪨", "🦊", "🌉", "🍀", "🐾"], bg: "from-honey/30 to-sage/40" },
-  garden: { items: ["🌻", "🐞", "🌱", "🐝", "🌷"], bg: "from-honey/40 to-sage/30" },
-  safe: { items: ["❤️", "🕯️", "🧸", "🏡", "💛"], bg: "from-rose/40 to-honey/30" },
-  studio: { items: ["🎨", "🖌️", "🌈", "✏️", "🖍️"], bg: "from-rose/30 to-lavender/40" },
-};
-const NOTES = [523, 587, 659, 784, 880, 1047, 1175];
+const FLOWERS = ["🌻", "🌼", "🌷", "🌸"];
+const PATH = [[12, 72], [27, 50], [42, 68], [57, 36], [72, 52], [87, 24]];
+const PAIRS = ["🌻", "🦋", "🍃", "🌻", "🍃", "🦋"];
 
-interface Bit {
-  id: number;
-  icon: string;
-  left: number;
-  dur: number;
-  delay: number;
-}
-
-/** A living, tappable strip: themed things drift up; each tap plays a soft note and sparkles. */
-export function MagicStage({
-  theme,
-  label,
-  night = false,
-  count = 6,
-}: {
-  theme: string;
-  label?: string;
-  night?: boolean | undefined;
-  count?: number;
+/** Optional purposeful play: no scores, deadlines or exercise-completion gate. */
+export function MagicStage({ theme, label, night = false, count: _count, variant }: {
+  theme: string; label?: string; night?: boolean; count?: number;
+  variant?: "trail" | "memory" | "garden";
 }) {
   const t = useT();
-  const calm = useStore((s) => s.reduceMotion);
-  const th = THEMES[theme] ?? THEMES["meadow"]!;
-  const seq = useRef(0);
-  const make = (): Bit => ({
-    id: seq.current++,
-    icon: th.items[Math.floor(Math.random() * th.items.length)] ?? "✨",
-    left: 6 + Math.random() * 70,
-    dur: 6 + Math.random() * 5,
-    delay: Math.random() * 3,
-  });
-  const [bits, setBits] = useState<Bit[]>([]);
-  const [pops, setPops] = useState<{ id: number; x: number; y: number }[]>([]);
-  const [score, setScore] = useState(0);
-  const timers = useRef<Set<number>>(new Set());
-  useEffect(
-    () => () => {
-      timers.current.forEach(window.clearTimeout);
-    },
-    [],
-  );
-  useEffect(() => {
-    setBits(Array.from({ length: count }, make));
-    setScore(0);
-  }, [theme, count]); // eslint-disable-line react-hooks/exhaustive-deps
-  const tap = (b: Bit) => {
-    const id = seq.current++;
-    setPops((p) => [...p, { id, x: b.left, y: 70 }]);
-    const timer = window.setTimeout(() => {
-      timers.current.delete(timer);
-      setPops((p) => p.filter((q) => q.id !== id));
-    }, 900);
-    timers.current.add(timer);
-    chime(NOTES[score % NOTES.length] ?? 523);
-    setScore((s) => s + 1);
-    setBits((all) => all.map((x) => (x.id === b.id ? { ...make(), delay: 0.3 } : x)));
+  const mode = variant ?? (["clouds", "studio"].includes(theme) ? "memory" : ["garden", "safe"].includes(theme) ? "garden" : "trail");
+  const [progress, setProgress] = useState(0);
+  const [chosen, setChosen] = useState(0);
+  const [planted, setPlanted] = useState<Record<number, number>>({});
+  const [open, setOpen] = useState<number[]>([]);
+  const [matched, setMatched] = useState<number[]>([]);
+  const [miss, setMiss] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const reset = () => { setProgress(0); setPlanted({}); setOpen([]); setMatched([]); setMiss(false); };
+  const trace = (n: number) => { if (n === progress) { setProgress(n + 1); sfx("soft"); } };
+  const reveal = (n: number) => {
+    if (matched.includes(n) || open.includes(n)) return;
+    const next = miss ? [n] : [...open, n];
+    setMiss(false); setOpen(next);
+    if (next.length === 2) {
+      const [a, b] = next;
+      if (a !== undefined && b !== undefined && PAIRS[a] === PAIRS[b]) {
+        setMatched([...matched, a, b]); setOpen([]); sfx("confirm");
+      } else setMiss(true);
+    }
   };
-  const milestone = score > 0 && score % 7 === 0;
-  return (
-    <div
-      className={`relative h-40 select-none overflow-hidden rounded-3xl bg-gradient-to-b ${th.bg} ${night ? "ring-1 ring-honey/30" : ""}`}
-      role="group"
-      aria-label={label ?? t("Чарівна смужка: торкайся, поки слухаєш")}
-    >
-      <div className="absolute inset-x-0 bottom-0 h-1/4 rounded-t-[50%] bg-sage/40" aria-hidden />
-      {[12, 34, 58, 80].map((l, k) => (
-        <span
-          key={l}
-          className="absolute h-1.5 w-1.5 rounded-full bg-honey animate-twinkle"
-          style={{ left: `${l}%`, top: `${15 + k * 12}%`, animationDelay: `${k * 0.5}s` }}
-          aria-hidden
-        />
-      ))}
-      {bits.map((b) => (
-        <Btn
-          variant="ghost"
-          key={b.id}
-          onClick={() => tap(b)}
-          aria-label={t("Торкнутися")}
-          className={`absolute bottom-0 flex h-14 w-14 items-center justify-center border-0 p-0 text-4xl shadow-none drop-shadow ${calm ? "animate-float" : "animate-drift"}`}
-          style={{
-            left: `${b.left}%`,
-            animationDuration: calm ? undefined : `${b.dur}s`,
-            animationDelay: `${b.delay}s`,
-            ...(calm ? { bottom: `${20 + (b.id % 3) * 22}%` } : {}),
-          }}
-        >
-          {b.icon}
-        </Btn>
-      ))}
-      {pops.map((p) => (
-        <span
-          key={p.id}
-          className="pointer-events-none absolute text-2xl animate-stagepop"
-          style={{ left: `${p.x}%`, top: p.y }}
-          aria-hidden
-        >
-          ✨
-        </span>
-      ))}
-      <p
-        className="pointer-events-none absolute left-3 top-2 rounded-full bg-card/80 px-3 py-1 text-xs font-bold text-foreground"
-        aria-live="polite"
-      >
-        {score === 0
-          ? t("Торкайся, поки слухаєш ✨")
-          : milestone
-            ? t("Чудово! {n} доторків 🌟", { n: score })
-            : t("Доторків: {n}", { n: score })}
-      </p>
+  const complete = mode === "trail" ? progress === 6 : mode === "memory" ? matched.length === 6 : Object.keys(planted).length === 6;
+  return <div role="group" aria-label={label ?? t("Маленька пригода")} className={`space-y-3 rounded-lg bg-sky/30 p-3 ${night ? "text-moon" : "text-foreground"}`}>
+    <div className="flex items-center justify-between gap-2">
+      <h3 className="font-display text-lg font-bold">{t(mode === "trail" ? "Стежка уваги" : mode === "memory" ? "Знайди друзів" : "Мій маленький сад")}</h3>
+      <Btn variant="soft" onClick={reset} aria-label={t("Почати спочатку")} className="shrink-0 px-3"><RotateCcw size={18} /></Btn>
     </div>
-  );
+    {mode === "trail" ? <div className="relative h-48 touch-pan-y overflow-hidden rounded-lg bg-sage/30"
+      onPointerDown={() => setDragging(true)} onPointerUp={() => setDragging(false)} onPointerCancel={() => setDragging(false)}
+      onPointerLeave={() => setDragging(false)} onPointerMove={(event) => {
+        if (!dragging) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width * 100;
+        const y = (event.clientY - rect.top) / rect.height * 100;
+        const point = PATH[progress];
+        if (point && Math.abs(x - (point[0] ?? 0)) < 9 && Math.abs(y - (point[1] ?? 0)) < 13) trace(progress);
+      }}>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
+        <polyline points={PATH.map((p) => p.join(",")).join(" ")} fill="none" stroke="var(--sage)" strokeWidth="2" strokeDasharray="3 3" />
+        <polyline points={PATH.slice(0, progress).map((p) => p.join(",")).join(" ")} fill="none" stroke="var(--honey)" strokeWidth="3" />
+      </svg>
+      {PATH.map(([x, y], n) => <div key={n} className="absolute -translate-x-1/2 -translate-y-1/2" style={{left: `${x}%`, top: `${y}%`}}>
+        <Btn variant={n < progress ? "honey" : "soft"} aria-label={t("Крок стежки {n}", { n: n + 1 })} disabled={n > progress} onClick={() => trace(n)} className={`h-11 min-h-11 w-11 p-0 ${n === progress ? "ring-2 ring-ring" : ""}`}>{n < progress ? "🌼" : n + 1}</Btn>
+      </div>)}
+    </div> : mode === "memory" ? <div className="grid grid-cols-3 gap-2">
+      {PAIRS.map((icon, n) => <Btn key={n} variant={matched.includes(n) ? "honey" : "soft"} aria-label={t("Картка {n}", {n: n + 1})} aria-pressed={open.includes(n) || matched.includes(n)} onClick={() => reveal(n)} className="h-20 text-3xl">{open.includes(n) || matched.includes(n) ? icon : "🍀"}</Btn>)}
+    </div> : <>
+      <div className="flex justify-center gap-2">{FLOWERS.map((flower, n) => <Btn key={flower} variant={chosen === n ? "honey" : "soft"} aria-label={t("Обрати квітку {n}", {n: n + 1})} aria-pressed={chosen === n} onClick={() => setChosen(n)} className="px-3 text-2xl">{flower}</Btn>)}</div>
+      <div className="grid grid-cols-3 gap-2 rounded-lg bg-sage/30 p-2">{Array.from({length: 6}, (_, n) => <Btn key={n} variant="ghost" aria-label={t("Посадити квітку {n}", {n: n + 1})} onClick={() => {setPlanted({...planted, [n]: chosen}); sfx("soft");}} className="h-16 border-sage/40 p-0 text-3xl">{planted[n] === undefined ? "🌱" : FLOWERS[planted[n] ?? 0]}</Btn>)}</div>
+    </>}
+    <p role="status" className="min-h-12 text-center text-sm">{t(complete ? "Готово. Можна відпочити або спробувати знову." : mode === "trail" ? "Веди пальцем від 1 до 6 або обирай кроки по черзі." : mode === "memory" ? miss ? "Ці картинки різні. Запам’ятай їх і обери іншу картку." : "Відкрий дві картки й знайди однакові картинки." : "Обери квітку й посади її на вільному місці.")}</p>
+  </div>;
 }

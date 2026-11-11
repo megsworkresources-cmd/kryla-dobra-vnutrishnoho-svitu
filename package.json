@@ -17,6 +17,7 @@
     "rolldown": "1.2.1"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.99",
     "@ai-sdk/openai": "^4.0.108",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/mcp-js": "^3.4.0",

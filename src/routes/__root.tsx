@@ -15,7 +15,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { ambientFor, playAmbient, sfx, unlockAudio } from "@/lib/audio";
+import { ambientFor, playAmbient, sfx, unlockAudio, stopAmbient, syncVolume } from "@/lib/audio";
 import { markVisit, useStore } from "../lib/store";
 import { t, useT } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
@@ -182,6 +182,8 @@ function RootComponent() {
   const music = useStore((s) => s.sound && s.music);
   const volume = useStore((s) => s.volume);
   const sound = useStore((s) => s.sound);
+  const voiceVolume = useStore((s) => s.voiceVolume);
+  const musicVolume = useStore((s) => s.musicVolume);
   const musicStyle = useStore((s) => s.musicStyle);
   const lang = useStore((s) => s.lang);
   const { pathname } = useLocation();
@@ -194,7 +196,8 @@ function RootComponent() {
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
-  useEffect(syncSpeechVolume, [sound, volume]);
+  useEffect(syncSpeechVolume, [sound, volume, voiceVolume]);
+  useEffect(syncVolume, [sound, volume, musicVolume]);
   useEffect(() => {
     stopSpeaking();
   }, [pathname]);
@@ -214,15 +217,25 @@ function RootComponent() {
       }
     };
     window.addEventListener("keydown", onKey);
+    const onVisibility = () => {
+      if (document.hidden) {
+        stopSpeaking();
+        stopAmbient();
+      } else playAmbient(ambientFor(window.location.pathname));
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", onVisibility);
     return () => {
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("keydown", onKey);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", onVisibility);
     };
   }, []);
   useEffect(() => {
     playAmbient(music ? ambientFor(pathname) : null);
     sfx("page");
-  }, [pathname, music, musicStyle]);
+  }, [pathname, music, musicStyle, musicVolume, volume]);
   useEffect(() => {
     const seg = pathname.split("/")[1];
     if (seg && PLACES.some((p) => p.id === seg)) markVisit(seg);

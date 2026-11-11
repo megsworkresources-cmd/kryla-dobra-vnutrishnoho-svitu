@@ -2,6 +2,7 @@
  * Recorded Ukrainian instrumental soundscapes with soft synthesised interface sounds.
  * Nothing plays until the child has touched the screen, and every sound obeys the saved settings.
  */
+import { useSyncExternalStore } from "react";
 import { getState } from "./store";
 import banduraTrack from "@/assets/audio/quiet-bandura.mp3.asset.json";
 import sopilkaTrack from "@/assets/audio/quiet-sopilka.mp3.asset.json";
@@ -35,7 +36,8 @@ export function isAudioUnlocked() {
 export function syncVolume() {
   const s = getState();
   if (master && ctx) master.gain.setTargetAtTime(s.sound ? s.volume : 0, ctx.currentTime, 0.05);
-  if (!s.sound || !s.music) stopAmbient();
+  if (amb && ctx) amb.bus.gain.setTargetAtTime(0.35 * s.musicVolume, ctx.currentTime, 0.05);
+  if (!s.sound || !s.music || s.volume === 0 || s.musicVolume === 0) stopAmbient();
 }
 
 function tone(
@@ -57,7 +59,7 @@ function tone(
   o.frequency.value = freq;
   const t = c.currentTime + start;
   g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(vol, t + 0.02);
+  g.gain.linearRampToValueAtTime(vol * getState().effectsVolume, t + 0.02);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(f)
     .connect(g)
@@ -83,8 +85,8 @@ function pluckBuffer(c: AudioContext, freq: number, bright: number, secs: number
   const damp = 0.996 - (1 - bright) * 0.004;
   for (let i = 0, j = 0; i < len; i++) {
     const n = (j + 1) % period;
-    const v = ring[j]!;
-    ring[j] = damp * (bright * v + (1 - bright) * 0.5 * (v + ring[n]!));
+    const v = ring[j] ?? 0;
+    ring[j] = damp * (bright * v + (1 - bright) * 0.5 * (v + (ring[n] ?? 0)));
     d[i] = v;
     j = n;
   }
@@ -97,50 +99,18 @@ function pluck(freq: number, when: number, vol: number, out: AudioNode, bright =
   const src = c.createBufferSource();
   src.buffer = pluckBuffer(c, freq, bright, secs);
   const g = c.createGain();
-  g.gain.value = vol;
+  g.gain.value = vol * getState().effectsVolume;
   const f = c.createBiquadFilter();
   f.type = "lowpass";
   f.frequency.value = 1800 + bright * 2500;
   src.connect(f).connect(g).connect(out);
   src.start(when);
 }
-/* Sopilka (wooden flute): soft sine with gentle vibrato and breath. */
-function flute(freq: number, when: number, dur: number, vol: number, out: AudioNode) {
-  const c = ac();
-  if (!c) return;
-  const o = c.createOscillator();
-  o.type = "sine";
-  o.frequency.value = freq;
-  const o2 = c.createOscillator();
-  o2.type = "triangle";
-  o2.frequency.value = freq * 2;
-  const g2 = c.createGain();
-  g2.gain.value = 0.12;
-  const vib = c.createOscillator();
-  vib.frequency.value = 5;
-  const vg = c.createGain();
-  vg.gain.setValueAtTime(0, when);
-  vg.gain.linearRampToValueAtTime(freq * 0.006, when + 0.35);
-  vib.connect(vg).connect(o.frequency);
-  const g = c.createGain();
-  g.gain.setValueAtTime(0, when);
-  g.gain.linearRampToValueAtTime(vol, when + 0.08);
-  g.gain.setValueAtTime(vol, when + dur * 0.7);
-  g.gain.exponentialRampToValueAtTime(0.0001, when + dur + 0.25);
-  o.connect(g);
-  o2.connect(g2).connect(g);
-  g.connect(out);
-  [o, o2, vib].forEach((x) => {
-    x.start(when);
-    x.stop(when + dur + 0.3);
-  });
-}
-
 export type Sfx = "tap" | "select" | "confirm" | "page" | "complete" | "soft";
 /** Very soft, low, rounded sounds — like a tiny wooden drop or a single quiet string. */
 export function sfx(kind: Sfx) {
   const s = getState();
-  if (!s.sound || !s.sfx) return;
+  if (!s.sound || !s.sfx || s.volume === 0 || s.effectsVolume === 0) return;
   const c = ac();
   if (!c || !master) return;
   const t = c.currentTime;
@@ -161,15 +131,34 @@ export function sfx(kind: Sfx) {
       pluck(440, t, 0.12, master, 0.3, 1.2);
       pluck(659, t + 0.1, 0.1, master, 0.3, 1.2);
       break;
-    case "complete":
-      [440, 523, 659, 880].forEach((f, i) => pluck(f, t + i * 0.16, 0.14, master!, 0.35, 2));
+    case "complete": {
+      const output = master;
+      [440, 523, 659, 880].forEach((f, i) => pluck(f, t + i * 0.16, 0.14, output, 0.35, 2));
       break;
+    }
   }
 }
 
 /* ---------- Ambient soundscapes ---------- */
 export type Ambient = "meadow" | "forest" | "night" | "clouds" | "garden" | "cozy";
-let amb: { kind: Ambient; style: string; stop: () => void } | null = null;
+let amb: { kind: Ambient; style: string; bus: GainNode; stop: () => void } | null = null;
+export type MusicStatus = "idle" | "loading" | "playing" | "error";
+let musicStatus: MusicStatus = "idle";
+const statusListeners = new Set<() => void>();
+function setMusicStatus(value: MusicStatus) {
+  musicStatus = value;
+  statusListeners.forEach((listener) => listener());
+}
+export function useMusicStatus() {
+  return useSyncExternalStore(
+    (listener) => {
+      statusListeners.add(listener);
+      return () => statusListeners.delete(listener);
+    },
+    () => musicStatus,
+    () => "idle" as MusicStatus,
+  );
+}
 
 function noise(c: AudioContext) {
   const b = c.createBuffer(1, c.sampleRate * 3, c.sampleRate);
@@ -187,7 +176,7 @@ function noise(c: AudioContext) {
 
 export function playAmbient(kind: Ambient | null) {
   const s = getState();
-  if (!kind || !s.sound || !s.music) {
+  if (!kind || !s.sound || !s.music || s.volume === 0 || s.musicVolume === 0 || document.hidden) {
     stopAmbient();
     return;
   }
@@ -197,7 +186,7 @@ export function playAmbient(kind: Ambient | null) {
   if (!c || !master) return;
   const bus = c.createGain();
   bus.gain.setValueAtTime(0, c.currentTime);
-  bus.gain.linearRampToValueAtTime(0.35, c.currentTime + 3);
+  bus.gain.linearRampToValueAtTime(0.35 * s.musicVolume, c.currentTime + 3);
   bus.connect(master);
   const stops: (() => void)[] = [];
   // soft wind / air bed
@@ -213,12 +202,13 @@ export function playAmbient(kind: Ambient | null) {
   stops.push(startMusic(bus, s.musicStyle ?? "bandura", kind === "night"));
   // occasional nature voices
   const timer = window.setInterval(() => {
-    if (!ctx) return;
-    const t = ctx.currentTime;
+    const current = ctx;
+    if (!current) return;
+    const t = current.currentTime;
     const chirp = (base: number, count: number, gap: number, vol: number) => {
       for (let k = 0; k < count; k++) {
-        const o = ctx!.createOscillator();
-        const g = ctx!.createGain();
+        const o = current.createOscillator();
+        const g = current.createGain();
         o.frequency.setValueAtTime(base, t + k * gap);
         o.frequency.exponentialRampToValueAtTime(base * 1.3, t + k * gap + 0.08);
         g.gain.setValueAtTime(0, t + k * gap);
@@ -239,22 +229,21 @@ export function playAmbient(kind: Ambient | null) {
   amb = {
     kind,
     style: s.musicStyle,
+    bus,
     stop: () => {
-      bus.gain.setTargetAtTime(0, c.currentTime, 0.4);
-      window.setTimeout(() => {
-        stops.forEach((x) => {
-          try {
-            x();
-          } catch {
-            /* already stopped */
-          }
-        });
-        bus.disconnect();
-      }, 1500);
+      // Cancel pending recordings and nature timers immediately on exit or replacement.
+      stops.forEach((stop) => {
+        try {
+          stop();
+        } catch {
+          /* already stopped */
+        }
+      });
+      bus.disconnect();
     },
   };
 }
-/* ---------- Light Ukrainian-style instrumentals (original tunes, synthesised) ---------- */
+/* ---------- Recorded Ukrainian instrumentals ---------- */
 export type MusicStyle = "bandura" | "sopilka" | "tsymbaly" | "lullaby" | "nature";
 export const MUSIC_STYLES: { id: MusicStyle; name: string; hint: string }[] = [
   { id: "bandura", name: "Бандура", hint: "Ніжні перебори струн" },
@@ -263,93 +252,6 @@ export const MUSIC_STYLES: { id: MusicStyle; name: string; hint: string }[] = [
   { id: "lullaby", name: "Колискова", hint: "Повільно й тихо, як перед сном" },
   { id: "nature", name: "Лише природа", hint: "Вітерець і пташки, без мелодії" },
 ];
-// D Ukrainian Dorian (D E F G# A B C) — the characteristic folk colour.
-const SC = [146.83, 164.81, 174.61, 207.65, 220, 246.94, 261.63];
-const note = (deg: number) => SC[((deg % 7) + 7) % 7]! * 2 ** Math.floor(deg / 7);
-// Phrases as [scale degree, beats]; -99 = rest. Original melodies in a folk character.
-const PHRASES: [number, number][][] = [
-  [
-    [7, 1],
-    [9, 1],
-    [10, 1],
-    [11, 2],
-    [10, 1],
-    [9, 1],
-    [7, 2],
-    [-99, 1],
-  ],
-  [
-    [11, 1],
-    [12, 1],
-    [11, 1],
-    [10, 1],
-    [9, 2],
-    [8, 1],
-    [7, 3],
-  ],
-  [
-    [4, 1],
-    [7, 1],
-    [9, 1],
-    [8, 1],
-    [7, 1],
-    [6, 1],
-    [7, 2],
-    [-99, 1],
-  ],
-  [
-    [9, 1.5],
-    [10, 0.5],
-    [11, 1],
-    [9, 1],
-    [8, 1],
-    [7, 1],
-    [6, 1],
-    [7, 2],
-  ],
-];
-const BASS = [0, 0, 3, 4, 0, 4, 3, 0];
-
-function startSynthMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
-  const c = ac();
-  if (!c || style === "nature") return () => {};
-  const tempo = style === "lullaby" || night ? 0.75 : style === "tsymbaly" ? 0.42 : 0.55; // seconds per beat
-  let next = c.currentTime + 0.5;
-  let pi = 0;
-  let bar = 0;
-  const schedule = () => {
-    if (!ctx) return;
-    while (next < ctx.currentTime + 2) {
-      const phrase = PHRASES[pi % PHRASES.length]!;
-      let t = next;
-      const shift = style === "lullaby" ? -7 : 0;
-      for (const [deg, beats] of phrase) {
-        if (deg !== -99) {
-          const f = note(deg + shift);
-          if (style === "sopilka") flute(f * 2, t, beats * tempo * 0.95, 0.05, bus);
-          else if (style === "tsymbaly") {
-            pluck(f * 2, t, 0.09, bus, 0.85, 1.6);
-            pluck(f * 2, t + 0.07, 0.04, bus, 0.85, 1.2);
-          } else pluck(f, t, style === "lullaby" ? 0.12 : 0.15, bus, 0.45, 2.4);
-        }
-        t += beats * tempo;
-      }
-      // gentle bandura bass / arpeggio underneath
-      const total = phrase.reduce((n, [, b]) => n + b, 0);
-      for (let b = 0; b < total; b += 2) {
-        const root = BASS[bar++ % BASS.length]! - 7;
-        pluck(note(root), next + b * tempo, 0.1, bus, 0.3, 2.6);
-        if (style !== "lullaby") pluck(note(root + 4), next + (b + 1) * tempo, 0.06, bus, 0.3, 1.8);
-      }
-      next = t + tempo;
-      pi++;
-    }
-  };
-  schedule();
-  const id = window.setInterval(schedule, 500);
-  return () => window.clearInterval(id);
-}
-
 const MUSIC_URLS: Record<Exclude<MusicStyle, "nature">, string> = {
   bandura: banduraTrack.url,
   sopilka: sopilkaTrack.url,
@@ -361,28 +263,33 @@ const trackCache = new Map<string, Promise<AudioBuffer>>();
 function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext) {
   const hit = trackCache.get(style);
   if (hit) return hit;
-  const request = fetch(MUSIC_URLS[style])
+  const request = fetch(MUSIC_URLS[style], { signal: AbortSignal.timeout(20000) })
     .then((r) => {
       if (!r.ok) throw new Error("music unavailable");
       return r.arrayBuffer();
     })
     .then((data) => c.decodeAudioData(data))
     .catch((error) => {
-      trackCache.delete(style);
+      if (trackCache.get(style) === request) trackCache.delete(style);
       throw error;
     });
   trackCache.set(style, request);
+  // Bound decoded buffers on mobile; current sources retain their own buffer reference.
+  if (trackCache.size > 2) {
+    const oldest = trackCache.keys().next().value;
+    if (oldest) trackCache.delete(oldest);
+  }
   return request;
 }
 
-/** Recorded, gently mastered Ukrainian instrumentals. Soft synthesis remains only as an offline fallback. */
+/** Never silently substitute a synthetic melody for an unavailable recording. */
 export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   const c = ac();
   if (!c || style === "nature") return () => {};
   let stopped = false;
   let source: AudioBufferSourceNode | null = null;
   let gain: GainNode | null = null;
-  let fallbackStop = () => {};
+  setMusicStatus("loading");
   void loadTrack(style, c)
     .then((buffer) => {
       if (stopped) return;
@@ -396,30 +303,30 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
       gain.gain.value = 0.72;
       source.connect(gain).connect(bus);
       source.start();
+      setMusicStatus("playing");
     })
     .catch(() => {
-      if (!stopped) fallbackStop = startSynthMusic(bus, style, night);
+      if (!stopped) setMusicStatus("error");
     });
   return () => {
     stopped = true;
-    fallbackStop();
-    if (source && gain) {
-      const active = source;
-      gain.gain.setTargetAtTime(0, c.currentTime, 0.15);
-      window.setTimeout(() => {
-        try {
-          active.stop();
-        } catch {
-          /* already stopped */
-        }
-      }, 700);
+
+    if (source) {
+      try {
+        source.stop();
+      } catch {
+        /* already stopped */
+      }
+      source.disconnect();
     }
+    gain?.disconnect();
   };
 }
 
 export function stopAmbient() {
   amb?.stop();
   amb = null;
+  setMusicStatus("idle");
 }
 
 export function ambientFor(pathname: string): Ambient | null {
@@ -446,7 +353,7 @@ export function ambientFor(pathname: string): Ambient | null {
 /** One soft plucked note for musical games (pentatonic friendly). */
 export function chime(freq: number) {
   const s = getState();
-  if (!s.sound || !s.sfx) return;
+  if (!s.sound || !s.sfx || s.volume === 0 || s.effectsVolume === 0) return;
   const c = ac();
   if (!c || !master) return;
   pluck(freq, c.currentTime, 0.12, master, 0.3, 1.5);

@@ -12,6 +12,7 @@
 - Keep destination routes separate from reusable activity modules and browser-safe content data, so every exercise has its own address and completion flow.
 - Persist child-created content and preferences only in the device store; this account-free product explicitly requires private local functionality.
 - Normalize invalid device settings on read without rewriting storage; retain valid child content and progress so recovery is non-destructive.
+- Keep recorded music cancellation synchronous, expose playback failures, and bound decoded caches; late media responses must never restart an exited activity.
 - Use semantic CSS tokens and the shared Btn control for new activity interactions, preserving the storybook design system.
 - Use CDN-hosted recorded Ukrainian instrumental tracks for background music and synthesize only interface/game sounds in `src/lib/audio.ts`; gate every sound and voice on saved settings and start only after the first touch, to respect autoplay rules while keeping recordings out of the repository.
 - Characters speak through the shared `CharacterSay` component with a visible caption, so spoken instructions always have a written equivalent.

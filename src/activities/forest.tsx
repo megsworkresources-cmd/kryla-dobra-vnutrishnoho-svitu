@@ -1,6 +1,6 @@
 import { chime } from "@/lib/audio";
 import { CharacterSay } from "@/components/Character";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Face } from "@/components/Face";
 import { EMOTIONS, SCENARIOS, SORT_ITEMS } from "@/content/emotions";
@@ -331,6 +331,8 @@ export function SortGame() {
   const [picked, setPicked] = useState<string | null>(null);
   const [stars, setStars] = useState(0);
   const [burst, setBurst] = useState(0);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
   if (i >= SORT_ITEMS.length)
     return (
       <DoneCard
@@ -343,21 +345,24 @@ export function SortGame() {
     );
   const item = SORT_ITEMS[i]!;
   const choose = (k: string) => {
+    if (picked) return;
     const right = k === item.kind;
     setPicked(k);
     if (right) {
       setStars((n) => n + 1);
       setBurst((n) => n + 1);
-      [659, 784, 1047].forEach((f, j) => setTimeout(() => chime(f), j * 110));
+      [659, 784, 1047].forEach((f, j) => timers.current.push(setTimeout(() => chime(f), j * 110)));
     } else chime(440);
     setFb((right ? t("Так!") : t("Хм, подумай ще.")) + " " + t(explain(item.kind)));
-    setTimeout(() => {
-      setFb(null);
-      setPicked(null);
-      const n = i + 1;
-      if (n >= SORT_ITEMS.length) markDone("forest-sort");
-      setI(n);
-    }, 2600);
+    timers.current.push(
+      setTimeout(() => {
+        setFb(null);
+        setPicked(null);
+        const n = i + 1;
+        if (n >= SORT_ITEMS.length) markDone("forest-sort");
+        setI(n);
+      }, 2600),
+    );
   };
   const target = picked ? BASKETS.findIndex((b) => b.kind === picked) : -1;
   return (

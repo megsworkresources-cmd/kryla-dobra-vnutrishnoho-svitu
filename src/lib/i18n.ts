@@ -7,6 +7,16 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Гучність музики": "Music volume",
+  "Гучність голосів": "Voice volume",
+  "Гучність звуків кнопок": "Button sound volume",
+  "Музика завантажується…": "Music is loading…",
+  "Музика звучить": "Music is playing",
+  "Музика недоступна. Перевір інтернет і спробуй ще раз.":
+    "Music is unavailable. Check your connection and try again.",
+  "Спробувати музику ще раз": "Retry music",
+  "Не вдалося зберегти на пристрої. Малюнок поки доступний тут; перевір вільне місце й спробуй ще раз.":
+    "Couldn't save on this device. Your drawing is still available here; check free space and try again.",
   "Наприклад: мені сумно, бо…": "For example: I feel sad because…",
   "Не вдалося вийти. Спробуйте ще раз.": "Couldn't sign out. Please try again.",
   "Не вдалося завершити дію. Перевірте дані й спробуйте ще раз.":
@@ -1171,12 +1181,17 @@ const EN: Record<string, string> = {
   "Тихий дідусь": "Quiet grandpa",
 
   // ---- recorded music and Claude story companion ----
-  "Ніжні записи українських інструментів і звуки природи": "Gentle recordings of Ukrainian instruments and nature sounds",
+  "Ніжні записи українських інструментів і звуки природи":
+    "Gentle recordings of Ukrainian instruments and nature sounds",
   "Казка для мене": "A Story for Me",
-  "Обери друга, місце й настрій — Claude створить лагідну казку саме для тебе.": "Pick a friend, place and mood — Claude will create a gentle story just for you.",
-  "Обери героя, місце й настрій — Claude створить нову історію.": "Pick a character, place and mood — Claude will create a new story.",
-  "Ось історія, яку ми створили разом. Можна читати в своєму темпі.": "Here is the story we made together. You can read at your own pace.",
-  "Обери друга, чарівне місце й настрій. Я допоможу скласти нову казку!": "Pick a friend, a magical place and a mood. I'll help you make a new story!",
+  "Обери друга, місце й настрій — Claude створить лагідну казку саме для тебе.":
+    "Pick a friend, place and mood — Claude will create a gentle story just for you.",
+  "Обери героя, місце й настрій — Claude створить нову історію.":
+    "Pick a character, place and mood — Claude will create a new story.",
+  "Ось історія, яку ми створили разом. Можна читати в своєму темпі.":
+    "Here is the story we made together. You can read at your own pace.",
+  "Обери друга, чарівне місце й настрій. Я допоможу скласти нову казку!":
+    "Pick a friend, a magical place and a mood. I'll help you make a new story!",
   "1. Хто буде героєм?": "1. Who will be the hero?",
   "2. Куди вирушимо?": "2. Where shall we go?",
   "3. Який настрій у казки?": "3. What is the story's mood?",
@@ -1186,21 +1201,29 @@ const EN: Record<string, string> = {
   "Хочу спокою": "I want calm",
   "Я пишаюся собою": "I feel proud",
   "Мені цікаво": "I feel curious",
-  "До Claude надсилаються лише твій вік, мова й три вибори вище. Без імені, власних слів і збереження казки.": "Only your age band, language and the three choices above are sent to Claude. No name, typed words or saved story.",
+  "До Claude надсилаються лише твій вік, мова й три вибори вище. Без імені, власних слів і збереження казки.":
+    "Only your age band, language and the three choices above are sent to Claude. No name, typed words or saved story.",
   "Обрати готову казку": "Choose a ready-made story",
   "Claude складає казку…": "Claude is making your story…",
   "Створити мою казку": "Create my story",
-  "Казка цього разу не склалася. Спробуй інший вибір або відкрий готову казку.": "The story didn't come together this time. Try another choice or open a ready-made story.",
-  "Чарівна казка ще не налаштована. Поки що обери готову казку в Нічному небі.": "The story magic isn't set up yet. Choose a ready-made story in the Night Sky for now.",
-  "Магія нових казок тимчасово вичерпана. Дорослий може поповнити кредити Lovable AI, а поки що обери готову казку.": "New-story magic is temporarily used up. A grown-up can add Lovable AI credits; meanwhile, choose a ready-made story.",
-  "Казкар зараз відпочиває. Зачекай трохи або обери готову казку.": "The storyteller is resting. Wait a little or choose a ready-made story.",
-  "Нові казки зараз недоступні. Обери готову казку в Нічному небі.": "New stories are unavailable right now. Choose a ready-made story in the Night Sky.",
-  "Казкар зараз недоступний. Обери готову казку в Нічному небі.": "The storyteller is unavailable right now. Choose a ready-made story in the Night Sky.",
+  "Казка цього разу не склалася. Спробуй інший вибір або відкрий готову казку.":
+    "The story didn't come together this time. Try another choice or open a ready-made story.",
+  "Чарівна казка ще не налаштована. Поки що обери готову казку в Нічному небі.":
+    "The story magic isn't set up yet. Choose a ready-made story in the Night Sky for now.",
+  "Магія нових казок тимчасово вичерпана. Дорослий може поповнити кредити Lovable AI, а поки що обери готову казку.":
+    "New-story magic is temporarily used up. A grown-up can add Lovable AI credits; meanwhile, choose a ready-made story.",
+  "Казкар зараз відпочиває. Зачекай трохи або обери готову казку.":
+    "The storyteller is resting. Wait a little or choose a ready-made story.",
+  "Нові казки зараз недоступні. Обери готову казку в Нічному небі.":
+    "New stories are unavailable right now. Choose a ready-made story in the Night Sky.",
+  "Казкар зараз недоступний. Обери готову казку в Нічному небі.":
+    "The storyteller is unavailable right now. Choose a ready-made story in the Night Sky.",
   "Нова казка з Claude": "A new story with Claude",
   "Сцена {n}": "Scene {n}",
   "Слухати голосом пристрою": "Listen with the device voice",
   "Зупинити читання": "Stop reading",
-  "Читання відбувається на цьому пристрої; текст казки нікуди не надсилається для озвучення.": "Reading happens on this device; the story text is not sent anywhere for narration.",
+  "Читання відбувається на цьому пристрої; текст казки нікуди не надсилається для озвучення.":
+    "Reading happens on this device; the story text is not sent anywhere for narration.",
   "Торкайся чарівних символів після казки": "Tap the magical symbols after the story",
   "Інша казка": "Another story",
   "Змінити вибір": "Change my choices",

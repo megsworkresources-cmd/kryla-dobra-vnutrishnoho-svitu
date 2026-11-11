@@ -40,7 +40,7 @@ function Choice({ selected, onClick, children, label }: { selected: boolean; onC
   );
 }
 
-export default function StoryCompanion() {
+function StoryCompanion() {
   const t = useT();
   const lang = useLang();
   const age = useStore((s) => s.age);
@@ -91,7 +91,7 @@ export default function StoryCompanion() {
           text={story ? t("Ось історія, яку ми створили разом. Можна читати в своєму темпі.") : t("Обери друга, чарівне місце й настрій. Я допоможу скласти нову казку!")} />
 
         {!story ? (
-          <div className="night-card space-y-5 p-5">
+          <div className="paper-card space-y-5 p-5 text-card-foreground">
             <fieldset>
               <legend className="font-display text-xl font-bold">{t("1. Хто буде героєм?")}</legend>
               <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-6">

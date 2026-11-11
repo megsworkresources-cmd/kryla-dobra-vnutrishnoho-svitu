@@ -90,9 +90,15 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
         </Link>
       </header>
       {title && (
-        <h1 className="relative z-20 mx-auto mt-3 w-full max-w-3xl px-4 font-display text-2xl font-bold drop-shadow-sm sm:text-3xl">
-          {t(title)}
-        </h1>
+        <div className="relative z-20 mx-auto mt-3 w-full max-w-3xl px-4">
+          <h1
+            className={`inline-block rounded-2xl px-4 py-2 font-display text-2xl font-bold shadow-soft backdrop-blur-sm sm:text-3xl ${
+              night ? "bg-night/60 text-moon" : "bg-paper/85 text-ink"
+            }`}
+          >
+            {t(title)}
+          </h1>
+        </div>
       )}
       <div className="relative z-10 mx-auto w-full max-w-3xl flex-1 animate-fade-up px-4 pb-6 pt-4">
         {children}

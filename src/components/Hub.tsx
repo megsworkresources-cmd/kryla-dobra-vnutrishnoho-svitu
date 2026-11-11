@@ -35,9 +35,11 @@ export function Hub({
   const count = items.filter((it) => done[it.id]).length;
   return (
     <Scene image={image} night={night} back="/world" compact>
-      <div className="pt-[16vh]">
+      <div className="pt-[12vh]">
         <h1
-          className={`font-display text-4xl font-bold drop-shadow-sm ${night ? "text-moon" : "text-ink"}`}
+          className={`inline-block rounded-2xl px-4 py-2 font-display text-4xl font-bold shadow-soft backdrop-blur-sm ${
+            night ? "bg-night/60 text-moon" : "bg-paper/85 text-ink"
+          }`}
         >
           {t(title)}
         </h1>

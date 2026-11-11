@@ -24,11 +24,11 @@ export function BottomNav({ night }: { night?: boolean | undefined; floating?: b
           {prev ? (
             <Link
               to={prev.to as never}
-              className={`${card} flex min-h-12 max-w-[48%] items-center gap-1 px-4 text-sm font-bold`}
+              className={`${card} flex min-h-14 max-w-[48%] items-center gap-1 px-4 py-2 text-sm font-bold leading-tight`}
               aria-label={t("Назад: {l}", { l: t(prev.label) })}
             >
               <ChevronLeft className="h-5 w-5 shrink-0" />
-              <span className="truncate">{t(prev.label)}</span>
+              <span className="min-w-0 whitespace-normal [text-wrap:balance]">{t(prev.label)}</span>
             </Link>
           ) : (
             <span />
@@ -36,10 +36,10 @@ export function BottomNav({ night }: { night?: boolean | undefined; floating?: b
           {next ? (
             <Link
               to={next.to as never}
-              className="flex min-h-12 max-w-[48%] items-center gap-1 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground shadow-soft"
+              className="flex min-h-14 max-w-[48%] items-center gap-1 rounded-full bg-primary px-4 py-2 text-sm font-bold leading-tight text-primary-foreground shadow-soft"
               aria-label={t("Далі: {l}", { l: t(next.label) })}
             >
-              <span className="truncate">{t(next.label)}</span>
+              <span className="min-w-0 whitespace-normal [text-wrap:balance]">{t(next.label)}</span>
               <ChevronRight className="h-5 w-5 shrink-0" />
             </Link>
           ) : (

@@ -54,7 +54,14 @@ export function speak(
 ) {
   if (typeof window === "undefined") return;
   const s = getState();
-  if (!s.sound || s.volume === 0 || s.voiceVolume === 0 || !isAudioUnlocked() || (!s.voice && !opts.force)) return;
+  if (
+    !s.sound ||
+    s.volume === 0 ||
+    s.voiceVolume === 0 ||
+    !isAudioUnlocked() ||
+    (!s.voice && !opts.force)
+  )
+    return;
   stopSpeaking();
   const c = opts.who ? CAST[opts.who] : null;
   const pitch = opts.pitch ?? c?.pitch ?? 1.05;

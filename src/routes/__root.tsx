@@ -218,8 +218,10 @@ function RootComponent() {
     };
     window.addEventListener("keydown", onKey);
     const onVisibility = () => {
-      if (document.hidden) { stopSpeaking(); stopAmbient(); }
-      else playAmbient(ambientFor(window.location.pathname));
+      if (document.hidden) {
+        stopSpeaking();
+        stopAmbient();
+      } else playAmbient(ambientFor(window.location.pathname));
     };
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pagehide", onVisibility);

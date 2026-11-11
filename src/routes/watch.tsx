@@ -220,7 +220,9 @@ function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
   const shot = clip.shots[i];
   const done = i >= clip.shots.length;
   useEffect(() => {
-    const pauseWhenHidden = () => { if (document.hidden) setPlaying(false); };
+    const pauseWhenHidden = () => {
+      if (document.hidden) setPlaying(false);
+    };
     document.addEventListener("visibilitychange", pauseWhenHidden);
     return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
   }, []);
@@ -243,7 +245,11 @@ function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
         aria-label={t(clip.title)}
       >
         {shot ? (
-          <div key={i} className="absolute inset-0 animate-fade-up" style={{ animationPlayState: playing ? "running" : "paused" }}>
+          <div
+            key={i}
+            className="absolute inset-0 animate-fade-up"
+            style={{ animationPlayState: playing ? "running" : "paused" }}
+          >
             <img
               src={shot.img}
               alt=""

@@ -94,20 +94,38 @@ function load() {
           : DEFAULTS.volume;
       for (const key of ["musicVolume", "voiceVolume", "effectsVolume"] as const) {
         const value = saved[key];
-        state[key] = typeof value === "number" && Number.isFinite(value)
-          ? Math.min(1, Math.max(0, value)) : DEFAULTS[key];
+        state[key] =
+          typeof value === "number" && Number.isFinite(value)
+            ? Math.min(1, Math.max(0, value))
+            : DEFAULTS[key];
       }
       for (const key of ["completed", "lastDone"] as const) {
-        state[key] = Object.fromEntries(Object.entries(state[key]).filter(([, value]) =>
-          typeof value === "number" && Number.isSafeInteger(value) && value >= 0));
+        state[key] = Object.fromEntries(
+          Object.entries(state[key]).filter(
+            ([, value]) => typeof value === "number" && Number.isSafeInteger(value) && value >= 0,
+          ),
+        );
       }
-      state.visits = Object.fromEntries(Object.entries(state.visits).filter(([, value]) =>
-        value && typeof value === "object" && Number.isSafeInteger(value.n) && value.n >= 0
-        && Number.isFinite(value.last) && value.last >= 0));
+      state.visits = Object.fromEntries(
+        Object.entries(state.visits).filter(
+          ([, value]) =>
+            value &&
+            typeof value === "object" &&
+            Number.isSafeInteger(value.n) &&
+            value.n >= 0 &&
+            Number.isFinite(value.last) &&
+            value.last >= 0,
+        ),
+      );
       state.favorites = state.favorites.filter((value) => typeof value === "string");
       state.comfort = state.comfort.filter((value) => typeof value === "string");
-      state.drawings = state.drawings.filter((value) => value && typeof value.id === "string"
-        && typeof value.data === "string" && Number.isFinite(value.at));
+      state.drawings = state.drawings.filter(
+        (value) =>
+          value &&
+          typeof value.id === "string" &&
+          typeof value.data === "string" &&
+          Number.isFinite(value.at),
+      );
       state.age = ["young", "mid", "older"].includes(String(saved.age))
         ? (saved.age as AgeBand)
         : DEFAULTS.age;

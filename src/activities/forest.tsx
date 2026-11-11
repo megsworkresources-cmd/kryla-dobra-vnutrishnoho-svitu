@@ -354,13 +354,15 @@ export function SortGame() {
       [659, 784, 1047].forEach((f, j) => timers.current.push(setTimeout(() => chime(f), j * 110)));
     } else chime(440);
     setFb((right ? t("Так!") : t("Хм, подумай ще.")) + " " + t(explain(item.kind)));
-    timers.current.push(setTimeout(() => {
-      setFb(null);
-      setPicked(null);
-      const n = i + 1;
-      if (n >= SORT_ITEMS.length) markDone("forest-sort");
-      setI(n);
-    }, 2600));
+    timers.current.push(
+      setTimeout(() => {
+        setFb(null);
+        setPicked(null);
+        const n = i + 1;
+        if (n >= SORT_ITEMS.length) markDone("forest-sort");
+        setI(n);
+      }, 2600),
+    );
   };
   const target = picked ? BASKETS.findIndex((b) => b.kind === picked) : -1;
   return (

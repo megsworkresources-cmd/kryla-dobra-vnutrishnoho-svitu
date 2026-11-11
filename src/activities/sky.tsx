@@ -108,7 +108,9 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   const [t2, setT] = useState(0);
   const [done, setDone] = useState(false);
   useEffect(() => {
-    const pauseWhenHidden = () => { if (document.hidden) setPlaying(false); };
+    const pauseWhenHidden = () => {
+      if (document.hidden) setPlaying(false);
+    };
     document.addEventListener("visibilitychange", pauseWhenHidden);
     return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
   }, []);

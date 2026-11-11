@@ -3,7 +3,9 @@ import { describe, expect, it, vi } from "vitest";
 describe("saved device settings recovery", () => {
   it("ignores malformed progress values while preserving valid progress and the original storage", async () => {
     vi.resetModules();
-    const raw = JSON.stringify({ completed: { flower: 3, corrupt: "7", negative: -2, nested: {} } });
+    const raw = JSON.stringify({
+      completed: { flower: 3, corrupt: "7", negative: -2, nested: {} },
+    });
     localStorage.setItem("tyhe-mistse-v1", raw);
     const { getState, totalDone } = await import("@/lib/store");
     expect(totalDone(getState().completed)).toBe(3);

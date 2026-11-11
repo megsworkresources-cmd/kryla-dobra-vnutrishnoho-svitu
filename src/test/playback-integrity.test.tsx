@@ -5,10 +5,15 @@ import { getState, update } from "@/lib/store";
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
 vi.mock("@/components/Scene", () => ({
-  Btn: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...props}>{children}</button>,
+  Btn: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button {...props}>{children}</button>
+  ),
 }));
 
-afterEach(() => { cleanup(); vi.useRealTimers(); });
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
 it("counts sunflower completion only when all thirteen areas are colored, once per round", () => {
   vi.useFakeTimers();

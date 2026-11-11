@@ -149,10 +149,14 @@ function setMusicStatus(value: MusicStatus) {
   statusListeners.forEach((listener) => listener());
 }
 export function useMusicStatus() {
-  return useSyncExternalStore((listener) => {
-    statusListeners.add(listener);
-    return () => statusListeners.delete(listener);
-  }, () => musicStatus, () => "idle" as MusicStatus);
+  return useSyncExternalStore(
+    (listener) => {
+      statusListeners.add(listener);
+      return () => statusListeners.delete(listener);
+    },
+    () => musicStatus,
+    () => "idle" as MusicStatus,
+  );
 }
 
 function noise(c: AudioContext) {
@@ -227,7 +231,13 @@ export function playAmbient(kind: Ambient | null) {
     bus,
     stop: () => {
       // Cancel pending recordings and nature timers immediately on exit or replacement.
-      stops.forEach((stop) => { try { stop(); } catch { /* already stopped */ } });
+      stops.forEach((stop) => {
+        try {
+          stop();
+        } catch {
+          /* already stopped */
+        }
+      });
       bus.disconnect();
     },
   };
@@ -301,7 +311,11 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
     stopped = true;
 
     if (source) {
-      try { source.stop(); } catch { /* already stopped */ }
+      try {
+        source.stop();
+      } catch {
+        /* already stopped */
+      }
       source.disconnect();
     }
     gain?.disconnect();

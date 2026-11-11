@@ -7,11 +7,17 @@ import { update } from "@/lib/store";
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
 vi.mock("@/components/Scene", () => ({
-  Btn: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...props}>{children}</button>,
+  Btn: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button {...props}>{children}</button>
+  ),
   DoneCard: ({ text }: { text: string }) => <p>{text}</p>,
 }));
 
-afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); });
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+});
 
 describe("experience repair regressions", () => {
   it("finishes cloud release even when animations are disabled", () => {
@@ -24,7 +30,9 @@ describe("experience repair regressions", () => {
   });
 
   it("does not start a nature sound when the master sound switch is off", () => {
-    const context = vi.fn(() => { throw new Error("sound should not start"); });
+    const context = vi.fn(() => {
+      throw new Error("sound should not start");
+    });
     vi.stubGlobal("AudioContext", context);
     update((s) => ({ ...s, sound: false }));
     render(<Sounds />);
@@ -35,7 +43,12 @@ describe("experience repair regressions", () => {
   it("does not speak at zero volume even for an explicit preview", () => {
     const say = vi.fn();
     vi.stubGlobal("speechSynthesis", { cancel: vi.fn(), speak: say, getVoices: () => [] });
-    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor(public text: string) {} });
+    vi.stubGlobal(
+      "SpeechSynthesisUtterance",
+      class {
+        constructor(public text: string) {}
+      },
+    );
     update((s) => ({ ...s, sound: true, volume: 0, voiceEngine: "device" }));
     speak("Привіт", { force: true });
     expect(say).not.toHaveBeenCalled();

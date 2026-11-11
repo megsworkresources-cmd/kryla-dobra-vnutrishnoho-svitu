@@ -191,9 +191,13 @@ function RootComponent() {
   useEffect(() => {
     document.documentElement.dataset["text"] = textSize;
   }, [textSize]);
-  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
   useEffect(syncSpeechVolume, [sound, volume]);
-  useEffect(() => { stopSpeaking(); }, [pathname]);
+  useEffect(() => {
+    stopSpeaking();
+  }, [pathname]);
   // Audio only starts after the first touch (browser autoplay rules), then follows the page.
   useEffect(() => {
     const onDown = (e: PointerEvent) => {
@@ -203,9 +207,17 @@ function RootComponent() {
       if (el && !el.closest("[data-no-tap]")) sfx("tap");
     };
     window.addEventListener("pointerdown", onDown);
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { unlockAudio(); playAmbient(ambientFor(window.location.pathname)); } };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        unlockAudio();
+        playAmbient(ambientFor(window.location.pathname));
+      }
+    };
     window.addEventListener("keydown", onKey);
-    return () => { window.removeEventListener("pointerdown", onDown); window.removeEventListener("keydown", onKey); };
+    return () => {
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
   }, []);
   useEffect(() => {
     playAmbient(music ? ambientFor(pathname) : null);
@@ -218,7 +230,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <main><Outlet /></main>
+      <main>
+        <Outlet />
+      </main>
       <TouchSparkles />
     </QueryClientProvider>
   );

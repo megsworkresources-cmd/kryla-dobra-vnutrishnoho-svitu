@@ -65,10 +65,10 @@ function Welcome() {
         >
           {t("Увійти у свій світ")}
         </Link>
-        <div className="mt-6">
+        <div className="mt-3">
           <Link
             to="/parents"
-            className="text-sm font-semibold text-muted-foreground underline underline-offset-4"
+            className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-muted-foreground underline underline-offset-4"
           >
             {t("Для дорослих")}
           </Link>

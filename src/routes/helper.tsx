@@ -193,7 +193,7 @@ function Helper() {
             "Твої почуття — важливі. Якщо тобі страшно чи боляче, розкажи дорослому, якому довіряєш.",
           )}
           <br />
-          <Link to="/parents" className="underline">
+          <Link to="/parents" className="inline-flex min-h-11 items-center underline">
             {t("Інформація для дорослих")}
           </Link>
         </p>

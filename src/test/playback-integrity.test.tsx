@@ -62,6 +62,10 @@ it("pauses and resumes cartoon timers, and stops narration when closed", () => {
   expect(stage).toHaveAttribute("data-playing", "true");
   fireEvent.click(screen.getByRole("button", { name: "Пауза" }));
   expect(stage).toHaveAttribute("data-playing", "false");
+  expect(stage.querySelector(".animate-fade-up")).not.toHaveStyle({
+    animationPlayState: "paused",
+  });
+  expect(stage.querySelector(".animate-kenburns")).toHaveStyle({ animationPlayState: "paused" });
   act(() => vi.advanceTimersByTime(7100));
   expect(screen.queryByText("Щоранку він повертав голівку до сонця.")).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Грати" }));

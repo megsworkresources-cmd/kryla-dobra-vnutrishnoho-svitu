@@ -44,7 +44,7 @@ const QUICK = [
 ];
 
 /** The Feelings Helper — the only place a child's words leave the device, sent once and never stored. */
-export default function Helper() {
+function Helper() {
   const t = useT();
   const navigate = useNavigate();
   const age = useStore((s) => s.age);

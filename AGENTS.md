@@ -15,6 +15,8 @@
 - Use CDN-hosted recorded Ukrainian instrumental tracks for background music and synthesize only interface/game sounds in `src/lib/audio.ts`; gate every sound and voice on saved settings and start only after the first touch, to respect autoplay rules while keeping recordings out of the repository.
 - Characters speak through the shared `CharacterSay` component with a visible caption, so spoken instructions always have a written equivalent.
 - Back/Next order comes from one list in `src/content/sequence.ts`; add every new page there so navigation never dead-ends.
+- Place the single main landmark around the root Outlet; shared scene frames use non-landmark containers so every page has exactly one main.
+- Exercise completion must use state/timers, never depend on animation events, so reduced-motion settings cannot block progress.
 - The feelings helper (/helper) is the only feature that sends child text off-device: one Lovable AI call via a server function, nothing stored, and it may only recommend keys from `src/content/catalog.ts`.
 - Ukrainian is the source language: write UI strings in Ukrainian and translate them via `t()`/`useT()` from `src/lib/i18n.ts` (never hardcode English); every new string needs a dictionary entry, guarded by `src/test/i18n.test.ts`.
 - Natural voices go through `src/lib/voice.server.ts` (Lovable AI TTS) with app-written lines only, cached in memory, falling back to device speech; never send child-typed text there.

@@ -118,7 +118,7 @@ function Pairs() {
             <button key={c.key} onClick={() => flip(i)} aria-label={shown ? t(CHARACTERS[c.who].name) : t("Закрита картка")}
               className={`aspect-[3/4] rounded-2xl shadow-soft transition active:scale-95 ${shown ? "bg-card animate-flip" : "bg-primary"} ${found.includes(c.who) ? "ring-4 ring-honey" : ""}`}>
               {shown ? <img src={CHARACTERS[c.who].image} alt="" className="mx-auto h-full w-auto object-contain p-1" /> : <span className="text-2xl" aria-hidden>🌻</span>}
-            </TabsTrigger>
+            </button>
           );
         })}
       </div>

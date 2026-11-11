@@ -1,9 +1,12 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { ColorFlower } from "@/activities/studio";
+import { Player } from "@/routes/watch";
 import { getState, update } from "@/lib/store";
+import { stopSpeaking } from "@/lib/speak";
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
+vi.mock("@/lib/speak", () => ({ speak: vi.fn(), stopSpeaking: vi.fn() }));
 vi.mock("@/components/Scene", () => ({
   Btn: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
     <button {...props}>{children}</button>
@@ -29,4 +32,50 @@ it("counts sunflower completion only when all thirteen areas are colored, once p
   fireEvent.click(center);
   expect(getState().completed["studio-color"]).toBe(1);
   act(() => vi.runAllTimers());
+});
+
+const clip = {
+  id: "test",
+  title: "Соняшник, що шукав сонце",
+  icon: "🌻",
+  shots: [
+    {
+      img: "/missing-scene.jpg",
+      who: "solomiya" as const,
+      text: "Біля білої хатки ріс маленький соняшник.",
+      fx: "🌻",
+    },
+    {
+      img: "/second-scene.jpg",
+      who: "solomiya" as const,
+      text: "Щоранку він повертав голівку до сонця.",
+      fx: "☀️",
+    },
+  ],
+};
+
+it("pauses and resumes cartoon timers, and stops narration when closed", () => {
+  vi.useFakeTimers();
+  const close = vi.fn();
+  const { container, unmount } = render(<Player clip={clip} onClose={close} />);
+  const stage = container.querySelector("[data-playing]")!;
+  expect(stage).toHaveAttribute("data-playing", "true");
+  fireEvent.click(screen.getByRole("button", { name: "Пауза" }));
+  expect(stage).toHaveAttribute("data-playing", "false");
+  act(() => vi.advanceTimersByTime(7100));
+  expect(screen.queryByText("Щоранку він повертав голівку до сонця.")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Грати" }));
+  act(() => vi.advanceTimersByTime(7100));
+  expect(screen.getByText("Щоранку він повертав голівку до сонця.")).toBeInTheDocument();
+  unmount();
+  expect(stopSpeaking).toHaveBeenCalled();
+});
+
+it("shows an accessible error when a cartoon illustration cannot load", () => {
+  const { container } = render(<Player clip={clip} onClose={vi.fn()} />);
+  const image = container.querySelector('img[src="/missing-scene.jpg"]')!;
+  fireEvent.error(image);
+  expect(screen.getByRole("alert")).toHaveTextContent(
+    "Не вдалося завантажити ілюстрацію. Спробуй інший мультик.",
+  );
 });

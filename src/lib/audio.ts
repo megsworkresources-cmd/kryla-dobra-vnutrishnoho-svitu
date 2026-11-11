@@ -1,5 +1,5 @@
 /**
- * Original sound identity, synthesised in the browser (no files to download).
+ * Recorded Ukrainian instrumental soundscapes with soft synthesised interface sounds.
  * Nothing plays until the child has touched the screen, and every sound obeys the saved settings.
  */
 import { getState } from './store';

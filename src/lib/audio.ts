@@ -216,8 +216,9 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
     stopped = true;
     fallbackStop();
     if (source && gain) {
+      const active = source;
       gain.gain.setTargetAtTime(0, c.currentTime, 0.15);
-      window.setTimeout(() => { try { source.stop(); } catch { /* already stopped */ } }, 700);
+      window.setTimeout(() => { try { active.stop(); } catch { /* already stopped */ } }, 700);
     }
   };
 }

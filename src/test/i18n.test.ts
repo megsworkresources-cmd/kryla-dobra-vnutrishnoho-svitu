@@ -2,6 +2,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { tr } from "@/lib/i18n";
+import ts from "typescript";
 
 const CYR = /[А-Яа-яЇїІіЄєҐґ]/;
 
@@ -27,14 +28,17 @@ describe("UA/EN language switch", () => {
     for (const file of walk("src")) {
       if (file.includes("i18n") || file.includes(".server.") || file.includes("test/")) continue;
       const text = readFileSync(file, "utf8");
-      const re = /'([^'\\\n]*[А-Яа-яЇїІіЄєҐґ][^'\\\n]*)'|"([^"\\\n]*[А-Яа-яЇїІіЄєҐґ][^"\\\n]*)"/g;
-      for (const m of text.matchAll(re)) {
-        const s = (m[1] ?? m[2]) as string;
-        // skip JSX/markup capture artifacts and the intentional bilingual toggle labels
-        if (/[=<>]|t\('|t\("|Мова \/ Language/.test(s) || s === "Українська") continue;
-        // Prettier may leave valid single-word dictionary keys unquoted.
-        if (!dict.includes(`"${s}"`) && !dict.includes(`\n  ${s}:`)) missing.push(`${file}: ${s}`);
-      }
+      const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+      const visit = (node: ts.Node) => {
+        if (ts.isStringLiteral(node)) {
+          const s = node.text;
+          if (CYR.test(s) && !/[=<>]|Мова \/ Language/.test(s) && s !== "Українська") {
+            if (!dict.includes(`"${s}"`) && !dict.includes(`\n  ${s}:`)) missing.push(`${file}: ${s}`);
+          }
+        }
+        ts.forEachChild(node, visit);
+      };
+      visit(source);
     }
     expect(missing).toEqual([]);
   });

@@ -96,11 +96,12 @@ const STORY_FX: Record<string, string[][]> = {
   ],
 };
 const STAR_NOTES = [523, 587, 659, 784, 880, 1047];
+const EMPTY_SCENES: string[] = [];
 
 /** Guided video story: illustrated scenes that play on their own, with narration and controls. */
 export function Story({ id }: { id: keyof typeof STORIES }) {
   const t = useT();
-  const scenes = STORIES[id] ?? [];
+  const scenes = STORIES[id] ?? EMPTY_SCENES;
   const voice = useStore((s) => s.voice && s.sound);
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(false);

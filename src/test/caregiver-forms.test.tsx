@@ -62,7 +62,37 @@ describe("caregiver form states", () => {
     expect(pending).toBeDisabled();
     fireEvent.click(pending);
     expect(auth.signInWithPassword).toHaveBeenCalledTimes(1);
-    finish!({ error: null });
+    await act(async () => finish!({ error: null }));
+    expect(mocks.navigate).toHaveBeenCalledWith({ to: "/parents", replace: true });
+  });
+
+  it("shows a sign-in failure without losing the adult's email", async () => {
+    vi.mocked(auth.signInWithPassword).mockResolvedValue({
+      error: new Error("invalid login"),
+    } as never);
+    render(<Login />);
+    fireEvent.change(screen.getByLabelText("Електронна пошта дорослого"), {
+      target: { value: "adult@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "wrong-password" } });
+    fireEvent.click(screen.getByRole("button", { name: "Увійти" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Не вдалося увійти");
+    expect(screen.getByLabelText("Електронна пошта дорослого")).toHaveValue("adult@example.com");
+    expect(mocks.navigate).not.toHaveBeenCalled();
+  });
+
+  it("requests recovery with the local reset address and shows the safe success message", async () => {
+    vi.mocked(auth.resetPasswordForEmail).mockResolvedValue({ error: null } as never);
+    render(<Login />);
+    fireEvent.click(screen.getByRole("button", { name: "Забули пароль?" }));
+    fireEvent.change(screen.getByLabelText("Електронна пошта дорослого"), {
+      target: { value: "adult@example.com" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Надіслати лист" }));
+    expect(await screen.findByRole("status")).toHaveTextContent("Якщо такий акаунт є");
+    expect(auth.resetPasswordForEmail).toHaveBeenCalledWith("adult@example.com", {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
   });
 
   it("keeps the recovery link state pending until session validation finishes", () => {
@@ -71,6 +101,15 @@ describe("caregiver form states", () => {
     render(<Reset />);
     expect(screen.getByRole("status")).toHaveTextContent("Перевіряємо посилання…");
     expect(screen.queryByText("Відкрийте це посилання з листа для зміни пароля.")).toBeNull();
+  });
+
+  it("rejects a recovery link without a valid authenticated session", async () => {
+    window.location.hash = "#type=recovery";
+    render(<Reset />);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Відкрийте це посилання з листа для зміни пароля.",
+    );
+    expect(screen.queryByLabelText("Пароль")).toBeNull();
   });
 
   it("shows a recovery update failure and allows a retry", async () => {

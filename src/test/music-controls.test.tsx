@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { update } from "@/lib/store";
 
@@ -119,14 +119,16 @@ it("surfaces recording load failure and resets status when stopped", async () =>
     "fetch",
     vi.fn(async () => new Response("missing", { status: 404 })),
   );
-  const { unlockAudio, startMusic, useMusicStatus } = await import("@/lib/audio");
+  const { unlockAudio, startMusic, stopAmbient, useMusicStatus } = await import("@/lib/audio");
   function Status() {
     return <span>{useMusicStatus()}</span>;
   }
   render(<Status />);
-  unlockAudio();
-  const stop = startMusic({} as AudioNode, "bandura", false);
+  act(() => {
+    unlockAudio();
+    startMusic({} as AudioNode, "bandura", false);
+  });
   expect(await screen.findByText("error")).toBeInTheDocument();
-  stop();
+  act(() => stopAmbient());
   expect(screen.getByText("idle")).toBeInTheDocument();
 });

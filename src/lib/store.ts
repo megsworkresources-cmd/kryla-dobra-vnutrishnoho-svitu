@@ -19,11 +19,11 @@ export interface AppState {
   reduceMotion: boolean;
   sound: boolean; // master switch
   music: boolean;
-  musicStyle: 'bandura' | 'sopilka' | 'tsymbaly' | 'lullaby' | 'nature';
+  musicStyle: "bandura" | "sopilka" | "tsymbaly" | "lullaby" | "nature";
   sfx: boolean;
   volume: number; // 0..1
   voiceURI: string;
-  voiceEngine: 'natural' | 'device';
+  voiceEngine: "natural" | "device";
   narrator: string; // natural narrator voice
   textSize: "normal" | "large" | "xl";
 }
@@ -42,7 +42,7 @@ const DEFAULTS: AppState = {
   reduceMotion: false,
   sound: true,
   music: false,
-  musicStyle: 'bandura',
+  musicStyle: "bandura",
   sfx: true,
   volume: 0.5,
   voiceURI: "",
@@ -52,7 +52,10 @@ const DEFAULTS: AppState = {
 };
 
 /** Read current state outside React (audio engine). */
-export function getState() { load(); return state; }
+export function getState() {
+  load();
+  return state;
+}
 
 let state: AppState = DEFAULTS;
 let loaded = false;
@@ -65,27 +68,39 @@ function load() {
     const raw = window.localStorage.getItem(KEY);
     if (raw) {
       const parsed: unknown = JSON.parse(raw);
-      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return;
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return;
       const saved = parsed as Partial<AppState>;
       state = { ...DEFAULTS, ...saved };
-      for (const key of ['favorites', 'comfort', 'drawings'] as const) {
+      for (const key of ["favorites", "comfort", "drawings"] as const) {
         if (!Array.isArray(saved[key])) Object.assign(state, { [key]: DEFAULTS[key] });
       }
-      for (const key of ['completed', 'visits', 'lastDone'] as const) {
+      for (const key of ["completed", "visits", "lastDone"] as const) {
         const value = saved[key];
-        if (!value || typeof value !== 'object' || Array.isArray(value)) Object.assign(state, { [key]: DEFAULTS[key] });
+        if (!value || typeof value !== "object" || Array.isArray(value))
+          Object.assign(state, { [key]: DEFAULTS[key] });
       }
-      for (const key of ['sound', 'music', 'sfx', 'voice', 'reduceMotion'] as const) {
-        if (typeof saved[key] !== 'boolean') state[key] = DEFAULTS[key];
+      for (const key of ["sound", "music", "sfx", "voice", "reduceMotion"] as const) {
+        if (typeof saved[key] !== "boolean") state[key] = DEFAULTS[key];
       }
-      state.volume = typeof saved.volume === 'number' && Number.isFinite(saved.volume) ? Math.min(1, Math.max(0, saved.volume)) : DEFAULTS.volume;
-      state.age = ['young', 'mid', 'older'].includes(String(saved.age)) ? saved.age as AgeBand : DEFAULTS.age;
-      state.lang = saved.lang === 'en' ? 'en' : 'uk';
-      state.musicStyle = ['bandura', 'sopilka', 'tsymbaly', 'lullaby', 'nature'].includes(String(saved.musicStyle)) ? saved.musicStyle as AppState['musicStyle'] : DEFAULTS.musicStyle;
-      state.voiceEngine = saved.voiceEngine === 'device' ? 'device' : 'natural';
-      state.textSize = ['normal', 'large', 'xl'].includes(String(saved.textSize)) ? saved.textSize as AppState['textSize'] : DEFAULTS.textSize;
-      state.voiceURI = typeof saved.voiceURI === 'string' ? saved.voiceURI : DEFAULTS.voiceURI;
-      state.narrator = typeof saved.narrator === 'string' ? saved.narrator : DEFAULTS.narrator;
+      state.volume =
+        typeof saved.volume === "number" && Number.isFinite(saved.volume)
+          ? Math.min(1, Math.max(0, saved.volume))
+          : DEFAULTS.volume;
+      state.age = ["young", "mid", "older"].includes(String(saved.age))
+        ? (saved.age as AgeBand)
+        : DEFAULTS.age;
+      state.lang = saved.lang === "en" ? "en" : "uk";
+      state.musicStyle = ["bandura", "sopilka", "tsymbaly", "lullaby", "nature"].includes(
+        String(saved.musicStyle),
+      )
+        ? (saved.musicStyle as AppState["musicStyle"])
+        : DEFAULTS.musicStyle;
+      state.voiceEngine = saved.voiceEngine === "device" ? "device" : "natural";
+      state.textSize = ["normal", "large", "xl"].includes(String(saved.textSize))
+        ? (saved.textSize as AppState["textSize"])
+        : DEFAULTS.textSize;
+      state.voiceURI = typeof saved.voiceURI === "string" ? saved.voiceURI : DEFAULTS.voiceURI;
+      state.narrator = typeof saved.narrator === "string" ? saved.narrator : DEFAULTS.narrator;
     }
   } catch {
     state = DEFAULTS;
@@ -124,18 +139,28 @@ export function useStore<T>(select: (s: AppState) => T): T {
 }
 
 export const markDone = (id: string) =>
-  update((s) => ({ ...s, completed: { ...s.completed, [id]: (s.completed[id] ?? 0) + 1 }, lastDone: { ...s.lastDone, [id]: Date.now() } }));
+  update((s) => ({
+    ...s,
+    completed: { ...s.completed, [id]: (s.completed[id] ?? 0) + 1 },
+    lastDone: { ...s.lastDone, [id]: Date.now() },
+  }));
 
 export const markVisit = (place: string) =>
-  update((s) => ({ ...s, visits: { ...s.visits, [place]: { n: (s.visits[place]?.n ?? 0) + 1, last: Date.now() } } }));
+  update((s) => ({
+    ...s,
+    visits: { ...s.visits, [place]: { n: (s.visits[place]?.n ?? 0) + 1, last: Date.now() } },
+  }));
 
 /** Wipes only progress records (not settings or drawings). */
-export const resetProgress = () => update((s) => ({ ...s, completed: {}, lastDone: {}, visits: {} }));
+export const resetProgress = () =>
+  update((s) => ({ ...s, completed: {}, lastDone: {}, visits: {} }));
 
 export const toggleFavorite = (href: string) =>
   update((s) => ({
     ...s,
-    favorites: s.favorites.includes(href) ? s.favorites.filter((f) => f !== href) : [...s.favorites, href],
+    favorites: s.favorites.includes(href)
+      ? s.favorites.filter((f) => f !== href)
+      : [...s.favorites, href],
   }));
 
 export const setAge = (age: AgeBand) => update((s) => ({ ...s, age }));
@@ -159,7 +184,13 @@ export function pick<T>(age: AgeBand, v: { young: T; mid: T; older: T }) {
 }
 
 export const addDrawing = (data: string) =>
-  update((s) => ({ ...s, drawings: [...s.drawings, { id: `${Date.now()}`, data, at: Date.now() }].slice(-30) }));
-export const removeDrawing = (id: string) => update((s) => ({ ...s, drawings: s.drawings.filter((d) => d.id !== id) }));
-export const addComfort = (text: string) => update((s) => ({ ...s, comfort: [...s.comfort, text] }));
-export const removeComfort = (i: number) => update((s) => ({ ...s, comfort: s.comfort.filter((_, j) => j !== i) }));
+  update((s) => ({
+    ...s,
+    drawings: [...s.drawings, { id: `${Date.now()}`, data, at: Date.now() }].slice(-30),
+  }));
+export const removeDrawing = (id: string) =>
+  update((s) => ({ ...s, drawings: s.drawings.filter((d) => d.id !== id) }));
+export const addComfort = (text: string) =>
+  update((s) => ({ ...s, comfort: [...s.comfort, text] }));
+export const removeComfort = (i: number) =>
+  update((s) => ({ ...s, comfort: s.comfort.filter((_, j) => j !== i) }));

@@ -57,25 +57,25 @@ function World() {
         🦋
       </div>
 
-      <header className="relative z-20 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-3">
+      <header className="relative z-20 flex flex-wrap items-center gap-2 p-3">
         <Link
           to="/"
-          className="paper-card flex h-12 min-w-0 items-center justify-self-start px-4 font-display text-lg font-bold"
+          className="paper-card flex h-12 min-w-0 flex-1 items-center px-4 font-display text-lg font-bold sm:flex-none"
         >
           <span className="truncate">{t("Тихе Місце")}</span>
         </Link>
-        <div className="col-span-2 grid grid-cols-[auto_repeat(6,minmax(0,1fr))] gap-1 sm:col-span-1 sm:flex sm:shrink-0 sm:gap-2">
-          <LangToggle />
+        <LangToggle />
+        <div className="grid w-full grid-cols-6 gap-1 sm:ml-auto sm:flex sm:w-auto sm:shrink-0 sm:items-center sm:gap-2">
           <Link
             to="/explore"
-            className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold"
+            className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Уся мапа")}
           >
             🔍<span className="hidden sm:inline">{t("Уся мапа")}</span>
           </Link>
           <Link
             to="/friends"
-            className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold"
+            className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Мої друзі-персонажі")}
           >
             <Users className="h-5 w-5" />
@@ -83,28 +83,28 @@ function World() {
           </Link>
           <Link
             to="/games"
-            className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold"
+            className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Ігри")}
           >
             🎮<span className="hidden sm:inline">{t("Ігри")}</span>
           </Link>
           <Link
             to="/watch"
-            className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold"
+            className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Мультики")}
           >
             📺<span className="hidden sm:inline">{t("Мультики")}</span>
           </Link>
           <Link
             to="/helper"
-            className="paper-card flex h-12 items-center gap-1 px-3 text-sm font-bold"
+            className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Розкажи, як ти почуваєшся")}
           >
             💬<span className="hidden sm:inline">{t("Розкажи")}</span>
           </Link>
           <Link
             to="/settings"
-            className="paper-card flex h-12 w-12 items-center justify-center"
+            className="paper-card flex h-12 min-w-11 items-center justify-center px-2 sm:px-3"
             aria-label={t("Налаштування")}
           >
             <Settings2 className="h-5 w-5" />

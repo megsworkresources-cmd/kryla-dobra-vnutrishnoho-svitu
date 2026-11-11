@@ -14,11 +14,13 @@ let unlocked = false;
 
 function ac() {
   if (typeof window === 'undefined' || !unlocked) return null;
+  if (!('AudioContext' in window)) return null;
   if (!ctx) { ctx = new AudioContext(); master = ctx.createGain(); master.connect(ctx.destination); }
-  if (ctx.state === 'suspended') void ctx.resume();
+  if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
   return ctx;
 }
 export function unlockAudio() { unlocked = true; ac(); syncVolume(); }
+export function isAudioUnlocked() { return unlocked; }
 
 export function syncVolume() {
   const s = getState();

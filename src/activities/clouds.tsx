@@ -1,5 +1,5 @@
 import { CharacterSay } from '@/components/Character';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Btn, DoneCard } from '@/components/Scene';
 import { Guided } from '@/components/Activity';
 import { markDone } from '@/lib/store';
@@ -18,10 +18,16 @@ export function Release() {
   const [text, setText] = useState('');
   const [flying, setFlying] = useState(false);
   const [done, setDone] = useState(false);
+  useEffect(() => {
+    if (!flying) return;
+    // Completion must not depend on a CSS animation (reduced-motion disables it).
+    const timer = window.setTimeout(() => { markDone('clouds-release'); setDone(true); }, 3500);
+    return () => window.clearTimeout(timer);
+  }, [flying]);
   if (done) return <DoneCard text={t('Хмаринка полетіла. Якщо турбота повернеться — ти знаєш, де її відпустити.')} again={() => { setText(''); setFlying(false); setDone(false); }} />;
   return <div className="space-y-5 text-center">
     <CharacterSay who="daryna" size="sm" mood="calm" action={flying ? 'look' : undefined} text={t('Напиши або просто подумай про те, що тебе турбує. Ніхто цього не побачить — навіть цей пристрій не збереже.')} />
-    <div className={`paper-card mx-auto max-w-md rounded-[3rem] p-6 ${flying ? 'animate-rise-away' : ''}`} onAnimationEnd={() => { markDone('clouds-release'); setDone(true); }}>
+    <div className={`paper-card mx-auto max-w-md rounded-[3rem] p-6 ${flying ? 'animate-rise-away' : ''}`}>
       <span className="text-5xl" aria-hidden>☁</span>
       <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={200} rows={3} aria-label={t('Моя турбота')} placeholder={t('Мене турбує…')} className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring" />
     </div>

@@ -43,7 +43,7 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
           <div className={`absolute inset-0 ${night ? "veil-night" : "veil-bottom"}`} />
         </div>
       )}
-      <header className="relative z-20 mx-auto flex w-full max-w-3xl items-center gap-2 px-4 pt-4">
+      <header className="relative z-20 mx-auto flex w-full max-w-3xl items-center gap-1 px-2 pt-4 sm:gap-2 sm:px-4">
         <button
           onClick={() =>
             back
@@ -55,7 +55,7 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
           className={`${btn} gap-1.5 px-3 text-sm font-bold sm:px-4`}
           aria-label={t("Назад")}
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5 shrink-0" />
           <span className="hidden min-[480px]:inline">{t("Назад")}</span>
         </button>
         <Link to="/" className={`${btn} w-12`} aria-label={t("Додому")}>
@@ -94,9 +94,9 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
           {t(title)}
         </h1>
       )}
-      <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 animate-fade-up px-4 pb-6 pt-4">
+      <div className="relative z-10 mx-auto w-full max-w-3xl flex-1 animate-fade-up px-4 pb-6 pt-4">
         {children}
-      </main>
+      </div>
       <BottomNav night={night} />
     </div>
   );
@@ -193,7 +193,7 @@ export function Btn({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`min-h-12 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:opacity-40 ${v} ${className}`}
+      className={`min-h-12 min-w-11 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:opacity-40 ${v} ${className}`}
       {...rest}
     >
       {children}

@@ -64,7 +64,7 @@ const STAR_NOTES = [523, 587, 659, 784, 880, 1047];
 export function Story({ id }: { id: keyof typeof STORIES }) {
   const t = useT();
   const scenes = STORIES[id] ?? [];
-  const voice = useStore((s) => s.voice);
+  const voice = useStore((s) => s.voice && s.sound);
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [t2, setT] = useState(0);
@@ -130,15 +130,23 @@ export const Reflect = () => <Guided night id="sky-reflect" ending="Твоя з�
 type Sound = 'rain' | 'wind' | 'crickets';
 export function Sounds() {
   const t = useT();
+  const sound = useStore((s) => s.sound);
+  const volume = useStore((s) => s.volume);
   const ctx = useRef<AudioContext | null>(null);
   const nodes = useRef<{ stop: () => void } | null>(null);
   const [on, setOn] = useState<Sound | null>(null);
   const stop = () => { nodes.current?.stop(); nodes.current = null; setOn(null); };
   useEffect(() => () => { nodes.current?.stop(); void ctx.current?.close(); }, []);
+  const gainRef = useRef<GainNode | null>(null);
+  useEffect(() => {
+    if (!sound || volume === 0) { nodes.current?.stop(); nodes.current = null; setOn(null); }
+    if (gainRef.current && ctx.current?.state !== 'closed') gainRef.current.gain.value = volume * 0.25;
+  }, [sound, volume]);
   const play = (kind: Sound) => {
     stop();
+    if (!sound || volume === 0 || !('AudioContext' in window)) return;
     const ac = ctx.current ?? new AudioContext(); ctx.current = ac; void ac.resume();
-    const gain = ac.createGain(); gain.gain.value = 0.25; gain.connect(ac.destination);
+    const gain = ac.createGain(); gainRef.current = gain; gain.gain.value = volume * 0.25; gain.connect(ac.destination);
     if (kind === 'crickets') {
       const osc = ac.createOscillator(); osc.frequency.value = 4200;
       const amp = ac.createGain(); amp.gain.value = 0;
@@ -160,7 +168,7 @@ export function Sounds() {
   const items: [Sound, string, string][] = [['rain', 'Дощ', '☂'], ['wind', 'Вітер', '≋'], ['crickets', 'Цвіркуни', '♪']];
   return <div className="space-y-4 text-center">
     <CharacterSay who="lihtaryk" night size="sm" mood={on ? 'calm' : 'talk'} action={on ? 'settle' : undefined} text={t('Обери звук і просто послухай. Можна заплющити очі.')} />
-    <div className="grid grid-cols-3 gap-3">{items.map(([k, label, m]) => <Btn key={k} variant={on === k ? 'honey' : 'soft'} aria-pressed={on === k} onClick={() => (on === k ? stop() : play(k))} className="flex h-28 flex-col items-center justify-center gap-1 rounded-3xl"><span className="text-3xl" aria-hidden>{m}</span>{t(label)}</Btn>)}</div>
+    <div className="grid grid-cols-3 gap-3">{items.map(([k, label, m]) => <Btn key={k} disabled={!sound || volume === 0} variant={on === k ? 'honey' : 'soft'} aria-pressed={on === k} onClick={() => (on === k ? stop() : play(k))} className="flex h-28 min-w-0 flex-col items-center justify-center gap-1 rounded-3xl px-2"><span className="text-3xl" aria-hidden>{m}</span>{t(label)}</Btn>)}</div>
     {on && <Btn variant="ghost" onClick={stop}>{t('Тиша')}</Btn>}
   </div>;
 }

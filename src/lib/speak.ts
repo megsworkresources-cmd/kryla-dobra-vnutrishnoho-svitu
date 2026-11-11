@@ -1,5 +1,6 @@
 import { getState } from './store';
 import type { CharId } from '@/content/characters';
+import { isAudioUnlocked } from './audio';
 
 /**
  * Character voices and narration. "natural" uses Lovable AI voices with a warm Ukrainian delivery
@@ -33,7 +34,7 @@ function deviceSpeak(text: string, pitch: number) {
   const s = getState();
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = s.lang === 'uk' ? 'uk-UA' : 'en-US'; u.rate = 0.85; u.pitch = pitch; u.volume = Math.min(1, Math.max(0.1, s.volume * 1.6));
+  u.lang = s.lang === 'uk' ? 'uk-UA' : 'en-US'; u.rate = 0.85; u.pitch = pitch; u.volume = s.volume;
   const all = window.speechSynthesis.getVoices();
   const sameLang = all.filter((x) => x.lang.toLowerCase().replace('_', '-').startsWith(s.lang));
   const v = (s.voiceURI && sameLang.find((x) => x.voiceURI === s.voiceURI)) ?? sameLang[0] ?? all.find((x) => x.lang.startsWith('uk'));
@@ -44,7 +45,7 @@ function deviceSpeak(text: string, pitch: number) {
 export function speak(text: string, opts: { force?: boolean; pitch?: number; who?: CharId; voice?: string; localOnly?: boolean } = {}) {
   if (typeof window === 'undefined') return;
   const s = getState();
-  if (!s.sound || (!s.voice && !opts.force)) return;
+  if (!s.sound || s.volume === 0 || !isAudioUnlocked() || (!s.voice && !opts.force)) return;
   stopSpeaking();
   const c = opts.who ? CAST[opts.who] : null;
   const pitch = opts.pitch ?? c?.pitch ?? 1.05;
@@ -56,8 +57,8 @@ export function speak(text: string, opts: { force?: boolean; pitch?: number; who
   const play = (b64: string) => {
     if (my !== token) return;
     audio = new Audio(`data:audio/wav;base64,${b64}`);
-    audio.volume = Math.min(1, Math.max(0.1, s.volume * 1.6));
-    void audio.play().catch(() => {});
+    audio.volume = getState().volume;
+    void audio.play().catch(() => { if (my === token) deviceSpeak(text, pitch); });
   };
   const hit = cache.get(key);
   if (hit) return play(hit);
@@ -76,4 +77,10 @@ export function stopSpeaking() {
   token++;
   if (audio) { audio.pause(); audio = null; }
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+}
+
+export function syncSpeechVolume() {
+  const s = getState();
+  if (!s.sound || s.volume === 0) { stopSpeaking(); return; }
+  if (audio) audio.volume = s.volume;
 }

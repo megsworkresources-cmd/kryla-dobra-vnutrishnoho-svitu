@@ -3,6 +3,10 @@
  * Nothing plays until the child has touched the screen, and every sound obeys the saved settings.
  */
 import { getState } from './store';
+import banduraTrack from '@/assets/audio/quiet-bandura.mp3.asset.json';
+import sopilkaTrack from '@/assets/audio/quiet-sopilka.mp3.asset.json';
+import tsymbalyTrack from '@/assets/audio/quiet-tsymbaly.mp3.asset.json';
+import lullabyTrack from '@/assets/audio/quiet-lullaby.mp3.asset.json';
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
@@ -133,7 +137,7 @@ const PHRASES: [number, number][][] = [
 ];
 const BASS = [0, 0, 3, 4, 0, 4, 3, 0];
 
-export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
+function startSynthMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   const c = ac(); if (!c || style === 'nature') return () => {};
   const tempo = style === 'lullaby' || night ? 0.75 : style === 'tsymbaly' ? 0.42 : 0.55; // seconds per beat
   let next = c.currentTime + 0.5; let pi = 0; let bar = 0;
@@ -164,6 +168,58 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   schedule();
   const id = window.setInterval(schedule, 500);
   return () => window.clearInterval(id);
+}
+
+const MUSIC_URLS: Record<Exclude<MusicStyle, 'nature'>, string> = {
+  bandura: banduraTrack.url,
+  sopilka: sopilkaTrack.url,
+  tsymbaly: tsymbalyTrack.url,
+  lullaby: lullabyTrack.url,
+};
+const trackCache = new Map<string, Promise<AudioBuffer>>();
+
+function loadTrack(style: Exclude<MusicStyle, 'nature'>, c: AudioContext) {
+  const hit = trackCache.get(style);
+  if (hit) return hit;
+  const request = fetch(MUSIC_URLS[style])
+    .then((r) => { if (!r.ok) throw new Error('music unavailable'); return r.arrayBuffer(); })
+    .then((data) => c.decodeAudioData(data))
+    .catch((error) => { trackCache.delete(style); throw error; });
+  trackCache.set(style, request);
+  return request;
+}
+
+/** Recorded, gently mastered Ukrainian instrumentals. Soft synthesis remains only as an offline fallback. */
+export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
+  const c = ac();
+  if (!c || style === 'nature') return () => {};
+  let stopped = false;
+  let source: AudioBufferSourceNode | null = null;
+  let gain: GainNode | null = null;
+  let fallbackStop = () => {};
+  void loadTrack(style, c).then((buffer) => {
+    if (stopped) return;
+    source = c.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    source.loopStart = Math.min(0.08, buffer.duration / 10);
+    source.loopEnd = Math.max(source.loopStart + 0.1, buffer.duration - 0.08);
+    source.playbackRate.value = night ? 0.96 : 1;
+    gain = c.createGain();
+    gain.gain.value = 0.72;
+    source.connect(gain).connect(bus);
+    source.start();
+  }).catch(() => {
+    if (!stopped) fallbackStop = startSynthMusic(bus, style, night);
+  });
+  return () => {
+    stopped = true;
+    fallbackStop();
+    if (source && gain) {
+      gain.gain.setTargetAtTime(0, c.currentTime, 0.15);
+      window.setTimeout(() => { try { source.stop(); } catch { /* already stopped */ } }, 700);
+    }
+  };
 }
 
 export function stopAmbient() { amb?.stop(); amb = null; }

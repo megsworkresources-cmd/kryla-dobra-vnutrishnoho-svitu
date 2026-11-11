@@ -41,14 +41,14 @@ function deviceSpeak(text: string, pitch: number) {
   window.speechSynthesis.speak(u);
 }
 
-export function speak(text: string, opts: { force?: boolean; pitch?: number; who?: CharId; voice?: string } = {}) {
+export function speak(text: string, opts: { force?: boolean; pitch?: number; who?: CharId; voice?: string; localOnly?: boolean } = {}) {
   if (typeof window === 'undefined') return;
   const s = getState();
   if (!s.sound || (!s.voice && !opts.force)) return;
   stopSpeaking();
   const c = opts.who ? CAST[opts.who] : null;
   const pitch = opts.pitch ?? c?.pitch ?? 1.05;
-  if (s.voiceEngine !== 'natural') return deviceSpeak(text, pitch);
+  if (opts.localOnly || s.voiceEngine !== 'natural') return deviceSpeak(text, pitch);
   const voice = opts.voice ?? c?.voice ?? s.narrator ?? 'Leda';
   const style = opts.who ?? 'narrator';
   const key = `${s.lang}|${voice}|${text}`;

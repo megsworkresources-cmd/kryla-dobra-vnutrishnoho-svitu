@@ -12,7 +12,7 @@
 - Keep destination routes separate from reusable activity modules and browser-safe content data, so every exercise has its own address and completion flow.
 - Persist child-created content and preferences only in the device store; this account-free product explicitly requires private local functionality.
 - Use semantic CSS tokens and the shared Btn control for new activity interactions, preserving the storybook design system.
-- Synthesize all sounds in `src/lib/audio.ts` (no audio files) and gate every sound and voice on the saved sound settings, starting only after the first touch, to respect autoplay rules and keep the app light.
+- Use CDN-hosted recorded Ukrainian instrumental tracks for background music and synthesize only interface/game sounds in `src/lib/audio.ts`; gate every sound and voice on saved settings and start only after the first touch, to respect autoplay rules while keeping recordings out of the repository.
 - Characters speak through the shared `CharacterSay` component with a visible caption, so spoken instructions always have a written equivalent.
 - Back/Next order comes from one list in `src/content/sequence.ts`; add every new page there so navigation never dead-ends.
 - The feelings helper (/helper) is the only feature that sends child text off-device: one Lovable AI call via a server function, nothing stored, and it may only recommend keys from `src/content/catalog.ts`.

@@ -20,6 +20,7 @@ import { Route as HelperRouteImport } from './routes/helper'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SafeRouteImport } from './routes/safe'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as StoryRouteImport } from './routes/story'
 import { Route as WatchRouteImport } from './routes/watch'
 import { Route as WorldRouteImport } from './routes/world'
 import { Route as CaregiverParentsRouteImport } from './routes/_caregiver/parents'
@@ -91,6 +92,11 @@ const SafeRoute = SafeRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoryRoute = StoryRouteImport.update({
+  id: '/story',
+  path: '/story',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WatchRoute = WatchRouteImport.update({
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
+  '/story': typeof StoryRoute
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
@@ -226,6 +233,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
+  '/story': typeof StoryRoute
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
@@ -258,6 +266,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
+  '/story': typeof StoryRoute
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/_caregiver/parents': typeof CaregiverParentsRoute
@@ -290,6 +299,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/safe'
     | '/settings'
+    | '/story'
     | '/watch'
     | '/world'
     | '/parents'
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/safe'
     | '/settings'
+    | '/story'
     | '/watch'
     | '/world'
     | '/parents'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/safe'
     | '/settings'
+    | '/story'
     | '/watch'
     | '/world'
     | '/_caregiver/parents'
@@ -383,6 +395,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SafeRoute: typeof SafeRoute
   SettingsRoute: typeof SettingsRoute
+  StoryRoute: typeof StoryRoute
   WatchRoute: typeof WatchRoute
   WorldRoute: typeof WorldRoute
   CloudsIdRoute: typeof CloudsIdRoute
@@ -479,6 +492,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/story': {
+      id: '/story'
+      path: '/story'
+      fullPath: '/story'
+      preLoaderRoute: typeof StoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/watch': {
@@ -634,6 +654,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SafeRoute: SafeRoute,
   SettingsRoute: SettingsRoute,
+  StoryRoute: StoryRoute,
   WatchRoute: WatchRoute,
   WorldRoute: WorldRoute,
   CloudsIdRoute: CloudsIdRoute,

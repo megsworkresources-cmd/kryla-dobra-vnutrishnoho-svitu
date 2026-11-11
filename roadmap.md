@@ -1,4 +1,7 @@
 # Completion roadmap
+- [ ] Replace synthesized background tunes with high-quality soothing Ukrainian instrumental recordings, preserving all settings and autoplay safeguards.
+- [ ] Add a choice-based Claude story companion with no free-text collection, no server storage and visible privacy guidance.
+- [ ] Audit every screen, fix discovered runtime/component errors and clear the existing lint errors.
 - [ ] Audit and complete caregiver authentication, session handling, recovery and regression checks.
 - [x] OAuth-protected activity catalog MCP + browser map tools: manifest extracted (2 tools), signed-out consent redirects to adult login with request preserved, verified at phone size (390x844).
 - [ ] Real external MCP client authorization end to end (needs an outside agent to run the OAuth consent flow).

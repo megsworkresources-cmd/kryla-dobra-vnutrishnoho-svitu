@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
@@ -83,6 +83,10 @@ function Watch() {
               </li>
             ))}
           </ul>
+          <Link to="/story" className="paper-card flex min-h-16 items-center justify-between gap-3 p-4 font-bold transition active:scale-[0.98]">
+            <span><span className="block font-display text-xl">{t("Казка для мене")}</span><span className="block text-sm font-normal text-muted-foreground">{t("Обери героя, місце й настрій — Claude створить нову історію.")}</span></span>
+            <span className="text-3xl" aria-hidden>✨</span>
+          </Link>
         </div>
       )}
     </Scene>

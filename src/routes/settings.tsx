@@ -47,7 +47,7 @@ function Settings() {
             <input type="range" min={0} max={1} step={0.05} value={s.volume} disabled={off} aria-label={t("Гучність")}
               onChange={(e) => set("volume", Number(e.target.value))} onPointerUp={() => sfx("select")} className="mt-2 w-full accent-primary" />
           </label>
-          <Toggle label={t("Фонова музика й природа")} hint={t("Легкі українські мелодії та природа")} checked={s.music} disabled={off} onChange={(v) => { unlockAudio(); set("music", v); playAmbient(v ? "garden" : null); }} />
+          <Toggle label={t("Фонова музика й природа")} hint={t("Ніжні записи українських інструментів і звуки природи")} checked={s.music} disabled={off} onChange={(v) => { unlockAudio(); set("music", v); playAmbient(v ? "garden" : null); }} />
           <fieldset className={`rounded-2xl bg-secondary px-4 py-3 ${off || !s.music ? "opacity-50" : ""}`} disabled={off || !s.music}>
             <legend className="sr-only">{t("Яка музика")}</legend>
             <span className="block font-bold">{t("Яка музика звучить")}</span>

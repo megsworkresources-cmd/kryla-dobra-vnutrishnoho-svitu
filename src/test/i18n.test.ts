@@ -33,7 +33,8 @@ describe("UA/EN language switch", () => {
         if (ts.isStringLiteral(node)) {
           const s = node.text;
           if (CYR.test(s) && !/[=<>]|Мова \/ Language/.test(s) && s !== "Українська") {
-            if (!dict.includes(`"${s}"`) && !dict.includes(`\n  ${s}:`)) missing.push(`${file}: ${s}`);
+            if (!dict.includes(`"${s}"`) && !dict.includes(`\n  ${s}:`))
+              missing.push(`${file}: ${s}`);
           }
         }
         ts.forEachChild(node, visit);

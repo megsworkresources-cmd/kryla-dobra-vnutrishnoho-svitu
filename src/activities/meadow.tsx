@@ -45,7 +45,7 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
   useEffect(() => {
     if (running && voice) speak(isInhale ? t("М’який вдих") : t("Повільний видих"));
     return stopSpeaking;
-  }, [phase, running, voice]);
+  }, [phase, running, voice, isInhale, t]);
   const reset = () => {
     setElapsed(0);
     setRunning(false);

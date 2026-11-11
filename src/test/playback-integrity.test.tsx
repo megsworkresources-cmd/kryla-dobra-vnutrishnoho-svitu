@@ -20,11 +20,13 @@ it("counts sunflower completion only when all thirteen areas are colored, once p
   update((s) => ({ ...s, lang: "uk", completed: {} }));
   render(<ColorFlower />);
   const regions = screen.getAllByRole("button", { name: /Соняшник для розфарбовування \d+/ });
-  fireEvent.click(regions[12]);
+  const center = regions[12];
+  if (!center) throw new Error("missing sunflower center");
+  fireEvent.click(center);
   expect(getState().completed["studio-color"] ?? 0).toBe(0);
   for (const region of regions) fireEvent.click(region);
   expect(getState().completed["studio-color"]).toBe(1);
-  fireEvent.click(regions[12]);
+  fireEvent.click(center);
   expect(getState().completed["studio-color"]).toBe(1);
   act(() => vi.runAllTimers());
 });

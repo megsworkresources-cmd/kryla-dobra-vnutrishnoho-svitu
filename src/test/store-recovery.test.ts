@@ -1,6 +1,15 @@
 import { describe, expect, it, vi } from "vitest";
 
 describe("saved device settings recovery", () => {
+  it("reports unavailable device storage without discarding the current drawing", async () => {
+    vi.resetModules();
+    localStorage.clear();
+    const { addDrawing, getState } = await import("@/lib/store");
+    const spy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("quota"); });
+    expect(addDrawing("data:image/jpeg;base64,example")).toBe(false);
+    expect(getState().drawings).toHaveLength(1);
+    spy.mockRestore();
+  });
   it("ignores malformed progress values while preserving valid progress and the original storage", async () => {
     vi.resetModules();
     const raw = JSON.stringify({

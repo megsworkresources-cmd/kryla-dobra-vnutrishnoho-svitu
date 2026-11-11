@@ -105,36 +105,39 @@ function Explore() {
                   })}
                 </div>
               </TransformComponent>
-              <div
-                className="absolute right-3 top-2 z-10 flex flex-col gap-2"
-                role="group"
-                aria-label={t("Масштаб")}
-              >
-                <button
-                  type="button"
-                  className={btn}
-                  onClick={() => zoomIn()}
-                  aria-label={t("Наблизити")}
+              {/* Bottom-right keeps these off the two right-hand map labels. */}
+              {!place && (
+                <div
+                  className="absolute bottom-3 right-3 z-10 flex gap-2"
+                  role="group"
+                  aria-label={t("Масштаб")}
                 >
-                  <Plus className="h-5 w-5" />
-                </button>
-                <button
-                  type="button"
-                  className={btn}
-                  onClick={() => zoomOut()}
-                  aria-label={t("Віддалити")}
-                >
-                  <Minus className="h-5 w-5" />
-                </button>
-                <button
-                  type="button"
-                  className={btn}
-                  onClick={() => resetTransform()}
-                  aria-label={t("Показати весь світ")}
-                >
-                  <Maximize2 className="h-5 w-5" />
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    className={btn}
+                    onClick={() => zoomIn()}
+                    aria-label={t("Наблизити")}
+                  >
+                    <Plus className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    className={btn}
+                    onClick={() => zoomOut()}
+                    aria-label={t("Віддалити")}
+                  >
+                    <Minus className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    className={btn}
+                    onClick={() => resetTransform()}
+                    aria-label={t("Показати весь світ")}
+                  >
+                    <Maximize2 className="h-5 w-5" />
+                  </button>
+                </div>
+              )}
             </>
           )}
         </TransformWrapper>

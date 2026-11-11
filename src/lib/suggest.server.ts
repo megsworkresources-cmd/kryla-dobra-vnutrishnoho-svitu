@@ -14,11 +14,16 @@ export const SuggestionSchema = z.object({
 export type Suggestion = z.infer<typeof SuggestionSchema>;
 
 export class SuggestError extends Error {
-  constructor(public status: number, message: string) { super(message); }
+  constructor(
+    public status: number,
+    message: string,
+  ) {
+    super(message);
+  }
 }
 
 export async function suggestActivity(text: string, age: string, lang: "uk" | "en" = "uk") {
-  const apiKey = process.env['LOVABLE_API_KEY'];
+  const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new SuggestError(500, "config");
   const provider = createOpenAI({
     baseURL: "https://ai.gateway.lovable.dev/v1",
@@ -37,9 +42,18 @@ ${list}
   const result = streamText({
     model: provider.responses("openai/gpt-6-astra"),
     output: Output.object({ schema: SuggestionSchema }),
-    instructions: lang === "en" ? `${system}\nAlways answer in English (US), warmly and simply.` : system,
+    instructions:
+      lang === "en" ? `${system}\nAlways answer in English (US), warmly and simply.` : system,
     messages: [{ role: "user", content: text }],
-    providerOptions: { openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
+    providerOptions: {
+      openai: {
+        forceReasoning: true,
+        reasoningEffort: "low",
+        reasoningSummary: "auto",
+        store: false,
+        include: ["reasoning.encrypted_content"],
+      },
+    },
   });
   try {
     const out = await result.output;

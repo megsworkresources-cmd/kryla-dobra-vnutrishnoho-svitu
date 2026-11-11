@@ -1241,7 +1241,8 @@ export type { Lang };
 let APP_LINES: Set<string> | null = null;
 /** True only for app-written lines (dictionary sources or translations). */
 export function isAppLine(s: string): boolean {
-  if (!APP_LINES) APP_LINES = new Set([...Object.keys(EN), ...Object.values(EN)].map((x) => x.trim()));
+  if (!APP_LINES)
+    APP_LINES = new Set([...Object.keys(EN), ...Object.values(EN)].map((x) => x.trim()));
   return APP_LINES.has(s.trim());
 }
 

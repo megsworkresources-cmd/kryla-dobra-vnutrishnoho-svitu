@@ -7,7 +7,12 @@ export function LangToggle({ night }: { night?: boolean | undefined }) {
   const btn = (l: "uk" | "en", label: string, name: string) => (
     <button
       type="button"
-      onClick={() => { if (lang !== l) { sfx("select"); update((s) => ({ ...s, lang: l })); } }}
+      onClick={() => {
+        if (lang !== l) {
+          sfx("select");
+          update((s) => ({ ...s, lang: l }));
+        }
+      }}
       aria-pressed={lang === l}
       aria-label={name}
       className={`h-9 rounded-full px-2 text-xs font-extrabold transition active:scale-90 ${lang === l ? "bg-primary text-primary-foreground" : night ? "opacity-70" : "opacity-60"}`}
@@ -16,7 +21,11 @@ export function LangToggle({ night }: { night?: boolean | undefined }) {
     </button>
   );
   return (
-    <div role="group" aria-label="Мова / Language" className={`${night ? "night-card" : "paper-card"} flex h-12 shrink-0 items-center gap-0.5 rounded-full px-1`}>
+    <div
+      role="group"
+      aria-label="Мова / Language"
+      className={`${night ? "night-card" : "paper-card"} flex h-12 shrink-0 items-center gap-0.5 rounded-full px-1`}
+    >
       {btn("uk", "UA", "Українська")}
       {btn("en", "EN", "English")}
     </div>

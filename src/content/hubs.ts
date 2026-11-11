@@ -1,7 +1,13 @@
 import type { HubItem } from "@/components/Hub";
 
 const f = (id: string, title: string, desc: string, mark: string, mins: string): HubItem => ({
-  id: `forest-${id}`, title, desc, mark, mins, href: "/forest/$id", params: { id },
+  id: `forest-${id}`,
+  title,
+  desc,
+  mark,
+  mins,
+  href: "/forest/$id",
+  params: { id },
 });
 
 export const FOREST: HubItem[] = [

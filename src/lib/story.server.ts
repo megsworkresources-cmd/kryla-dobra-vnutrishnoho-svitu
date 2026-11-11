@@ -18,7 +18,11 @@ export type StoryData = z.infer<typeof StoryInput>;
 export type StoryErrorCode = "config" | "credits" | "busy" | "denied" | "unavailable" | "fail";
 
 export class StoryError extends Error {
-  constructor(public status: number, public code: StoryErrorCode, message: string) {
+  constructor(
+    public status: number,
+    public code: StoryErrorCode,
+    message: string,
+  ) {
     super(message);
   }
 }
@@ -27,16 +31,31 @@ const FEELINGS: Record<StoryData["feeling"], { uk: string; en: string }> = {
   calm: { uk: "спокій і тихий відпочинок", en: "calm and quiet rest" },
   sad: { uk: "сум і потреба у теплому товаристві", en: "sadness and a need for warm company" },
   worried: { uk: "хвилювання і пошук опори", en: "worry and finding support" },
-  angry: { uk: "злість і потреба в просторі без осуду", en: "anger and a need for space without judgement" },
+  angry: {
+    uk: "злість і потреба в просторі без осуду",
+    en: "anger and a need for space without judgement",
+  },
   proud: { uk: "гордість за маленький особистий крок", en: "pride in a small personal step" },
   curious: { uk: "цікавість і ніжна пригода", en: "curiosity and a gentle adventure" },
 };
 
 function failure(status: number, lang: "uk" | "en"): StoryError {
-  const code: StoryErrorCode = status === 401 ? "config" : status === 402 ? "credits" : status === 403 ? "denied" : status === 404 ? "unavailable" : status === 429 ? "busy" : "fail";
+  const code: StoryErrorCode =
+    status === 401
+      ? "config"
+      : status === 402
+        ? "credits"
+        : status === 403
+          ? "denied"
+          : status === 404
+            ? "unavailable"
+            : status === 429
+              ? "busy"
+              : "fail";
   const messages: Record<StoryErrorCode, string> = {
     config: "Чарівна казка ще не налаштована. Поки що обери готову казку в Нічному небі.",
-    credits: "Магія нових казок тимчасово вичерпана. Дорослий може поповнити кредити Lovable AI, а поки що обери готову казку.",
+    credits:
+      "Магія нових казок тимчасово вичерпана. Дорослий може поповнити кредити Lovable AI, а поки що обери готову казку.",
     busy: "Казкар зараз відпочиває. Зачекай трохи або обери готову казку.",
     denied: "Нові казки зараз недоступні. Обери готову казку в Нічному небі.",
     unavailable: "Казкар зараз недоступний. Обери готову казку в Нічному небі.",
@@ -67,20 +86,40 @@ export async function generateStory(input: StoryData): Promise<Story> {
     const result = streamText({
       model: anthropic("anthropic/claude-sonnet-5"),
       output: Output.object({ schema: StorySchema }),
-      system: input.lang === "en" ? `${system}\nWrite the entire story in warm, simple US English. Keep the character's name recognizable.` : system,
-      messages: [{ role: "user", content: `Create one new story from these approved choices: ${who.name}, ${place.name}, ${FEELINGS[input.feeling].en}.` }],
+      system:
+        input.lang === "en"
+          ? `${system}\nWrite the entire story in warm, simple US English. Keep the character's name recognizable.`
+          : system,
+      messages: [
+        {
+          role: "user",
+          content: `Create one new story from these approved choices: ${who.name}, ${place.name}, ${FEELINGS[input.feeling].en}.`,
+        },
+      ],
       maxOutputTokens: 3000,
       maxRetries: 0,
       providerOptions: { anthropic: { thinking: { type: "adaptive" }, effort: "low" } },
     });
     const out = await result.output;
-    const scenes = out.scenes.slice(0, 4).map((scene) => ({ text: scene.text.trim().slice(0, 1400) })).filter((scene) => scene.text.length > 0);
-    if (scenes.length !== 4 || !out.title.trim() || !out.closing.trim()) throw failure(422, input.lang);
-    return { title: out.title.trim().slice(0, 140), scenes, closing: out.closing.trim().slice(0, 400) };
+    const scenes = out.scenes
+      .slice(0, 4)
+      .map((scene) => ({ text: scene.text.trim().slice(0, 1400) }))
+      .filter((scene) => scene.text.length > 0);
+    if (scenes.length !== 4 || !out.title.trim() || !out.closing.trim())
+      throw failure(422, input.lang);
+    return {
+      title: out.title.trim().slice(0, 140),
+      scenes,
+      closing: out.closing.trim().slice(0, 400),
+    };
   } catch (error) {
     if (error instanceof StoryError) throw error;
     if (NoObjectGeneratedError.isInstance(error)) throw failure(422, input.lang);
-    const status = Number((error as { statusCode?: number; status?: number })?.statusCode ?? (error as { status?: number })?.status ?? 500);
+    const status = Number(
+      (error as { statusCode?: number; status?: number })?.statusCode ??
+        (error as { status?: number })?.status ??
+        500,
+    );
     throw failure(status, input.lang);
   }
 }

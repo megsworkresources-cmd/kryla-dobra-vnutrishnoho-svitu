@@ -8,7 +8,14 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 
 export default defineConfig({
-  vite: { plugins: [mcpPlugin({ path: "/api/public/mcp", metadataPath: "/api/public/.well-known/oauth-protected-resource" })] },
+  vite: {
+    plugins: [
+      mcpPlugin({
+        path: "/api/public/mcp",
+        metadataPath: "/api/public/.well-known/oauth-protected-resource",
+      }),
+    ],
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

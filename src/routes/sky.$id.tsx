@@ -8,7 +8,8 @@ export const Route = createFileRoute("/sky/$id")({
     if (!title) throw notFound();
     return { title };
   },
-  head: ({ loaderData }) => pageHead(loaderData?.title ?? JOURNEYS.sky.title, `Вправа: ${JOURNEYS.sky.title}.`),
+  head: ({ loaderData }) =>
+    pageHead(loaderData?.title ?? JOURNEYS.sky.title, `Вправа: ${JOURNEYS.sky.title}.`),
   component: Page,
 });
 

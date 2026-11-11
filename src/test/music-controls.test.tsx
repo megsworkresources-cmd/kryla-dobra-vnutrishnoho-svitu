@@ -89,7 +89,10 @@ it("does not create audio before a user gesture unlocks it", async () => {
 
 it("stops the previous soundscape on replacement and route cleanup", async () => {
   const { sources } = audioContextStub();
-  vi.stubGlobal("fetch", vi.fn(() => new Promise(() => {})));
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(() => new Promise(() => {})),
+  );
   const { unlockAudio, playAmbient, stopAmbient } = await import("@/lib/audio");
   unlockAudio();
   playAmbient("garden");
@@ -112,7 +115,10 @@ it("keeps music stopped when its saved volume is zero", async () => {
 
 it("surfaces recording load failure and resets status when stopped", async () => {
   audioContextStub();
-  vi.stubGlobal("fetch", vi.fn(async () => new Response("missing", { status: 404 })));
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => new Response("missing", { status: 404 })),
+  );
   const { unlockAudio, startMusic, useMusicStatus } = await import("@/lib/audio");
   function Status() {
     return <span>{useMusicStatus()}</span>;

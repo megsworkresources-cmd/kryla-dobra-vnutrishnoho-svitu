@@ -165,9 +165,11 @@ function CaregiverLogin() {
           )}
           <Btn type="submit" disabled={busy} className="w-full">
             {busy
-              ? t({ signin: "Входимо…", signup: "Створюємо акаунт…", forgot: "Надсилаємо лист…" }[
-                  mode
-                ])
+              ? t(
+                  { signin: "Входимо…", signup: "Створюємо акаунт…", forgot: "Надсилаємо лист…" }[
+                    mode
+                  ],
+                )
               : t({ signin: "Увійти", signup: "Створити акаунт", forgot: "Надіслати лист" }[mode])}
           </Btn>
           <div className="flex flex-wrap justify-center gap-2 text-sm">

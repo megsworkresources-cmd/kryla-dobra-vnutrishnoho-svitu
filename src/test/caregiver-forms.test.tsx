@@ -35,6 +35,7 @@ const auth = vi.mocked(supabase.auth, true);
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.spyOn(LoginRoute, "useSearch").mockReturnValue({ redirect: "/parents" });
   vi.mocked(auth.getUser).mockResolvedValue({ data: { user: null }, error: null } as never);
   window.location.hash = "";
   sessionStorage.clear();

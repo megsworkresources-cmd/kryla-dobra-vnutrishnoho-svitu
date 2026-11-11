@@ -1,4 +1,5 @@
 # Completion roadmap
+- [ ] Follow-up repairs: keyboard activation of shared magic controls, invalid saved-setting recovery and large-text character layout; regression and browser checks.
 - [x] In-place targeted repairs and browser audit: 35 routes at three sizes; audio decoding, cartoon controls, drawing persistence, reduced-motion release, keyboard games and public/caregiver separation checked.
 - [x] Existing recorded tracks verified: all four return 200 and decode; physical iPhone listening remains manual.
 - [x] Choice-based Claude story companion verified with a real Ukrainian story response; no typed child text or story storage.

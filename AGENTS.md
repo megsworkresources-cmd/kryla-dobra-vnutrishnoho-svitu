@@ -19,6 +19,8 @@
 - Back/Next order comes from one list in `src/content/sequence.ts`; add every new page there so navigation never dead-ends.
 - Place the single main landmark around the root Outlet; shared scene frames use non-landmark containers so every page has exactly one main.
 - Exercise completion must use state/timers, never depend on animation events, so reduced-motion settings cannot block progress.
+- Recorded story footage uses StoryFilm for muted inline playback, interruption handling and failures; story owners retain captions and narration.
+- Listening-stage interactions rotate among tracing, memory and garden building without persisting child choices or gating exercise completion.
 - The feelings helper (/helper) is the only feature that sends child text off-device: one Lovable AI call via a server function, nothing stored, and it may only recommend keys from `src/content/catalog.ts`.
 - Ukrainian is the source language: write UI strings in Ukrainian and translate them via `t()`/`useT()` from `src/lib/i18n.ts` (never hardcode English); every new string needs a dictionary entry, guarded by `src/test/i18n.test.ts`.
 - Natural voices go through `src/lib/voice.server.ts` (Lovable AI TTS) with app-written lines only, cached in memory, falling back to device speech; never send child-typed text there.

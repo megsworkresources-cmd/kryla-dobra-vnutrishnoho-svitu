@@ -15,16 +15,23 @@ let unlocked = false;
 let audioGeneration = 0;
 let ambientGeneration = 0;
 
-function handleAudioStateChange() {
-  if (!ctx) return;
-  if (ctx.state === "closed") {
-    ctx = null;
+function handleAudioStateChange(changedContext: AudioContext) {
+  // Ignore events from a context that was closed and subsequently replaced.
+  if (ctx !== changedContext) return;
+  if (changedContext.state === "closed") {
+    audioGeneration += 1;
+    ambientGeneration += 1;
+    stopAmbient();
+    try {
+      master?.disconnect();
+    } catch {
+      // already disconnected
+    }
     master = null;
+    ctx = null;
     return;
   }
-  if (ctx.state === "running") {
-    syncVolume();
-  }
+  if (changedContext.state === "running") syncVolume();
 }
 
 function ac() {
@@ -38,7 +45,8 @@ function ac() {
     ctx = new AudioContext();
     master = ctx.createGain();
     master.connect(ctx.destination);
-    ctx.onstatechange = handleAudioStateChange;
+    const createdContext = ctx;
+    createdContext.onstatechange = () => handleAudioStateChange(createdContext);
   }
   if (ctx.state === "suspended") void ctx.resume().catch(() => {});
   return ctx;
@@ -63,13 +71,11 @@ export function destroyAudio() {
     }
     master = null;
   }
-  if (ctx) {
-    try {
-      if (ctx.state !== "closed") void ctx.close();
-    } catch {
-      // browser may reject closing an already-closed context
-    }
-    ctx = null;
+  const closingContext = ctx;
+  ctx = null;
+  if (closingContext) {
+    closingContext.onstatechange = null;
+    if (closingContext.state !== "closed") void closingContext.close().catch(() => {});
   }
 }
 
@@ -79,8 +85,10 @@ export function isAudioUnlocked() {
 
 export function syncVolume() {
   const s = getState();
-  if (master && ctx) master.gain.setTargetAtTime(s.sound ? s.volume : 0, ctx.currentTime, 0.05);
-  if (amb && ctx) amb.bus.gain.setTargetAtTime(0.35 * s.musicVolume, ctx.currentTime, 0.05);
+  if (master && ctx && ctx.state !== "closed")
+    master.gain.setTargetAtTime(s.sound ? s.volume : 0, ctx.currentTime, 0.05);
+  if (amb && ctx && ctx.state !== "closed")
+    amb.bus.gain.setTargetAtTime(0.35 * s.musicVolume, ctx.currentTime, 0.05);
   if (!s.sound || !s.music || s.volume === 0 || s.musicVolume === 0) stopAmbient();
 }
 
@@ -247,7 +255,7 @@ export function playAmbient(kind: Ambient | null) {
   const timer = window.setInterval(() => {
     if (token !== ambientGeneration) return;
     const current = ctx;
-    if (!current || current.state === "closed") return;
+    if (!current || current.state !== "running") return;
     const t = current.currentTime;
     const chirp = (base: number, count: number, gap: number, vol: number) => {
       for (let k = 0; k < count; k++) {
@@ -307,19 +315,20 @@ const MUSIC_URLS: Record<Exclude<MusicStyle, "nature">, string> = {
   tsymbaly: tsymbalyTrack.url,
   lullaby: lullabyTrack.url,
 };
+// Cache the shared fetch/decode promise independently of any one playback's lifetime.
+// A caller stopping playback must not abort a load another caller is waiting on.
 const trackCache = new Map<string, Promise<AudioBuffer>>();
 
-function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext, signal?: AbortSignal) {
+function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext) {
   const hit = trackCache.get(style);
   if (hit) return hit;
-  const request = fetch(MUSIC_URLS[style], { signal: signal ?? AbortSignal.timeout(20000) })
+  const request = fetch(MUSIC_URLS[style], { signal: AbortSignal.timeout(20000) })
     .then((r) => {
       if (!r.ok) throw new Error("music unavailable");
       return r.arrayBuffer();
     })
     .then((data) => c.decodeAudioData(data))
     .catch((error) => {
-      if (signal?.aborted) return null;
       if (trackCache.get(style) === request) trackCache.delete(style);
       throw error;
     });
@@ -336,15 +345,13 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   const c = ac();
   if (!c || style === "nature") return () => {};
   const generation = audioGeneration;
-  const controller = new AbortController();
   let stopped = false;
   let source: AudioBufferSourceNode | null = null;
   let gain: GainNode | null = null;
   setMusicStatus("loading");
-  void loadTrack(style, c, controller.signal)
+  void loadTrack(style, c)
     .then((buffer) => {
-      if (stopped || generation !== audioGeneration || c.state === "closed") return;
-      if (!buffer) return;
+      if (stopped || generation !== audioGeneration || c !== ctx || c.state !== "running") return;
       source = c.createBufferSource();
       source.buffer = buffer;
       source.loop = true;
@@ -362,7 +369,6 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
     });
   return () => {
     stopped = true;
-    controller.abort();
     if (source) {
       try {
         source.stop();

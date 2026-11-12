@@ -15,6 +15,18 @@ let unlocked = false;
 let audioGeneration = 0;
 let ambientGeneration = 0;
 
+function handleAudioStateChange() {
+  if (!ctx) return;
+  if (ctx.state === "closed") {
+    ctx = null;
+    master = null;
+    return;
+  }
+  if (ctx.state === "running") {
+    syncVolume();
+  }
+}
+
 function ac() {
   if (typeof window === "undefined" || !unlocked) return null;
   if (!("AudioContext" in window)) return null;
@@ -26,6 +38,7 @@ function ac() {
     ctx = new AudioContext();
     master = ctx.createGain();
     master.connect(ctx.destination);
+    ctx.onstatechange = handleAudioStateChange;
   }
   if (ctx.state === "suspended") void ctx.resume().catch(() => {});
   return ctx;

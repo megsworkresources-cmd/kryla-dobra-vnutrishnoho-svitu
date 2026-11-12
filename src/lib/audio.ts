@@ -12,10 +12,16 @@ import lullabyTrack from "@/assets/audio/quiet-lullaby.mp3.asset.json";
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let unlocked = false;
+let audioGeneration = 0;
+let ambientGeneration = 0;
 
 function ac() {
   if (typeof window === "undefined" || !unlocked) return null;
   if (!("AudioContext" in window)) return null;
+  if (ctx && ctx.state === "closed") {
+    ctx = null;
+    master = null;
+  }
   if (!ctx) {
     ctx = new AudioContext();
     master = ctx.createGain();
@@ -24,11 +30,36 @@ function ac() {
   if (ctx.state === "suspended") void ctx.resume().catch(() => {});
   return ctx;
 }
+
 export function unlockAudio() {
   unlocked = true;
   ac();
   syncVolume();
 }
+
+export function destroyAudio() {
+  unlocked = false;
+  audioGeneration += 1;
+  ambientGeneration += 1;
+  stopAmbient();
+  if (master) {
+    try {
+      master.disconnect();
+    } catch {
+      // already disconnected
+    }
+    master = null;
+  }
+  if (ctx) {
+    try {
+      if (ctx.state !== "closed") void ctx.close();
+    } catch {
+      // browser may reject closing an already-closed context
+    }
+    ctx = null;
+  }
+}
+
 export function isAudioUnlocked() {
   return unlocked;
 }
@@ -184,12 +215,12 @@ export function playAmbient(kind: Ambient | null) {
   stopAmbient();
   const c = ac();
   if (!c || !master) return;
+  const token = ++ambientGeneration;
   const bus = c.createGain();
   bus.gain.setValueAtTime(0, c.currentTime);
   bus.gain.linearRampToValueAtTime(0.35 * s.musicVolume, c.currentTime + 3);
   bus.connect(master);
   const stops: (() => void)[] = [];
-  // soft wind / air bed
   const n = noise(c);
   const f = c.createBiquadFilter();
   f.type = "lowpass";
@@ -200,10 +231,10 @@ export function playAmbient(kind: Ambient | null) {
   n.start();
   stops.push(() => n.stop());
   stops.push(startMusic(bus, s.musicStyle ?? "bandura", kind === "night"));
-  // occasional nature voices
   const timer = window.setInterval(() => {
+    if (token !== ambientGeneration) return;
     const current = ctx;
-    if (!current) return;
+    if (!current || current.state === "closed") return;
     const t = current.currentTime;
     const chirp = (base: number, count: number, gap: number, vol: number) => {
       for (let k = 0; k < count; k++) {
@@ -231,7 +262,7 @@ export function playAmbient(kind: Ambient | null) {
     style: s.musicStyle,
     bus,
     stop: () => {
-      // Cancel pending recordings and nature timers immediately on exit or replacement.
+      ambientGeneration += 1;
       stops.forEach((stop) => {
         try {
           stop();
@@ -239,10 +270,15 @@ export function playAmbient(kind: Ambient | null) {
           /* already stopped */
         }
       });
-      bus.disconnect();
+      try {
+        bus.disconnect();
+      } catch {
+        /* already disconnected */
+      }
     },
   };
 }
+
 /* ---------- Recorded Ukrainian instrumentals ---------- */
 export type MusicStyle = "bandura" | "sopilka" | "tsymbaly" | "lullaby" | "nature";
 export const MUSIC_STYLES: { id: MusicStyle; name: string; hint: string }[] = [
@@ -260,21 +296,21 @@ const MUSIC_URLS: Record<Exclude<MusicStyle, "nature">, string> = {
 };
 const trackCache = new Map<string, Promise<AudioBuffer>>();
 
-function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext) {
+function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext, signal?: AbortSignal) {
   const hit = trackCache.get(style);
   if (hit) return hit;
-  const request = fetch(MUSIC_URLS[style], { signal: AbortSignal.timeout(20000) })
+  const request = fetch(MUSIC_URLS[style], { signal: signal ?? AbortSignal.timeout(20000) })
     .then((r) => {
       if (!r.ok) throw new Error("music unavailable");
       return r.arrayBuffer();
     })
     .then((data) => c.decodeAudioData(data))
     .catch((error) => {
+      if (signal?.aborted) return null;
       if (trackCache.get(style) === request) trackCache.delete(style);
       throw error;
     });
   trackCache.set(style, request);
-  // Bound decoded buffers on mobile; current sources retain their own buffer reference.
   if (trackCache.size > 2) {
     const oldest = trackCache.keys().next().value;
     if (oldest) trackCache.delete(oldest);
@@ -286,13 +322,16 @@ function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext) {
 export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   const c = ac();
   if (!c || style === "nature") return () => {};
+  const generation = audioGeneration;
+  const controller = new AbortController();
   let stopped = false;
   let source: AudioBufferSourceNode | null = null;
   let gain: GainNode | null = null;
   setMusicStatus("loading");
-  void loadTrack(style, c)
+  void loadTrack(style, c, controller.signal)
     .then((buffer) => {
-      if (stopped) return;
+      if (stopped || generation !== audioGeneration || c.state === "closed") return;
+      if (!buffer) return;
       source = c.createBufferSource();
       source.buffer = buffer;
       source.loop = true;
@@ -306,11 +345,11 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
       setMusicStatus("playing");
     })
     .catch(() => {
-      if (!stopped) setMusicStatus("error");
+      if (!stopped && generation === audioGeneration) setMusicStatus("error");
     });
   return () => {
     stopped = true;
-
+    controller.abort();
     if (source) {
       try {
         source.stop();

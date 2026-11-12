@@ -4,6 +4,8 @@ import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import night from "@/assets/night.jpg";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Guided } from "@/components/Activity";
+import { StoryFilm } from "@/components/StoryFilm";
+import { STORY_MEDIA } from "@/content/story-media";
 import { markDone, useStore } from "@/lib/store";
 import { speak, stopSpeaking } from "@/lib/speak";
 import { useT } from "@/lib/i18n";
@@ -119,7 +121,8 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   const [lit, setLit] = useState<number[]>([]);
   const [hop, setHop] = useState<string | null>(null);
   const fx = STORY_FX[id]?.[i] ?? ["✨"];
-  const narrator = CHARACTERS[castFor("sky")[i % 2]!];
+  const narrator = CHARACTERS[castFor("sky")[i % 2] ?? "solomiya"];
+  const film = STORY_MEDIA[id];
   const len = Math.max(6, Math.round((scenes[i]?.length ?? 0) / 14));
   const finish = () => {
     setPlaying(false);
@@ -170,13 +173,22 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
         aria-label={t("Відео-казка")}
       >
         <div className="relative aspect-[4/3] overflow-hidden">
-          <img
-            key={i}
-            src={night}
-            alt=""
-            className={`h-full w-full object-cover ${playing ? "animate-kenburns" : ""}`}
-            style={{ objectPosition: `${20 + i * 15}% 50%` }}
-          />
+          {film ? (
+            <StoryFilm
+              src={film}
+              poster={night}
+              playing={playing}
+              onPause={() => setPlaying(false)}
+            />
+          ) : (
+            <img
+              key={i}
+              src={night}
+              alt=""
+              className={`h-full w-full object-cover ${playing ? "animate-kenburns" : ""}`}
+              style={{ objectPosition: `${20 + i * 15}% 50%` }}
+            />
+          )}
           {[10, 30, 55, 72, 88].map((l, k) => (
             <span
               key={l}

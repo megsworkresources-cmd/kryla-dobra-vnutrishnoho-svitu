@@ -1,14 +1,16 @@
 # Completion roadmap
-- [ ] Current request: replace repeated listening-strip tapping with purposeful tracing, memory and garden-building interactions.
-- [ ] Current request: replace illustrated story slides with recorded moving scenes and accessible playback.
-- [ ] Current request: verify browser media interruptions and checks; real iPhone testing requires a physical device.
+- [x] Reliability follow-up: compile and translation failures repaired; 77 tests pass, lint has 0 errors/6 shared-UI Fast Refresh warnings, automatic build/type checks pass. Eight representative routes checked at 320px, 390px and desktop; recorded sunflower video decodes and pause/resume works without page errors.
+- [x] Current request: listening strips now offer purposeful tracing, memory and garden building, with keyboard access and regression tests; child choices remain transient.
+- [x] Current request: existing three recorded assets integrated into matching cartoons and lantern/seed stories with captions, pause, retry and interruption handling.
+- [ ] Remaining story videos: bridge, paints, lullaby, rain and sleep have no matching recorded assets; preserve existing illustrations until suitable footage is supplied/generated. Arbitrary Claude stories remain text, not falsely presented as generated video.
+- [x] Current request: media autoplay rejection, page interruption, exit cleanup and late-play cancellation covered by automated tests; real iPhone testing remains blocked on a physical device.
 - [x] Current follow-up: formatted source-owned lint findings without editing generated clients; full lint has 0 errors and 6 Fast Refresh warnings in shared UI primitives.
 - [x] Current follow-up: regression-tested caregiver pending/error/recovery states, media lifecycle/failure handling and paused-scene visibility.
 - [x] Current follow-up: 70 tests passed; representative activity/story/cartoon/garden/settings/caregiver flows passed at 320px, 390px and desktop; physical-device/email/external-OAuth blockers retained.
 - [x] Current repair pass: recorded music loading/error/retry and independent volumes; synchronous exit cancellation; bounded media caches; paused/background cartoons and breathing; one-time full coloring rewards; non-destructive malformed progress recovery; storage failure feedback; timer cleanup; 58 tests and repaired-file lint passed. 48 routes checked at three widths; eleven guided flows, two breathing flows, four recordings and local garden reload checked.
 - [ ] Physical iPhone/Android checks: listening quality, Safari/Chrome autoplay, interruptions and device voices require actual devices.
 - [ ] Shared community garden: no shared feature exists; private device-only garden retained. Requires an explicit privacy-safe specification before cloud functionality.
-- [ ] Exact requested box breathing, Magic Jar and «Як твоє серденько сьогодні?» experiences: no matching named implementations found; existing no-hold flower/wave breathing and feelings jar preserved rather than misrepresented.
+- Deferred scope: exact named box breathing, Magic Jar and «Як твоє серденько сьогодні?» experiences require a separate activity brief; existing no-hold flower/wave breathing and feelings jar preserved rather than misrepresented.
 - [x] Follow-up repairs: shared magic keyboard activation, pending sparkle cleanup, non-destructive saved-setting recovery and large-text character layout; regression/browser checks passed.
 - [x] In-place targeted repairs and browser audit: 35 routes at three sizes; audio decoding, cartoon controls, drawing persistence, reduced-motion release, keyboard games and public/caregiver separation checked.
 - [x] Existing recorded tracks verified: all four return 200 and decode; physical iPhone listening remains manual.

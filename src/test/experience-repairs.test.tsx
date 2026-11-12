@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { Release } from "@/activities/clouds";
 import { Sounds } from "@/activities/sky";
 import { speak } from "@/lib/speak";
-import { update } from "@/lib/store";
+import { getState, update } from "@/lib/store";
 import { MagicStage } from "@/components/MagicStage";
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
@@ -21,11 +21,48 @@ afterEach(() => {
 });
 
 describe("experience repair regressions", () => {
+  it("completes the ordered trail and resets without changing device progress", () => {
+    const saved = getState().completed;
+    render(<MagicStage theme="meadow" />);
+    for (let n = 1; n <= 6; n++)
+      fireEvent.click(screen.getByRole("button", { name: `Крок стежки ${n}` }));
+    expect(screen.getByRole("button", { name: "Крок стежки 6" })).toHaveTextContent("🌼");
+    fireEvent.click(screen.getByRole("button", { name: "Почати спочатку" }));
+    expect(screen.getByRole("button", { name: "Крок стежки 2" })).toBeDisabled();
+    expect(getState().completed).toEqual(saved);
+  });
+
+  it("remembers matched pairs but lets a mismatched pair be tried again", () => {
+    render(<MagicStage theme="clouds" />);
+    const card = (n: number) => screen.getByRole("button", { name: `Картка ${n}` });
+    fireEvent.click(card(1));
+    fireEvent.click(card(2));
+    fireEvent.click(card(4));
+    expect(card(1)).toHaveAttribute("aria-pressed", "false");
+    fireEvent.click(card(1));
+    expect(card(4)).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(card(2));
+    fireEvent.click(card(6));
+    fireEvent.click(card(3));
+    fireEvent.click(card(5));
+    for (let n = 1; n <= 6; n++) expect(card(n)).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("plants the selected flower without uploading or changing saved garden growth", () => {
+    const saved = getState().completed;
+    render(<MagicStage theme="garden" />);
+    fireEvent.click(screen.getByRole("button", { name: "Обрати квітку 3" }));
+    fireEvent.click(screen.getByRole("button", { name: "Посадити квітку 1" }));
+    expect(screen.getByRole("button", { name: "Посадити квітку 1" })).toHaveTextContent("🌷");
+    expect(getState().completed).toEqual(saved);
+  });
+
   it("activates shared magic controls with a keyboard-generated click", () => {
     update((s) => ({ ...s, lang: "uk", reduceMotion: true }));
     render(<MagicStage theme="meadow" count={1} />);
-    fireEvent.click(screen.getByRole("button", { name: "Торкнутися" }), { detail: 0 });
-    expect(screen.getByText("Доторків: 1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Крок стежки 2" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Крок стежки 1" }), { detail: 0 });
+    expect(screen.getByRole("button", { name: "Крок стежки 2" })).toBeEnabled();
   });
   it("finishes cloud release even when animations are disabled", () => {
     vi.useFakeTimers();

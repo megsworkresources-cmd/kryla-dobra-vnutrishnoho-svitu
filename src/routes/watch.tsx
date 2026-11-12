@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
+import { StoryFilm } from "@/components/StoryFilm";
+import { STORY_MEDIA } from "@/content/story-media";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { pageHead } from "@/content/journeys";
 import { useStore } from "@/lib/store";
@@ -172,7 +174,7 @@ function Watch() {
                 >
                   <div className="relative aspect-video overflow-hidden">
                     <img
-                      src={c.shots[0]!.img}
+                      src={c.shots[0]?.img}
                       alt=""
                       className="h-full w-full object-cover transition group-hover:scale-105"
                       loading="lazy"
@@ -219,6 +221,7 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
   const [playing, setPlaying] = useState(true);
   const [failedShot, setFailedShot] = useState<number | null>(null);
   const shot = clip.shots[i];
+  const film = STORY_MEDIA[clip.id];
   const mediaFailed = failedShot === i;
   const done = i >= clip.shots.length;
   useEffect(() => {
@@ -253,13 +256,22 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
                 <p role="alert">{t("Не вдалося завантажити ілюстрацію. Спробуй інший мультик.")}</p>
               </div>
             )}
-            <img
-              src={shot.img}
-              alt=""
-              className="h-full w-full object-cover animate-kenburns"
-              onError={() => setFailedShot(i)}
-              style={{ animationPlayState: playing ? "running" : "paused" }}
-            />
+            {film ? (
+              <StoryFilm
+                src={film}
+                poster={shot.img}
+                playing={playing}
+                onPause={() => setPlaying(false)}
+              />
+            ) : (
+              <img
+                src={shot.img}
+                alt=""
+                className="h-full w-full object-cover animate-kenburns"
+                onError={() => setFailedShot(i)}
+                style={{ animationPlayState: playing ? "running" : "paused" }}
+              />
+            )}
             {[12, 30, 52, 70, 88].map((l, k) => (
               <span
                 key={l}

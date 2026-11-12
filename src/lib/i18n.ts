@@ -7,6 +7,27 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Маленька пригода": "A little adventure",
+  "Стежка уваги": "Attention trail",
+  "Знайди друзів": "Find friends",
+  "Мій маленький сад": "My little garden",
+  "Крок стежки {n}": "Trail step {n}",
+  "Картка {n}": "Card {n}",
+  "Обрати квітку {n}": "Choose flower {n}",
+  "Посадити квітку {n}": "Plant flower {n}",
+  "Готово. Можна відпочити або спробувати знову.": "Finished. You can rest or try again.",
+  "Веди пальцем від 1 до 6 або обирай кроки по черзі.":
+    "Trace from 1 to 6 or choose each step in order.",
+  "Ці картинки різні. Запам’ятай їх і обери іншу картку.":
+    "These pictures are different. Remember them and choose another card.",
+  "Відкрий дві картки й знайди однакові картинки.":
+    "Turn over two cards and find matching pictures.",
+  "Обери квітку й посади її на вільному місці.": "Choose a flower and plant it in an empty spot.",
+  "Анімована казка": "Animated story",
+  "Відео завантажується…": "Video is loading…",
+  "Натисни «Грати», щоб продовжити відео.": "Press Play to continue the video.",
+  "Відео недоступне. Можна читати казку або спробувати ще раз.":
+    "Video is unavailable. You can read the story or try again.",
   "Гучність музики": "Music volume",
   "Гучність голосів": "Voice volume",
   "Гучність звуків кнопок": "Button sound volume",

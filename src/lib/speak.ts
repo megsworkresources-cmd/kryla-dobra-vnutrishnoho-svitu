@@ -25,7 +25,7 @@ export function voices(): SpeechSynthesisVoice[] {
   return uk.length ? uk : all.filter((v) => /^(ru|pl|en)/.test(v.lang)).slice(0, 6);
 }
 
-const cache = new Map<string, string>(); // in-memory only
+const cache = new Map<string, string>(); // in-memory only; values are audio data URIs
 let audio: HTMLAudioElement | null = null;
 let token = 0;
 
@@ -69,15 +69,21 @@ export function speak(
   if (opts.localOnly || s.voiceEngine !== "natural") return deviceSpeak(text, pitch);
   const voice = opts.voice ?? c?.voice ?? s.narrator ?? "Leda";
   const style = opts.who ?? "narrator";
-  const key = `${s.lang}|${voice}|${text}`;
+  const key = `${s.lang}|${voice}|${style}|${text}`;
   const my = ++token;
-  const play = (b64: string) => {
+  const play = (audioData: string) => {
     if (my !== token) return;
-    audio = new Audio(`data:audio/wav;base64,${b64}`);
+    // voice.server returns a complete data URI with the gateway's actual MIME type.
+    // Retain a compatibility path for older server responses that returned bare base64.
+    const source = audioData.startsWith("data:audio/")
+      ? audioData
+      : `data:audio/ogg;codecs=opus;base64,${audioData}`;
+    const player = new Audio(source);
+    audio = player;
     const current = getState();
     if (!current.sound || current.volume === 0 || current.voiceVolume === 0) return;
-    audio.volume = current.volume * current.voiceVolume;
-    void audio.play().catch(() => {
+    player.volume = current.volume * current.voiceVolume;
+    void player.play().catch(() => {
       if (my === token) deviceSpeak(text, pitch);
     });
   };

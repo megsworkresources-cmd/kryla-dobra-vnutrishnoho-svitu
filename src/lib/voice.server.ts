@@ -1,6 +1,7 @@
 /** Server-only: turns app-written lines (never child text) into natural speech via Lovable AI. */
 const MODEL = "google/gemini-3.1-flash-tts-preview";
 const URL = "https://ai.gateway.lovable.dev/v1/audio/speech";
+const DEFAULT_TTS_MIME = "audio/ogg; codecs=opus";
 
 const STYLES: Record<string, [string, string]> = {
   narrator: ["як тепла казкарка", "like a warm storyteller"],
@@ -11,6 +12,17 @@ const STYLES: Record<string, [string, string]> = {
   marko: ["як добрий творчий хлопчик", "like a kind, creative boy"],
   lihtaryk: ["як маленький казковий їжачок, грайливо", "like a tiny playful fairy-tale hedgehog"],
 };
+
+function toDataUri(raw: ArrayBuffer, contentType: string | null): string {
+  const mime =
+    contentType && contentType.includes("audio/") ? contentType : DEFAULT_TTS_MIME;
+  const bytes = new Uint8Array(raw);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return `data:${mime};base64,${btoa(binary)}`;
+}
 
 export class VoiceError extends Error {}
 
@@ -37,12 +49,10 @@ export async function synthesize(text: string, voice: string, lang: "uk" | "en",
     }),
   });
   if (!res.ok) {
-    console.error(`Voice request failed [${res.status}]: ${await res.text()}`);
+    const body = await res.text().catch(() => "");
+    console.error(`Voice request failed [${res.status}]: ${body}`);
     throw new VoiceError(String(res.status));
   }
-  const buf = new Uint8Array(await res.arrayBuffer());
-  let bin = "";
-  for (let i = 0; i < buf.length; i += 0x8000)
-    bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
-  return btoa(bin);
+  const type = res.headers.get("content-type");
+  return toDataUri(await res.arrayBuffer(), type);
 }

@@ -33,9 +33,9 @@ export const EXTRAS: Record<string, string> = {
   "Мої три ідеї": "My three ideas",
   "Одна ідея на рядок — навіть смішні.": "One idea per line — silly ones welcome.",
   "Наприклад: позичу зошит у сусіда": "For example: borrow a notebook from my neighbour",
-  "Слушати — це теж дія": "Listening is an action too",
+  "Слухати — це теж дія": "Listening is an action too",
   "Не перебивати": "Don’t interrupt",
-  "Кивнути": "Nod",
+  Кивнути: "Nod",
   "Спитати «а що тобі подобається?»": "Ask “what do you like about it?”",
   "Повторити своїми словами": "Repeat it in my own words",
   "Щось синє": "Something blue",
@@ -43,11 +43,11 @@ export const EXTRAS: Record<string, string> = {
   "Щось яскраве": "Something bright",
   "Щось далеке": "Something far away",
   "Щось зовсім поруч": "Something very close",
-  "Гладеньке": "Smooth",
-  "Тепле": "Warm",
-  "Прохолодне": "Cool",
+  Гладеньке: "Smooth",
+  Тепле: "Warm",
+  Прохолодне: "Cool",
   "М’яке": "Soft",
-  "Голос": "A voice",
+  Голос: "A voice",
   "Кроки або рух": "Footsteps or movement",
   "Тихий фон": "A quiet background sound",
   "Знайомий запах": "A familiar smell",
@@ -56,13 +56,12 @@ export const EXTRAS: Record<string, string> = {
   "Напиши її так, як вона звучить у голові.": "Write it the way it sounds in your head.",
   "Наприклад: у мене нічого не вийде": "For example: nothing will work out for me",
   "Тепліша думка своїми словами": "A kinder thought in my own words",
-  "Перепиши її так, щоб було чесно й тепліше.":
-    "Rewrite it so it stays honest but is kinder.",
+  "Перепиши її так, щоб було чесно й тепліше.": "Rewrite it so it stays honest but is kinder.",
   "Запис недоступний — грає мелодія, створена на цьому пристрої.":
     "The recording is unavailable, so a melody created on this device is playing.",
   "Мелодія тут, на пристрої": "Made on this device",
-  "Вдих": "Breathe in",
-  "Видих": "Breathe out",
+  Вдих: "Breathe in",
+  Видих: "Breathe out",
   "Озирнися повільно. Знайди очима кожну з п’яти — і торкнись, коли помітиш.":
     "Look around slowly. Find each of the five with your eyes — and tap it when you spot it.",
   "П’ять опор уже знайдено. Очі повернули тебе в цю кімнату.":
@@ -70,8 +69,7 @@ export const EXTRAS: Record<string, string> = {
   "Поклади долоні на щось поруч і відчуй різницю між поверхнями.":
     "Rest your palms on something nearby and feel how the surfaces differ.",
   "Тіло теж розповідає, де ти зараз.": "Your body tells you where you are, too.",
-  "Звуки навколо — ще один спосіб бути тут.":
-    "The sounds around you are another way to be here.",
+  "Звуки навколо — ще один спосіб бути тут.": "The sounds around you are another way to be here.",
   "Що ти відчуваєш носом? Якщо нічого — це теж нормально.":
     "What can you smell? If nothing, that is fine too.",
   "Навіть ледь помітний запах повертає увагу до тіла.":

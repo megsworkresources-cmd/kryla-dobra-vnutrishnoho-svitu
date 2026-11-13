@@ -45,7 +45,10 @@ function read(): Record<string, Session> {
 function write(all: Record<string, Session>) {
   if (typeof window === "undefined") return false;
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(Object.entries(all).slice(-LIMIT))));
+    window.localStorage.setItem(
+      KEY,
+      JSON.stringify(Object.fromEntries(Object.entries(all).slice(-LIMIT))),
+    );
     return true;
   } catch {
     /* storage full or unavailable — the exercise still works in memory */

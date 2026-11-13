@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Btn, DoneCard } from "./Scene";
-import { Choices } from "./Activity";
 import { CharacterSay, type Action } from "./Character";
 import { MagicStage } from "./MagicStage";
 import { clearSession, getSession, saveSession, type Session } from "@/lib/sessions";
@@ -8,6 +7,46 @@ import { markDone } from "@/lib/store";
 import { sfx } from "@/lib/audio";
 import { useExtraT } from "@/lib/i18n.extras";
 import { castFor, CHARACTERS, type CharId } from "@/content/characters";
+
+/** Option grid shared by every practice step. */
+function Choices({
+  options,
+  value,
+  onChange,
+  icons,
+}: {
+  options: readonly string[];
+  value: string;
+  onChange: (s: string) => void;
+  icons?: Record<string, string> | undefined;
+}) {
+  const t = useExtraT();
+  return (
+    <div className="grid gap-2 sm:grid-cols-2">
+      {options.map((option) => (
+        <Btn
+          key={option}
+          variant={value === option ? "primary" : "soft"}
+          aria-pressed={value === option}
+          onClick={() => {
+            sfx("select");
+            onChange(option);
+          }}
+          className={`flex h-auto items-center gap-3 py-3 text-left ${
+            value === option ? "ring-4 ring-ring" : ""
+          }`}
+        >
+          {icons?.[option] && (
+            <span className="text-3xl" aria-hidden>
+              {icons[option]}
+            </span>
+          )}
+          {t(option)}
+        </Btn>
+      ))}
+    </div>
+  );
+}
 
 export interface PracticeStep {
   title: string;
@@ -96,7 +135,10 @@ export function Practice({
       return;
     }
     const target = stepRef.current ?? doneRef.current;
-    target?.scrollIntoView({ block: "start", behavior: calm() ? "auto" : "smooth" });
+    target?.scrollIntoView({
+      block: "start",
+      behavior: calm() ? "auto" : "smooth",
+    });
   }, [index, done]);
 
   // A reply can land under the fixed bottom bar; centre it only when unreadable.
@@ -110,7 +152,10 @@ export function Practice({
       const barClearance = 88;
       const readable = rect.top >= 0 && rect.bottom <= window.innerHeight - barClearance;
       if (readable) return;
-      el.scrollIntoView({ block: "center", behavior: calm() ? "auto" : "smooth" });
+      el.scrollIntoView({
+        block: "center",
+        behavior: calm() ? "auto" : "smooth",
+      });
     }, 120);
     return () => window.clearTimeout(timer);
   }, [answers, checks, index, step]);
@@ -160,7 +205,9 @@ export function Practice({
           who={guide}
           night={night}
           mood="think"
-          text={t("Ти вже почав цю вправу. Продовжити з кроку {i}?", { i: at + 1 })}
+          text={t("Ти вже почав цю вправу. Продовжити з кроку {i}?", {
+            i: at + 1,
+          })}
         />
         <div className="flex flex-wrap justify-center gap-2">
           <Btn
@@ -272,9 +319,15 @@ export function Practice({
                   aria-pressed={on}
                   onClick={() => {
                     sfx(on ? "soft" : "select");
-                    setChecks({
-                      ...checks,
-                      [index]: on ? checked.filter((v) => v !== item) : [...checked, item],
+                    // Functional update: two fast taps must both land.
+                    setChecks((previous) => {
+                      const current = previous[index] ?? [];
+                      return {
+                        ...previous,
+                        [index]: on
+                          ? current.filter((value) => value !== item)
+                          : [...current, item],
+                      };
                     });
                   }}
                   className={`flex h-auto items-center gap-3 py-3 text-left ${on ? "ring-2 ring-ring" : ""}`}
@@ -288,7 +341,10 @@ export function Practice({
             })}
           </div>
           <p role="status" className="text-sm opacity-80">
-            {t("Позначено {i} з {n}", { i: checked.length, n: step.checklist.length })}
+            {t("Позначено {i} з {n}", {
+              i: checked.length,
+              n: step.checklist.length,
+            })}
           </p>
         </div>
       )}
@@ -303,7 +359,9 @@ export function Practice({
             value={selected}
             maxLength={280}
             placeholder={step.write.placeholder ? t(step.write.placeholder) : undefined}
-            onChange={(event) => setAnswers({ ...answers, [index]: event.target.value })}
+            onChange={(event) =>
+              setAnswers((previous) => ({ ...previous, [index]: event.target.value }))
+            }
             className="w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           />
           <p className="text-sm opacity-75">
@@ -327,7 +385,7 @@ export function Practice({
                     aria-pressed={on}
                     onClick={() => {
                       sfx("select");
-                      setAnswers({ ...answers, [index]: option });
+                      setAnswers((previous) => ({ ...previous, [index]: option }));
                     }}
                     className={`flex h-auto w-full items-center gap-3 py-3 text-left ${on ? "ring-4 ring-ring" : ""}`}
                   >
@@ -352,7 +410,7 @@ export function Practice({
               icons={step.icons}
               options={step.options}
               value={selected}
-              onChange={(value) => setAnswers({ ...answers, [index]: value })}
+              onChange={(value) => setAnswers((previous) => ({ ...previous, [index]: value }))}
             />
           )}
         </div>
@@ -416,7 +474,9 @@ function Vision({ items, night }: { items: { icon: string; label: string }[]; ni
     <div
       className={`${night ? "night-card" : "paper-card"} relative h-44 overflow-hidden bg-gradient-to-b from-sky/40 to-sage/40 p-0`}
       role="img"
-      aria-label={t("Твоя уявна картина: {l}", { l: items.map((i) => t(i.label)).join(", ") })}
+      aria-label={t("Твоя уявна картина: {l}", {
+        l: items.map((i) => t(i.label)).join(", "),
+      })}
     >
       <div className="absolute inset-x-0 bottom-0 h-1/3 rounded-t-[50%] bg-sage/50" />
       <span className="absolute right-6 top-4 text-3xl animate-float" aria-hidden>
@@ -432,7 +492,10 @@ function Vision({ items, night }: { items: { icon: string; label: string }[]; ni
         <span
           key={it.label}
           className="absolute bottom-6 text-6xl animate-pop"
-          style={{ left: `${15 + ((k * 30) % 70)}%`, animationDelay: `${k * 0.15}s` }}
+          style={{
+            left: `${15 + ((k * 30) % 70)}%`,
+            animationDelay: `${k * 0.15}s`,
+          }}
           aria-hidden
         >
           {it.icon}
@@ -442,7 +505,11 @@ function Vision({ items, night }: { items: { icon: string; label: string }[]; ni
         <span
           key={l}
           className="absolute h-1.5 w-1.5 rounded-full bg-honey animate-twinkle"
-          style={{ left: `${l}%`, top: `${30 + k * 8}%`, animationDelay: `${k * 0.4}s` }}
+          style={{
+            left: `${l}%`,
+            top: `${30 + k * 8}%`,
+            animationDelay: `${k * 0.4}s`,
+          }}
           aria-hidden
         />
       ))}

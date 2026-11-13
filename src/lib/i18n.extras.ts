@@ -105,6 +105,9 @@ export const EXTRAS: Record<string, string> = {
     "What do you know now that you didn’t before? Write a few words — that is your find.",
   "Ось це — голос друга, який завжди з тобою.":
     "That is the voice of a friend who is always with you.",
+  "Відпустити хмарку": "Let the cloud go",
+  "Можна пропустити — точне місце не обов’язкове.":
+    "You can skip this — the exact spot is not required.",
   "Твій малюнок зберігся на цьому пристрої.": "Your drawing was kept on this device.",
   "Продовжити малюнок": "Carry on drawing",
   "Новий аркуш": "Start a new sheet",

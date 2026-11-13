@@ -14,8 +14,7 @@ const STYLES: Record<string, [string, string]> = {
 };
 
 function toDataUri(raw: ArrayBuffer, contentType: string | null): string {
-  const mime =
-    contentType && contentType.includes("audio/") ? contentType : DEFAULT_TTS_MIME;
+  const mime = contentType && contentType.includes("audio/") ? contentType : DEFAULT_TTS_MIME;
   const bytes = new Uint8Array(raw);
   let binary = "";
   for (let i = 0; i < bytes.length; i += 0x8000) {
@@ -33,7 +32,7 @@ export async function synthesize(text: string, voice: string, lang: "uk" | "en",
   if (!key) throw new VoiceError("config");
   const prompt =
     lang === "uk"
-      ? `Промов українською мовою з природною теплою українською вимовою, ${style}, повільно й лагідно для дитини: ${text}`
+      ? `Промов українською мовою з природною теплою українською вимовою, ${style}, повільно й лагідно для дитини: [...]`
       : `Say in warm, natural English, ${style}, slowly and gently for a child: ${text}`;
   const res = await fetch(URL, {
     method: "POST",

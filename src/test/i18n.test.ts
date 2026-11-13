@@ -23,7 +23,9 @@ describe("UA/EN language switch", () => {
   });
 
   it("has an English entry for every Ukrainian string shown in the app", () => {
-    const dict = readFileSync("src/lib/i18n.ts", "utf8");
+    // English copy lives in the main dictionary plus the practice-upgrade extras.
+    const dict =
+      readFileSync("src/lib/i18n.ts", "utf8") + readFileSync("src/lib/i18n.extras.ts", "utf8");
     const missing: string[] = [];
     for (const file of walk("src")) {
       if (file.includes("i18n") || file.includes(".server.") || file.includes("test/")) continue;

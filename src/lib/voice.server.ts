@@ -32,7 +32,7 @@ export async function synthesize(text: string, voice: string, lang: "uk" | "en",
   if (!key) throw new VoiceError("config");
   const prompt =
     lang === "uk"
-      ? `Промов українською мовою з природною теплою українською вимовою, ${style}, повільно й лагідно для дитини: [...]`
+      ? `Промов українською мовою з природною теплою українською вимовою, ${style}, повільно й лагідно для дитини: ${text}`
       : `Say in warm, natural English, ${style}, slowly and gently for a child: ${text}`;
   const res = await fetch(URL, {
     method: "POST",

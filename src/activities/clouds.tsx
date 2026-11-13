@@ -59,27 +59,6 @@ export function Release() {
     }, 3500);
     return () => window.clearTimeout(timer);
   }, [flying]);
-  if (!where)
-    return (
-      <div className="space-y-4">
-        <CharacterSay
-          who="daryna"
-          size="sm"
-          mood="think"
-          text={t("Спершу знайди, де ця турбота живе в тілі. Це допоможе її помітити.")}
-        />
-        <div className="grid gap-2 sm:grid-cols-2">
-          {["У животі", "У грудях", "У горлі", "У плечах"].map((place) => (
-            <Btn key={place} variant="soft" onClick={() => setWhere(place)} className="h-auto py-3">
-              {t(place)}
-            </Btn>
-          ))}
-        </div>
-        <p className="text-center text-sm opacity-75">
-          {t("Можна обрати «десь тут» — точне місце не обов’язкове.")}
-        </p>
-      </div>
-    );
   if (done)
     return (
       <div className="space-y-3">
@@ -92,11 +71,13 @@ export function Release() {
             setWhere(null);
           }}
         />
-        <p className="paper-card p-4 text-center text-sm font-semibold">
-          {t("Ти помітив, що вона живе {place}. Помічене вже не керує тобою так, як непомічене.", {
-            place: t(where).toLowerCase(),
-          })}
-        </p>
+        {where && (
+          <p className="paper-card p-4 text-center text-sm font-semibold">
+            {t("Ти помітив, що вона живе {place}. Помічене вже не керує тобою так, як непомічене.", {
+              place: t(where).toLowerCase(),
+            })}
+          </p>
+        )}
       </div>
     );
   return (
@@ -110,9 +91,25 @@ export function Release() {
           "Напиши або просто подумай про те, що тебе турбує. Ніхто цього не побачить — навіть цей пристрій не збереже.",
         )}
       />
-      <p className="text-sm font-semibold">
-        {t("Ти вже згадав, де вона живе. Тепер відпусти її разом із хмаркою.")}
-      </p>
+      <div className="paper-card space-y-2 p-4 text-left">
+        <p className="font-bold">{t("Де ти відчуваєш цю турботу зараз?")}</p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {["У животі", "У грудях", "У горлі", "У плечах"].map((place) => (
+            <Btn
+              key={place}
+              variant={where === place ? "primary" : "soft"}
+              aria-pressed={where === place}
+              onClick={() => setWhere(where === place ? null : place)}
+              className="h-auto py-3"
+            >
+              {t(place)}
+            </Btn>
+          ))}
+        </div>
+        <p className="text-sm opacity-75">
+          {t("Можна пропустити — точне місце не обов’язкове.")}
+        </p>
+      </div>
       <div
         className={`paper-card mx-auto max-w-md rounded-[3rem] p-6 ${flying ? "animate-rise-away" : ""}`}
       >
@@ -190,64 +187,7 @@ export const Thoughts = () => (
       {
         title: "Помітити думку",
         text: "Іноді думка каже: «У мене нічого не вийде». Яка думка буває в тебе?",
-        options: ["Нічого не вийде", "Мене не люблять", "Станеться щось погане", "Інша думка"],
-      },
-      {
-        title: "Що допомагає їй вірити?",
-        text: "Подумай: що було, коли ця думка здавалася правдою? Це нормально — так буває в усіх.",
-      },
-      {
-        title: "А що каже інше?",
-        text: "Чи був випадок, коли все вийшло трохи краще, ніж думка обіцяла?",
-        options: ["Так, був", "Не впевнений", "Поки не пригадую"],
-        response: "Навіть маленький приклад — уже інший бік історії.",
-      },
-      {
-        title: "Що сказав би друг?",
-        text: "Якби твій друг мав таку думку, що б ти йому сказав? Можеш сказати це й собі.",
-      },
-      {
-        title: "Нова думка",
-        text: "Обери думку, яка звучить чесно й тепліше.",
-        options: [
-          "Я можу спробувати",
-          "Це важко, але я не сам",
-          "Я не знаю, що буде, і це нормально",
-        ],
-      },
-      {
-        title: "Тепліша думка",
-        text: "Тепер скажи її своїми словами — так, ніби говориш другові.",
-        write: {
-          label: "Тепліша думка своїми словами",
-          placeholder: "Перепиши її так, щоб було чесно й тепліше.",
-        },
-        response: "Думка, яку ти написав сам, звучить найпереконливіше.",
-      },
-    ]}
-  />
-);
-
-export const Anchor = () => (
-  <Practice
-    id="clouds-anchor"
-    ending="Одна хвилина — і ти вже трохи ближче до себе."
-    steps={[
-      {
-        title: "Стоп",
-        text: "Зупинись. Нічого не треба вирішувати просто зараз.",
-      },
-      {
-        title: "Ступні",
-        text: "Притисни ступні до підлоги. Відчуй, що вона тебе тримає.",
-      },
-      {
-        title: "Видих",
-        text: "Зроби повільний видих, ніби дмухаєш на гарячий чай.",
-      },
-      {
-        title: "Поруч",
-        text: "Скажи собі: «Мені зараз важко, і я дбаю про себе». Можна покликати дорослого, якому довіряєш.",
+        options: ["Нічого не вийде", "Мене не люблять", "Стане ться щось погане", "Інша думка"],
       },
     ]}
   />

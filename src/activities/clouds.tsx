@@ -73,9 +73,12 @@ export function Release() {
         />
         {where && (
           <p className="paper-card p-4 text-center text-sm font-semibold">
-            {t("Ти помітив, що вона живе {place}. Помічене вже не керує тобою так, як непомічене.", {
-              place: t(where).toLowerCase(),
-            })}
+            {t(
+              "Ти помітив, що вона живе {place}. Помічене вже не керує тобою так, як непомічене.",
+              {
+                place: t(where).toLowerCase(),
+              },
+            )}
           </p>
         )}
       </div>
@@ -106,9 +109,7 @@ export function Release() {
             </Btn>
           ))}
         </div>
-        <p className="text-sm opacity-75">
-          {t("Можна пропустити — точне місце не обов’язкове.")}
-        </p>
+        <p className="text-sm opacity-75">{t("Можна пропустити — точне місце не обов’язкове.")}</p>
       </div>
       <div
         className={`paper-card mx-auto max-w-md rounded-[3rem] p-6 ${flying ? "animate-rise-away" : ""}`}

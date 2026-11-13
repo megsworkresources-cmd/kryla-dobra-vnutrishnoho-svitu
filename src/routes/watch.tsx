@@ -246,24 +246,28 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
       <div
         className="relative aspect-video overflow-hidden rounded-3xl bg-night shadow-soft"
         data-playing={playing && !done}
-        role="img"
+        role="region"
         aria-label={t(clip.title)}
       >
+        {film && shot && (
+          <StoryFilm
+            src={film}
+            poster={clip.shots[0]?.img ?? shot.img}
+            playing={playing && !done}
+            onPause={() => setPlaying(false)}
+          />
+        )}
         {shot ? (
-          <div key={i} className="absolute inset-0 animate-fade-up">
+          <div
+            key={i}
+            className={`absolute inset-0 animate-fade-up ${film ? "pointer-events-none" : ""}`}
+          >
             {mediaFailed && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-night p-6 text-center text-moon">
                 <p role="alert">{t("Не вдалося завантажити ілюстрацію. Спробуй інший мультик.")}</p>
               </div>
             )}
-            {film ? (
-              <StoryFilm
-                src={film}
-                poster={shot.img}
-                playing={playing}
-                onPause={() => setPlaying(false)}
-              />
-            ) : (
+            {!film && (
               <img
                 src={shot.img}
                 alt=""
@@ -272,27 +276,30 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
                 style={{ animationPlayState: playing ? "running" : "paused" }}
               />
             )}
-            {[12, 30, 52, 70, 88].map((l, k) => (
-              <span
-                key={l}
-                className="absolute text-2xl animate-float"
-                style={{
-                  left: `${l}%`,
-                  top: `${15 + (k % 3) * 18}%`,
-                  animationDelay: `${k * 0.5}s`,
-                  animationPlayState: playing ? "running" : "paused",
-                }}
-                aria-hidden
-              >
-                {shot.fx}
-              </span>
-            ))}
-            <img
-              src={CHARACTERS[shot.who].image}
-              alt=""
-              className="absolute bottom-0 left-2 h-[62%] w-auto animate-talk drop-shadow-lg"
-              style={{ animationPlayState: playing ? "running" : "paused" }}
-            />
+            {!film &&
+              [12, 30, 52, 70, 88].map((l, k) => (
+                <span
+                  key={l}
+                  className="absolute text-2xl animate-float"
+                  style={{
+                    left: `${l}%`,
+                    top: `${15 + (k % 3) * 18}%`,
+                    animationDelay: `${k * 0.5}s`,
+                    animationPlayState: playing ? "running" : "paused",
+                  }}
+                  aria-hidden
+                >
+                  {shot.fx}
+                </span>
+              ))}
+            {!film && (
+              <img
+                src={CHARACTERS[shot.who].image}
+                alt=""
+                className="absolute bottom-0 left-2 h-[62%] w-auto animate-talk drop-shadow-lg"
+                style={{ animationPlayState: playing ? "running" : "paused" }}
+              />
+            )}
           </div>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-moon">

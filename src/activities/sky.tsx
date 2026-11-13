@@ -100,7 +100,7 @@ const STORY_FX: Record<string, string[][]> = {
 const STAR_NOTES = [523, 587, 659, 784, 880, 1047];
 const EMPTY_SCENES: string[] = [];
 
-/** Guided video story: illustrated scenes that play on their own, with narration and controls. */
+/** Recorded story playback with app-owned narration, captions and optional controls. */
 export function Story({ id }: { id: keyof typeof STORIES }) {
   const t = useT();
   const scenes = STORIES[id] ?? EMPTY_SCENES;
@@ -189,65 +189,68 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
               style={{ objectPosition: `${20 + i * 15}% 50%` }}
             />
           )}
-          {[10, 30, 55, 72, 88].map((l, k) => (
-            <span
-              key={l}
-              className="absolute h-1.5 w-1.5 rounded-full bg-moon animate-twinkle"
-              style={{ left: `${l}%`, top: `${8 + k * 6}%`, animationDelay: `${k * 0.5}s` }}
-              aria-hidden
-            />
-          ))}
-          {FIREFLIES.map(([x, y], k) => {
-            const on = lit.includes(k);
-            return (
-              <button
-                key={k}
-                type="button"
-                aria-label={t("Засвітити світлячка")}
-                aria-pressed={on}
-                onClick={() => {
-                  if (!on) {
-                    chime(STAR_NOTES[lit.length % STAR_NOTES.length]!);
-                    if (lit.length + 1 === FIREFLIES.length)
-                      [523, 659, 784, 1047, 1319].forEach((f, j) =>
-                        effects.current.push(setTimeout(() => chime(f), 250 + j * 130)),
-                      );
-                    setLit([...lit, k]);
-                  } else sfx("select");
-                }}
-                className="absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full"
-                style={{ left: `${x}%`, top: `${y}%` }}
-              >
-                <span
-                  className={`block rounded-full ${on ? "h-4 w-4 bg-honey shadow-lift animate-glow-on" : "h-2.5 w-2.5 bg-moon/60 animate-twinkle"}`}
-                />
-              </button>
-            );
-          })}
-          {fx.map((g, k) => {
-            const key = `${i}-${k}`;
-            return (
-              <button
-                key={key}
-                type="button"
-                aria-label={t("Торкнутися")}
-                onClick={() => {
-                  setHop(key);
-                  chime(STAR_NOTES[(k + i) % STAR_NOTES.length]!);
-                  effects.current.push(setTimeout(() => setHop(null), 600));
-                }}
-                className={`absolute flex h-14 w-14 items-center justify-center text-4xl drop-shadow-lg ${hop === key ? "animate-pop" : "animate-float"}`}
-                style={{
-                  left: `${35 + k * 22}%`,
-                  top: `${45 + (k % 2) * 18}%`,
-                  animationDelay: `${k * 0.7}s`,
-                }}
-              >
-                <span className={hop === key ? "animate-wiggle" : ""}>{g}</span>
-              </button>
-            );
-          })}
-          {lit.length === FIREFLIES.length && (
+          {!film &&
+            [10, 30, 55, 72, 88].map((l, k) => (
+              <span
+                key={l}
+                className="absolute h-1.5 w-1.5 rounded-full bg-moon animate-twinkle"
+                style={{ left: `${l}%`, top: `${8 + k * 6}%`, animationDelay: `${k * 0.5}s` }}
+                aria-hidden
+              />
+            ))}
+          {!film &&
+            FIREFLIES.map(([x, y], k) => {
+              const on = lit.includes(k);
+              return (
+                <button
+                  key={k}
+                  type="button"
+                  aria-label={t("Засвітити світлячка")}
+                  aria-pressed={on}
+                  onClick={() => {
+                    if (!on) {
+                      chime(STAR_NOTES[lit.length % STAR_NOTES.length] ?? 523);
+                      if (lit.length + 1 === FIREFLIES.length)
+                        [523, 659, 784, 1047, 1319].forEach((f, j) =>
+                          effects.current.push(setTimeout(() => chime(f), 250 + j * 130)),
+                        );
+                      setLit([...lit, k]);
+                    } else sfx("select");
+                  }}
+                  className="absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full"
+                  style={{ left: `${x}%`, top: `${y}%` }}
+                >
+                  <span
+                    className={`block rounded-full ${on ? "h-4 w-4 bg-honey shadow-lift animate-glow-on" : "h-2.5 w-2.5 bg-moon/60 animate-twinkle"}`}
+                  />
+                </button>
+              );
+            })}
+          {!film &&
+            fx.map((g, k) => {
+              const key = `${i}-${k}`;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  aria-label={t("Торкнутися")}
+                  onClick={() => {
+                    setHop(key);
+                    chime(STAR_NOTES[(k + i) % STAR_NOTES.length] ?? 523);
+                    effects.current.push(setTimeout(() => setHop(null), 600));
+                  }}
+                  className={`absolute flex h-14 w-14 items-center justify-center text-4xl drop-shadow-lg ${hop === key ? "animate-pop" : "animate-float"}`}
+                  style={{
+                    left: `${35 + k * 22}%`,
+                    top: `${45 + (k % 2) * 18}%`,
+                    animationDelay: `${k * 0.7}s`,
+                  }}
+                >
+                  <span className={hop === key ? "animate-wiggle" : ""}>{g}</span>
+                </button>
+              );
+            })}
+          {!film && lit.length === FIREFLIES.length && (
             <svg
               className="pointer-events-none absolute inset-0 h-full w-full"
               viewBox="0 0 100 100"
@@ -264,12 +267,14 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
               />
             </svg>
           )}
-          <img
-            key={`n${i}`}
-            src={narrator.image}
-            alt={t(narrator.name)}
-            className={`absolute bottom-1 left-2 h-28 w-auto drop-shadow-lg sm:h-36 ${playing ? "animate-talk" : "animate-pop"}`}
-          />
+          {!film && (
+            <img
+              key={`n${i}`}
+              src={narrator.image}
+              alt={t(narrator.name)}
+              className={`absolute bottom-1 left-2 h-28 w-auto drop-shadow-lg sm:h-36 ${playing ? "animate-talk" : "animate-pop"}`}
+            />
+          )}
         </div>
         <p
           key={`t${i}`}

@@ -1,4 +1,5 @@
 # Completion roadmap
+- [ ] Current story/game request: animate remaining stories with existing character artwork, preserve captions and uninterrupted video across narration beats; polish memory, bubbles and constellation controls and verify at phone/desktop sizes.
 - [x] Reliability follow-up: compile and translation failures repaired; 77 tests pass, lint has 0 errors/6 shared-UI Fast Refresh warnings, automatic build/type checks pass. Eight representative routes checked at 320px, 390px and desktop; recorded sunflower video decodes and pause/resume works without page errors.
 - [x] Current request: listening strips now offer purposeful tracing, memory and garden building, with keyboard access and regression tests; child choices remain transient.
 - [x] Current request: existing three recorded assets integrated into matching cartoons and lantern/seed stories with captions, pause, retry and interruption handling.

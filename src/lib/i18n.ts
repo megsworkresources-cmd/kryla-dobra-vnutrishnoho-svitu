@@ -7,6 +7,9 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Знайдено пар: {n} із {total}": "Pairs found: {n} of {total}",
+  "Картка {n}: {name}": "Card {n}: {name}",
+  "Прибрати останню зірку": "Undo the last star",
   "Маленька пригода": "A little adventure",
   "Стежка уваги": "Attention trail",
   "Знайди друзів": "Find friends",

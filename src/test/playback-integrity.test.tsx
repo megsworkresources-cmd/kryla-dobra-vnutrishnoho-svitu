@@ -83,3 +83,18 @@ it("shows an accessible error when a cartoon illustration cannot load", () => {
     "Не вдалося завантажити ілюстрацію. Спробуй інший мультик.",
   );
 });
+
+it("retains the same video element across caption changes", async () => {
+  vi.useFakeTimers();
+  vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+  const { container } = render(<Player clip={{ ...clip, id: "sunflower" }} onClose={vi.fn()} />);
+  const video = container.querySelector("video");
+  expect(video).not.toBeNull();
+  act(() => vi.advanceTimersByTime(7100));
+  expect(container.querySelector("video")).toBe(video);
+  expect(screen.getByText("Щоранку він повертав голівку до сонця.")).toBeInTheDocument();
+  cleanup();
+  await act(async () => {});
+  vi.restoreAllMocks();
+});

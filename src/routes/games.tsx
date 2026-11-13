@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { RotateCcw, Undo2, Pause } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
 import { CHARACTERS, type CharId } from "@/content/characters";
+import { PAIR_IDS, initialCards, deal } from "@/content/game-cards";
 import { pageHead } from "@/content/journeys";
 import { chime, sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
@@ -78,30 +80,46 @@ function Games() {
 const SCALE = [392, 440, 523, 587, 659, 784, 880];
 
 /* 1. Pop drifting bubbles — each pop is a soft note. */
-function Bubbles() {
+export function Bubbles() {
   const t = useT();
   const calm = useStore((s) => s.reduceMotion);
   const [list, setList] = useState<
-    { id: number; x: number; size: number; dur: number; hue: number }[]
+    { id: number; x: number; size: number; dur: number; hue: number; born: number }[]
   >([]);
   const [popped, setPopped] = useState(0);
   const id = useRef(0);
   useEffect(() => {
-    const spawn = () =>
+    if (calm) {
+      setList(
+        Array.from({ length: 9 }, (_, n) => ({
+          id: ++id.current,
+          x: n,
+          size: 64,
+          dur: 0,
+          hue: n % 4,
+          born: 0,
+        })),
+      );
+      return;
+    }
+    const spawn = () => {
+      if (document.hidden) return;
       setList((l) => [
-        ...l.slice(-14),
+        ...l.filter((b) => Date.now() - b.born < b.dur * 1000).slice(-14),
         {
           id: ++id.current,
-          x: 5 + Math.random() * 80,
+          x: 5 + Math.random() * 65,
           size: 48 + Math.random() * 40,
           dur: 7 + Math.random() * 5,
           hue: Math.floor(Math.random() * 4),
+          born: Date.now(),
         },
       ]);
+    };
     spawn();
     const iv = window.setInterval(spawn, 900);
     return () => window.clearInterval(iv);
-  }, []);
+  }, [calm]);
   const tints = ["bg-sky/40", "bg-rose/40", "bg-honey/40", "bg-sage/40"];
   return (
     <div className="space-y-3">
@@ -111,30 +129,34 @@ function Bubbles() {
         text={t("Лови бульбашки пальчиком! Кожна співає свою ноту.")}
       />
       <div
-        className="paper-card relative h-[55vh] overflow-hidden bg-gradient-to-b from-sky/30 to-sage/30 p-0"
+        className={`paper-card relative h-[55vh] min-h-80 overflow-hidden bg-gradient-to-b from-sky/30 to-sage/30 ${calm ? "grid grid-cols-3 place-items-center gap-3 p-6 pt-14" : "p-0"}`}
         data-no-tap
       >
         {list.map((b) => (
-          <button
+          <Btn
             key={b.id}
             aria-label={t("Бульбашка")}
             onClick={() => {
               chime(SCALE[b.id % SCALE.length] ?? 523);
               setPopped((p) => p + 1);
-              setList((l) => l.filter((x) => x.id !== b.id));
+              setList((l) =>
+                calm
+                  ? l.map((x) =>
+                      x.id === b.id ? { ...x, id: ++id.current, hue: (x.hue + 1) % 4 } : x,
+                    )
+                  : l.filter((x) => x.id !== b.id),
+              );
             }}
-            onAnimationEnd={() => setList((l) => l.filter((x) => x.id !== b.id))}
-            className={`absolute -bottom-24 rounded-full border-2 border-card/80 shadow-soft animate-bubble ${tints[b.hue]}`}
+            className={`${calm ? "relative" : "absolute -bottom-24 animate-bubble"} rounded-full border-2 border-card/80 p-0 shadow-soft ${tints[b.hue]}`}
             style={{
-              left: `${b.x}%`,
+              ...(calm ? {} : { left: `${b.x}%` }),
               width: b.size,
               height: b.size,
               animationDuration: `${b.dur}s`,
-              ...(calm ? { bottom: `${10 + (b.id % 5) * 15}%` } : {}),
             }}
           >
             <span className="absolute left-[22%] top-[18%] h-1/4 w-1/4 rounded-full bg-card/80" />
-          </button>
+          </Btn>
         ))}
         <p className="absolute right-3 top-3 rounded-full bg-card/80 px-3 py-1 text-sm font-bold">
           🫧 {popped}
@@ -145,26 +167,31 @@ function Bubbles() {
 }
 
 /* 2. Memory pairs with the character friends. */
-const PAIR_IDS: CharId[] = ["solomiya", "taras", "olenka", "marko", "daryna", "lihtaryk"];
-const deal = () =>
-  [...PAIR_IDS, ...PAIR_IDS].map((who, i) => ({ key: i, who })).sort(() => Math.random() - 0.5);
-
-function Pairs() {
+export function Pairs() {
   const t = useT();
-  const [cards, setCards] = useState(deal);
+  const [cards, setCards] = useState(initialCards);
   const [open, setOpen] = useState<number[]>([]);
   const [found, setFound] = useState<CharId[]>([]);
   const timer = useRef<number | undefined>(undefined);
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  useEffect(() => {
+    setCards(deal());
+    return () => window.clearTimeout(timer.current);
+  }, []);
+  const reset = () => {
+    window.clearTimeout(timer.current);
+    setOpen([]);
+    setFound([]);
+    setCards(deal());
+  };
   const flip = (i: number) => {
-    if (open.length === 2 || open.includes(i) || found.includes(cards[i]!.who)) return;
+    const card = cards[i];
+    if (!card || open.length === 2 || open.includes(i) || found.includes(card.who)) return;
     sfx("select");
     const next = [...open, i];
     setOpen(next);
     if (next.length === 2) {
-      const [a, b] = next as [number, number];
-      const first = cards[a],
-        second = cards[b];
+      const first = cards[next[0] ?? -1],
+        second = cards[next[1] ?? -1];
       if (!first || !second) return;
       if (first.who === second.who) {
         timer.current = window.setTimeout(() => {
@@ -191,15 +218,23 @@ function Pairs() {
               : t("Відкривай картки й шукай однакових друзів.")
         }
       />
-      <div className="grid grid-cols-4 gap-2" data-no-tap>
+      <p role="status" className="text-center text-sm font-bold">
+        {t("Знайдено пар: {n} із {total}", { n: found.length, total: PAIR_IDS.length })}
+      </p>
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" data-no-tap>
         {cards.map((c, i) => {
           const shown = open.includes(i) || found.includes(c.who);
           return (
-            <button
+            <Btn
               key={c.key}
               onClick={() => flip(i)}
-              aria-label={shown ? t(CHARACTERS[c.who].name) : t("Закрита картка")}
-              className={`aspect-[3/4] rounded-2xl shadow-soft transition active:scale-95 ${shown ? "bg-card animate-flip" : "bg-primary"} ${found.includes(c.who) ? "ring-4 ring-honey" : ""}`}
+              aria-label={t("Картка {n}: {name}", {
+                n: i + 1,
+                name: shown ? t(CHARACTERS[c.who].name) : t("Закрита картка"),
+              })}
+              aria-pressed={shown}
+              disabled={found.includes(c.who)}
+              className={`aspect-[3/4] min-w-0 overflow-hidden rounded-2xl p-0 shadow-soft transition active:scale-95 ${shown ? "bg-card animate-flip" : "bg-primary"} ${found.includes(c.who) ? "ring-2 ring-honey" : ""}`}
             >
               {shown ? (
                 <img
@@ -212,53 +247,67 @@ function Pairs() {
                   🌻
                 </span>
               )}
-            </button>
+            </Btn>
           );
         })}
       </div>
-      {all && (
-        <div className="text-center">
-          <Btn
-            onClick={() => {
-              setCards(deal());
-              setFound([]);
-            }}
-          >
-            {t("Грати ще раз")}
-          </Btn>
-        </div>
-      )}
+      <div className="text-center">
+        <Btn variant="soft" onClick={reset}>
+          <RotateCcw size={18} className="mr-2 inline" />
+          {t(all ? "Грати ще раз" : "Почати спочатку")}
+        </Btn>
+      </div>
     </div>
   );
 }
 
 /* 3. Touch the night sky to place singing stars; lines join them into a constellation. */
-function Stars() {
+export function Stars() {
   const t = useT();
   const [stars, setStars] = useState<{ x: number; y: number }[]>([]);
   const box = useRef<HTMLDivElement>(null);
   const timers = useRef<number[]>([]);
+  const [active, setActive] = useState<number | null>(null);
   const stop = () => {
     timers.current.forEach(window.clearTimeout);
     timers.current = [];
   };
-  useEffect(() => stop, []);
+  useEffect(() => {
+    const pause = () => {
+      stop();
+      setActive(null);
+    };
+    const hidden = () => {
+      if (document.hidden) pause();
+    };
+    window.addEventListener("pagehide", pause);
+    document.addEventListener("visibilitychange", hidden);
+    return () => {
+      stop();
+      window.removeEventListener("pagehide", pause);
+      document.removeEventListener("visibilitychange", hidden);
+    };
+  }, []);
   const add = (e: React.PointerEvent) => {
     const r = box.current?.getBoundingClientRect();
     if (!r) return;
-    const x = ((e.clientX - r.left) / r.width) * 100,
-      y = ((e.clientY - r.top) / r.height) * 100;
-    chime(SCALE[Math.min(6, Math.floor(((100 - y) / 100) * 7))]!);
+    stop();
+    setActive(null);
+    const x = Math.max(5, Math.min(95, ((e.clientX - r.left) / r.width) * 100)),
+      y = Math.max(5, Math.min(95, ((e.clientY - r.top) / r.height) * 100));
+    chime(SCALE[Math.min(6, Math.floor(((100 - y) / 100) * 7))] ?? 523);
     setStars((s) => [...s.slice(-24), { x, y }]);
   };
   const play = () => {
     stop();
+    setActive(0);
     timers.current = stars.map((s, i) =>
-      window.setTimeout(
-        () => chime(SCALE[Math.min(6, Math.floor(((100 - s.y) / 100) * 7))] ?? 523),
-        i * 300,
-      ),
+      window.setTimeout(() => {
+        setActive(i);
+        chime(SCALE[Math.min(6, Math.floor(((100 - s.y) / 100) * 7))] ?? 523);
+      }, i * 300),
     );
+    timers.current.push(window.setTimeout(() => setActive(null), stars.length * 300));
   };
   return (
     <div className="space-y-3">
@@ -273,6 +322,8 @@ function Stars() {
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
+            stop();
+            setActive(null);
             chime(523);
             setStars((s) => [...s.slice(-24), { x: 50, y: 50 }]);
           }
@@ -305,7 +356,9 @@ function Stars() {
             style={{ left: `${s.x}%`, top: `${s.y}%` }}
             aria-hidden
           >
-            <span className="block animate-twinkle">⭐</span>
+            <span className={`block ${active === i ? "scale-150 text-honey" : "animate-twinkle"}`}>
+              ⭐
+            </span>
           </span>
         ))}
         {stars.length === 0 && (
@@ -314,15 +367,42 @@ function Stars() {
           </p>
         )}
       </div>
-      <div className="flex justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-2">
+        <Btn
+          variant="soft"
+          disabled={!stars.length}
+          aria-label={t("Прибрати останню зірку")}
+          onClick={() => {
+            stop();
+            setActive(null);
+            setStars((s) => s.slice(0, -1));
+          }}
+        >
+          <span title={t("Прибрати останню зірку")}>
+            <Undo2 size={20} />
+          </span>
+        </Btn>
         <Btn variant="honey" disabled={!stars.length} onClick={play}>
           {t("▶ Заграти сузір'я")}
         </Btn>
+        {active !== null && (
+          <Btn
+            variant="soft"
+            aria-label={t("Пауза")}
+            onClick={() => {
+              stop();
+              setActive(null);
+            }}
+          >
+            <Pause size={20} />
+          </Btn>
+        )}
         <Btn
           variant="soft"
           disabled={!stars.length}
           onClick={() => {
             stop();
+            setActive(null);
             setStars([]);
           }}
         >

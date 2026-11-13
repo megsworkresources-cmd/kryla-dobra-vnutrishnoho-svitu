@@ -6,6 +6,7 @@ import { Btn } from "@/components/Scene";
 import { addDrawing, markDone, removeDrawing, useStore } from "@/lib/store";
 import { useT, useLang, localeOf } from "@/lib/i18n";
 import { chime, sfx } from "@/lib/audio";
+import { clearDraft, getDraft, saveDraft } from "@/lib/drafts";
 
 const STAMPS = ["🌻", "⭐", "🦋", "❤️", "🌈", "🐞", "☁️", "🌙"];
 const NOTES = [523, 587, 659, 784, 880, 1047];
@@ -41,6 +42,43 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   const tid = useRef(0);
   const last = useRef(0);
   const [party, setParty] = useState(0);
+  const [draft, setDraft] = useState<string | null>(null);
+  const dirty = useRef(false);
+  // A half-finished drawing should survive leaving the page.
+  useEffect(() => {
+    setDraft(getDraft(id) ?? null);
+  }, [id]);
+  const keep = () => {
+    if (!dirty.current) return;
+    dirty.current = false;
+    const c = ref.current;
+    if (c) saveDraft(id, c.toDataURL("image/jpeg", 0.6));
+  };
+  const resume = () => {
+    const url = draft;
+    const c = ref.current;
+    const g = c?.getContext("2d");
+    if (!url || !c || !g) return;
+    const img = new Image();
+    img.onload = () => {
+      g.fillStyle = resolve("var(--paper)");
+      g.fillRect(0, 0, c.width, c.height);
+      g.drawImage(img, 0, 0, c.width, c.height);
+    };
+    img.src = url;
+    setDraft(null);
+    sfx("page");
+  };
+  const discard = () => {
+    clearDraft(id);
+    setDraft(null);
+  };
+  const clear = () => {
+    dirty.current = false;
+    clearDraft(id);
+    setDraft(null);
+    fill();
+  };
   const spark = (e: React.PointerEvent, g: string) => {
     const r = ref.current!.getBoundingClientRect();
     const id = tid.current++;
@@ -68,6 +106,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   const down = (e: React.PointerEvent) => {
     const g = ref.current?.getContext("2d");
     if (!g) return;
+    dirty.current = true;
     if (stamp) {
       const [x, y] = pos(e);
       g.font = `${size * 9}px serif`;
@@ -120,6 +159,17 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   return (
     <div className="space-y-3">
       <CharacterSay who="marko" size="sm" mood={saved ? "cheer" : "think"} text={t(prompt)} />
+      {draft && (
+        <div className="paper-card space-y-2 p-4" role="status">
+          <p className="font-bold">{t("Твій малюнок зберігся на цьому пристрої.")}</p>
+          <div className="flex flex-wrap gap-2">
+            <Btn onClick={resume}>{t("Продовжити малюнок")}</Btn>
+            <Btn variant="soft" onClick={discard}>
+              {t("Новий аркуш")}
+            </Btn>
+          </div>
+        </div>
+      )}
       <div className="relative">
         <canvas
           ref={ref}
@@ -127,8 +177,14 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
           height={700}
           onPointerDown={down}
           onPointerMove={move}
-          onPointerUp={() => (drawing.current = false)}
-          onPointerCancel={() => (drawing.current = false)}
+          onPointerUp={() => {
+            drawing.current = false;
+            keep();
+          }}
+          onPointerCancel={() => {
+            drawing.current = false;
+            keep();
+          }}
           className="paper-card aspect-[9/7] w-full touch-none rounded-3xl"
           aria-label={t("Аркуш для малювання")}
         />
@@ -229,7 +285,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
             {s === 4 ? t("Тонкий") : s === 8 ? t("Середній") : t("Товстий")}
           </Btn>
         ))}
-        <Btn variant="soft" onClick={fill}>
+        <Btn variant="soft" onClick={clear}>
           {t("Очистити")}
         </Btn>
         <Btn
@@ -241,6 +297,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
             if (persisted) markDone(id);
             setSaved(persisted);
             setSaveFailed(!persisted);
+            if (persisted) discard();
             setParty((n) => n + 1);
             [523, 659, 784, 1047].forEach((f, k) =>
               timers.current.push(setTimeout(() => chime(f), k * 140)),

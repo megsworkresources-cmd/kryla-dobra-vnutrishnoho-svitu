@@ -137,14 +137,19 @@ export function Guided({
     target?.scrollIntoView({ block: "start", behavior: calm() ? "auto" : "smooth" });
   }, [index, done]);
 
-  // The character's answer to a choice can land under the bottom bar. Pull it
-  // into view only when it is actually off-screen, so nothing jumps needlessly.
+  // The character's answer to a choice can land under the bottom bar. Bring it
+  // to the middle of the screen, but only when it is actually out of view, so
+  // an answer that is already readable does not move the page.
   useEffect(() => {
     if (!choices[index]) return;
     const el = replyRef.current;
     if (!el) return;
     const id = window.setTimeout(() => {
-      el.scrollIntoView({ block: "nearest", behavior: calm() ? "auto" : "smooth" });
+      const rect = el.getBoundingClientRect();
+      const barClearance = 88; // fixed Back/Next bar overlays the page bottom
+      const readable = rect.top >= 0 && rect.bottom <= window.innerHeight - barClearance;
+      if (readable) return;
+      el.scrollIntoView({ block: "center", behavior: calm() ? "auto" : "smooth" });
     }, 120);
     return () => window.clearTimeout(id);
   }, [choices, index]);

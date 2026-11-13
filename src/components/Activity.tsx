@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import { Btn, DoneCard } from "./Scene";
 import { CharacterSay, type Action } from "./Character";
@@ -98,6 +98,11 @@ export interface GuidedStep {
   vision?: boolean;
 }
 
+/** True when the OS or the in-app "less motion" toggle asks for calm. */
+const calm = () =>
+  document.documentElement.classList.contains("reduce-motion") ||
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 export function Guided({
   id,
   steps,
@@ -115,25 +120,61 @@ export function Guided({
   const [done, setDone] = useState(false);
   const [guide, friend] = castFor(id);
   const step = steps[index];
+  const stepRef = useRef<HTMLElement | null>(null);
+  const doneRef = useRef<HTMLDivElement | null>(null);
+  const replyRef = useRef<HTMLDivElement | null>(null);
+  const mounted = useRef(false);
+
+  // A new step renders above wherever the page was scrolled to, so the child
+  // would land in the middle of it. Bring the step (or the ending card) back
+  // to the top. Skipped on first mount so the page keeps its normal entry.
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    const target = stepRef.current ?? doneRef.current;
+    target?.scrollIntoView({ block: "start", behavior: calm() ? "auto" : "smooth" });
+  }, [index, done]);
+
+  // The character's answer to a choice can land under the bottom bar. Pull it
+  // into view only when it is actually off-screen, so nothing jumps needlessly.
+  useEffect(() => {
+    if (!choices[index]) return;
+    const el = replyRef.current;
+    if (!el) return;
+    const id = window.setTimeout(() => {
+      el.scrollIntoView({ block: "nearest", behavior: calm() ? "auto" : "smooth" });
+    }, 120);
+    return () => window.clearTimeout(id);
+  }, [choices, index]);
+
   if (done)
     return (
-      <DoneCard
-        text={t(ending)}
-        night={night}
-        who={guide}
-        again={() => {
-          setIndex(0);
-          setChoices({});
-          setDone(false);
-        }}
-      />
+      <div ref={doneRef} className="scroll-mt-4">
+        <DoneCard
+          text={t(ending)}
+          night={night}
+          who={guide}
+          again={() => {
+            setIndex(0);
+            setChoices({});
+            setDone(false);
+          }}
+        />
+      </div>
     );
   if (!step) return null;
   const selected = choices[index] ?? "";
   const speaker = step.who ?? (step.options ? friend : guide);
   const reply = selected ? (step.responses?.[selected] ?? step.response) : undefined;
   return (
-    <section key={index} className="space-y-4 animate-step" aria-label={t(step.title)}>
+    <section
+      key={index}
+      ref={stepRef}
+      className="space-y-4 animate-step scroll-mt-4"
+      aria-label={t(step.title)}
+    >
       <div className="flex items-center gap-3">
         <div
           className="h-2.5 flex-1 overflow-hidden rounded-full bg-secondary"
@@ -188,6 +229,7 @@ export function Guided({
       )}
       {reply && (
         <div
+          ref={replyRef}
           aria-live="polite"
           className={step.vision ? "animate-fade-up [animation-delay:900ms]" : ""}
         >

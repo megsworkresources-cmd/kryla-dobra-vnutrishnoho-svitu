@@ -49,6 +49,7 @@ export function Release() {
   const [text, setText] = useState("");
   const [flying, setFlying] = useState(false);
   const [done, setDone] = useState(false);
+  const [where, setWhere] = useState<string | null>(null);
   useEffect(() => {
     if (!flying) return;
     // Completion must not depend on a CSS animation (reduced-motion disables it).
@@ -58,16 +59,45 @@ export function Release() {
     }, 3500);
     return () => window.clearTimeout(timer);
   }, [flying]);
+  if (!where)
+    return (
+      <div className="space-y-4">
+        <CharacterSay
+          who="daryna"
+          size="sm"
+          mood="think"
+          text={t("Спершу знайди, де ця турбота живе в тілі. Це допоможе її помітити.")}
+        />
+        <div className="grid gap-2 sm:grid-cols-2">
+          {["У животі", "У грудях", "У горлі", "У плечах"].map((place) => (
+            <Btn key={place} variant="soft" onClick={() => setWhere(place)} className="h-auto py-3">
+              {t(place)}
+            </Btn>
+          ))}
+        </div>
+        <p className="text-center text-sm opacity-75">
+          {t("Можна обрати «десь тут» — точне місце не обов’язкове.")}
+        </p>
+      </div>
+    );
   if (done)
     return (
-      <DoneCard
-        text={t("Хмаринка полетіла. Якщо турбота повернеться — ти знаєш, де її відпустити.")}
-        again={() => {
-          setText("");
-          setFlying(false);
-          setDone(false);
-        }}
-      />
+      <div className="space-y-3">
+        <DoneCard
+          text={t("Хмаринка полетіла. Якщо турбота повернеться — ти знаєш, де її відпустити.")}
+          again={() => {
+            setText("");
+            setFlying(false);
+            setDone(false);
+            setWhere(null);
+          }}
+        />
+        <p className="paper-card p-4 text-center text-sm font-semibold">
+          {t("Ти помітив, що вона живе {place}. Помічене вже не керує тобою так, як непомічене.", {
+            place: t(where).toLowerCase(),
+          })}
+        </p>
+      </div>
     );
   return (
     <div className="space-y-5 text-center">
@@ -80,6 +110,9 @@ export function Release() {
           "Напиши або просто подумай про те, що тебе турбує. Ніхто цього не побачить — навіть цей пристрій не збереже.",
         )}
       />
+      <p className="text-sm font-semibold">
+        {t("Ти вже згадав, де вона живе. Тепер відпусти її разом із хмаркою.")}
+      </p>
       <div
         className={`paper-card mx-auto max-w-md rounded-[3rem] p-6 ${flying ? "animate-rise-away" : ""}`}
       >
@@ -96,7 +129,7 @@ export function Release() {
           className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
-      {!flying && <Btn onClick={() => setFlying(true)}>{t("Відпустити хмаринку")}</Btn>}
+      {!flying && <Btn onClick={() => setFlying(true)}>{t("Відпустити хмарку")}</Btn>}
     </div>
   );
 }

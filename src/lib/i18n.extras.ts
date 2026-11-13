@@ -105,6 +105,22 @@ export const EXTRAS: Record<string, string> = {
     "What do you know now that you didn’t before? Write a few words — that is your find.",
   "Ось це — голос друга, який завжди з тобою.":
     "That is the voice of a friend who is always with you.",
+  "Твій малюнок зберігся на цьому пристрої.": "Your drawing was kept on this device.",
+  "Продовжити малюнок": "Carry on drawing",
+  "Новий аркуш": "Start a new sheet",
+  "Спершу знайди, де ця турбота живе в тілі. Це допоможе її помітити.":
+    "First, find where this worry lives in your body. That helps you notice it.",
+  "Де ти відчуваєш цю турботу зараз?": "Where do you feel this worry right now?",
+  "У животі": "In my tummy",
+  "У грудях": "In my chest",
+  "У горлі": "In my throat",
+  "У плечах": "In my shoulders",
+  "Можна обрати «десь тут» — точне місце не обов’язкове.":
+    "“Somewhere around here” is fine — the exact spot is not required.",
+  "Ти вже згадав, де вона живе. Тепер відпусти її разом із хмаркою.":
+    "You have found where it lives. Now let it go with the cloud.",
+  "Ти помітив, що вона живе {place}. Помічене вже не керує тобою так, як непомічене.":
+    "You noticed it lives {place}. Noticed, it no longer steers you the way it did unseen.",
 };
 
 /**

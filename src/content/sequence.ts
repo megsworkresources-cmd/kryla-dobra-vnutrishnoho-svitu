@@ -29,7 +29,6 @@ export const ORDER: Stop[] = (() => {
       );
   }
   list.push(
-    { to: "/settings", label: "Налаштування" },
     { to: "/parents", label: "Для дорослих" },
     { to: "/shared-garden", label: "Спільний сад" },
   );

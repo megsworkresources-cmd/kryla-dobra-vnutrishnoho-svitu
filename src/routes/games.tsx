@@ -206,6 +206,7 @@ export function Pairs() {
   const [cards, setCards] = useState(initialCards);
   const [open, setOpen] = useState<number[]>([]);
   const [found, setFound] = useState<CharId[]>([]);
+  const [peek, setPeek] = useState(false);
   const timer = useRef<number | undefined>(undefined);
   useEffect(() => {
     setCards(deal());
@@ -215,11 +216,12 @@ export function Pairs() {
     window.clearTimeout(timer.current);
     setOpen([]);
     setFound([]);
+    setPeek(false);
     setCards(deal());
   };
   const flip = (i: number) => {
     const card = cards[i];
-    if (!card || open.length === 2 || open.includes(i) || found.includes(card.who)) return;
+    if (!card || peek || open.length === 2 || open.includes(i) || found.includes(card.who)) return;
     sfx("select");
     const next = [...open, i];
     setOpen(next);
@@ -257,7 +259,7 @@ export function Pairs() {
       </p>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" data-no-tap>
         {cards.map((c, i) => {
-          const shown = open.includes(i) || found.includes(c.who);
+          const shown = peek || open.includes(i) || found.includes(c.who);
           return (
             <Btn
               key={c.key}
@@ -286,6 +288,17 @@ export function Pairs() {
         })}
       </div>
       <div className="text-center">
+        <Btn
+          variant="soft"
+          disabled={peek || open.length > 0 || all}
+          onClick={() => {
+            window.clearTimeout(timer.current);
+            setPeek(true);
+            timer.current = window.setTimeout(() => setPeek(false), 3000);
+          }}
+        >
+          {t("Підглянути картки")}
+        </Btn>{" "}
         <Btn variant="soft" onClick={reset}>
           <RotateCcw size={18} className="mr-2 inline" />
           {t(all ? "Грати ще раз" : "Почати спочатку")}

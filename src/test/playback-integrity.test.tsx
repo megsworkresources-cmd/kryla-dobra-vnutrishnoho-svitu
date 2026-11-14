@@ -98,3 +98,17 @@ it("retains the same video element across caption changes", async () => {
   await act(async () => {});
   vi.restoreAllMocks();
 });
+
+it("replays from the first caption after completion and allows stepping back", () => {
+  vi.useFakeTimers();
+  render(<Player clip={clip} onClose={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Далі →" }));
+  fireEvent.click(screen.getByRole("button", { name: "Попередня сцена" }));
+  expect(screen.getByText("Біля білої хатки ріс маленький соняшник.")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Далі →" }));
+  fireEvent.click(screen.getByRole("button", { name: "Далі →" }));
+  expect(screen.getByText("Кінець")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Ще раз" }));
+  expect(screen.getByText("Біля білої хатки ріс маленький соняшник.")).toBeVisible();
+  expect(screen.getByRole("button", { name: "Попередня сцена" })).toBeDisabled();
+});

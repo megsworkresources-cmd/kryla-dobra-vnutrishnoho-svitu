@@ -7,6 +7,9 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Анонімні соняшники з добровільною згодою дорослих. Малюнки й почуття залишаються приватними.":
+    "Anonymous sunflowers shared with caregiver consent. Drawings and feelings stay private.",
+  "Підглянути картки": "Peek at cards",
   "Спільний сад": "Shared garden",
   "Мій соняшник": "My sunflower",
   "Стадія {n} з 5": "Stage {n} of 5",
@@ -19,12 +22,16 @@ const EN: Record<string, string> = {
   "Поки що немає спільних соняшників.": "No sunflowers are shared yet.",
   "Сад недоступний. Спробуйте ще раз.": "Garden unavailable. Please try again.",
   "Сад завантажується…": "Garden is loading…",
-  "Я погоджуюся поширити лише анонімну стадію росту соняшника. Імена, малюнки, почуття й записи про вправи залишаються на пристрої.": "I consent to share only an anonymous sunflower growth stage. Names, drawings, feelings and exercise records stay on this device.",
-  "Один соняшник на акаунт дорослого. Оновлення надсилаються лише за вашим натисканням; вимкнення приховує квітку, не змінюючи даних дитини.": "One sunflower per caregiver account. Updates are sent only when you choose; stopping sharing hides the flower without changing child data.",
+  "Я погоджуюся поширити лише анонімну стадію росту соняшника. Імена, малюнки, почуття й записи про вправи залишаються на пристрої.":
+    "I consent to share only an anonymous sunflower growth stage. Names, drawings, feelings and exercise records stay on this device.",
+  "Один соняшник на акаунт дорослого. Оновлення надсилаються лише за вашим натисканням; вимкнення приховує квітку, не змінюючи даних дитини.":
+    "One sunflower per caregiver account. Updates are sent only when you choose; stopping sharing hides the flower without changing child data.",
   "Соняшники інших родин": "Other families’ sunflowers",
   "Справжній запис росту соняшника": "Recorded sunflower growth",
-  "Відео: Naturenow, CC BY-SA 4.0; перетворено з GIF у MP4.": "Video: Naturenow, CC BY-SA 4.0; converted from GIF to MP4.",
-  "Місцеві записи залишаються приватними. Лише у спільному саду дорослий може окремо поширити анонімну стадію соняшника.": "Local records stay private. Only in the shared garden can a caregiver separately share an anonymous sunflower stage.",
+  "Відео: Naturenow, CC BY-SA 4.0; перетворено з GIF у MP4.":
+    "Video: Naturenow, CC BY-SA 4.0; converted from GIF to MP4.",
+  "Місцеві записи залишаються приватними. Лише у спільному саду дорослий може окремо поширити анонімну стадію соняшника.":
+    "Local records stay private. Only in the shared garden can a caregiver separately share an anonymous sunflower stage.",
   "Готова казка": "Ready-made story",
   "Пригода насінини": "The seed's adventure",
   "Знайдено пар: {n} із {total}": "Pairs found: {n} of {total}",

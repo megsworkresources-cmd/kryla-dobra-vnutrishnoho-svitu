@@ -80,3 +80,16 @@ it("undo removes the last star and exit cancels queued notes", () => {
   act(() => vi.runAllTimers());
   expect(chime).toHaveBeenCalledTimes(calls);
 });
+
+it("memory peek reveals temporarily without awarding pairs and reset cancels it", () => {
+  render(<Pairs />);
+  fireEvent.click(screen.getByRole("button", { name: "Підглянути картки" }));
+  expect(screen.queryByRole("button", { name: "Картка 1: Закрита картка" })).toBeNull();
+  expect(screen.getByRole("status")).toHaveTextContent("Знайдено пар: 0 із 6");
+  act(() => vi.advanceTimersByTime(3000));
+  expect(screen.getByRole("button", { name: "Картка 1: Закрита картка" })).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Підглянути картки" }));
+  fireEvent.click(screen.getByRole("button", { name: "Почати спочатку" }));
+  act(() => vi.advanceTimersByTime(4000));
+  expect(screen.getByRole("button", { name: "Картка 1: Закрита картка" })).toBeVisible();
+});

@@ -349,6 +349,16 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
           </Btn>
         )}
         {!done && (
+          <Btn
+            variant="soft"
+            aria-label={t("Попередня сцена")}
+            disabled={i === 0}
+            onClick={() => setI((n) => Math.max(0, n - 1))}
+          >
+            {t("Назад")}
+          </Btn>
+        )}
+        {!done && (
           <Btn variant="soft" onClick={() => setI(i + 1)}>
             {t("Далі →")}
           </Btn>

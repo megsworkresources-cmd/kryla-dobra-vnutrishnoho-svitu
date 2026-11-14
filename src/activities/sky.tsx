@@ -5,7 +5,7 @@ import night from "@/assets/night.jpg";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Guided } from "@/components/Activity";
 import { StoryFilm } from "@/components/StoryFilm";
-import { STORY_MEDIA } from "@/content/story-media";
+import { SKY_MEDIA } from "@/content/story-media";
 import { markDone, useStore } from "@/lib/store";
 import { speak, stopSpeaking } from "@/lib/speak";
 import { useT } from "@/lib/i18n";
@@ -122,7 +122,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   const [hop, setHop] = useState<string | null>(null);
   const fx = STORY_FX[id]?.[i] ?? ["✨"];
   const narrator = CHARACTERS[castFor("sky")[i % 2] ?? "solomiya"];
-  const film = STORY_MEDIA[id];
+  const film = SKY_MEDIA[id];
   const len = Math.max(6, Math.round((scenes[i]?.length ?? 0) / 14));
   const finish = () => {
     setPlaying(false);
@@ -321,11 +321,16 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
           <SkipForward size={20} />
         </Btn>
       </div>
-      {!film && <p className="text-center text-sm font-bold">
-        {lit.length < FIREFLIES.length
-          ? t("Торкнись світлячків на картинці: {n} з {m}", { n: lit.length, m: FIREFLIES.length })
-          : t("Усі світлячки світять для тебе ✨")}
-      </p>}
+      {!film && (
+        <p className="text-center text-sm font-bold">
+          {lit.length < FIREFLIES.length
+            ? t("Торкнись світлячків на картинці: {n} з {m}", {
+                n: lit.length,
+                m: FIREFLIES.length,
+              })
+            : t("Усі світлячки світять для тебе ✨")}
+        </p>
+      )}
       <p className="text-center text-sm opacity-75">
         {t("Сцена {i} з {n}. Увімкни голос у налаштуваннях, щоб казку читали вголос.", {
           i: i + 1,

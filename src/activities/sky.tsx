@@ -158,6 +158,8 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
           setI(0);
           setT(0);
           setDone(false);
+          setLit([]);
+          setHop(null);
         }}
       />
     );
@@ -319,11 +321,11 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
           <SkipForward size={20} />
         </Btn>
       </div>
-      <p className="text-center text-sm font-bold">
+      {!film && <p className="text-center text-sm font-bold">
         {lit.length < FIREFLIES.length
           ? t("Торкнись світлячків на картинці: {n} з {m}", { n: lit.length, m: FIREFLIES.length })
           : t("Усі світлячки світять для тебе ✨")}
-      </p>
+      </p>}
       <p className="text-center text-sm opacity-75">
         {t("Сцена {i} з {n}. Увімкни голос у налаштуваннях, щоб казку читали вголос.", {
           i: i + 1,

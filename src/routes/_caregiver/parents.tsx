@@ -100,9 +100,10 @@ function Parents() {
         </p>
         <p className="paper-card p-4 text-sm">
           {t(
-            "Ця панель показує лише те, що збережено на цьому пристрої. Нічого не надсилається в інтернет. Це не оцінка — кожна дитина рухається у своєму темпі.",
+            "Місцеві записи залишаються приватними. Лише у спільному саду дорослий може окремо поширити анонімну стадію соняшника.",
           )}
         </p>
+        <Link to="/shared-garden" className="paper-card block p-4 font-bold text-primary underline">🌻 {t("Спільний сад")}</Link>
 
         <section aria-label={t("Підсумок")} className="grid grid-cols-2 gap-3">
           {stats.map(({ icon: I, n, l }) => (

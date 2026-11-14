@@ -24,6 +24,7 @@ import { Route as StoryRouteImport } from './routes/story'
 import { Route as WatchRouteImport } from './routes/watch'
 import { Route as WorldRouteImport } from './routes/world'
 import { Route as CaregiverParentsRouteImport } from './routes/_caregiver/parents'
+import { Route as CaregiverSharedGardenRouteImport } from './routes/_caregiver/shared-garden'
 import { Route as CloudsIndexRouteImport } from './routes/clouds.index'
 import { Route as CloudsIdRouteImport } from './routes/clouds.$id'
 import { Route as ForestIndexRouteImport } from './routes/forest.index'
@@ -112,6 +113,11 @@ const WorldRoute = WorldRouteImport.update({
 const CaregiverParentsRoute = CaregiverParentsRouteImport.update({
   id: '/parents',
   path: '/parents',
+  getParentRoute: () => CaregiverRouteRoute,
+} as any)
+const CaregiverSharedGardenRoute = CaregiverSharedGardenRouteImport.update({
+  id: '/shared-garden',
+  path: '/shared-garden',
   getParentRoute: () => CaregiverRouteRoute,
 } as any)
 const CloudsIndexRoute = CloudsIndexRouteImport.update({
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
+  '/shared-garden': typeof CaregiverSharedGardenRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -237,6 +244,7 @@ export interface FileRoutesByTo {
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
+  '/shared-garden': typeof CaregiverSharedGardenRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -270,6 +278,7 @@ export interface FileRoutesById {
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/_caregiver/parents': typeof CaregiverParentsRoute
+  '/_caregiver/shared-garden': typeof CaregiverSharedGardenRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -303,6 +312,7 @@ export interface FileRouteTypes {
     | '/watch'
     | '/world'
     | '/parents'
+    | '/shared-garden'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/watch'
     | '/world'
     | '/parents'
+    | '/shared-garden'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/watch'
     | '/world'
     | '/_caregiver/parents'
+    | '/_caregiver/shared-garden'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -522,6 +534,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CaregiverParentsRouteImport
       parentRoute: typeof CaregiverRouteRoute
     }
+    '/_caregiver/shared-garden': {
+      id: '/_caregiver/shared-garden'
+      path: '/shared-garden'
+      fullPath: '/shared-garden'
+      preLoaderRoute: typeof CaregiverSharedGardenRouteImport
+      parentRoute: typeof CaregiverRouteRoute
+    }
     '/clouds/': {
       id: '/clouds/'
       path: '/clouds'
@@ -632,10 +651,12 @@ declare module '@tanstack/react-router' {
 
 interface CaregiverRouteRouteChildren {
   CaregiverParentsRoute: typeof CaregiverParentsRoute
+  CaregiverSharedGardenRoute: typeof CaregiverSharedGardenRoute
 }
 
 const CaregiverRouteRouteChildren: CaregiverRouteRouteChildren = {
   CaregiverParentsRoute: CaregiverParentsRoute,
+  CaregiverSharedGardenRoute: CaregiverSharedGardenRoute,
 }
 
 const CaregiverRouteRouteWithChildren = CaregiverRouteRoute._addFileChildren(

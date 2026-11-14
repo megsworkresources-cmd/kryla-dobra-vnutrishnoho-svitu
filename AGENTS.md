@@ -10,7 +10,7 @@
 <!-- LOVABLE:END -->
 
 - Keep destination routes separate from reusable activity modules and browser-safe content data, so every exercise has its own address and completion flow.
-- Persist child-created content and preferences only in the device store; this account-free product explicitly requires private local functionality.
+- Keep child-created content and preferences in the device store; only an explicitly opted-in coarse sunflower stage may be sent from the caregiver garden, never child identity or activity records.
 - Normalize invalid device settings on read without rewriting storage; retain valid child content and progress so recovery is non-destructive.
 - Keep recorded music cancellation synchronous, expose playback failures, and bound decoded caches; late media responses must never restart an exited activity.
 - Use semantic CSS tokens and the shared Btn control for new activity interactions, preserving the storybook design system.
@@ -25,7 +25,7 @@
 - The feelings helper (/helper) is the only feature that sends child text off-device: one Lovable AI call via a server function, nothing stored, and it may only recommend keys from `src/content/catalog.ts`.
 - Ukrainian is the source language: write UI strings in Ukrainian and translate them via `t()`/`useT()` from `src/lib/i18n.ts` (never hardcode English); every new string needs a dictionary entry, guarded by `src/test/i18n.test.ts`.
 - Natural voices go through `src/lib/voice.server.ts` (Lovable AI TTS) with app-written lines only, cached in memory, falling back to device speech; never send child-typed text there.
-- Adult-only pages live under `src/routes/_caregiver/` (ssr:false gate confirmed by the `verifyCaregiver` server function); child routes stay public and no child data ever goes to the backend.
+- Adult-only pages live under `src/routes/_caregiver/` (ssr:false gate confirmed by the `verifyCaregiver` server function); child routes stay public. Shared sunflower requests independently revalidate the caregiver and never access child content.
 - Account identity transitions use one root Auth subscriber; logout cancels and clears query caches without touching the device store, and recovery readiness requires a current Auth user.
 - Remote MCP tools use OAuth client-claim verification and expose only app-written catalog data; browser WebMCP reads only the visible map, keeping child device data inaccessible to agents.
 - OAuth consent uses the existing caregiver sign-in with canonical local return paths preserved through password sign-in and email confirmation, so child routes remain account-free.

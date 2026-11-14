@@ -14,13 +14,43 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      shared_sunflowers: {
+        Row: {
+          flower_id: string
+          owner_id: string
+          sharing: boolean
+          stage: number
+        }
+        Insert: {
+          flower_id?: string
+          owner_id: string
+          sharing?: boolean
+          stage?: number
+        }
+        Update: {
+          flower_id?: string
+          owner_id?: string
+          sharing?: boolean
+          stage?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      publish_sunflower: {
+        Args: { new_stage: number; opt_in: boolean }
+        Returns: undefined
+      }
+      read_shared_sunflowers: {
+        Args: never
+        Returns: {
+          flower_id: string
+          stage: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

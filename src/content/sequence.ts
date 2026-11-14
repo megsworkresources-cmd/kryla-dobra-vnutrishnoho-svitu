@@ -28,7 +28,7 @@ export const ORDER: Stop[] = (() => {
         list.push({ to: `/${p.id}/${a[0]}`, label: a[1] }),
       );
   }
-  list.push({ to: "/settings", label: "Налаштування" }, { to: "/parents", label: "Для дорослих" });
+  list.push({ to: "/settings", label: "Налаштування" }, { to: "/parents", label: "Для дорослих" }, { to: "/shared-garden", label: "Спільний сад" });
   return list;
 })();
 

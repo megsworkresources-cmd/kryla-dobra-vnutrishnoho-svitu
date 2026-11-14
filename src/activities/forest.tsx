@@ -3,7 +3,7 @@ import { CharacterSay } from "@/components/Character";
 import { useEffect, useRef, useState } from "react";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Face } from "@/components/Face";
-import { EMOTIONS, SCENARIOS, SORT_ITEMS } from "@/content/emotions";
+import { EMOTIONS, emotionAt, SCENARIOS, SORT_ITEMS } from "@/content/emotions";
 import { markDone, pick, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import { CHARACTERS, castFor } from "@/content/characters";
@@ -11,7 +11,7 @@ import { CHARACTERS, castFor } from "@/content/characters";
 /* 1. Meet the emotions */
 export function EmotionGallery() {
   const t = useT();
-  const [sel, setSel] = useState(EMOTIONS[0]!);
+  const [sel, setSel] = useState(() => emotionAt(0));
   const [seen, setSeen] = useState<Set<string>>(new Set([EMOTIONS[0]!.id]));
   const [done, setDone] = useState(false);
   if (done)
@@ -218,7 +218,7 @@ const ZONES = [
 ];
 export function BodyMap() {
   const t = useT();
-  const [emo, setEmo] = useState(EMOTIONS[2]!);
+  const [emo, setEmo] = useState(() => emotionAt(2));
   const [marks, setMarks] = useState<Record<string, string[]>>({});
   const [done, setDone] = useState(false);
   const mine = marks[emo.id] ?? [];

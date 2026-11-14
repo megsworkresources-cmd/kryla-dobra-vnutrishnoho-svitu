@@ -44,6 +44,15 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("caregiver form states", () => {
+  it("shows an error instead of failing silently when the session check is rejected", async () => {
+    vi.mocked(auth.getUser).mockRejectedValue(new Error("offline"));
+    render(<Login />);
+    expect(
+      await screen.findByText("Не вдалося завершити дію. Перевірте дані й спробуйте ще раз."),
+    ).toBeInTheDocument();
+    expect(mocks.navigate).not.toHaveBeenCalled();
+  });
+
   it("announces pending sign-in and prevents duplicate submissions", async () => {
     let finish: ((value: { error: null }) => void) | undefined;
     vi.mocked(auth.signInWithPassword).mockImplementation(

@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Btn, Scene } from "@/components/Scene";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,6 +42,8 @@ function CaregiverLogin() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
+  const tRef = useRef(t);
+  tRef.current = t;
   // Already signed in → go straight back.
   useEffect(() => {
     let active = true;
@@ -60,7 +62,13 @@ function CaregiverLogin() {
       .then(({ data }) => {
         if (active && data.user) void navigate({ to: redirect as never, replace: true });
       })
-      .catch(() => {});
+      .catch(() => {
+        if (active)
+          setMsg({
+            kind: "err",
+            text: tRef.current("Не вдалося завершити дію. Перевірте дані й спробуйте ще раз."),
+          });
+      });
     return () => {
       active = false;
     };

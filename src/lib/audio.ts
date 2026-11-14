@@ -63,7 +63,10 @@ export function unlockAudio() {
   unlocked = true;
   const context = ac();
   if (context && context.state !== "running" && context.state !== "closed")
-    void context.resume().catch(() => {});
+    void context.resume().catch(() => {
+      // Safari can reject resume outside a fresh gesture; surface it on the music status.
+      if (musicStatus !== "idle") setMusicStatus("error");
+    });
   syncVolume();
 }
 
@@ -84,7 +87,10 @@ export function destroyAudio() {
   ctx = null;
   if (closingContext) {
     closingContext.onstatechange = null;
-    if (closingContext.state !== "closed") void closingContext.close().catch(() => {});
+    if (closingContext.state !== "closed")
+      void closingContext.close().catch(() => {
+        // Teardown only: a failed close has no user-visible effect, and the context is already detached.
+      });
   }
 }
 
@@ -209,6 +215,9 @@ const statusListeners = new Set<() => void>();
 function setMusicStatus(value: MusicStatus) {
   musicStatus = value;
   statusListeners.forEach((listener) => listener());
+}
+export function getMusicStatus(): MusicStatus {
+  return musicStatus;
 }
 export function useMusicStatus() {
   return useSyncExternalStore(

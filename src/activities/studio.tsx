@@ -9,7 +9,9 @@ import { chime, sfx } from "@/lib/audio";
 import { clearDraft, getDraft, saveDraft } from "@/lib/drafts";
 
 const STAMPS = ["🌻", "⭐", "🦋", "❤️", "🌈", "🐞", "☁️", "🌙"];
-const NOTES = [523, 587, 659, 784, 880, 1047];
+const NOTES = [523, 587, 659, 784, 880, 1047] as const;
+const noteAt = (i: number): number =>
+  NOTES[((i % NOTES.length) + NOTES.length) % NOTES.length] ?? NOTES[0];
 
 const COLORS = [
   "var(--ink)",
@@ -20,7 +22,8 @@ const COLORS = [
   "var(--lavender)",
   "var(--dusk)",
   "var(--paper)",
-];
+] as const;
+type PaintColor = (typeof COLORS)[number];
 const resolve = (c: string) =>
   getComputedStyle(document.documentElement).getPropertyValue(c.slice(4, -1)).trim() || c;
 
@@ -30,7 +33,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   const drawing = useRef(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
-  const [color, setColor] = useState(COLORS[0]!);
+  const [color, setColor] = useState<PaintColor>(COLORS[0]);
   const [size, setSize] = useState(8);
   const [eraser, setEraser] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -113,7 +116,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
       g.textAlign = "center";
       g.textBaseline = "middle";
       g.fillText(stamp, x, y);
-      chime(NOTES[Math.floor(Math.random() * NOTES.length)]!);
+      chime(noteAt(Math.floor(Math.random() * NOTES.length)));
       spark(e, "✨");
       setSaved(false);
       return;
@@ -339,7 +342,7 @@ export const Feel = () => (
 export function ColorFlower() {
   const t = useT();
   const [fills, setFills] = useState<string[]>(Array(13).fill("var(--paper)"));
-  const [color, setColor] = useState(COLORS[1]!);
+  const [color, setColor] = useState<PaintColor>(COLORS[1]);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
   const [popped, setPopped] = useState<number | null>(null);
@@ -347,7 +350,7 @@ export function ColorFlower() {
     const next = fills.map((f, j) => (j === k ? color : f));
     setFills(next);
     setPopped(k);
-    chime(NOTES[k % NOTES.length]!);
+    chime(noteAt(k));
     if (!fills.every((f) => f !== "var(--paper)") && next.every((f) => f !== "var(--paper)")) {
       markDone("studio-color");
       [523, 659, 784, 1047].forEach((f, j) =>

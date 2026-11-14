@@ -154,3 +154,10 @@ export const SORT_ITEMS: { text: string; kind: "think" | "feel" | "do" }[] = [
   { text: "Я обійняв маму", kind: "do" },
   { text: "Я злюся", kind: "feel" },
 ];
+
+/** Fixed-list lookup with an explicit invariant instead of a non-null assertion. */
+export function emotionAt(index: number): Emotion {
+  const emotion = EMOTIONS[index] ?? EMOTIONS[0];
+  if (!emotion) throw new Error("EMOTIONS must contain at least one emotion");
+  return emotion;
+}

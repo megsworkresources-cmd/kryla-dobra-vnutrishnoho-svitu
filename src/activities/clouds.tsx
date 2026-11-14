@@ -127,7 +127,7 @@ export function Release() {
           className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
-      {!flying && <Btn onClick={() => setFlying(true)}>{t("Відпустити хмаринку")}</Btn>}
+      {!flying && <Btn onClick={() => setFlying(true)}>{t("Відпустити хмарку")}</Btn>}
     </div>
   );
 }

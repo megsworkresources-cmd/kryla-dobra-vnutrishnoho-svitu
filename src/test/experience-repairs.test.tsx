@@ -68,7 +68,7 @@ describe("experience repair regressions", () => {
     vi.useFakeTimers();
     update((s) => ({ ...s, reduceMotion: true, lang: "uk" }));
     render(<Release />);
-    fireEvent.click(screen.getByRole("button", { name: "Відпустити хмаринку" }));
+    fireEvent.click(screen.getByRole("button", { name: "Відпустити хмарку" }));
     act(() => vi.advanceTimersByTime(3600));
     expect(screen.queryByRole("textbox")).toBeNull();
   });

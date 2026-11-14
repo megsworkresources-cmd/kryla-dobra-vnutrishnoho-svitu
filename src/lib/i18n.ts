@@ -694,7 +694,7 @@ const EN: Record<string, string> = {
     "Write or just think about what's troubling you. Nobody will see it — even this device won't keep it.",
   "Моя турбота": "My worry",
   "Мене турбує…": "I'm worried about…",
-  "Відпустити хмаринку": "Let the cloud go",
+  "Відпустити хмарку": "Let the cloud go",
   "Хмаринка полетіла. Якщо турбота повернеться — ти знаєш, де її відпустити.":
     "The cloud has flown away. If the worry comes back — you know where to let it go.",
   "Стежка до галявини": "The path to the glade",

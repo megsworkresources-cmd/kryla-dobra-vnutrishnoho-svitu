@@ -183,6 +183,7 @@ function RootComponent() {
   const volume = useStore((s) => s.volume);
   const sound = useStore((s) => s.sound);
   const voiceVolume = useStore((s) => s.voiceVolume);
+  const voice = useStore((s) => s.voice);
   const musicVolume = useStore((s) => s.musicVolume);
   const musicStyle = useStore((s) => s.musicStyle);
   const lang = useStore((s) => s.lang);
@@ -196,7 +197,7 @@ function RootComponent() {
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
-  useEffect(syncSpeechVolume, [sound, volume, voiceVolume]);
+  useEffect(syncSpeechVolume, [sound, voice, volume, voiceVolume]);
   useEffect(syncVolume, [sound, volume, musicVolume]);
   useEffect(() => {
     stopSpeaking();
@@ -209,14 +210,14 @@ function RootComponent() {
       const el = (e.target as HTMLElement).closest("a,button");
       if (el && !el.closest("[data-no-tap]")) sfx("tap");
     };
-    window.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointerdown", onDown, true);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         unlockAudio();
         playAmbient(ambientFor(window.location.pathname));
       }
     };
-    window.addEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey, true);
     const onVisibility = () => {
       if (document.hidden) {
         stopSpeaking();
@@ -224,12 +225,16 @@ function RootComponent() {
       } else playAmbient(ambientFor(window.location.pathname));
     };
     document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("pagehide", onVisibility);
+    const onExit = () => {
+      stopSpeaking();
+      stopAmbient();
+    };
+    window.addEventListener("pagehide", onExit);
     return () => {
-      window.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onDown, true);
+      window.removeEventListener("keydown", onKey, true);
       document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("pagehide", onVisibility);
+      window.removeEventListener("pagehide", onExit);
     };
   }, []);
   useEffect(() => {

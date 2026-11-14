@@ -1,6 +1,7 @@
 import { getState } from "./store";
 import type { CharId } from "@/content/characters";
 import { isAudioUnlocked } from "./audio";
+import { useSyncExternalStore } from "react";
 
 /**
  * Character voices and narration. "natural" uses Lovable AI voices with a warm Ukrainian delivery
@@ -28,12 +29,38 @@ export function voices(): SpeechSynthesisVoice[] {
 const cache = new Map<string, string>(); // in-memory only; values are audio data URIs
 let audio: HTMLAudioElement | null = null;
 let token = 0;
+type SpeechState = "idle" | "loading" | "playing" | "paused" | "unavailable";
+let speechState: SpeechState = "idle";
+const listeners = new Set<() => void>();
+export const getSpeechState = () => speechState;
+function setSpeechState(state: SpeechState) {
+  speechState = state;
+  listeners.forEach((l) => l());
+}
+export function useSpeechState() {
+  return useSyncExternalStore(
+    (l) => {
+      listeners.add(l);
+      return () => listeners.delete(l);
+    },
+    getSpeechState,
+    () => "idle" as SpeechState,
+  );
+}
 
 function deviceSpeak(text: string, pitch: number) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  if (
+    typeof window === "undefined" ||
+    !("speechSynthesis" in window) ||
+    !("SpeechSynthesisUtterance" in window)
+  ) {
+    setSpeechState("unavailable");
+    return;
+  }
   const s = getState();
   if (!s.sound || s.volume === 0 || s.voiceVolume === 0) return;
   window.speechSynthesis.cancel();
+  const mine = token;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = s.lang === "uk" ? "uk-UA" : "en-US";
   u.rate = 0.85;
@@ -41,12 +68,24 @@ function deviceSpeak(text: string, pitch: number) {
   u.volume = s.volume * s.voiceVolume;
   const all = window.speechSynthesis.getVoices();
   const sameLang = all.filter((x) => x.lang.toLowerCase().replace("_", "-").startsWith(s.lang));
-  const v =
-    (s.voiceURI && sameLang.find((x) => x.voiceURI === s.voiceURI)) ??
-    sameLang[0] ??
-    all.find((x) => x.lang.startsWith("uk"));
+  const v = (s.voiceURI && sameLang.find((x) => x.voiceURI === s.voiceURI)) ?? sameLang[0];
   if (v) u.voice = v;
-  window.speechSynthesis.speak(u);
+  u.onstart = () => {
+    if (mine === token) setSpeechState("playing");
+  };
+  u.onend = () => {
+    if (mine === token) setSpeechState("idle");
+  };
+  u.onerror = () => {
+    if (mine === token) setSpeechState("unavailable");
+  };
+  setSpeechState("loading");
+  try {
+    window.speechSynthesis.resume();
+    window.speechSynthesis.speak(u);
+  } catch {
+    setSpeechState("unavailable");
+  }
 }
 
 export function speak(
@@ -71,6 +110,7 @@ export function speak(
   const style = opts.who ?? "narrator";
   const key = `${s.lang}|${voice}|${style}|${text}`;
   const my = ++token;
+  setSpeechState("loading");
   const play = (audioData: string) => {
     if (my !== token) return;
     // voice.server returns a complete data URI with the gateway's actual MIME type.
@@ -81,11 +121,38 @@ export function speak(
     const player = new Audio(source);
     audio = player;
     const current = getState();
-    if (!current.sound || current.volume === 0 || current.voiceVolume === 0) return;
+    if (!current.sound || current.volume === 0 || current.voiceVolume === 0) {
+      stopSpeaking();
+      return;
+    }
     player.volume = current.volume * current.voiceVolume;
-    void player.play().catch(() => {
-      if (my === token) deviceSpeak(text, pitch);
-    });
+    player.onplaying = () => {
+      if (my === token) setSpeechState("playing");
+    };
+    player.onended = () => {
+      if (my === token) setSpeechState("idle");
+    };
+    let fellBack = false;
+    const fallback = () => {
+      if (my !== token || fellBack) return;
+      fellBack = true;
+      player.onplaying = null;
+      player.onended = null;
+      player.onerror = null;
+      player.pause();
+      audio = null;
+      deviceSpeak(text, pitch);
+    };
+    player.onerror = fallback;
+    if (speechState === "paused") return;
+    void player
+      .play()
+      .then(() => {
+        if (my !== token || speechState === "paused") player.pause();
+      })
+      .catch(() => {
+        fallback();
+      });
   };
   const hit = cache.get(key);
   if (hit) return play(hit);
@@ -109,18 +176,35 @@ export function speak(
 }
 
 export function pauseSpeaking() {
+  if (speechState === "idle" || speechState === "unavailable") return;
+  setSpeechState("paused");
   audio?.pause();
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.pause();
 }
 export function resumeSpeaking() {
   const s = getState();
   if (!s.sound || s.volume === 0 || s.voiceVolume === 0 || !isAudioUnlocked()) return;
-  void audio?.play().catch(() => {});
+  if (speechState !== "paused") return;
+  setSpeechState("playing");
+  const mine = token;
+  const player = audio;
+  void player
+    ?.play()
+    .then(() => {
+      if (mine !== token) player.pause();
+    })
+    .catch(() => {
+      if (mine === token) setSpeechState("unavailable");
+    });
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.resume();
 }
 export function stopSpeaking() {
   token++;
+  setSpeechState("idle");
   if (audio) {
+    audio.onplaying = null;
+    audio.onended = null;
+    audio.onerror = null;
     audio.pause();
     audio = null;
   }
@@ -129,7 +213,7 @@ export function stopSpeaking() {
 
 export function syncSpeechVolume() {
   const s = getState();
-  if (!s.sound || s.volume === 0 || s.voiceVolume === 0) {
+  if (!s.sound || !s.voice || s.volume === 0 || s.voiceVolume === 0) {
     stopSpeaking();
     return;
   }

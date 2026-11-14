@@ -29,3 +29,6 @@
 - Account identity transitions use one root Auth subscriber; logout cancels and clears query caches without touching the device store, and recovery readiness requires a current Auth user.
 - Remote MCP tools use OAuth client-claim verification and expose only app-written catalog data; browser WebMCP reads only the visible map, keeping child device data inaccessible to agents.
 - OAuth consent uses the existing caregiver sign-in with canonical local return paths preserved through password sign-in and email confirmation, so child routes remain account-free.
+- Keep ready-made story fallback browser-safe and app-written, and display it as prepared rather than AI-generated; network/configuration failures must not remove offline stories.
+- Measure the fixed navigation bar for its content spacer, so translated labels, large text and safe areas cannot obscure the last controls.
+- Derive narration controls from shared speech lifecycle state, not optimistic button toggles, so failed or completed playback cannot leave a false Stop state.

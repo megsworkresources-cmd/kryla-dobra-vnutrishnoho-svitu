@@ -84,16 +84,18 @@ export function Bubbles() {
   const t = useT();
   const calm = useStore((s) => s.reduceMotion);
   const [list, setList] = useState<
-    { id: number; x: number; size: number; dur: number; hue: number; born: number }[]
+    { id: number; x: number; y: number; size: number; dur: number; hue: number; born: number }[]
   >([]);
   const [popped, setPopped] = useState(0);
   const id = useRef(0);
+  const [round, setRound] = useState(0);
   useEffect(() => {
     if (calm) {
       setList(
         Array.from({ length: 9 }, (_, n) => ({
           id: ++id.current,
           x: n,
+          y: 0,
           size: 64,
           dur: 0,
           hue: n % 4,
@@ -109,6 +111,7 @@ export function Bubbles() {
         {
           id: ++id.current,
           x: 5 + Math.random() * 65,
+          y: 15 + Math.random() * 60,
           size: 48 + Math.random() * 40,
           dur: 7 + Math.random() * 5,
           hue: Math.floor(Math.random() * 4),
@@ -116,10 +119,20 @@ export function Bubbles() {
         },
       ]);
     };
-    spawn();
+    setList(
+      Array.from({ length: 9 }, (_, n) => ({
+        id: ++id.current,
+        x: 5 + (n % 3) * 28,
+        y: 15 + Math.floor(n / 3) * 25,
+        size: 56,
+        dur: 9 + (n % 3),
+        hue: n % 4,
+        born: Date.now(),
+      })),
+    );
     const iv = window.setInterval(spawn, 900);
     return () => window.clearInterval(iv);
-  }, [calm]);
+  }, [calm, round]);
   const tints = ["bg-sky/40", "bg-rose/40", "bg-honey/40", "bg-sage/40"];
   return (
     <div className="space-y-3">
@@ -147,20 +160,41 @@ export function Bubbles() {
                   : l.filter((x) => x.id !== b.id),
               );
             }}
-            className={`${calm ? "relative" : "absolute -bottom-24 animate-bubble"} rounded-full border-2 border-card/80 p-0 shadow-soft ${tints[b.hue]}`}
+            variant="soft"
+            className={`${calm ? "relative" : "absolute"} rounded-full border-2 border-primary bg-transparent p-0 shadow-soft`}
             style={{
-              ...(calm ? {} : { left: `${b.x}%` }),
+              ...(calm ? {} : { left: `${b.x}%`, top: `${b.y}%` }),
               width: b.size,
               height: b.size,
               animationDuration: `${b.dur}s`,
             }}
           >
-            <span className="absolute left-[22%] top-[18%] h-1/4 w-1/4 rounded-full bg-card/80" />
+            <span
+              aria-hidden
+              className={`pointer-events-none absolute inset-0 rounded-full ${calm ? "" : "animate-float"} ${tints[b.hue]}`}
+            >
+              <span className="absolute left-[22%] top-[18%] h-1/4 w-1/4 rounded-full bg-card/80" />
+            </span>
           </Btn>
         ))}
-        <p className="absolute right-3 top-3 rounded-full bg-card/80 px-3 py-1 text-sm font-bold">
+        <p
+          role="status"
+          className="absolute right-3 top-3 rounded-full bg-card/80 px-3 py-1 text-sm font-bold text-card-foreground"
+        >
           🫧 {popped}
         </p>
+      </div>
+      <div className="text-center">
+        <Btn
+          variant="soft"
+          onClick={() => {
+            setPopped(0);
+            setRound((r) => r + 1);
+          }}
+        >
+          <RotateCcw size={18} className="mr-2 inline" />
+          {t("Грати ще раз")}
+        </Btn>
       </div>
     </div>
   );

@@ -35,6 +35,21 @@ it("keeps nine reachable bubbles with reduced motion without saving play", () =>
   expect(getState().completed).toEqual(progress);
 });
 
+it("starts with several bubbles and replay resets score and notes", () => {
+  update((s) => ({ ...s, reduceMotion: false }));
+  render(<Bubbles />);
+  const bubbles = screen.getAllByRole("button", { name: "Бульбашка" });
+  expect(bubbles.length).toBeGreaterThanOrEqual(6);
+  vi.mocked(chime).mockClear();
+  fireEvent.click(bubbles[0] as HTMLElement);
+  fireEvent.click(bubbles[1] as HTMLElement);
+  expect(vi.mocked(chime).mock.calls[0]?.[0]).not.toEqual(vi.mocked(chime).mock.calls[1]?.[0]);
+  expect(screen.getByRole("status")).toHaveTextContent("2");
+  fireEvent.click(screen.getByRole("button", { name: "Грати ще раз" }));
+  expect(screen.getByRole("status")).toHaveTextContent("0");
+  expect(screen.getAllByRole("button", { name: "Бульбашка" }).length).toBeGreaterThanOrEqual(6);
+});
+
 it("reset cancels a pending memory match", () => {
   vi.spyOn(Math, "random").mockReturnValue(0.999);
   render(<Pairs />);

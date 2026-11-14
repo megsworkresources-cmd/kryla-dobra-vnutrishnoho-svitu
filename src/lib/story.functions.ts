@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { tr } from "./i18n";
 
 export const StoryInput = z.object({
   who: z.enum(["solomiya", "taras", "olenka", "marko", "daryna", "lihtaryk"]),
@@ -10,16 +11,25 @@ export const StoryInput = z.object({
 });
 
 export const makeStory = createServerFn({ method: "POST" })
-  .validator(StoryInput)
+  .inputValidator(StoryInput)
   .handler(async ({ data }) => {
     const { generateStory, StoryError } = await import("./story.server");
     try {
-      return { ok: true as const, story: await generateStory(data) };
+      return {
+        ok: true as const,
+        story: await generateStory(data, process.env["LOVABLE_API_KEY"]),
+      };
     } catch (error) {
       return {
         ok: false as const,
         error: error instanceof StoryError ? error.code : "fail",
-        message: error instanceof StoryError ? error.message : "The story could not be created.",
+        message:
+          error instanceof StoryError
+            ? error.message
+            : tr(
+                "Казка цього разу не склалася. Спробуй інший вибір або відкрий готову казку.",
+                data.lang,
+              ),
       };
     }
   });

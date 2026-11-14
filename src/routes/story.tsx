@@ -13,6 +13,7 @@ import { markDone, useStore, type AgeBand } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
 import { speak, stopSpeaking } from "@/lib/speak";
 import { useServerFn } from "@tanstack/react-start";
+import { readyStory } from "@/content/ready-story";
 
 export const Route = createFileRoute("/story")({
   head: () =>
@@ -76,6 +77,7 @@ function StoryCompanion() {
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [prepared, setPrepared] = useState(false);
   const request = useRef(0);
   const createStory = useServerFn(makeStory);
 
@@ -96,6 +98,7 @@ function StoryCompanion() {
       const res = await createStory({ data: { who, place, feeling, age: AGE_ASK[age], lang } });
       if (mine !== request.current) return;
       if (res.ok) {
+        setPrepared(false);
         setStory(res.story);
         markDone("story");
       } else {
@@ -115,6 +118,13 @@ function StoryCompanion() {
     setStory(null);
     setError("");
     setLoading(false);
+  };
+  const openPrepared = () => {
+    request.current += 1;
+    stopSpeaking();
+    setLoading(false);
+    setPrepared(true);
+    setStory(readyStory(lang));
   };
 
   return (
@@ -214,12 +224,15 @@ function StoryCompanion() {
                 {loading ? t("Claude складає казку…") : t("Створити мою казку")}
               </span>
             </Btn>
+            <Btn variant="soft" onClick={openPrepared} className="w-full">
+              {t("Обрати готову казку")}
+            </Btn>
           </div>
         ) : (
           <article className="animate-fade-up space-y-4" aria-live="polite">
             <div className="paper-card overflow-hidden p-5 text-card-foreground sm:p-6">
               <p className="text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
-                {t("Нова казка з Claude")}
+                {t(prepared ? "Готова казка" : "Нова казка з Claude")}
               </p>
               <h2 className="mt-1 font-display text-3xl font-bold">{story.title}</h2>
               <div className="mt-5 space-y-5">

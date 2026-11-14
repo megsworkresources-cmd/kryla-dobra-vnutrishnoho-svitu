@@ -2,19 +2,36 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { neighbours } from "@/content/sequence";
 import { useT } from "@/lib/i18n";
+import { useEffect, useRef, useState } from "react";
 
 /** Back / Next buttons shown at the bottom of every page. */
 export function BottomNav({ night }: { night?: boolean | undefined; floating?: boolean }) {
   const t = useT();
   const { pathname } = useLocation();
   const { prev, next } = neighbours(pathname);
+  const bar = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(80);
+  useEffect(() => {
+    const element = bar.current;
+    if (!element) return;
+    const measure = () => setHeight(element.getBoundingClientRect().height);
+    measure();
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [pathname]);
   if (!prev && !next) return null;
   const card = night ? "night-card" : "paper-card";
   return (
     <>
       {/* Spacer reserves the bar's height so page content never slides underneath it. */}
-      <div aria-hidden className="h-[calc(5rem+env(safe-area-inset-bottom))] shrink-0" />
+      <div aria-hidden className="shrink-0" style={{ height }} />
       <div
+        ref={bar}
         className={`fixed inset-x-0 bottom-0 z-40 border-t border-border backdrop-blur-md ${night ? "bg-night-bar" : "bg-background/95"}`}
       >
         <nav

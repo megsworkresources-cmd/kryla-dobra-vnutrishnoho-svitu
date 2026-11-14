@@ -107,6 +107,18 @@
     font-family: var(--font-sans);
     -webkit-tap-highlight-color: transparent;
   }
+  html {
+    scroll-padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+  }
+  input,
+  textarea {
+    color: var(--ink);
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground);
+    opacity: 1;
+  }
   h1,
   h2,
   h3 {
@@ -125,6 +137,7 @@
 
 @utility paper-card {
   background: var(--card);
+  color: var(--card-foreground);
   border: 1px solid var(--border);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-soft);

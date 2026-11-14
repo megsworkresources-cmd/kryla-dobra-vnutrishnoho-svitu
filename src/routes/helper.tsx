@@ -85,8 +85,9 @@ function Helper() {
             <p className="font-bold">{t("Або обери:")}</p>
             <div className="flex flex-wrap gap-2">
               {QUICK.map((q) => (
-                <button
+                <Btn
                   key={q}
+                  variant="soft"
                   onClick={() => {
                     setText(q);
                     void ask(q);
@@ -94,23 +95,24 @@ function Helper() {
                   className="min-h-11 rounded-full bg-secondary px-4 text-sm font-bold"
                 >
                   {t(q)}
-                </button>
+                </Btn>
               ))}
             </div>
             <div className="flex flex-wrap gap-2">
               {EMOTIONS.slice(0, 6).map((e) => (
-                <button
+                <Btn
                   key={e.id}
+                  variant="soft"
                   onClick={() => {
                     const q = t(e.name).toLowerCase();
                     setText(q);
                     void ask(q);
                   }}
-                  className="flex min-h-11 items-center gap-2 rounded-full bg-secondary px-4 text-sm font-bold"
+                  className="flex min-h-11 items-center gap-2 rounded-full bg-secondary px-4 text-sm font-bold text-secondary-foreground"
                 >
                   <span className={`h-3 w-3 rounded-full ${e.color}`} />
                   {t(e.name)}
-                </button>
+                </Btn>
               ))}
             </div>
             <div className="night-card p-4">
@@ -124,7 +126,7 @@ function Helper() {
                 rows={3}
                 maxLength={300}
                 placeholder={t("Наприклад: мені сумно, бо…")}
-                className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring"
+                className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base text-secondary-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring"
               />
               <Btn
                 onClick={() => void ask(text)}
@@ -155,7 +157,7 @@ function Helper() {
                 <p className="text-xs font-extrabold uppercase tracking-wide text-moon">
                   {t("Спробуй це")}
                 </p>
-                <div className="mt-2 flex items-center justify-between gap-3 rounded-2xl bg-secondary p-3">
+                <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl bg-secondary p-3 text-secondary-foreground">
                   <span className="font-bold">
                     {t(act.title)}
                     <span className="block text-xs font-normal opacity-75">{t(act.desc)}</span>

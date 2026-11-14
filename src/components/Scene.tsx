@@ -9,6 +9,7 @@ import { sfx } from "@/lib/audio";
 import { MagicStage } from "./MagicStage";
 import { useT } from "@/lib/i18n";
 import { castFor, cheerOf, type CharId } from "@/content/characters";
+import { cn } from "@/lib/utils";
 
 interface SceneProps {
   image?: string;
@@ -43,7 +44,7 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
           <div className={`absolute inset-0 ${night ? "veil-night" : "veil-bottom"}`} />
         </div>
       )}
-      <header className="relative z-20 mx-auto flex w-full max-w-3xl items-center gap-1 px-2 pt-4 sm:gap-2 sm:px-4">
+      <header className="relative z-20 mx-auto flex w-full max-w-3xl items-center gap-1 px-2 pt-[max(1rem,env(safe-area-inset-top))] sm:gap-2 sm:px-4">
         <button
           onClick={() =>
             back
@@ -200,7 +201,11 @@ export function Btn({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`min-h-12 min-w-11 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:opacity-40 ${v} ${className}`}
+      className={cn(
+        "min-h-12 min-w-11 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:saturate-50",
+        v,
+        className,
+      )}
       {...rest}
     >
       {children}

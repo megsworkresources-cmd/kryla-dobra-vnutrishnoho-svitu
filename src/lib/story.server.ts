@@ -65,8 +65,7 @@ function failure(status: number, lang: "uk" | "en"): StoryError {
 }
 
 /** One streamed Claude call, consumed server-side. Only preset choices are sent; nothing is stored. */
-export async function generateStory(input: StoryData): Promise<Story> {
-  const apiKey = process.env["LOVABLE_API_KEY"];
+export async function generateStory(input: StoryData, apiKey: string | undefined): Promise<Story> {
   if (!apiKey) throw failure(401, input.lang);
   const runIdFetch = createLovableAiGatewayRunIdFetch();
   const anthropic = createAnthropic({
@@ -76,7 +75,8 @@ export async function generateStory(input: StoryData): Promise<Story> {
     fetch: runIdFetch.fetch,
   });
   const who = CHARACTERS[input.who];
-  const place = PLACES.find((p) => p.id === input.place)!;
+  const place = PLACES.find((p) => p.id === input.place);
+  if (!place) throw failure(400, input.lang);
   const age = input.age;
   const system = `Ти — український дитячий казкар застосунку «Тихе Місце». Створи лагідну, образну коротку казку для дитини ${age} років.
 Головний герой: ${who.name}. Місце: ${place.name}. Емоційна тема: ${FEELINGS[input.feeling].uk}.

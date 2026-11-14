@@ -12,7 +12,7 @@ import { CHARACTERS, castFor } from "@/content/characters";
 export function EmotionGallery() {
   const t = useT();
   const [sel, setSel] = useState(() => emotionAt(0));
-  const [seen, setSeen] = useState<Set<string>>(new Set([EMOTIONS[0]!.id]));
+  const [seen, setSeen] = useState<Set<string>>(new Set([emotionAt(0).id]));
   const [done, setDone] = useState(false);
   if (done)
     return (

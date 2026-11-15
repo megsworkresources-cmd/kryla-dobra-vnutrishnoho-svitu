@@ -10,7 +10,11 @@ vi.mock("@tanstack/react-start", () => ({
   createServerFn: () => ({
     middleware: (items: unknown[]) => {
       expect(items).toEqual([mocks.middleware]);
-      return { handler: (h: unknown) => h, inputValidator: () => ({ handler: (h: unknown) => h }) };
+      return {
+        handler: (h: unknown) => h,
+        validator: () => ({ handler: (h: unknown) => h }),
+        inputValidator: () => ({ handler: (h: unknown) => h }),
+      };
     },
   }),
 }));

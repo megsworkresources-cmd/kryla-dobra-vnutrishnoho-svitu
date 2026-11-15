@@ -23,7 +23,7 @@ export const readGarden = createServerFn({ method: "POST" })
 
 export const shareSunflower = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => sunflowerInput.parse(input))
+  .validator((input) => sunflowerInput.parse(input))
   .handler(async ({ data, context }) => {
     setResponseHeader("Cache-Control", "no-store");
     const token = getRequestHeader("authorization")?.replace(/^Bearer /, "");

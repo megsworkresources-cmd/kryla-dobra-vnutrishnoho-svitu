@@ -6,7 +6,7 @@ import { growthStage, totalDone, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 
-const NEXT = [1, 3, 7, 12, 20] as const;
+const NEXT: readonly number[] = [1, 3, 7, 12, 20];
 
 export const Route = createFileRoute("/garden")({
   head: () =>
@@ -108,7 +108,7 @@ function Garden() {
           <p className="font-display text-2xl font-bold">{t(words)}</p>
           <p className="mt-2 text-muted-foreground">
             {t(
-              "Кожна вправа, казка чи малюнок — крапля води для соняшника. Він ніколи не в’яне, навіть якщо ти довго не заходиш.",
+              "Кожна вправа, казка чи малюнок — крапля води для соняшника. Він ніколи не в'яне, навіть якщо ти довго не заходиш.",
             )}
           </p>
           <p className="mt-3 text-sm font-semibold">

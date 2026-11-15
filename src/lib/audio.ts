@@ -36,25 +36,37 @@ function handleAudioStateChange(changedContext: AudioContext) {
 
 function ac() {
   if (typeof window === "undefined" || !unlocked) return null;
-  if (!("AudioContext" in window)) return null;
+  if (!getState().sound) return null;
+  const AudioContextClass =
+    window.AudioContext ??
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!AudioContextClass) return null;
   if (ctx && ctx.state === "closed") {
     ctx = null;
     master = null;
   }
   if (!ctx) {
-    ctx = new AudioContext();
+    try {
+      ctx = new AudioContextClass();
+    } catch {
+      return null;
+    }
     master = ctx.createGain();
     master.connect(ctx.destination);
     const createdContext = ctx;
     createdContext.onstatechange = () => handleAudioStateChange(createdContext);
   }
-  if (ctx.state === "suspended") void ctx.resume().catch(() => {});
   return ctx;
 }
 
 export function unlockAudio() {
   unlocked = true;
-  ac();
+  const context = ac();
+  if (context && context.state !== "running" && context.state !== "closed")
+    void context.resume().catch(() => {
+      // Safari can reject resume outside a fresh gesture; surface it on the music status.
+      if (musicStatus !== "idle") setMusicStatus("error");
+    });
   syncVolume();
 }
 
@@ -75,7 +87,10 @@ export function destroyAudio() {
   ctx = null;
   if (closingContext) {
     closingContext.onstatechange = null;
-    if (closingContext.state !== "closed") void closingContext.close().catch(() => {});
+    if (closingContext.state !== "closed")
+      void closingContext.close().catch(() => {
+        // Teardown only: a failed close has no user-visible effect, and the context is already detached.
+      });
   }
 }
 
@@ -201,6 +216,9 @@ function setMusicStatus(value: MusicStatus) {
   musicStatus = value;
   statusListeners.forEach((listener) => listener());
 }
+export function getMusicStatus(): MusicStatus {
+  return musicStatus;
+}
 export function useMusicStatus() {
   return useSyncExternalStore(
     (listener) => {
@@ -315,50 +333,6 @@ const MUSIC_URLS: Record<Exclude<MusicStyle, "nature">, string> = {
   tsymbaly: tsymbalyTrack.url,
   lullaby: lullabyTrack.url,
 };
-/* If a recording is not on the host, these notes carry the style instead, generated on the
-   device. They are a stand-in for the performance, never a claim to be it. */
-const BED_NOTES: Record<Exclude<MusicStyle, "nature">, number[]> = {
-  bandura: [196, 247, 294, 392, 294, 247, 220, 262],
-  sopilka: [392, 440, 523, 587, 523, 440, 392, 349],
-  tsymbaly: [523, 659, 784, 659, 587, 523, 587, 659],
-  lullaby: [262, 330, 392, 330, 294, 262, 247, 220],
-};
-const BED_GAP: Record<Exclude<MusicStyle, "nature">, number> = {
-  bandura: 0.95,
-  sopilka: 1.15,
-  tsymbaly: 0.6,
-  lullaby: 1.6,
-};
-const BED_BRIGHT: Record<Exclude<MusicStyle, "nature">, number> = {
-  bandura: 0.45,
-  sopilka: 0.7,
-  tsymbaly: 0.85,
-  lullaby: 0.3,
-};
-function startFallbackBed(style: Exclude<MusicStyle, "nature">, bus: AudioNode, c: AudioContext) {
-  const notes = BED_NOTES[style];
-  const bright = BED_BRIGHT[style];
-  const bed = c.createGain();
-  bed.gain.value = 0.5;
-  bed.connect(bus);
-  let index = 0;
-  const play = () => {
-    if (c !== ctx || c.state !== "running") return;
-    const freq = notes[index % notes.length] ?? 262;
-    pluck(freq, c.currentTime, 0.55, bed, bright, style === "lullaby" ? 3 : 2);
-    index += 1;
-  };
-  play();
-  const timer = window.setInterval(play, BED_GAP[style] * 1000);
-  return () => {
-    window.clearInterval(timer);
-    try {
-      bed.disconnect();
-    } catch {
-      /* already disconnected */
-    }
-  };
-}
 // Cache the shared fetch/decode promise independently of any one playback's lifetime.
 // A caller stopping playback must not abort a load another caller is waiting on.
 const trackCache = new Map<string, Promise<AudioBuffer>>();
@@ -384,7 +358,7 @@ function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext) {
   return request;
 }
 
-/** Prefer the recording; carry the style on the device when it cannot be loaded. */
+/** Never silently substitute a synthetic melody for an unavailable recording. */
 export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   const c = ac();
   if (!c || style === "nature") return () => {};
@@ -392,11 +366,14 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   let stopped = false;
   let source: AudioBufferSourceNode | null = null;
   let gain: GainNode | null = null;
-  let bedStop: (() => void) | null = null;
   setMusicStatus("loading");
   void loadTrack(style, c)
     .then((buffer) => {
-      if (stopped || generation !== audioGeneration || c !== ctx || c.state !== "running") return;
+      if (stopped || generation !== audioGeneration || c !== ctx) return;
+      if (c.state !== "running") {
+        setMusicStatus("error");
+        return;
+      }
       source = c.createBufferSource();
       source.buffer = buffer;
       source.loop = true;
@@ -410,19 +387,10 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
       setMusicStatus("playing");
     })
     .catch(() => {
-      if (stopped || generation !== audioGeneration) return;
-      setMusicStatus("error");
-      // A missing file must not leave the child in silence; the device plays the style
-      // itself, softly, until the recording is uploaded again.
-      try {
-        if (c === ctx && c.state === "running") bedStop = startFallbackBed(style, bus, c);
-      } catch {
-        /* an audio context without the needed pieces is left quiet */
-      }
+      if (!stopped && generation === audioGeneration) setMusicStatus("error");
     });
   return () => {
     stopped = true;
-    bedStop?.();
     if (source) {
       try {
         source.stop();

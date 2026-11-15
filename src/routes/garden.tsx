@@ -108,7 +108,7 @@ function Garden() {
           <p className="font-display text-2xl font-bold">{t(words)}</p>
           <p className="mt-2 text-muted-foreground">
             {t(
-              "Кожна вправа, казка чи малюнок — крапля води для соняшника. Він ніколи не в'яне, навіть якщо ти довго не заходиш.",
+              "Кожна вправа, казка чи малюнок — крапля води для соняшника. Він ніколи не в’яне, навіть якщо ти довго не заходиш.",
             )}
           </p>
           <p className="mt-3 text-sm font-semibold">

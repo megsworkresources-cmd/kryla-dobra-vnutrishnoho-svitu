@@ -1,6 +1,5 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { update } from "@/lib/store";
 
 function audioContextStub() {
   const sources: { stop: ReturnType<typeof vi.fn> }[] = [];
@@ -61,8 +60,10 @@ function audioContextStub() {
   return { context, sources };
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.resetModules();
+  // The store module is reloaded by resetModules, so reach the fresh instance.
+  const { update } = await import("@/lib/store");
   update((state) => ({
     ...state,
     sound: true,
@@ -106,6 +107,7 @@ it("stops the previous soundscape on replacement and route cleanup", async () =>
 
 it("keeps music stopped when its saved volume is zero", async () => {
   const { sources } = audioContextStub();
+  const { update } = await import("@/lib/store");
   update((state) => ({ ...state, musicVolume: 0 }));
   const { unlockAudio, playAmbient } = await import("@/lib/audio");
   unlockAudio();

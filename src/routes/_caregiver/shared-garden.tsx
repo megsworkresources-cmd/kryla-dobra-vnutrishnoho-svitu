@@ -8,7 +8,7 @@ import { StoryFilm } from "@/components/StoryFilm";
 import { pageHead } from "@/content/journeys";
 import { growthPart } from "@/content/growth";
 import { readGarden, shareSunflower } from "@/lib/shared-garden.functions";
-import { growthStage, totalDone, useStore } from "@/lib/store";
+import { careCount, growthStage, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
@@ -30,8 +30,7 @@ function SharedGarden() {
   const client = useQueryClient();
   const read = useServerFn(readGarden);
   const share = useServerFn(shareSunflower);
-  const completed = useStore((s) => s.completed);
-  const localStage = growthStage(totalDone(completed));
+  const localStage = growthStage(useStore((s) => careCount(s)));
   const key = ["shared-garden", caregiver.userId];
   const garden = useQuery({
     queryKey: key,

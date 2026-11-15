@@ -6,7 +6,7 @@ import { StoryFilm } from "@/components/StoryFilm";
 import { growthPart } from "@/content/growth";
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
-import { growthStage, totalDone, useStore } from "@/lib/store";
+import { careCount, growthStage, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
@@ -30,7 +30,7 @@ const WORDS = [
 
 function Garden() {
   const t = useT();
-  const count = useStore((s) => totalDone(s.completed));
+  const count = useStore((s) => careCount(s));
   const stage = growthStage(count);
   const h = ([6, 40, 70, 100, 125, 135] as const)[stage] ?? 6;
   const words = WORDS[stage] ?? WORDS[0];

@@ -2,14 +2,16 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Pause, Play, RefreshCw } from "lucide-react";
+import { Droplets, Pause, Play, RefreshCw } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
 import { StoryFilm } from "@/components/StoryFilm";
 import { growthPart } from "@/content/growth";
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { readCommunityGarden } from "@/lib/community-garden.functions";
-import { growthStage, totalDone, useStore } from "@/lib/store";
+import { canWater, localDay } from "@/content/watering";
+import { sfx } from "@/lib/audio";
+import { careCount, growthStage, useStore, waterFlower } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
@@ -32,7 +34,9 @@ function CommunityGarden() {
     refetchInterval: 60000,
     retry: false,
   });
-  const count = useStore((s) => totalDone(s.completed));
+  const count = useStore((s) => careCount(s));
+  const wateredOn = useStore((s) => s.wateredOn);
+  const careSteps = useStore((s) => s.careSteps);
   const ownStage = growthStage(count);
   const shared = garden.data?.stages ?? [];
   const [picked, setPicked] = useState<number | null>(null);
@@ -44,6 +48,36 @@ function CommunityGarden() {
   return (
     <Scene image={placeImage("garden")} title="Спільний сад" back="/garden" compact>
       <div className="space-y-4 pt-[10vh]">
+        <section className="paper-card p-4 text-center">
+          <h2 className="font-display text-xl font-bold">{t("Полити соняшник")}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t(
+              "Одне поливання на день. Кожне поливання додає соняшнику одну сходинку росту — і нічого не в’яне, якщо ти пропустиш день.",
+            )}
+          </p>
+          {canWater(wateredOn) ? (
+            <Btn
+              className="mt-3"
+              onClick={() => {
+                waterFlower(localDay());
+                sfx("soft");
+                setPicked(null);
+                setPlaying(true);
+              }}
+            >
+              <Droplets size={18} />
+              {t("Полити соняшник")}
+            </Btn>
+          ) : (
+            <p role="status" className="mt-3 font-bold text-primary">
+              {t("Сьогодні вже полито. Соняшник підріс 🌱")}
+            </p>
+          )}
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t("Поливань: {n}", { n: careSteps })}
+          </p>
+        </section>
+
         <section className="paper-card p-4">
           <p className="text-sm text-muted-foreground">
             {t(

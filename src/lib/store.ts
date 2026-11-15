@@ -29,6 +29,8 @@ export interface AppState {
   voiceEngine: "natural" | "device";
   narrator: string; // natural narrator voice
   textSize: "normal" | "large" | "xl";
+  careSteps: number; // daily waterings that grew the sunflower
+  wateredOn: string | null; // local day (YYYY-MM-DD) of the last watering
 }
 
 const KEY = "tyhe-mistse-v1";
@@ -55,6 +57,8 @@ const DEFAULTS: AppState = {
   voiceEngine: "natural",
   narrator: "Leda",
   textSize: "normal",
+  careSteps: 0,
+  wateredOn: null,
 };
 
 /** Read current state outside React (audio engine). */
@@ -141,6 +145,16 @@ function load() {
         : DEFAULTS.textSize;
       state.voiceURI = typeof saved.voiceURI === "string" ? saved.voiceURI : DEFAULTS.voiceURI;
       state.narrator = typeof saved.narrator === "string" ? saved.narrator : DEFAULTS.narrator;
+      state.careSteps =
+        typeof saved.careSteps === "number" &&
+        Number.isSafeInteger(saved.careSteps) &&
+        saved.careSteps >= 0
+          ? saved.careSteps
+          : DEFAULTS.careSteps;
+      state.wateredOn =
+        typeof saved.wateredOn === "string" && /^\d{4}-\d{2}-\d{2}$/.test(saved.wateredOn)
+          ? saved.wateredOn
+          : DEFAULTS.wateredOn;
     }
   } catch {
     state = DEFAULTS;
@@ -196,7 +210,18 @@ export const markVisit = (place: string) =>
 
 /** Wipes only progress records (not settings or drawings). */
 export const resetProgress = () =>
-  update((s) => ({ ...s, completed: {}, lastDone: {}, visits: {} }));
+  update((s) => ({
+    ...s,
+    completed: {},
+    lastDone: {},
+    visits: {},
+    careSteps: 0,
+    wateredOn: null,
+  }));
+
+/** One watering per local day; growth never decreases and nothing leaves the device. */
+export const waterFlower = (day: string) =>
+  update((s) => (s.wateredOn === day ? s : { ...s, wateredOn: day, careSteps: s.careSteps + 1 }));
 
 export const toggleFavorite = (href: string) =>
   update((s) => ({
@@ -210,6 +235,12 @@ export const setAge = (age: AgeBand) => update((s) => ({ ...s, age }));
 
 export function totalDone(c: Record<string, number>) {
   return Object.values(c).reduce((a, b) => a + b, 0);
+}
+
+/** Growth comes from real activities plus gentle daily waterings. */
+export function careCount(s: Pick<AppState, "completed" | "careSteps">) {
+  const waterings = Number.isSafeInteger(s.careSteps) && s.careSteps > 0 ? s.careSteps : 0;
+  return totalDone(s.completed) + waterings;
 }
 
 /** Sunflower growth stage 0..5 from completed activity count. Never decreases. */

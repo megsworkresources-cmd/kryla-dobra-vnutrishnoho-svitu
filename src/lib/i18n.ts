@@ -9,6 +9,11 @@ import { getState, useStore, type Lang } from "./store";
 const EN: Record<string, string> = {
   "Анонімні соняшники з добровільною згодою дорослих. Малюнки й почуття залишаються приватними.":
     "Anonymous sunflowers shared with caregiver consent. Drawings and feelings stay private.",
+  "Полити соняшник": "Water the sunflower",
+  "Одне поливання на день. Кожне поливання додає соняшнику одну сходинку росту — і нічого не в’яне, якщо ти пропустиш день.":
+    "One watering a day. Every watering gives the sunflower one more step of growth — and nothing wilts if you miss a day.",
+  "Сьогодні вже полито. Соняшник підріс 🌱": "Watered today. Your sunflower has grown a little 🌱",
+  "Поливань: {n}": "Waterings: {n}",
   "Соняшники інших родин на стадії росту — без імен і малюнків.":
     "Sunflowers from other families at their growth stage — no names or drawings.",
   "Подивися, як ростуть соняшники інших родин.": "See how sunflowers from other families grow.",

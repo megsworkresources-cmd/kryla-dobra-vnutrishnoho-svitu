@@ -36,37 +36,25 @@ function handleAudioStateChange(changedContext: AudioContext) {
 
 function ac() {
   if (typeof window === "undefined" || !unlocked) return null;
-  if (!getState().sound) return null;
-  const AudioContextClass =
-    window.AudioContext ??
-    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-  if (!AudioContextClass) return null;
+  if (!("AudioContext" in window)) return null;
   if (ctx && ctx.state === "closed") {
     ctx = null;
     master = null;
   }
   if (!ctx) {
-    try {
-      ctx = new AudioContextClass();
-    } catch {
-      return null;
-    }
+    ctx = new AudioContext();
     master = ctx.createGain();
     master.connect(ctx.destination);
     const createdContext = ctx;
     createdContext.onstatechange = () => handleAudioStateChange(createdContext);
   }
+  if (ctx.state === "suspended") void ctx.resume().catch(() => {});
   return ctx;
 }
 
 export function unlockAudio() {
   unlocked = true;
-  const context = ac();
-  if (context && context.state !== "running" && context.state !== "closed")
-    void context.resume().catch(() => {
-      // Safari can reject resume outside a fresh gesture; surface it on the music status.
-      if (musicStatus !== "idle") setMusicStatus("error");
-    });
+  ac();
   syncVolume();
 }
 
@@ -87,10 +75,7 @@ export function destroyAudio() {
   ctx = null;
   if (closingContext) {
     closingContext.onstatechange = null;
-    if (closingContext.state !== "closed")
-      void closingContext.close().catch(() => {
-        // Teardown only: a failed close has no user-visible effect, and the context is already detached.
-      });
+    if (closingContext.state !== "closed") void closingContext.close().catch(() => {});
   }
 }
 
@@ -216,9 +201,6 @@ function setMusicStatus(value: MusicStatus) {
   musicStatus = value;
   statusListeners.forEach((listener) => listener());
 }
-export function getMusicStatus(): MusicStatus {
-  return musicStatus;
-}
 export function useMusicStatus() {
   return useSyncExternalStore(
     (listener) => {
@@ -336,29 +318,13 @@ const MUSIC_URLS: Record<Exclude<MusicStyle, "nature">, string> = {
 // Cache the shared fetch/decode promise independently of any one playback's lifetime.
 // A caller stopping playback must not abort a load another caller is waiting on.
 const trackCache = new Map<string, Promise<AudioBuffer>>();
-// The recordings are stored separately from the app, so a host can answer 404 while the
-// exercise pages keep working. Remember such an answer briefly: one failed request instead
-// of one per screen, and the next attempt after the window still finds a re-uploaded file.
-const missingTracks = new Map<string, number>();
-const MISSING_TTL = 30_000;
-function knownMissing(style: Exclude<MusicStyle, "nature">) {
-  const seen = missingTracks.get(style);
-  if (seen === undefined) return false;
-  if (Date.now() - seen < MISSING_TTL) return true;
-  missingTracks.delete(style);
-  return false;
-}
 
 function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext) {
   const hit = trackCache.get(style);
   if (hit) return hit;
-  if (knownMissing(style)) return Promise.reject(new Error("music unavailable"));
   const request = fetch(MUSIC_URLS[style], { signal: AbortSignal.timeout(20000) })
     .then((r) => {
-      if (!r.ok) {
-        if (r.status === 404 || r.status === 403) missingTracks.set(style, Date.now());
-        throw new Error("music unavailable");
-      }
+      if (!r.ok) throw new Error("music unavailable");
       return r.arrayBuffer();
     })
     .then((data) => c.decodeAudioData(data))
@@ -378,11 +344,6 @@ function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext) {
 export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   const c = ac();
   if (!c || style === "nature") return () => {};
-  if (knownMissing(style)) {
-    // The file is absent, not the connection — say so at once instead of loading for ever.
-    setMusicStatus("error");
-    return () => {};
-  }
   const generation = audioGeneration;
   let stopped = false;
   let source: AudioBufferSourceNode | null = null;
@@ -390,11 +351,7 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   setMusicStatus("loading");
   void loadTrack(style, c)
     .then((buffer) => {
-      if (stopped || generation !== audioGeneration || c !== ctx) return;
-      if (c.state !== "running") {
-        setMusicStatus("error");
-        return;
-      }
+      if (stopped || generation !== audioGeneration || c !== ctx || c.state !== "running") return;
       source = c.createBufferSource();
       source.buffer = buffer;
       source.loop = true;

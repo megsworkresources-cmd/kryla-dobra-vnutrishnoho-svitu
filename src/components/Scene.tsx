@@ -1,4 +1,4 @@
-import { Link, useLocation, useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, Heart, Home, Map, Settings2 } from "lucide-react";
 import { useEffect, useState, type ReactNode, type CSSProperties } from "react";
 import { BottomNav } from "./BottomNav";
@@ -120,7 +120,9 @@ export function DoneCard({
   night?: boolean;
   who?: CharId;
 }) {
-  const { pathname } = useLocation();
+  // DoneCard also renders without a router — in tests and previews of a single screen —
+  // so the section comes from the address bar, which holds the same value.
+  const pathname = typeof window === "undefined" ? "/" : window.location.pathname;
   const t = useT();
   const hero = who ?? castFor(pathname.split("/")[1] ?? "")[0];
   const [cheer] = useState(() => cheerOf(hero));

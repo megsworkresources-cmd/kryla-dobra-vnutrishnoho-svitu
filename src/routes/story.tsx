@@ -159,6 +159,8 @@ function StoryCompanion() {
                     label={t("Обрати {n}", { n: t(CHARACTERS[id].name) })}
                   >
                     <img
+                      loading="lazy"
+                      decoding="async"
                       src={CHARACTERS[id].image}
                       alt=""
                       className="mx-auto h-14 w-14 object-contain"

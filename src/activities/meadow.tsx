@@ -60,22 +60,7 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
       <DoneCard text={t("Дякую, що побув на лузі. Далі можна дихати звичайно.")} again={reset} />
     );
   return (
-    <div className="space-y-5 text-center">
-      <CharacterSay
-        who="olenka"
-        size="sm"
-        mood="calm"
-        autoSpeak={!running}
-        action={running ? "breathe" : undefined}
-        text={t(
-          pick(age, {
-            young: "Нюхай квітку. Потім легко подуй на пелюстки. Дихай так, як зручно тобі.",
-            mid: "Дихай м’яко, без затримок. Якщо цей ритм незручний — зроби паузу й дихай звичайно.",
-            older:
-              "Не намагайся вдихати надто глибоко. Орієнтир — комфорт, а не точне потрапляння в ритм.",
-          }),
-        )}
-      />
+    <div className="space-y-4 text-center">
       {!started && (
         <div className="flex justify-center gap-2" aria-label={t("Тривалість")}>
           {[60, 120, 180].map((seconds) => (
@@ -136,6 +121,21 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
           </Btn>
         )}
       </div>
+      <CharacterSay
+        who="olenka"
+        size="sm"
+        mood="calm"
+        autoSpeak={!running}
+        action={running ? "breathe" : undefined}
+        text={t(
+          pick(age, {
+            young: "Нюхай квітку. Потім легко подуй на пелюстки. Дихай так, як зручно тобі.",
+            mid: "Дихай м’яко, без затримок. Якщо цей ритм незручний — зроби паузу й дихай звичайно.",
+            older:
+              "Не намагайся вдихати надто глибоко. Орієнтир — комфорт, а не точне потрапляння в ритм.",
+          }),
+        )}
+      />
     </div>
   );
 }

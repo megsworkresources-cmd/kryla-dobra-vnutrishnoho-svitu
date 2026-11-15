@@ -73,6 +73,8 @@ function Explore() {
               >
                 <div className="relative h-full" style={{ aspectRatio: "1088 / 1920" }}>
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src={map}
                     alt={t("Чарівна долина з лісом, лугом, хмарним замком і нічним небом")}
                     className="h-full w-full select-none rounded-2xl"
@@ -147,6 +149,8 @@ function Explore() {
           <div className="absolute inset-x-3 bottom-3 z-20 mx-auto max-w-md animate-fade-up">
             <div className="paper-card flex items-center gap-3 p-3">
               <img
+                loading="lazy"
+                decoding="async"
                 src={place.image}
                 alt=""
                 className="h-16 w-16 shrink-0 rounded-2xl object-cover"

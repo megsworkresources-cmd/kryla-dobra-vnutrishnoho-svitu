@@ -15,6 +15,7 @@ export function StoryFilm({
   startAt,
   part,
   label,
+  quiet,
 }: {
   src: string;
   poster: string;
@@ -25,6 +26,8 @@ export function StoryFilm({
   part?: { from: number; to: number } | undefined;
   /** Accessible name for the footage, when it is not a cartoon. */
   label?: string | undefined;
+  /** Decorative footage: a blocked autoplay stays silent instead of asking for a tap. */
+  quiet?: boolean | undefined;
 }) {
   const t = useT();
   const video = useRef<HTMLVideoElement>(null);
@@ -152,7 +155,7 @@ export function StoryFilm({
           pauseOwner.current();
         }}
       />
-      {status !== "ready" && (
+      {status !== "ready" && !(quiet && status === "blocked") && (
         <div className="absolute inset-x-0 top-0 z-20 bg-card/95 p-3 text-center text-sm text-card-foreground">
           <p role={status === "error" ? "alert" : "status"}>
             {t(

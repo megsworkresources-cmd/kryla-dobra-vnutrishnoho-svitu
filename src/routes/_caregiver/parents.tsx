@@ -148,6 +148,8 @@ function Parents() {
                   className={`flex items-center gap-2 rounded-2xl p-2 ${v ? "bg-secondary" : "opacity-60"}`}
                 >
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src={p.image}
                     alt=""
                     className="h-10 w-10 shrink-0 rounded-xl object-cover"
@@ -221,6 +223,8 @@ function Parents() {
                 .map((d) => (
                   <li key={d.id}>
                     <img
+                      loading="lazy"
+                      decoding="async"
                       src={d.data}
                       alt={t("Малюнок від {d}", { d: date(d.at) })}
                       className="aspect-[9/7] w-full rounded-xl object-cover"

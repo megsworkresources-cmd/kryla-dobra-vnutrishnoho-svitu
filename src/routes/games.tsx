@@ -287,6 +287,8 @@ export function Pairs() {
             >
               {shown ? (
                 <img
+                  loading="lazy"
+                  decoding="async"
                   src={CHARACTERS[c.who].image}
                   alt=""
                   className="mx-auto h-full w-auto object-contain p-1"

@@ -54,7 +54,6 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
   }, [path]);
 
   const card = night ? "night-card" : "paper-card";
-  const progress = position >= 0 ? ((position + 1) / ORDER.length) * 100 : 0;
   return (
     <>
       {/* Spacer reserves the bar's height so page content never slides underneath it. */}
@@ -90,16 +89,8 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
             </nav>
           )}
 
-          <div className="mb-1 flex items-baseline gap-2 text-[0.7rem] font-extrabold uppercase tracking-wide">
-            <span className="truncate">{t(current?.label ?? "Тихе Місце")}</span>
-            {position >= 0 && (
-              <span className="ml-auto shrink-0 tabular-nums opacity-70">
-                {t("Крок {i} з {n}", { i: position + 1, n: ORDER.length })}
-              </span>
-            )}
-          </div>
-          <div className="mb-1.5 h-1 overflow-hidden rounded-full bg-secondary" aria-hidden>
-            <div className="h-full rounded-full bg-primary" style={{ width: `${progress}%` }} />
+          <div className="mb-1.5 truncate text-[0.7rem] font-extrabold uppercase tracking-wide">
+            {t(current?.label ?? "Тихе Місце")}
           </div>
 
           <nav

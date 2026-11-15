@@ -59,6 +59,7 @@ function Garden() {
               onPause={() => setPlaying(false)}
               part={growthPart(stage)}
               label="Запис росту соняшника"
+              quiet
             />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-night/85 via-night/40 to-transparent px-3 pb-3 pt-10">
               <p className="font-display text-lg font-bold text-moon">{t(words)}</p>
@@ -76,7 +77,7 @@ function Garden() {
               href="https://commons.wikimedia.org/wiki/File:Sunflower_growing_time_lapse.gif"
               target="_blank"
               rel="noreferrer"
-              className="underline"
+              className="inline-block py-1 underline"
             >
               {t("Відео: Naturenow, CC BY-SA 4.0; перетворено з GIF у MP4.")}
             </a>{" "}

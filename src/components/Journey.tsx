@@ -30,6 +30,8 @@ export function JourneyActivity({
   title: string;
 }) {
   const C = ACTIVITIES[place][id];
+  // The breathing exercises draw their own large flower and sea, so no second motif.
+  const ownVisual = place === "meadow" && (id === "flower" || id === "wave");
   return (
     <Scene
       title={title}
@@ -40,7 +42,7 @@ export function JourneyActivity({
       compact
     >
       <div className="space-y-4 pt-[6vh]">
-        <Motif place={place} id={id} night={place === "sky"} />
+        {!ownVisual && <Motif place={place} id={id} night={place === "sky"} />}
         {C ? <C /> : null}
       </div>
     </Scene>

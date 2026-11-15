@@ -47,7 +47,13 @@ function CommunityGarden() {
 
   return (
     <Scene image={placeImage("garden")} title="Спільний сад" back="/garden" compact>
-      <div className="space-y-4 pt-[10vh]">
+      <div className="space-y-4 pt-[6vh]">
+        <p className="text-sm text-muted-foreground">
+          {t(
+            "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.",
+          )}
+        </p>
+
         <section className="paper-card p-4 text-center">
           <h2 className="font-display text-xl font-bold">{t("Полити соняшник")}</h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -79,19 +85,9 @@ function CommunityGarden() {
         </section>
 
         <section className="paper-card p-4">
-          <p className="text-sm text-muted-foreground">
-            {t(
-              "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.",
-            )}
-          </p>
-          <div className="mt-3 flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="font-display text-2xl font-bold">{t("Спільний сад")}</h2>
-            {!unavailable && (
-              <p className="text-sm text-muted-foreground">
-                {t("У саду {n} квіток", { n: shared.length + 1 })}
-              </p>
-            )}
-          </div>
+          {!unavailable && (
+            <p className="text-sm font-bold">{t("У саду {n} квіток", { n: shared.length + 1 })}</p>
+          )}
           <p className="mt-1 text-sm text-muted-foreground">
             {t("Обери квітку, щоб побачити, як вона росла.")}
           </p>
@@ -192,6 +188,7 @@ function CommunityGarden() {
               onPause={() => setPlaying(false)}
               part={growthPart(shownStage)}
               label="Запис росту соняшника"
+              quiet
             />
           </div>
           <div className="flex flex-wrap justify-center gap-2 p-4">
@@ -205,7 +202,7 @@ function CommunityGarden() {
               href="https://commons.wikimedia.org/wiki/File:Sunflower_growing_time_lapse.gif"
               target="_blank"
               rel="noreferrer"
-              className="underline"
+              className="inline-block py-1 underline"
             >
               {t("Відео: Naturenow, CC BY-SA 4.0; перетворено з GIF у MP4.")}
             </a>{" "}

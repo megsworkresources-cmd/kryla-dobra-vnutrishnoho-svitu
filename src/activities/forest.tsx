@@ -335,6 +335,9 @@ export function SortGame() {
   const [picked, setPicked] = useState<string | null>(null);
   const [stars, setStars] = useState(0);
   const [burst, setBurst] = useState(0);
+  // Replaying must re-render even when every other value is unchanged: the card list
+  // may have been reloaded in the meantime, and a state that keeps its value is a no-op.
+  const [round, setRound] = useState(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
   const item = SORT_ITEMS[i];
@@ -348,6 +351,7 @@ export function SortGame() {
           setBurst(0);
           setFb(null);
           setPicked(null);
+          setRound((r) => r + 1);
         }}
       />
     );
@@ -373,7 +377,7 @@ export function SortGame() {
   };
   const target = picked ? BASKETS.findIndex((b) => b.kind === picked) : -1;
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" key={round}>
       <div className="flex items-center justify-between text-sm">
         <span className="text-muted-foreground">
           {t("Картка {i} з {n}", { i: i + 1, n: SORT_ITEMS.length })}

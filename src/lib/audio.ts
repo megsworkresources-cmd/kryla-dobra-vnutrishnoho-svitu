@@ -36,25 +36,37 @@ function handleAudioStateChange(changedContext: AudioContext) {
 
 function ac() {
   if (typeof window === "undefined" || !unlocked) return null;
-  if (!("AudioContext" in window)) return null;
+  if (!getState().sound) return null;
+  const AudioContextClass =
+    window.AudioContext ??
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!AudioContextClass) return null;
   if (ctx && ctx.state === "closed") {
     ctx = null;
     master = null;
   }
   if (!ctx) {
-    ctx = new AudioContext();
+    try {
+      ctx = new AudioContextClass();
+    } catch {
+      return null;
+    }
     master = ctx.createGain();
     master.connect(ctx.destination);
     const createdContext = ctx;
     createdContext.onstatechange = () => handleAudioStateChange(createdContext);
   }
-  if (ctx.state === "suspended") void ctx.resume().catch(() => {});
   return ctx;
 }
 
 export function unlockAudio() {
   unlocked = true;
-  ac();
+  const context = ac();
+  if (context && context.state !== "running" && context.state !== "closed")
+    void context.resume().catch(() => {
+      // Safari can reject resume outside a fresh gesture; surface it on the music status.
+      if (musicStatus !== "idle") setMusicStatus("error");
+    });
   syncVolume();
 }
 
@@ -75,7 +87,10 @@ export function destroyAudio() {
   ctx = null;
   if (closingContext) {
     closingContext.onstatechange = null;
-    if (closingContext.state !== "closed") void closingContext.close().catch(() => {});
+    if (closingContext.state !== "closed")
+      void closingContext.close().catch(() => {
+        // Teardown only: a failed close has no user-visible effect, and the context is already detached.
+      });
   }
 }
 
@@ -200,6 +215,9 @@ const statusListeners = new Set<() => void>();
 function setMusicStatus(value: MusicStatus) {
   musicStatus = value;
   statusListeners.forEach((listener) => listener());
+}
+export function getMusicStatus(): MusicStatus {
+  return musicStatus;
 }
 export function useMusicStatus() {
   return useSyncExternalStore(
@@ -372,7 +390,11 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   setMusicStatus("loading");
   void loadTrack(style, c)
     .then((buffer) => {
-      if (stopped || generation !== audioGeneration || c !== ctx || c.state !== "running") return;
+      if (stopped || generation !== audioGeneration || c !== ctx) return;
+      if (c.state !== "running") {
+        setMusicStatus("error");
+        return;
+      }
       source = c.createBufferSource();
       source.buffer = buffer;
       source.loop = true;

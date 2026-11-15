@@ -10,8 +10,8 @@ import { loadEnv } from "vite";
 
 // The framework's dev asset proxy serves recorded films and images from Lovable,
 // but it reads LOVABLE_PREVIEW_HOST from process.env. Vite only exposes VITE_*
-// variables itself, so forward a host configured in .env.local (git-ignored) and
-// never override the value Lovable's own sandbox already provides.
+// variables itself, so forward the host in .env (or a .env.local override) and
+// never replace the value Lovable's own sandbox already provides.
 const localEnv = loadEnv(process.env["NODE_ENV"] ?? "development", process.cwd(), "");
 if (!process.env["LOVABLE_PREVIEW_HOST"] && localEnv["LOVABLE_PREVIEW_HOST"])
   process.env["LOVABLE_PREVIEW_HOST"] = localEnv["LOVABLE_PREVIEW_HOST"];

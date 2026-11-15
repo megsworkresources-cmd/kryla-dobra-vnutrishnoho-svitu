@@ -9,6 +9,44 @@ import { getState, useStore, type Lang } from "./store";
 const EN: Record<string, string> = {
   "Анонімні соняшники з добровільною згодою дорослих. Малюнки й почуття залишаються приватними.":
     "Anonymous sunflowers shared with caregiver consent. Drawings and feelings stay private.",
+  "Можна було просто дихати й нічого не вирішувати.":
+    "It was enough to breathe and decide nothing at all.",
+  "Сум був поруч. {who} не проганяв його — просто сидів разом із ним.":
+    "Sadness was nearby. {who} did not chase it away — just sat with it.",
+  "Хвилювання скидалося на маленьку хмарку: вона є, і з нею можна йти далі.":
+    "The worry was like a small cloud: it is there, and you can keep walking with it.",
+  "Злість була гарячою, як чай. {who} дав їй трохи місця й вибрав, що робити далі.":
+    "The anger was hot as tea. {who} gave it some room and chose what to do next.",
+  "Було чим пишатися: маленький крок виявився справжнім.":
+    "There was something to be proud of: a small step turned out to be real.",
+  "Цікавість тягнула вперед, і {who} обережно ступив далі.":
+    "Curiosity pulled forward, and {who} took a careful step on.",
+  "У саду пахло землею й соняшниками, а листя шепотіло.":
+    "The garden smelled of earth and sunflowers, and the leaves were whispering.",
+  "Ліс шумів тихо, і стежка сама вела вперед.":
+    "The forest hummed quietly, and the path led on by itself.",
+  "На лузі гойдалися квіти, а вітер був м’який, як ковдра.":
+    "Flowers swayed in the meadow, and the wind was soft as a blanket.",
+  "Хмари пливли повільно, і можна було спертися на них поглядом.":
+    "Clouds drifted slowly, and you could rest your eyes on them.",
+  "Над головою горіли зорі, і кожна була чиєюсь маленькою історією.":
+    "Stars burned overhead, and each one was someone's small story.",
+  "На столі лежали фарби, і білий аркуш чекав.":
+    "Paints lay on the table, and a white sheet was waiting.",
+  "Стежка була звичайна, але кроки на ній були свої.":
+    "The path was ordinary, but the steps on it were your own.",
+  "У безпечному місці було тепло, і ніхто не квапив.":
+    "The safe place was warm, and nobody hurried you.",
+  "{who} прийшов у {place}. Там було тихо, і можна було не поспішати.":
+    "{who} came to {place}. It was quiet there, and there was no need to hurry.",
+  "Спочатку {who} просто стояв. Потім зробив один маленький крок — невеликий, але свій.":
+    "At first {who} just stood. Then came one small step — not big, but their own.",
+  "Казка про {place}, де було тепло": "A story about {place}, where it was warm",
+  "Ця казка не мусить закінчуватися правильно. Достатньо, що {who} був тут.":
+    "This story does not have to end the right way. It is enough that {who} was here.",
+  "Чарівне місце": "A magical place",
+  "Було тихо, і можна було не поспішати.": "It was quiet, and there was no need to hurry.",
+  "Складено в застосунку": "Written in the app",
   "Полити соняшник": "Water the sunflower",
   "Одне поливання на день. Кожне поливання додає соняшнику одну сходинку росту — і нічого не в’яне, якщо ти пропустиш день.":
     "One watering a day. Every watering gives the sunflower one more step of growth — and nothing wilts if you miss a day.",

@@ -1,5 +1,5 @@
 import { CharacterSay } from "@/components/Character";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Guided, Narration } from "@/components/Activity";
@@ -90,7 +90,13 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
           ))}
         </div>
       )}
-      <BreathVisual kind={kind} grow={running && isInhale} seconds={isInhale ? inhale : exhale} />
+      <BreathVisual
+        key={`${kind}-${started}-${duration}`}
+        kind={kind}
+        running={running}
+        inhale={inhale}
+        exhale={exhale}
+      />
       <div aria-live="polite">
         <p className="font-display text-3xl font-bold">
           {started ? (running ? phase : t("Пауза")) : t("У своєму темпі")}
@@ -173,81 +179,121 @@ export function RelaxBody() {
   );
 }
 
-/** Flower opens on the in-breath; the wave rises on the in-breath and settles on the out-breath. */
+/**
+ * The flower opens on the in-breath and closes on the out-breath; the sea rises and
+ * settles with the same rhythm. The motion runs on a CSS keyframe whose period matches
+ * the exercise, so it stays smooth between the one-second ticks and simply freezes when paused.
+ */
 function BreathVisual({
   kind,
-  grow,
-  seconds,
+  running,
+  inhale,
+  exhale,
 }: {
   kind: "flower" | "wave";
-  grow: boolean;
-  seconds: number;
+  running: boolean;
+  inhale: number;
+  exhale: number;
 }) {
   const t = useT();
-  const ease = { transition: `transform ${seconds}s ease-in-out` };
-  if (kind === "wave")
-    return (
-      <svg
-        viewBox="0 0 240 150"
-        className="mx-auto h-48 w-full max-w-sm overflow-hidden rounded-3xl"
-        role="img"
-        aria-label={t("Хвиля дихання")}
-      >
-        <rect width="240" height="150" fill="var(--secondary)" />
-        <circle cx="190" cy="34" r="16" fill="var(--honey)" opacity=".8" />
-        <g style={{ ...ease, transform: `translateY(${grow ? -42 : 0}px)` }}>
-          <path
-            className="animate-wave-x"
-            d="M-240 100 q30 -18 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 V200 H-240z"
-            fill="var(--sky)"
-            opacity=".55"
-          />
-          <path
-            className="animate-wave-x-slow"
-            d="M-240 110 q30 -14 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 V200 H-240z"
-            fill="var(--primary)"
-            opacity=".45"
-          />
-          <g transform="translate(110 92)" className="animate-sway">
-            <path d="M0 0 h22 l-5 7 h-12z" fill="var(--ink)" />
-            <path d="M11 0 v-16 l9 12z" fill="var(--paper)" />
-          </g>
-        </g>
-      </svg>
-    );
+  const period = inhale + exhale;
+  const peak = Math.round((inhale / period) * 100);
+  const name = `breath-${kind}-${inhale}-${exhale}`;
+  const rest = kind === "wave" ? "translateY(0px)" : "scale(0.56) rotate(0deg)";
+  const full = kind === "wave" ? "translateY(-46px)" : "scale(1) rotate(18deg)";
+  const style: CSSProperties = {
+    animation: `${name} ${period}s ease-in-out infinite`,
+    animationPlayState: running ? "running" : "paused",
+  };
   return (
-    <svg
-      viewBox="0 0 200 200"
-      className="mx-auto h-56 w-56"
-      role="img"
-      aria-label={t("Квітка дихання")}
-    >
-      <path d="M100 200 V130" stroke="var(--sage)" strokeWidth="6" strokeLinecap="round" />
-      <ellipse cx="80" cy="170" rx="16" ry="7" fill="var(--sage)" transform="rotate(-25 80 170)" />
-      <g
-        style={{
-          ...ease,
-          transform: `scale(${grow ? 1 : 0.55}) rotate(${grow ? 20 : 0}deg)`,
-          transformOrigin: "100px 95px",
-        }}
-      >
-        {Array.from({ length: 10 }, (_, i) => (
-          <ellipse
-            key={i}
-            cx="100"
-            cy="50"
-            rx="15"
-            ry="38"
+    <>
+      <style>{`@keyframes ${name} {
+  0%, 100% { transform: ${rest}; }
+  ${peak}% { transform: ${full}; }
+}`}</style>
+      {kind === "wave" ? (
+        <svg
+          viewBox="0 0 240 150"
+          className="mx-auto h-48 w-full max-w-sm overflow-hidden rounded-3xl"
+          role="img"
+          aria-label={t("Хвиля дихання")}
+        >
+          <rect width="240" height="150" fill="var(--secondary)" />
+          <circle
+            cx="190"
+            cy="34"
+            r="16"
             fill="var(--honey)"
-            stroke="var(--accent)"
-            strokeWidth="1"
-            transform={`rotate(${i * 36} 100 95)`}
-            opacity=".95"
+            opacity=".8"
+            className="animate-twinkle"
           />
-        ))}
-      </g>
-      <circle cx="100" cy="95" r="22" fill="var(--ink)" opacity=".85" />
-      <circle cx="93" cy="89" r="4" fill="var(--paper)" opacity=".4" />
-    </svg>
+          <g style={style}>
+            <path
+              className="animate-wave-x"
+              d="M-240 100 q30 -18 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 V200 H-240z"
+              fill="var(--sky)"
+              opacity=".55"
+            />
+            <path
+              className="animate-wave-x-slow"
+              d="M-240 110 q30 -14 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 V200 H-240z"
+              fill="var(--primary)"
+              opacity=".45"
+            />
+            <g transform="translate(110 92)" className="animate-float">
+              <path d="M0 0 h22 l-5 7 h-12z" fill="var(--ink)" />
+              <path d="M11 0 v-16 l9 12z" fill="var(--paper)" />
+            </g>
+          </g>
+        </svg>
+      ) : (
+        <svg
+          viewBox="0 0 200 200"
+          className="mx-auto h-56 w-56"
+          role="img"
+          aria-label={t("Квітка дихання")}
+        >
+          <path d="M100 200 V130" stroke="var(--sage)" strokeWidth="6" strokeLinecap="round" />
+          <ellipse
+            cx="80"
+            cy="170"
+            rx="16"
+            ry="7"
+            fill="var(--sage)"
+            transform="rotate(-25 80 170)"
+          />
+          <g style={{ ...style, transformOrigin: "100px 95px" }}>
+            {Array.from({ length: 10 }, (_, i) => (
+              <ellipse
+                key={i}
+                cx="100"
+                cy="50"
+                rx="15"
+                ry="38"
+                fill="var(--honey)"
+                stroke="var(--accent)"
+                strokeWidth="1"
+                transform={`rotate(${i * 36} 100 95)`}
+                opacity=".95"
+              />
+            ))}
+          </g>
+          <circle cx="100" cy="95" r="22" fill="var(--ink)" opacity=".85" />
+          <circle cx="93" cy="89" r="4" fill="var(--paper)" opacity=".4" />
+          {[34, 160, 172].map((x, k) => (
+            <circle
+              key={x}
+              cx={x}
+              cy={120 - k * 26}
+              r="3.5"
+              fill="var(--honey)"
+              opacity=".7"
+              className="animate-float"
+              style={{ animationDelay: `${k * 0.9}s` }}
+            />
+          ))}
+        </svg>
+      )}
+    </>
   );
 }

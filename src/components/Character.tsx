@@ -11,7 +11,8 @@ export type Mood = "talk" | "listen" | "think" | "cheer" | "calm";
 export type Action = "squeeze" | "shrug" | "feet" | "settle" | "look" | "breathe";
 const MOOD_MARK: Record<Mood, string> = {
   talk: "",
-  listen: "👂",
+  // Listening is shown by the character's own pose, not a floating glyph by the head.
+  listen: "",
   think: "💭",
   cheer: "✨",
   calm: "🌿",

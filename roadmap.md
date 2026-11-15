@@ -1,5 +1,6 @@
 # Completion roadmap
 
+- [x] Polish request: story creation always finishes (app-written story when the AI key is absent), the breathing flower and wave are driven by a breath-period CSS animation instead of second-by-second state, the floating ear glyph is gone, and every exercise plus the created story carries an animated motif. 144 tests pass.
 - [x] Watering request: a once-a-day check-in on the community garden waters the child's sunflower, adds one care step locally (no data leaves the device) and feeds the same growth stages, so the flower and its film advance; missed days never take growth away. 139 tests pass.
 - [x] Public garden request: children open /community-garden with no adult sign-in; it reads only coarse stages from a stage-only projection (migration 0002 adds an anon-readable RPC, with a narrow server-side fallback) and never carries ids, owners or child data. 136 tests pass.
 - [x] Garden request: the child's garden now plays the recorded sunflower growth only up to the flower's current stage (six stage slices, looping, pause control, credit), keeps the stage illustration as "today", and links to the shared garden; the shared garden became a community bed of every opted-in anonymous sunflower with per-flower growth playback. 133 tests pass.

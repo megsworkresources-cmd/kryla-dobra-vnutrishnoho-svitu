@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { BookOpen, Sparkles, Square, Volume2 } from "lucide-react";
 import night from "@/assets/night.jpg";
 import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
 import { MagicStage } from "@/components/MagicStage";
+import { Motif } from "@/components/Motif";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { PLACES } from "@/content/places";
 import { pageHead } from "@/content/journeys";
@@ -14,6 +15,7 @@ import { useLang, useT } from "@/lib/i18n";
 import { speak, stopSpeaking } from "@/lib/speak";
 import { useServerFn } from "@tanstack/react-start";
 import { readyStory } from "@/content/ready-story";
+import { composedStory } from "@/content/story-builder";
 
 export const Route = createFileRoute("/story")({
   head: () =>
@@ -76,8 +78,7 @@ function StoryCompanion() {
   const [feeling, setFeeling] = useState<Feeling>("calm");
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [prepared, setPrepared] = useState(false);
+  const [source, setSource] = useState<"ai" | "ready" | "app">("ai");
   const request = useRef(0);
   const createStory = useServerFn(makeStory);
 
@@ -89,24 +90,26 @@ function StoryCompanion() {
     [],
   );
 
+  const show = (next: Story, from: "ai" | "app") => {
+    setSource(from);
+    setStory(next);
+    markDone("story");
+  };
+
   const generate = async () => {
     const mine = ++request.current;
     stopSpeaking();
     setLoading(true);
-    setError("");
     try {
       const res = await createStory({ data: { who, place, feeling, age: AGE_ASK[age], lang } });
       if (mine !== request.current) return;
-      if (res.ok) {
-        setPrepared(false);
-        setStory(res.story);
-        markDone("story");
-      } else {
-        setError(res.message);
-      }
+      // The app can always write a story itself, so creating one never dead-ends.
+      show(
+        res.ok ? res.story : composedStory({ who, place, feeling, lang }),
+        res.ok ? "ai" : "app",
+      );
     } catch {
-      if (mine === request.current)
-        setError(t("Казка цього разу не склалася. Спробуй інший вибір або відкрий готову казку."));
+      if (mine === request.current) show(composedStory({ who, place, feeling, lang }), "app");
     } finally {
       if (mine === request.current) setLoading(false);
     }
@@ -116,14 +119,14 @@ function StoryCompanion() {
     request.current += 1;
     stopSpeaking();
     setStory(null);
-    setError("");
+    setSource("ai");
     setLoading(false);
   };
   const openPrepared = () => {
     request.current += 1;
     stopSpeaking();
     setLoading(false);
-    setPrepared(true);
+    setSource("ready");
     setStory(readyStory(lang));
   };
 
@@ -207,17 +210,6 @@ function StoryCompanion() {
                 "До Claude надсилаються лише твій вік, мова й три вибори вище. Без імені, власних слів і збереження казки.",
               )}
             </p>
-            {error && (
-              <div className="paper-card p-4 text-center" role="alert">
-                <p>{error}</p>
-                <Link
-                  to="/sky"
-                  className="mt-2 inline-flex min-h-11 items-center font-bold underline"
-                >
-                  {t("Обрати готову казку")}
-                </Link>
-              </div>
-            )}
             <Btn onClick={() => void generate()} disabled={loading} className="w-full">
               <span className="inline-flex items-center gap-2">
                 <Sparkles className="h-5 w-5" />
@@ -230,9 +222,16 @@ function StoryCompanion() {
           </div>
         ) : (
           <article className="animate-fade-up space-y-4" aria-live="polite">
+            <Motif place={place} id="story" night />
             <div className="paper-card overflow-hidden p-5 text-card-foreground sm:p-6">
               <p className="text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
-                {t(prepared ? "Готова казка" : "Нова казка з Claude")}
+                {t(
+                  source === "ai"
+                    ? "Нова казка з Claude"
+                    : source === "ready"
+                      ? "Готова казка"
+                      : "Складено в застосунку",
+                )}
               </p>
               <h2 className="mt-1 font-display text-3xl font-bold">{story.title}</h2>
               <div className="mt-5 space-y-5">
@@ -292,11 +291,6 @@ function StoryCompanion() {
                 {t("Змінити вибір")}
               </Btn>
             </div>
-            {error && (
-              <p className="paper-card p-4 text-center" role="alert">
-                {error}
-              </p>
-            )}
           </article>
         )}
       </div>

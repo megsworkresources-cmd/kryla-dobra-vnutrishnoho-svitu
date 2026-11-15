@@ -1,4 +1,5 @@
 import { Hub } from "./Hub";
+import { Motif } from "./Motif";
 import { Scene } from "./Scene";
 import { placeImage } from "@/content/places";
 import { JOURNEYS, journeyItems, type Journey } from "@/content/journeys";
@@ -38,7 +39,10 @@ export function JourneyActivity({
       night={place === "sky"}
       compact
     >
-      <div className="pt-[8vh]">{C ? <C /> : null}</div>
+      <div className="space-y-4 pt-[6vh]">
+        <Motif place={place} id={id} night={place === "sky"} />
+        {C ? <C /> : null}
+      </div>
     </Scene>
   );
 }

@@ -186,13 +186,13 @@ function Garden() {
         </section>
 
         <Link
-          to="/shared-garden"
+          to="/community-garden"
           className="paper-card flex items-center justify-between gap-3 p-4"
         >
           <span className="min-w-0">
             <span className="block font-display text-lg font-bold">🌻 {t("Спільний сад")}</span>
             <span className="mt-1 block text-sm text-muted-foreground">
-              {t("Відкрий спільний сад разом із дорослим — там ростуть соняшники інших родин.")}
+              {t("Подивися, як ростуть соняшники інших родин.")}
             </span>
           </span>
           <Sprout className="h-6 w-6 shrink-0 text-primary" aria-hidden />

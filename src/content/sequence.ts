@@ -21,6 +21,8 @@ export const ORDER: Stop[] = (() => {
   ];
   for (const p of PLACES) {
     list.push({ to: p.to, label: p.name });
+    // The community garden belongs to the garden stop: every child can walk into it.
+    if (p.id === "garden") list.push({ to: "/community-garden", label: "Спільний сад" });
     if (p.id === "forest")
       FOREST.forEach((f) => list.push({ to: `/forest/${f.params?.["id"]}`, label: f.title }));
     if (p.id in JOURNEYS)

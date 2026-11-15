@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CaregiverRouteRouteImport } from './routes/_caregiver/route'
 import { Route as CaregiverLoginRouteImport } from './routes/caregiver-login'
+import { Route as CommunityGardenRouteImport } from './routes/community-garden'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as GamesRouteImport } from './routes/games'
@@ -53,6 +54,11 @@ const CaregiverRouteRoute = CaregiverRouteRouteImport.update({
 const CaregiverLoginRoute = CaregiverLoginRouteImport.update({
   id: '/caregiver-login',
   path: '/caregiver-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityGardenRoute = CommunityGardenRouteImport.update({
+  id: '/community-garden',
+  path: '/community-garden',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -200,6 +206,7 @@ const ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/caregiver-login': typeof CaregiverLoginRoute
+  '/community-garden': typeof CommunityGardenRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/caregiver-login': typeof CaregiverLoginRoute
+  '/community-garden': typeof CommunityGardenRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_caregiver': typeof CaregiverRouteRouteWithChildren
   '/caregiver-login': typeof CaregiverLoginRoute
+  '/community-garden': typeof CommunityGardenRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/caregiver-login'
+    | '/community-garden'
     | '/explore'
     | '/friends'
     | '/games'
@@ -332,6 +342,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/caregiver-login'
+    | '/community-garden'
     | '/explore'
     | '/friends'
     | '/games'
@@ -365,6 +376,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_caregiver'
     | '/caregiver-login'
+    | '/community-garden'
     | '/explore'
     | '/friends'
     | '/games'
@@ -399,6 +411,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CaregiverRouteRoute: typeof CaregiverRouteRouteWithChildren
   CaregiverLoginRoute: typeof CaregiverLoginRoute
+  CommunityGardenRoute: typeof CommunityGardenRoute
   ExploreRoute: typeof ExploreRoute
   FriendsRoute: typeof FriendsRoute
   GamesRoute: typeof GamesRoute
@@ -448,6 +461,13 @@ declare module '@tanstack/react-router' {
       path: '/caregiver-login'
       fullPath: '/caregiver-login'
       preLoaderRoute: typeof CaregiverLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community-garden': {
+      id: '/community-garden'
+      path: '/community-garden'
+      fullPath: '/community-garden'
+      preLoaderRoute: typeof CommunityGardenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -667,6 +687,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CaregiverRouteRoute: CaregiverRouteRouteWithChildren,
   CaregiverLoginRoute: CaregiverLoginRoute,
+  CommunityGardenRoute: CommunityGardenRoute,
   ExploreRoute: ExploreRoute,
   FriendsRoute: FriendsRoute,
   GamesRoute: GamesRoute,

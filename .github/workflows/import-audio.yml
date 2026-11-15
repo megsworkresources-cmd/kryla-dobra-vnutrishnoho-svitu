@@ -1,0 +1,49 @@
+name: Import audio (temporary)
+
+# One-shot migration: copies the four recordings into the app so they no longer
+# depend on a separate host. Removed again as soon as it has run.
+
+on:
+  push:
+    paths:
+      - .github/workflows/import-audio.yml
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the four recordings
+        run: |
+          mkdir -p public/audio
+          base="https://site-8036227802b74189967178c0ae9fe6cc.freebuff.page"
+          for track in quiet-bandura quiet-sopilka quiet-tsymbaly quiet-lullaby; do
+            curl -fsSL "$base/$track.mp3" -o "public/audio/$track.mp3"
+          done
+
+      - name: Check every file matches the original
+        run: |
+          cat > /tmp/expected.md5 <<'EOF'
+          a113790e7ad65a6168698969ffcf4d56  public/audio/quiet-bandura.mp3
+          3bf78294d9573d719f5509fd087e8c0c  public/audio/quiet-sopilka.mp3
+          90ed66ba82f8614640714fbba15881a8  public/audio/quiet-tsymbaly.mp3
+          6ff68a04a841130347dfbd61d489b0f2  public/audio/quiet-lullaby.mp3
+          EOF
+          md5sum -c /tmp/expected.md5
+          ls -l public/audio
+
+      - name: Commit them into the repository
+        run: |
+          git config user.name "audio-import"
+          git config user.email "actions@github.com"
+          git add public/audio
+          if git diff --cached --quiet; then
+            echo "Recordings already present, nothing to commit."
+            exit 0
+          fi
+          git commit -m "chore(audio): add the four recordings to public/audio"
+          git push

@@ -10,12 +10,13 @@ import { chime, sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Counting, Melody, Patterns } from "@/activities/games";
 
 export const Route = createFileRoute("/games")({
   head: () =>
     pageHead(
       "Ігри",
-      "Спокійні ігри для сенсорного екрана: бульбашки, пари друзів і зоряна музика.",
+      "Шість спокійних ігор для сенсорного екрана: музика, пам'ять, візерунки й лічба.",
     ),
   component: Games,
 });
@@ -24,6 +25,9 @@ const GAMES = [
   { id: "bubbles", icon: "🫧", name: "Мильні бульбашки" },
   { id: "pairs", icon: "🃏", name: "Пари друзів" },
   { id: "stars", icon: "🌟", name: "Зоряна музика" },
+  { id: "melody", icon: "🎶", name: "Повтори мелодію" },
+  { id: "patterns", icon: "🧩", name: "Тихі візерунки" },
+  { id: "counting", icon: "🌠", name: "Порахуй зірочки" },
 ] as const;
 type GameId = (typeof GAMES)[number]["id"];
 
@@ -43,7 +47,7 @@ function Games() {
           }}
         >
           <TabsList
-            className="grid h-auto grid-cols-3 gap-2 bg-transparent p-0"
+            className="grid h-auto grid-cols-3 gap-2 bg-transparent p-0 sm:grid-cols-6"
             aria-label={t("Ігри")}
           >
             {GAMES.map((g) => (
@@ -67,6 +71,15 @@ function Games() {
           </TabsContent>
           <TabsContent value="stars">
             <Stars />
+          </TabsContent>
+          <TabsContent value="melody">
+            <Melody />
+          </TabsContent>
+          <TabsContent value="patterns">
+            <Patterns />
+          </TabsContent>
+          <TabsContent value="counting">
+            <Counting />
           </TabsContent>
         </Tabs>
         <p className="text-center text-sm text-muted-foreground">

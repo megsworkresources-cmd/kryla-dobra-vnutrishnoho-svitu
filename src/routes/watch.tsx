@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Pause, Play, RotateCcw } from "lucide-react";
+import { Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
+import { CartoonStage, type CartoonShot } from "@/components/CartoonStage";
 import { StoryFilm } from "@/components/StoryFilm";
 import { STORY_MEDIA } from "@/content/story-media";
-import { CHARACTERS, type CharId } from "@/content/characters";
 import { pageHead } from "@/content/journeys";
 import { useStore } from "@/lib/store";
-import { speak, stopSpeaking } from "@/lib/speak";
+import { useAudioUnlocked } from "@/lib/audio";
+import { speak, stopSpeaking, useSpeechState } from "@/lib/speak";
 import { useT, useLang } from "@/lib/i18n";
 import welcome from "@/assets/welcome.jpg";
 import meadow from "@/assets/meadow.jpg";
@@ -23,12 +24,7 @@ export const Route = createFileRoute("/watch")({
   component: Watch,
 });
 
-interface Shot {
-  img: string;
-  who: CharId;
-  text: string;
-  fx: string;
-}
+type Shot = CartoonShot;
 interface Clip {
   id: string;
   title: string;
@@ -220,6 +216,9 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [failedShot, setFailedShot] = useState<number | null>(null);
+  const audioReady = useAudioUnlocked();
+  const speech = useSpeechState();
+  const speaking = speech === "loading" || speech === "playing";
   const shot = clip.shots[i];
   const film = STORY_MEDIA[clip.id];
   const mediaFailed = failedShot === i;
@@ -231,15 +230,20 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
     document.addEventListener("visibilitychange", pauseWhenHidden);
     return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
   }, []);
+  // Captions keep their own gentle pace; the saved voice setting decides who speaks.
   useEffect(() => {
     if (!playing || done) return;
-    if (voice && shot) speak(t(shot.text), { who: shot.who });
     const id = window.setTimeout(() => setI((x) => x + 1), SHOT_MS);
-    return () => {
-      window.clearTimeout(id);
+    return () => window.clearTimeout(id);
+  }, [i, playing, done]);
+  useEffect(() => {
+    if (done || !playing || !voice || !shot || !audioReady) {
       stopSpeaking();
-    };
-  }, [i, playing, done, voice, lang]); // eslint-disable-line react-hooks/exhaustive-deps
+      return;
+    }
+    speak(t(shot.text), { who: shot.who });
+    return stopSpeaking;
+  }, [i, playing, done, voice, lang, audioReady]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="space-y-3">
       <h2 className="font-display text-2xl font-bold">{t(clip.title)}</h2>
@@ -255,6 +259,7 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
             poster={clip.shots[0]?.img ?? shot.img}
             playing={playing && !done}
             onPause={() => setPlaying(false)}
+            startAt={i / Math.max(1, clip.shots.length)}
           />
         )}
         {shot ? (
@@ -262,43 +267,18 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
             key={i}
             className={`absolute inset-0 animate-fade-up ${film ? "pointer-events-none" : ""}`}
           >
+            <CartoonStage
+              clipId={clip.id}
+              index={i}
+              shot={shot}
+              playing={playing && !done}
+              film={Boolean(film)}
+              onImageError={() => setFailedShot(i)}
+            />
             {mediaFailed && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-night p-6 text-center text-moon">
                 <p role="alert">{t("Не вдалося завантажити ілюстрацію. Спробуй інший мультик.")}</p>
               </div>
-            )}
-            {!film && (
-              <img
-                src={shot.img}
-                alt=""
-                className="h-full w-full object-cover animate-kenburns"
-                onError={() => setFailedShot(i)}
-                style={{ animationPlayState: playing ? "running" : "paused" }}
-              />
-            )}
-            {!film &&
-              [12, 30, 52, 70, 88].map((l, k) => (
-                <span
-                  key={l}
-                  className="absolute text-2xl animate-float"
-                  style={{
-                    left: `${l}%`,
-                    top: `${15 + (k % 3) * 18}%`,
-                    animationDelay: `${k * 0.5}s`,
-                    animationPlayState: playing ? "running" : "paused",
-                  }}
-                  aria-hidden
-                >
-                  {shot.fx}
-                </span>
-              ))}
-            {!film && (
-              <img
-                src={CHARACTERS[shot.who].image}
-                alt=""
-                className="absolute bottom-0 left-2 h-[62%] w-auto animate-talk drop-shadow-lg"
-                style={{ animationPlayState: playing ? "running" : "paused" }}
-              />
             )}
           </div>
         ) : (
@@ -339,14 +319,29 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
             {t("Ще раз")}
           </Btn>
         ) : (
-          <Btn
-            onClick={() => setPlaying(!playing)}
-            className="inline-flex items-center gap-2"
-            aria-label={playing ? t("Пауза") : t("Грати")}
-          >
-            {playing ? <Pause size={18} /> : <Play size={18} />}
-            {playing ? t("Пауза") : t("Грати")}
-          </Btn>
+          <>
+            <Btn
+              onClick={() => setPlaying(!playing)}
+              className="inline-flex items-center gap-2"
+              aria-label={playing ? t("Пауза") : t("Грати")}
+            >
+              {playing ? <Pause size={18} /> : <Play size={18} />}
+              {playing ? t("Пауза") : t("Грати")}
+            </Btn>
+            {shot && (
+              <Btn
+                variant="soft"
+                onClick={() =>
+                  speaking ? stopSpeaking() : speak(t(shot.text), { force: true, who: shot.who })
+                }
+                className="inline-flex items-center gap-2"
+                aria-label={speaking ? t("Зупинити голос") : t("Послухати")}
+              >
+                {speaking ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                {speaking ? t("Зупинити") : t("Послухати")}
+              </Btn>
+            )}
+          </>
         )}
         {!done && (
           <Btn

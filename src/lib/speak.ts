@@ -1,6 +1,6 @@
 import { getState } from "./store";
 import type { CharId } from "@/content/characters";
-import { isAudioUnlocked } from "./audio";
+import { duckMusic, isAudioUnlocked } from "./audio";
 import { useSyncExternalStore } from "react";
 
 /**
@@ -93,17 +93,23 @@ function deviceSpeak(text: string, pitch: number) {
     if (mine === token) setSpeechState("playing");
   };
   u.onend = () => {
-    if (mine === token) setSpeechState("idle");
+    if (mine !== token) return;
+    setSpeechState("idle");
+    duckMusic(false);
   };
   u.onerror = () => {
-    if (mine === token) setSpeechState("unavailable");
+    if (mine !== token) return;
+    setSpeechState("unavailable");
+    duckMusic(false);
   };
   setSpeechState("loading");
+  duckMusic(true);
   try {
     window.speechSynthesis.resume();
     window.speechSynthesis.speak(u);
   } catch {
     setSpeechState("unavailable");
+    duckMusic(false);
   }
 }
 
@@ -149,10 +155,14 @@ export function speak(
     }
     player.volume = current.volume * current.voiceVolume;
     player.onplaying = () => {
-      if (my === token) setSpeechState("playing");
+      if (my !== token) return;
+      setSpeechState("playing");
+      duckMusic(true);
     };
     player.onended = () => {
-      if (my === token) setSpeechState("idle");
+      if (my !== token) return;
+      setSpeechState("idle");
+      duckMusic(false);
     };
     let fellBack = false;
     const fallback = () => {
@@ -163,10 +173,12 @@ export function speak(
       player.onerror = null;
       player.pause();
       audio = null;
+      duckMusic(false);
       deviceSpeak(text, pitch);
     };
     player.onerror = fallback;
     if (speechState === "paused") return;
+    duckMusic(true);
     void player
       .play()
       .then(() => {
@@ -227,6 +239,7 @@ export function resumeSpeaking() {
 export function stopSpeaking() {
   token++;
   setSpeechState("idle");
+  duckMusic(false);
   if (audio) {
     audio.onplaying = null;
     audio.onended = null;

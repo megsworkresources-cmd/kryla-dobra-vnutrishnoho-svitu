@@ -6,7 +6,11 @@ import { getState, update } from "@/lib/store";
 import { stopSpeaking } from "@/lib/speak";
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
-vi.mock("@/lib/speak", () => ({ speak: vi.fn(), stopSpeaking: vi.fn() }));
+vi.mock("@/lib/speak", () => ({
+  speak: vi.fn(),
+  stopSpeaking: vi.fn(),
+  useSpeechState: () => "idle",
+}));
 vi.mock("@/components/Scene", () => ({
   Btn: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
     <button {...props}>{children}</button>

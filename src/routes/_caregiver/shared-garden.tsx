@@ -2,15 +2,18 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Play, Pause, RefreshCw, Sprout } from "lucide-react";
+import { Pause, Play, RefreshCw, Sprout } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
 import { StoryFilm } from "@/components/StoryFilm";
 import { pageHead } from "@/content/journeys";
+import { growthPart } from "@/content/growth";
 import { readGarden, shareSunflower } from "@/lib/shared-garden.functions";
 import { growthStage, totalDone, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
+
+const GLYPHS = ["🌰", "🌱", "🌿", "🌿", "🌼", "🌻"] as const;
 
 export const Route = createFileRoute("/_caregiver/shared-garden")({
   head: () =>
@@ -37,7 +40,7 @@ function SharedGarden() {
     retry: false,
   });
   const [consent, setConsent] = useState(false);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const mutation = useMutation({
     mutationFn: (sharing: boolean) => share({ data: { stage: sharing ? localStage : 0, sharing } }),
@@ -48,26 +51,156 @@ function SharedGarden() {
     retry: false,
   });
   const own = garden.data?.own;
+  const flowers = garden.data?.flowers ?? [];
+  const ownStage = Math.max(localStage, own?.stage ?? 0);
+  const shown = selected ? flowers.find((f) => f.flower_id === selected) : undefined;
+  const shownStage = shown?.stage ?? ownStage;
+  const shownName = shown ? flowers.indexOf(shown) + 1 : null;
+
   return (
     <Scene title="Спільний сад" back="/parents">
-      <div className="space-y-6">
+      <div className="space-y-5">
         <p className="text-sm text-muted-foreground">
           {t(
-            "Один соняшник на акаунт дорослого. Оновлення надсилаються лише за вашим натисканням; вимкнення приховує квітку, не змінюючи даних дитини.",
+            "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.",
           )}
         </p>
-        <section className="space-y-3">
-          <h2 className="font-display text-2xl font-bold">{t("Мій соняшник")}</h2>
-          <p>{t("Стадія {n} з 5", { n: Math.max(localStage, own?.stage ?? 0) })}</p>
-          <p role="status" className="font-bold text-primary">
-            {t(own?.sharing ? "Соняшник поширено" : "Поширення вимкнено")}
+
+        <section aria-label={t("Спільний сад")} className="paper-card p-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="font-display text-2xl font-bold">{t("Спільний сад")}</h2>
+            <p className="text-sm text-muted-foreground">
+              {t("У саду {n} квіток", { n: flowers.length + 1 })}
+            </p>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("Обери квітку, щоб побачити, як вона росла.")}
           </p>
-          {garden.isPending && <p role="status">{t("Сад завантажується…")}</p>}
+          <ul className="mt-3 flex flex-wrap items-end justify-center gap-2">
+            <li>
+              <Btn
+                variant="soft"
+                aria-pressed={selected === null}
+                onClick={() => {
+                  setSelected(null);
+                  setPlaying(true);
+                }}
+                className="w-24 flex-col rounded-lg px-2 py-3"
+              >
+                <span aria-hidden className="block text-4xl leading-none">
+                  {GLYPHS[ownStage] ?? "🌻"}
+                </span>
+                <span className="mt-2 block text-xs font-bold">{t("Твій соняшник")}</span>
+                <span className="block text-[11px] text-muted-foreground">
+                  {t("Стадія {n} з 5", { n: ownStage })}
+                </span>
+              </Btn>
+            </li>
+            {flowers.map((flower, i) => (
+              <li key={flower.flower_id}>
+                <Btn
+                  variant="soft"
+                  aria-pressed={selected === flower.flower_id}
+                  onClick={() => {
+                    setSelected(flower.flower_id);
+                    setPlaying(true);
+                  }}
+                  className="w-24 flex-col rounded-lg px-2 py-3"
+                >
+                  <span
+                    aria-hidden
+                    className={`block leading-none ${flower.stage >= 5 ? "animate-sway" : ""}`}
+                    style={{ fontSize: `${1.9 + flower.stage * 0.16}rem` }}
+                  >
+                    {GLYPHS[flower.stage] ?? "🌻"}
+                  </span>
+                  <span className="mt-2 block text-xs font-bold">
+                    {t("Квітка {n}", { n: i + 1 })}
+                  </span>
+                  <span className="block text-[11px] text-muted-foreground">
+                    {t("Стадія {n} з 5", { n: flower.stage })}
+                  </span>
+                </Btn>
+              </li>
+            ))}
+          </ul>
+          {garden.isPending && (
+            <p role="status" className="mt-3 text-sm">
+              {t("Сад завантажується…")}
+            </p>
+          )}
           {(garden.isError || mutation.isError) && (
-            <p role="alert" className="text-destructive">
+            <p role="alert" className="mt-3 text-sm text-destructive">
               {t("Сад недоступний. Спробуйте ще раз.")}
             </p>
           )}
+          {garden.data && !flowers.length && (
+            <p className="mt-3 text-sm">{t("Поки що немає спільних соняшників.")}</p>
+          )}
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Btn variant="soft" disabled={garden.isFetching} onClick={() => void garden.refetch()}>
+              <RefreshCw size={18} />
+              {t("Оновити сад")}
+            </Btn>
+          </div>
+        </section>
+
+        <section className="paper-card overflow-hidden">
+          <div className="px-4 pt-4">
+            <h2 className="font-display text-2xl font-bold">{t("Як росте обрана квітка")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {shownName ? t("Квітка {n}", { n: shownName }) : t("Твій соняшник")} ·{" "}
+              {t("Стадія {n} з 5", { n: shownStage })}
+            </p>
+          </div>
+          <div className="relative mx-auto mt-3 aspect-[440/768] w-full max-w-64 overflow-hidden rounded-lg bg-secondary sm:max-w-72">
+            <StoryFilm
+              key={`${shown?.flower_id ?? "own"}-${shownStage}`}
+              src={recorded.url}
+              poster={meadow}
+              playing={playing}
+              onPause={() => setPlaying(false)}
+              part={growthPart(shownStage)}
+              label="Запис росту соняшника"
+            />
+          </div>
+          <div className="flex flex-wrap justify-center gap-2 p-4">
+            <Btn onClick={() => setPlaying(!playing)}>
+              {playing ? <Pause size={18} /> : <Play size={18} />}
+              {t(playing ? "Пауза" : "Дивитися ріст")}
+            </Btn>
+          </div>
+          <p className="px-4 pb-4 text-xs text-muted-foreground">
+            <a
+              href="https://commons.wikimedia.org/wiki/File:Sunflower_growing_time_lapse.gif"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              {t("Відео: Naturenow, CC BY-SA 4.0; перетворено з GIF у MP4.")}
+            </a>{" "}
+            <a
+              href="https://creativecommons.org/licenses/by-sa/4.0/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              CC BY-SA 4.0
+            </a>
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="font-display text-2xl font-bold">{t("Мій соняшник")}</h2>
+          <p className="text-sm text-muted-foreground">
+            {t(
+              "Один соняшник на акаунт дорослого. Оновлення надсилаються лише за вашим натисканням; вимкнення приховує квітку, не змінюючи даних дитини.",
+            )}
+          </p>
+          <p>{t("Стадія {n} з 5", { n: ownStage })}</p>
+          <p role="status" className="font-bold text-primary">
+            {t(own?.sharing ? "Соняшник поширено" : "Поширення вимкнено")}
+          </p>
           {own && !own.sharing && (
             <label className="flex items-start gap-3 text-sm leading-relaxed">
               <input
@@ -106,77 +239,7 @@ function SharedGarden() {
                 {t("Поділитися соняшником")}
               </Btn>
             )}
-            <Btn variant="soft" disabled={garden.isFetching} onClick={() => void garden.refetch()}>
-              <RefreshCw size={18} />
-              {t("Оновити сад")}
-            </Btn>
           </div>
-        </section>
-        <section className="space-y-3">
-          <h2 className="font-display text-2xl font-bold">{t("Соняшники інших родин")}</h2>
-          {garden.data && !garden.data.flowers.length && (
-            <p>{t("Поки що немає спільних соняшників.")}</p>
-          )}
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {garden.data?.flowers.map((flower) => (
-              <li key={flower.flower_id}>
-                <Btn
-                  variant="soft"
-                  aria-pressed={selected === flower.flower_id}
-                  onClick={() => {
-                    setSelected(flower.flower_id);
-                    setPlaying(true);
-                  }}
-                  className="w-full flex-col rounded-lg p-4"
-                >
-                  <span aria-hidden className="block text-5xl">
-                    {["🌰", "🌱", "🌿", "🌿", "🌼", "🌻"][flower.stage]}
-                  </span>
-                  <span className="mt-3 text-sm font-bold">
-                    {t("Стадія {n} з 5", { n: flower.stage })}
-                  </span>
-                </Btn>
-              </li>
-            ))}
-          </ul>
-        </section>
-        <section className="space-y-3">
-          <h2 className="font-display text-2xl font-bold">
-            {t("Справжній запис росту соняшника")}
-          </h2>
-          <div className="relative mx-auto aspect-[440/768] w-full max-w-64 overflow-hidden rounded-lg bg-secondary">
-            <StoryFilm
-              key={selected}
-              src={recorded.url}
-              poster={meadow}
-              playing={playing}
-              onPause={() => setPlaying(false)}
-            />
-          </div>
-          <div className="text-center">
-            <Btn onClick={() => setPlaying(!playing)}>
-              {playing ? <Pause size={18} /> : <Play size={18} />}
-              {t(playing ? "Пауза" : "Дивитися")}
-            </Btn>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            <a
-              href="https://commons.wikimedia.org/wiki/File:Sunflower_growing_time_lapse.gif"
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
-              {t("Відео: Naturenow, CC BY-SA 4.0; перетворено з GIF у MP4.")}
-            </a>{" "}
-            <a
-              href="https://creativecommons.org/licenses/by-sa/4.0/"
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
-              CC BY-SA 4.0
-            </a>
-          </p>
         </section>
       </div>
     </Scene>

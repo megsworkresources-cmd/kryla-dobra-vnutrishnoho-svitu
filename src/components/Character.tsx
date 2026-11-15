@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Volume2 } from "lucide-react";
 import { CHARACTERS, type CharId } from "@/content/characters";
-import { speak, useSpeechState } from "@/lib/speak";
+import { getSpeechState, speak, useSpeechState } from "@/lib/speak";
+import { useAudioUnlocked } from "@/lib/audio";
 import { useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 
@@ -39,13 +40,19 @@ export function CharacterSay({
   const c = CHARACTERS[who];
   const t = useT();
   const voiceOn = useStore((s) => s.voice && s.sound);
+  const audioReady = useAudioUnlocked();
   const [pulse, setPulse] = useState(0);
   const speechState = useSpeechState();
   const [requested, setRequested] = useState(false);
   useEffect(() => {
     setPulse((p) => p + 1);
-    if (autoSpeak && voiceOn) speak(text, { who });
-  }, [text, autoSpeak, voiceOn, who]);
+    // Nothing is spoken before the first touch, then the greeting can play.
+    if (!autoSpeak || !voiceOn || !audioReady) return;
+    // Several characters share a page: let the line that already started finish.
+    const state = getSpeechState();
+    if (state === "loading" || state === "playing") return;
+    speak(text, { who });
+  }, [text, autoSpeak, voiceOn, who, audioReady]);
   const h = { sm: "h-24", md: "h-32 sm:h-40", lg: "h-44 sm:h-56" }[size];
   return (
     <figure

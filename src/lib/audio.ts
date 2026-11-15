@@ -14,6 +14,13 @@ let master: GainNode | null = null;
 let unlocked = false;
 let audioGeneration = 0;
 let ambientGeneration = 0;
+const unlockListeners = new Set<() => void>();
+function notifyUnlocked() {
+  unlockListeners.forEach((listener) => listener());
+}
+let scape: { kind: Soundscape; bus: GainNode; stop: () => void } | null = null;
+let scapeKind: Soundscape | null = null;
+const scapeListeners = new Set<() => void>();
 
 function handleAudioStateChange(changedContext: AudioContext) {
   // Ignore events from a context that was closed and subsequently replaced.
@@ -59,19 +66,36 @@ function ac() {
   return ctx;
 }
 
+/** A phone interruption leaves the context suspended; ask for it again on the next sound. */
+function ensureRunning(c: AudioContext) {
+  if (c.state === "suspended") void c.resume().catch(() => {});
+}
+
 export function unlockAudio() {
-  unlocked = true;
+  if (!unlocked) {
+    unlocked = true;
+    notifyUnlocked();
+  }
   const context = ac();
   if (context && context.state !== "running" && context.state !== "closed")
-    void context.resume().catch(() => {
-      // Safari can reject resume outside a fresh gesture; surface it on the music status.
-      if (musicStatus !== "idle") setMusicStatus("error");
-    });
+    void context
+      .resume()
+      .then(() => {
+        // The gesture unlocked the context: start the soundscape that was waiting for it.
+        if (wantedAmbient && context === ctx) playAmbient(wantedAmbient);
+      })
+      .catch(() => {
+        // Safari can reject resume outside a fresh gesture; surface it on the music status.
+        if (musicStatus !== "idle") setMusicStatus("error");
+      });
   syncVolume();
 }
 
 export function destroyAudio() {
-  unlocked = false;
+  if (unlocked) {
+    unlocked = false;
+    notifyUnlocked();
+  }
   audioGeneration += 1;
   ambientGeneration += 1;
   stopAmbient();
@@ -98,13 +122,27 @@ export function isAudioUnlocked() {
   return unlocked;
 }
 
+/** True once a real gesture has unlocked sound, so pages know when they may speak. */
+export function useAudioUnlocked() {
+  return useSyncExternalStore(
+    (listener) => {
+      unlockListeners.add(listener);
+      return () => unlockListeners.delete(listener);
+    },
+    () => unlocked,
+    () => false,
+  );
+}
+
 export function syncVolume() {
   const s = getState();
   if (master && ctx && ctx.state !== "closed")
     master.gain.setTargetAtTime(s.sound ? s.volume : 0, ctx.currentTime, 0.05);
-  if (amb && ctx && ctx.state !== "closed")
-    amb.bus.gain.setTargetAtTime(0.35 * s.musicVolume, ctx.currentTime, 0.05);
+  applyAmbientGain();
+  if (scape && ctx && ctx.state !== "closed")
+    scape.bus.gain.setTargetAtTime(0.5 * s.effectsVolume, ctx.currentTime, 0.08);
   if (!s.sound || !s.music || s.volume === 0 || s.musicVolume === 0) stopAmbient();
+  if (!s.sound || s.volume === 0 || s.effectsVolume === 0) stopSoundscape();
 }
 
 function tone(
@@ -180,6 +218,7 @@ export function sfx(kind: Sfx) {
   if (!s.sound || !s.sfx || s.volume === 0 || s.effectsVolume === 0) return;
   const c = ac();
   if (!c || !master) return;
+  ensureRunning(c);
   const t = c.currentTime;
   switch (kind) {
     case "tap":
@@ -209,6 +248,9 @@ export function sfx(kind: Sfx) {
 /* ---------- Ambient soundscapes ---------- */
 export type Ambient = "meadow" | "forest" | "night" | "clouds" | "garden" | "cozy";
 let amb: { kind: Ambient; style: string; bus: GainNode; stop: () => void } | null = null;
+/** The scene the page asked for, kept so a freshly unlocked context can start it. */
+let wantedAmbient: Ambient | null = null;
+let musicDucked = false;
 export type MusicStatus = "idle" | "loading" | "playing" | "error";
 let musicStatus: MusicStatus = "idle";
 const statusListeners = new Set<() => void>();
@@ -230,6 +272,21 @@ export function useMusicStatus() {
   );
 }
 
+/** Keep the background music under the voice so every word stays clear. */
+function applyAmbientGain() {
+  if (!amb || !ctx || ctx.state === "closed") return;
+  amb.bus.gain.setTargetAtTime(
+    0.35 * getState().musicVolume * (musicDucked ? 0.3 : 1),
+    ctx.currentTime,
+    0.12,
+  );
+}
+export function duckMusic(on: boolean) {
+  if (musicDucked === on) return;
+  musicDucked = on;
+  applyAmbientGain();
+}
+
 function noise(c: AudioContext) {
   const b = c.createBuffer(1, c.sampleRate * 3, c.sampleRate);
   const d = b.getChannelData(0);
@@ -245,19 +302,25 @@ function noise(c: AudioContext) {
 }
 
 export function playAmbient(kind: Ambient | null) {
+  wantedAmbient = kind;
   const s = getState();
   if (!kind || !s.sound || !s.music || s.volume === 0 || s.musicVolume === 0 || document.hidden) {
     stopAmbient();
     return;
   }
-  if (amb?.kind === kind && amb.style === s.musicStyle) return;
+  // A recording that failed must be retryable when the child comes back to the page.
+  if (amb?.kind === kind && amb.style === s.musicStyle && musicStatus !== "error") return;
   stopAmbient();
   const c = ac();
   if (!c || !master) return;
+  ensureRunning(c);
   const token = ++ambientGeneration;
   const bus = c.createGain();
   bus.gain.setValueAtTime(0, c.currentTime);
-  bus.gain.linearRampToValueAtTime(0.35 * s.musicVolume, c.currentTime + 3);
+  bus.gain.linearRampToValueAtTime(
+    0.35 * s.musicVolume * (musicDucked ? 0.3 : 1),
+    c.currentTime + 3,
+  );
   bus.connect(master);
   const stops: (() => void)[] = [];
   const n = noise(c);
@@ -358,6 +421,29 @@ function loadTrack(style: Exclude<MusicStyle, "nature">, c: AudioContext) {
   return request;
 }
 
+/** The first gesture can leave a fresh context suspended for a moment; wait for it. */
+function whenRunning(c: AudioContext, generation: number, ms = 5000) {
+  const ready = () => c.state === "running" && generation === audioGeneration;
+  if (ready()) return Promise.resolve(true);
+  return new Promise<boolean>((resolve) => {
+    let settled = false;
+    let timer = 0;
+    const finish = (ok: boolean) => {
+      if (settled) return;
+      settled = true;
+      if (typeof c.removeEventListener === "function") c.removeEventListener("statechange", check);
+      window.clearTimeout(timer);
+      resolve(ok && generation === audioGeneration);
+    };
+    const check = () => {
+      if (c.state === "running") finish(true);
+      else if (c.state === "closed") finish(false);
+    };
+    if (typeof c.addEventListener === "function") c.addEventListener("statechange", check);
+    timer = window.setTimeout(() => finish(c.state === "running"), ms);
+  });
+}
+
 /** Never silently substitute a synthetic melody for an unavailable recording. */
 export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   const c = ac();
@@ -368,9 +454,10 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
   let gain: GainNode | null = null;
   setMusicStatus("loading");
   void loadTrack(style, c)
-    .then((buffer) => {
+    .then(async (buffer) => {
+      const running = await whenRunning(c, generation);
       if (stopped || generation !== audioGeneration || c !== ctx) return;
-      if (c.state !== "running") {
+      if (!running) {
         setMusicStatus("error");
         return;
       }
@@ -409,6 +496,105 @@ export function stopAmbient() {
   setMusicStatus("idle");
 }
 
+/* ---------- Nature sounds chosen by the child ---------- */
+export type Soundscape = "rain" | "wind" | "crickets";
+function setScapeKind(kind: Soundscape | null) {
+  scapeKind = kind;
+  scapeListeners.forEach((listener) => listener());
+}
+export function getSoundscape() {
+  return scapeKind;
+}
+export function useSoundscape() {
+  return useSyncExternalStore(
+    (listener) => {
+      scapeListeners.add(listener);
+      return () => scapeListeners.delete(listener);
+    },
+    () => scapeKind,
+    () => null as Soundscape | null,
+  );
+}
+
+/** Rain, wind and evening crickets share the app's context, master volume and settings. */
+export function playSoundscape(kind: Soundscape) {
+  const s = getState();
+  if (!s.sound || s.volume === 0 || s.effectsVolume === 0) return;
+  const c = ac();
+  if (!c || !master || c.state === "closed") return;
+  ensureRunning(c);
+  stopSoundscape();
+  const bus = c.createGain();
+  bus.gain.value = 0.5 * s.effectsVolume;
+  bus.connect(master);
+  const stops: (() => void)[] = [];
+  if (kind === "crickets") {
+    const osc = c.createOscillator();
+    osc.frequency.value = 4200;
+    const amp = c.createGain();
+    amp.gain.value = 0;
+    const lfo = c.createOscillator();
+    lfo.frequency.value = 18;
+    const lg = c.createGain();
+    lg.gain.value = 0.08;
+    lfo.connect(lg).connect(amp.gain);
+    osc.connect(amp).connect(bus);
+    osc.start();
+    lfo.start();
+    stops.push(() => {
+      osc.stop();
+      lfo.stop();
+    });
+  } else {
+    const buffer = c.createBuffer(1, Math.floor(c.sampleRate * 2), c.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+    const src = c.createBufferSource();
+    src.buffer = buffer;
+    src.loop = true;
+    const filter = c.createBiquadFilter();
+    filter.type = kind === "rain" ? "highpass" : "lowpass";
+    filter.frequency.value = kind === "rain" ? 1200 : 400;
+    src.connect(filter).connect(bus);
+    src.start();
+    stops.push(() => src.stop());
+    if (kind === "wind") {
+      const lfo = c.createOscillator();
+      lfo.frequency.value = 0.15;
+      const lg = c.createGain();
+      lg.gain.value = 250;
+      lfo.connect(lg).connect(filter.frequency);
+      lfo.start();
+      stops.push(() => lfo.stop());
+    }
+  }
+  scape = {
+    kind,
+    bus,
+    stop: () => {
+      stops.forEach((stop) => {
+        try {
+          stop();
+        } catch {
+          /* already stopped */
+        }
+      });
+      try {
+        bus.disconnect();
+      } catch {
+        /* already disconnected */
+      }
+    },
+  };
+  setScapeKind(kind);
+}
+
+export function stopSoundscape() {
+  scape?.stop();
+  scape = null;
+  setScapeKind(null);
+}
+
 export function ambientFor(pathname: string): Ambient | null {
   const seg = pathname.split("/")[1] ?? "";
   return (
@@ -425,6 +611,8 @@ export function ambientFor(pathname: string): Ambient | null {
         safe: "cozy",
         studio: "cozy",
         path: "meadow",
+        watch: "cozy",
+        story: "cozy",
       } as Record<string, Ambient>
     )[seg] ?? null
   );
@@ -436,5 +624,6 @@ export function chime(freq: number) {
   if (!s.sound || !s.sfx || s.volume === 0 || s.effectsVolume === 0) return;
   const c = ac();
   if (!c || !master) return;
+  ensureRunning(c);
   pluck(freq, c.currentTime, 0.12, master, 0.3, 1.5);
 }

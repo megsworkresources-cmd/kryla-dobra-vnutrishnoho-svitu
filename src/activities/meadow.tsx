@@ -5,12 +5,14 @@ import { Btn, DoneCard } from "@/components/Scene";
 import { Guided, Narration } from "@/components/Activity";
 import { markDone, pick, useStore } from "@/lib/store";
 import { speak, stopSpeaking } from "@/lib/speak";
+import { useAudioUnlocked } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 
 export function Breathing({ kind }: { kind: "flower" | "wave" }) {
   const t = useT();
   const age = useStore((s) => s.age);
   const voice = useStore((s) => s.voice);
+  const audioReady = useAudioUnlocked();
   const [duration, setDuration] = useState(60);
   const [elapsed, setElapsed] = useState(0);
   const [started, setStarted] = useState(false);
@@ -43,9 +45,9 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
     }
   }, [elapsed, duration, started, done, kind]);
   useEffect(() => {
-    if (running && voice) speak(isInhale ? t("М’який вдих") : t("Повільний видих"));
+    if (running && voice && audioReady) speak(isInhale ? t("М’який вдих") : t("Повільний видих"));
     return stopSpeaking;
-  }, [phase, running, voice, isInhale, t]);
+  }, [phase, running, voice, audioReady, isInhale, t]);
   const reset = () => {
     setElapsed(0);
     setRunning(false);

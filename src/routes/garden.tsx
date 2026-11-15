@@ -1,10 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Scene } from "@/components/Scene";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Pause, Play, Sprout } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Btn, Scene } from "@/components/Scene";
+import { StoryFilm } from "@/components/StoryFilm";
+import { growthPart } from "@/content/growth";
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { growthStage, totalDone, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
-import { useEffect, useState } from "react";
+import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
+import meadow from "@/assets/meadow.jpg";
 
 const NEXT: readonly number[] = [1, 3, 7, 12, 20];
 
@@ -32,6 +37,7 @@ function Garden() {
   const next = NEXT[stage] ?? count;
   const previous = NEXT[stage - 1] ?? 0;
   const [grown, setGrown] = useState(0);
+  const [playing, setPlaying] = useState(true);
   useEffect(() => {
     const id = requestAnimationFrame(() => setGrown(1));
     return () => cancelAnimationFrame(id);
@@ -39,9 +45,55 @@ function Garden() {
   const left = stage < 5 ? next - count : 0;
   return (
     <Scene image={placeImage("garden")} title="Сад соняшників" back="/world" compact>
-      <div className="pt-[18vh]">
-        <div className="paper-card p-6 text-center">
-          <svg viewBox="0 0 200 220" className="mx-auto h-72" role="img" aria-label={t(words)}>
+      <div className="space-y-4 pt-[10vh]">
+        <section className="paper-card overflow-hidden">
+          <div
+            className="relative mx-auto aspect-[440/768] w-full max-w-64 bg-secondary sm:max-w-72"
+            role="group"
+            aria-label={t("Запис росту соняшника")}
+          >
+            <StoryFilm
+              src={recorded.url}
+              poster={meadow}
+              playing={playing}
+              onPause={() => setPlaying(false)}
+              part={growthPart(stage)}
+              label="Запис росту соняшника"
+            />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-night/85 via-night/40 to-transparent px-3 pb-3 pt-10">
+              <p className="font-display text-lg font-bold text-moon">{t(words)}</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 p-4">
+            <p className="text-sm font-bold">{t("Твоя стадія: {n} з 5", { n: stage })}</p>
+            <Btn variant="soft" onClick={() => setPlaying(!playing)}>
+              {playing ? <Pause size={18} /> : <Play size={18} />}
+              {t(playing ? "Пауза" : "Дивитися ріст")}
+            </Btn>
+          </div>
+          <p className="px-4 pb-3 text-xs text-muted-foreground">
+            <a
+              href="https://commons.wikimedia.org/wiki/File:Sunflower_growing_time_lapse.gif"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              {t("Відео: Naturenow, CC BY-SA 4.0; перетворено з GIF у MP4.")}
+            </a>{" "}
+            <a
+              href="https://creativecommons.org/licenses/by-sa/4.0/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              CC BY-SA 4.0
+            </a>
+          </p>
+        </section>
+
+        <section className="paper-card p-5 text-center">
+          <h2 className="font-display text-xl font-bold">{t("Твій соняшник сьогодні")}</h2>
+          <svg viewBox="0 0 200 220" className="mx-auto h-44" role="img" aria-label={t(words)}>
             <ellipse cx="100" cy="205" rx="70" ry="12" fill="var(--sage)" opacity=".5" />
             <g
               style={{
@@ -105,7 +157,6 @@ function Garden() {
                 />
               ))}
           </svg>
-          <p className="font-display text-2xl font-bold">{t(words)}</p>
           <p className="mt-2 text-muted-foreground">
             {t(
               "Кожна вправа, казка чи малюнок — крапля води для соняшника. Він ніколи не в’яне, навіть якщо ти довго не заходиш.",
@@ -132,7 +183,20 @@ function Garden() {
               </p>
             </>
           )}
-        </div>
+        </section>
+
+        <Link
+          to="/shared-garden"
+          className="paper-card flex items-center justify-between gap-3 p-4"
+        >
+          <span className="min-w-0">
+            <span className="block font-display text-lg font-bold">🌻 {t("Спільний сад")}</span>
+            <span className="mt-1 block text-sm text-muted-foreground">
+              {t("Відкрий спільний сад разом із дорослим — там ростуть соняшники інших родин.")}
+            </span>
+          </span>
+          <Sprout className="h-6 w-6 shrink-0 text-primary" aria-hidden />
+        </Link>
       </div>
     </Scene>
   );

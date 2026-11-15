@@ -15,7 +15,15 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { ambientFor, playAmbient, sfx, unlockAudio, stopAmbient, syncVolume } from "@/lib/audio";
+import {
+  ambientFor,
+  playAmbient,
+  sfx,
+  unlockAudio,
+  stopAmbient,
+  stopSoundscape,
+  syncVolume,
+} from "@/lib/audio";
 import { markVisit, useStore } from "../lib/store";
 import { t, useT } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
@@ -199,9 +207,11 @@ function RootComponent() {
   }, [lang]);
   useEffect(syncSpeechVolume, [sound, voice, volume, voiceVolume]);
   useEffect(syncVolume, [sound, volume, musicVolume]);
-  useEffect(() => {
-    stopSpeaking();
-  }, [pathname]);
+  // Stop the page we are leaving. This has to be a cleanup: a new page's characters
+  // start their line while it mounts, and a plain effect would cut them off.
+  useEffect(() => () => stopSpeaking(), [pathname]);
+  // A chosen nature sound belongs to its activity, not to the next page.
+  useEffect(() => () => stopSoundscape(), [pathname]);
   // Audio only starts after the first touch (browser autoplay rules), then follows the page.
   useEffect(() => {
     const onDown = (e: PointerEvent) => {
@@ -224,12 +234,14 @@ function RootComponent() {
       if (document.hidden) {
         stopSpeaking();
         stopAmbient();
+        stopSoundscape();
       } else playAmbient(ambientFor(window.location.pathname));
     };
     document.addEventListener("visibilitychange", onVisibility);
     const onExit = () => {
       stopSpeaking();
       stopAmbient();
+      stopSoundscape();
     };
     window.addEventListener("pagehide", onExit);
     return () => {

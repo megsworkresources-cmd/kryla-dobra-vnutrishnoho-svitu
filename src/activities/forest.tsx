@@ -91,8 +91,8 @@ export function MixedFeelings() {
   const [chosen, setChosen] = useState<string[]>([]);
   const [reveal, setReveal] = useState(false);
   const [done, setDone] = useState(false);
-  const sc = SCENARIOS[i]!;
-  if (done)
+  const sc = SCENARIOS[i];
+  if (done || !sc)
     return (
       <DoneCard
         text={t("Почуття можуть змішуватися, як фарби.")}
@@ -145,7 +145,8 @@ export function MixedFeelings() {
             </span>
           )}
           {chosen.map((id) => {
-            const e = EMOTIONS.find((x) => x.id === id)!;
+            const e = EMOTIONS.find((x) => x.id === id);
+            if (!e) return null;
             return (
               <span key={id} className="flex animate-pop flex-col items-center">
                 <span
@@ -295,7 +296,10 @@ export function BodyMap() {
             <p className="mt-3 font-semibold">
               {t("Ти позначив: {z}", {
                 z: mine
-                  .map((m) => t(ZONES.find((z) => z.id === m)!.label.toLowerCase()))
+                  .flatMap((m) => {
+                    const zone = ZONES.find((z) => z.id === m);
+                    return zone ? [t(zone.label.toLowerCase())] : [];
+                  })
                   .join(", "),
               })}
             </p>
@@ -333,17 +337,20 @@ export function SortGame() {
   const [burst, setBurst] = useState(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
-  if (i >= SORT_ITEMS.length)
+  const item = SORT_ITEMS[i];
+  if (!item)
     return (
       <DoneCard
         text={t("Ти вмієш розрізняти думки, почуття й дії!")}
         again={() => {
           setI(0);
           setStars(0);
+          setBurst(0);
+          setFb(null);
+          setPicked(null);
         }}
       />
     );
-  const item = SORT_ITEMS[i]!;
   const choose = (k: string) => {
     if (picked) return;
     const right = k === item.kind;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Volume2 } from "lucide-react";
 import { CHARACTERS, type CharId } from "@/content/characters";
-import { speak } from "@/lib/speak";
+import { speak, useSpeechState } from "@/lib/speak";
 import { useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 
@@ -40,6 +40,8 @@ export function CharacterSay({
   const t = useT();
   const voiceOn = useStore((s) => s.voice && s.sound);
   const [pulse, setPulse] = useState(0);
+  const speechState = useSpeechState();
+  const [requested, setRequested] = useState(false);
   useEffect(() => {
     setPulse((p) => p + 1);
     if (autoSpeak && voiceOn) speak(text, { who });
@@ -72,12 +74,20 @@ export function CharacterSay({
         <span className="mt-1 block text-lg leading-snug">{text}</span>
         <button
           type="button"
-          onClick={() => speak(text, { force: true, who })}
+          onClick={() => {
+            setRequested(true);
+            speak(text, { force: true, who });
+          }}
           aria-label={t("Послухати, що каже {n}", { n: t(c.name) })}
           className="absolute -bottom-4 right-4 flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft"
         >
           <Volume2 size={16} />
         </button>
+        {requested && speechState === "unavailable" && (
+          <span role="alert" className="mt-2 block text-sm">
+            {t("Голос недоступний")}
+          </span>
+        )}
       </figcaption>
     </figure>
   );

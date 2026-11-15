@@ -65,6 +65,10 @@ export function StoryFilm({
         src={src}
         poster={poster}
         muted
+        onPause={() => {
+          if (playing) pauseOwner.current();
+        }}
+        onWaiting={() => setStatus("loading")}
         playsInline
         loop
         preload="metadata"

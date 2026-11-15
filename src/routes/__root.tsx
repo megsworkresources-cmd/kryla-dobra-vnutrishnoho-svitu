@@ -21,7 +21,7 @@ import { t, useT } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { authTransition, RECOVERY_KEY } from "@/lib/caregiver-session";
 import { safeReturnPath } from "@/lib/caregiver-guard";
-import { stopSpeaking, syncSpeechVolume } from "@/lib/speak";
+import { stopSpeaking, syncSpeechVolume, unlockSpeech } from "@/lib/speak";
 
 function NotFoundComponent() {
   const t = useT();
@@ -206,6 +206,7 @@ function RootComponent() {
   useEffect(() => {
     const onDown = (e: PointerEvent) => {
       unlockAudio();
+      unlockSpeech();
       playAmbient(ambientFor(window.location.pathname));
       const el = (e.target as HTMLElement).closest("a,button");
       if (el && !el.closest("[data-no-tap]")) sfx("tap");
@@ -214,6 +215,7 @@ function RootComponent() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         unlockAudio();
+        unlockSpeech();
         playAmbient(ambientFor(window.location.pathname));
       }
     };

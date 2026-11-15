@@ -6,7 +6,7 @@ import { growthStage, totalDone, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 
-const NEXT = [1, 3, 7, 12, 20];
+const NEXT = [1, 3, 7, 12, 20] as const;
 
 export const Route = createFileRoute("/garden")({
   head: () =>
@@ -21,29 +21,27 @@ const WORDS = [
   "Стебло тягнеться до сонця",
   "З’явився бутон",
   "Соняшник розквітнув!",
-];
+] as const;
 
 function Garden() {
   const t = useT();
   const count = useStore((s) => totalDone(s.completed));
   const stage = growthStage(count);
-  const h = [6, 40, 70, 100, 125, 135][stage]!;
+  const h = ([6, 40, 70, 100, 125, 135] as const)[stage] ?? 6;
+  const words = WORDS[stage] ?? WORDS[0];
+  const next = NEXT[stage] ?? count;
+  const previous = NEXT[stage - 1] ?? 0;
   const [grown, setGrown] = useState(0);
   useEffect(() => {
     const id = requestAnimationFrame(() => setGrown(1));
     return () => cancelAnimationFrame(id);
   }, [stage]);
-  const left = stage < 5 ? NEXT[stage]! - count : 0;
+  const left = stage < 5 ? next - count : 0;
   return (
     <Scene image={placeImage("garden")} title="Сад соняшників" back="/world" compact>
       <div className="pt-[18vh]">
         <div className="paper-card p-6 text-center">
-          <svg
-            viewBox="0 0 200 220"
-            className="mx-auto h-72"
-            role="img"
-            aria-label={t(WORDS[stage]!)}
-          >
+          <svg viewBox="0 0 200 220" className="mx-auto h-72" role="img" aria-label={t(words)}>
             <ellipse cx="100" cy="205" rx="70" ry="12" fill="var(--sage)" opacity=".5" />
             <g
               style={{
@@ -107,7 +105,7 @@ function Garden() {
                 />
               ))}
           </svg>
-          <p className="font-display text-2xl font-bold">{t(WORDS[stage]!)}</p>
+          <p className="font-display text-2xl font-bold">{t(words)}</p>
           <p className="mt-2 text-muted-foreground">
             {t(
               "Кожна вправа, казка чи малюнок — крапля води для соняшника. Він ніколи не в’яне, навіть якщо ти довго не заходиш.",
@@ -125,7 +123,7 @@ function Garden() {
                 <div
                   className="h-full rounded-full bg-honey transition-all duration-1000"
                   style={{
-                    width: `${Math.min(100, (1 - left / (NEXT[stage]! - (stage ? NEXT[stage - 1]! : 0))) * 100 * grown)}%`,
+                    width: `${Math.min(100, (1 - left / Math.max(1, next - previous)) * 100 * grown)}%`,
                   }}
                 />
               </div>

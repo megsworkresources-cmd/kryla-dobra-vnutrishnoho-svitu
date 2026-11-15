@@ -28,6 +28,25 @@ export function voices(): SpeechSynthesisVoice[] {
 
 const cache = new Map<string, string>(); // in-memory only; values are audio data URIs
 let audio: HTMLAudioElement | null = null;
+let primedPlayer: HTMLAudioElement | null = null;
+let naturalPaused = false;
+/** Reuse the element unlocked synchronously by a real gesture, including on Safari. */
+export function unlockSpeech() {
+  if (typeof window === "undefined" || primedPlayer || !getState().sound) return;
+  const player = new Audio(
+    "data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQIAAAAAAA==",
+  );
+  primedPlayer = player;
+  player.volume = 0;
+  void player
+    .play()
+    .then(() => {
+      if (audio !== player) player.pause();
+    })
+    .catch(() => {
+      if (primedPlayer === player && audio !== player) primedPlayer = null;
+    });
+}
 let token = 0;
 type SpeechState = "idle" | "loading" | "playing" | "paused" | "unavailable";
 let speechState: SpeechState = "idle";
@@ -106,6 +125,8 @@ export function speak(
   const c = opts.who ? CAST[opts.who] : null;
   const pitch = opts.pitch ?? c?.pitch ?? 1.05;
   if (opts.localOnly || s.voiceEngine !== "natural") return deviceSpeak(text, pitch);
+  if (opts.force) naturalPaused = false;
+  if (naturalPaused) return deviceSpeak(text, pitch);
   const voice = opts.voice ?? c?.voice ?? s.narrator ?? "Leda";
   const style = opts.who ?? "narrator";
   const key = `${s.lang}|${voice}|${style}|${text}`;
@@ -118,7 +139,8 @@ export function speak(
     const source = audioData.startsWith("data:audio/")
       ? audioData
       : `data:audio/ogg;codecs=opus;base64,${audioData}`;
-    const player = new Audio(source);
+    const player = primedPlayer ?? new Audio();
+    player.src = source;
     audio = player;
     const current = getState();
     if (!current.sound || current.volume === 0 || current.voiceVolume === 0) {
@@ -134,7 +156,7 @@ export function speak(
     };
     let fellBack = false;
     const fallback = () => {
-      if (my !== token || fellBack) return;
+      if (my !== token || fellBack || speechState === "paused") return;
       fellBack = true;
       player.onplaying = null;
       player.onended = null;
@@ -168,10 +190,13 @@ export function speak(
           if (oldest) cache.delete(oldest);
         }
         play(r.audio);
-      } else if (my === token) deviceSpeak(text, pitch);
+      } else if (my === token) {
+        if (["402", "403", "401", "404", "config"].includes(r.error)) naturalPaused = true;
+        if (speechState !== "paused") deviceSpeak(text, pitch);
+      }
     })
     .catch(() => {
-      if (my === token) deviceSpeak(text, pitch);
+      if (my === token && speechState !== "paused") deviceSpeak(text, pitch);
     });
 }
 
@@ -185,13 +210,14 @@ export function resumeSpeaking() {
   const s = getState();
   if (!s.sound || s.volume === 0 || s.voiceVolume === 0 || !isAudioUnlocked()) return;
   if (speechState !== "paused") return;
-  setSpeechState("playing");
+  setSpeechState("loading");
   const mine = token;
   const player = audio;
   void player
     ?.play()
     .then(() => {
       if (mine !== token) player.pause();
+      else setSpeechState("playing");
     })
     .catch(() => {
       if (mine === token) setSpeechState("unavailable");

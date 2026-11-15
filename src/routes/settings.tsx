@@ -12,7 +12,7 @@ import {
   unlockAudio,
   useMusicStatus,
 } from "@/lib/audio";
-import { speak, stopSpeaking, voices } from "@/lib/speak";
+import { speak, stopSpeaking, voices, useSpeechState } from "@/lib/speak";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/settings")({
@@ -76,6 +76,7 @@ const NARRATORS = [
 ] as const;
 
 function Settings() {
+  const speechState = useSpeechState();
   const t = useT();
   const s = useStore((x) => x);
   const musicStatus = useMusicStatus();
@@ -328,6 +329,7 @@ function Settings() {
           >
             {t("Послухати голос")}
           </Btn>
+          {speechState === "unavailable" && <p role="alert">{t("Голос недоступний")}</p>}
         </Section>
         <Section title={t("👀 Екран")}>
           <p className="font-bold">{t("Розмір тексту")}</p>

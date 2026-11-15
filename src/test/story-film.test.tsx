@@ -63,3 +63,14 @@ it("does not restart footage when only the owner's callback changes", () => {
   rerender(<StoryFilm src="/test.mp4" poster="/test.jpg" playing onPause={() => {}} />);
   expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(1);
 });
+
+it("pauses the owner when the browser interrupts active video", () => {
+  const pause = vi.fn();
+  const { container } = render(
+    <StoryFilm src="/test.mp4" poster="/test.jpg" playing onPause={pause} />,
+  );
+  const video = container.querySelector("video");
+  if (!video) throw new Error("Missing video");
+  fireEvent.pause(video);
+  expect(pause).toHaveBeenCalledTimes(1);
+});

@@ -1,7 +1,7 @@
 /** Server-only: turns app-written lines (never child text) into natural speech via Lovable AI. */
 const MODEL = "google/gemini-3.1-flash-tts-preview";
 const URL = "https://ai.gateway.lovable.dev/v1/audio/speech";
-const DEFAULT_TTS_MIME = "audio/ogg; codecs=opus";
+const DEFAULT_TTS_MIME = "audio/wav";
 
 const STYLES: Record<string, [string, string]> = {
   narrator: ["як тепла казкарка", "like a warm storyteller"],
@@ -26,7 +26,7 @@ function toDataUri(raw: ArrayBuffer, contentType: string | null): string {
 export class VoiceError extends Error {}
 
 export async function synthesize(text: string, voice: string, lang: "uk" | "en", who: string) {
-  const [ukStyle, enStyle] = STYLES[who] ?? STYLES["narrator"]!;
+  const [ukStyle, enStyle] = STYLES[who] ?? ["як тепла казкарка", "like a warm storyteller"];
   const style = lang === "uk" ? ukStyle : enStyle;
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new VoiceError("config");

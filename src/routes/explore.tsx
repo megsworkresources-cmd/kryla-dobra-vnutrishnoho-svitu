@@ -79,7 +79,8 @@ function Explore() {
                     draggable={false}
                   />
                   {PLACES.map((p) => {
-                    const s = SPOTS[p.id]!;
+                    const s = SPOTS[p.id];
+                    if (!s) return null;
                     const active = sel === p.id;
                     return (
                       <button

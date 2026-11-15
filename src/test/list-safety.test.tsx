@@ -3,6 +3,24 @@ import { afterEach, expect, it, vi } from "vitest";
 import { BodyMap, MixedFeelings, SortGame } from "@/activities/forest";
 import { EMOTIONS, SCENARIOS, SORT_ITEMS } from "@/content/emotions";
 import { update } from "@/lib/store";
+import type { ReactNode } from "react";
+
+vi.mock("@tanstack/react-router", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@tanstack/react-router")>();
+  return {
+    ...actual,
+    // DoneCard links to the garden with <Link>; rendering it in isolation needs an anchor.
+    Link: ({
+      to = "#",
+      children,
+      ...rest
+    }: { to?: string; children?: ReactNode } & Record<string, unknown>) => (
+      <a href={to} {...rest}>
+        {children}
+      </a>
+    ),
+  };
+});
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
 vi.mock("@/lib/audio", () => ({ chime: vi.fn(), sfx: vi.fn() }));

@@ -39,8 +39,7 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
   }, [pathname]);
 
   const card = night ? "night-card" : "paper-card";
-  const side =
-    "flex min-h-14 min-w-0 flex-1 items-center gap-1 px-4 py-2 text-sm font-bold leading-tight";
+  const side = "flex min-h-14 min-w-0 items-center gap-1 px-4 py-2 text-sm font-bold leading-tight";
   return (
     <>
       {/* Spacer reserves the bar's height so page content never slides underneath it. */}
@@ -51,20 +50,21 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
       >
         <nav
           aria-label={t("Назад і далі")}
-          className="mx-auto flex max-w-3xl items-center gap-2 px-4 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2"
+          className="mx-auto grid max-w-3xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2"
         >
-          {back ? (
-            <Link
-              to={back.to as never}
-              className={`${card} ${side} justify-start`}
-              aria-label={t("Назад: {l}", { l: t(back.label) })}
-            >
-              <ChevronLeft className="h-5 w-5 shrink-0" aria-hidden />
-              <span className="line-clamp-2 min-w-0 [text-wrap:balance]">{t(back.label)}</span>
-            </Link>
-          ) : (
-            <span className="min-h-14 flex-1" />
-          )}
+          <div className="flex min-w-0">
+            {back ? (
+              <Link
+                to={back.to as never}
+                activeOptions={{ exact: true }}
+                className={`${card} ${side}`}
+                aria-label={t("Назад: {l}", { l: t(back.label) })}
+              >
+                <ChevronLeft className="h-5 w-5 shrink-0" aria-hidden />
+                <span className="line-clamp-2 min-w-0 [text-wrap:balance]">{t(back.label)}</span>
+              </Link>
+            ) : null}
+          </div>
 
           <Link
             to={"/world" as never}
@@ -78,18 +78,19 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
             <Map className="h-6 w-6" aria-hidden />
           </Link>
 
-          {next ? (
-            <Link
-              to={next.to as never}
-              className={`${side} justify-end rounded-full bg-primary text-primary-foreground shadow-soft`}
-              aria-label={t("Далі: {l}", { l: t(next.label) })}
-            >
-              <span className="line-clamp-2 min-w-0 [text-wrap:balance]">{t(next.label)}</span>
-              <ChevronRight className="h-5 w-5 shrink-0" aria-hidden />
-            </Link>
-          ) : (
-            <span className="min-h-14 flex-1" />
-          )}
+          <div className="flex min-w-0 justify-end">
+            {next ? (
+              <Link
+                to={next.to as never}
+                activeOptions={{ exact: true }}
+                className={`${side} justify-end rounded-full bg-primary text-primary-foreground shadow-soft`}
+                aria-label={t("Далі: {l}", { l: t(next.label) })}
+              >
+                <span className="line-clamp-2 min-w-0 [text-wrap:balance]">{t(next.label)}</span>
+                <ChevronRight className="h-5 w-5 shrink-0" aria-hidden />
+              </Link>
+            ) : null}
+          </div>
         </nav>
       </div>
     </>

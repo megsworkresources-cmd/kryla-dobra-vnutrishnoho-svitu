@@ -47,16 +47,16 @@ function Games() {
           }}
         >
           <TabsList
-            className="grid h-auto grid-cols-3 gap-2 bg-transparent p-0 sm:grid-cols-6"
+            className="grid h-auto grid-cols-3 items-stretch gap-2 bg-transparent p-0 sm:grid-cols-6"
             aria-label={t("Ігри")}
           >
             {GAMES.map((g) => (
               <TabsTrigger
                 key={g.id}
                 value={g.id}
-                className={`paper-card flex min-w-0 flex-col items-center gap-1 whitespace-normal p-3 font-bold transition active:scale-95 ${game === g.id ? "ring-4 ring-ring" : ""}`}
+                className={`paper-card flex h-full min-w-0 flex-col items-center justify-center gap-1 whitespace-normal p-2 text-sm leading-tight font-bold sm:p-3 sm:text-base transition active:scale-95 ${game === g.id ? "ring-4 ring-ring" : ""}`}
               >
-                <span className="text-3xl" aria-hidden>
+                <span className="text-2xl sm:text-3xl" aria-hidden>
                   {g.icon}
                 </span>
                 <span className="text-sm">{t(g.name)}</span>
@@ -155,7 +155,7 @@ export function Bubbles() {
         text={t("Лови бульбашки пальчиком! Кожна співає свою ноту.")}
       />
       <div
-        className={`paper-card relative h-[55vh] min-h-80 overflow-hidden bg-gradient-to-b from-sky/30 to-sage/30 ${calm ? "grid grid-cols-3 place-items-center gap-3 p-6 pt-14" : "p-0"}`}
+        className={`paper-card relative h-[min(60svh,34rem)] min-h-80 overflow-hidden bg-gradient-to-b from-sky/30 to-sage/30 ${calm ? "grid grid-cols-3 place-items-center gap-3 p-6 pt-14" : "p-0"}`}
         data-no-tap
       >
         {list.map((b) => (

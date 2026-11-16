@@ -41,12 +41,18 @@ function Garden() {
     return () => cancelAnimationFrame(id);
   }, [stage]);
   const left = next === null ? 0 : Math.max(0, next - count);
+  // Saved progress lives on the device, so the server can only draw a seed.
+  // Stay invisible until the real stage is read, then fade in — no seed flash.
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   return (
     <Scene image={placeImage("garden")} title="Сад соняшників" back="/world" compact>
-      <div className="space-y-4 pt-[10vh]">
+      <div
+        className={`space-y-4 pt-3 transition-opacity duration-500 sm:pt-[10vh] ${ready ? "opacity-100" : "opacity-0"}`}
+      >
         <section className="paper-card overflow-hidden">
           <div
-            className="relative mx-auto aspect-[440/768] w-full max-w-64 bg-secondary sm:max-w-72"
+            className="relative mx-auto aspect-[440/768] w-full max-w-80 bg-secondary"
             role="group"
             aria-label={t("Запис росту соняшника")}
           >

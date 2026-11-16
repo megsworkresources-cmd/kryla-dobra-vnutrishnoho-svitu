@@ -35,3 +35,4 @@
 - Derive narration controls from shared speech lifecycle state, not optimistic button toggles, so failed or completed playback cannot leave a false Stop state.
 - Shared garden mutations accept only strict stage/consent input, use owner RLS and a locked-down anonymous projection RPC; explicit adult updates prevent child routes from sending data.
 - Keep human-cast cartoon and animal-cast bridge footage separate; video remains silent inline and captions/narration stay app-owned.
+- Public community garden reads use only the publishable stage projection and fail closed if unavailable; never bypass table RLS with an admin fallback.

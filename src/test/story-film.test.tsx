@@ -74,3 +74,37 @@ it("pauses the owner when the browser interrupts active video", () => {
   fireEvent.pause(video);
   expect(pause).toHaveBeenCalledTimes(1);
 });
+
+it("cancels a late loop restart after leaving the story", async () => {
+  let finish: (() => void) | undefined;
+  const { container, unmount } = render(
+    <StoryFilm src="/test.mp4" poster="/test.jpg" playing startAt={0.2} onPause={vi.fn()} />,
+  );
+  const media = container.querySelector("video");
+  if (!media) throw new Error("Missing video");
+  await act(async () => {});
+  vi.mocked(HTMLMediaElement.prototype.play).mockImplementation(
+    () =>
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
+  );
+  fireEvent.ended(media);
+  unmount();
+  const calls = vi.mocked(HTMLMediaElement.prototype.pause).mock.calls.length;
+  await act(async () => finish?.());
+  expect(HTMLMediaElement.prototype.pause).toHaveBeenCalledTimes(calls + 1);
+});
+
+it("pauses the owner when a loop restart is blocked", async () => {
+  const pause = vi.fn();
+  const { container } = render(
+    <StoryFilm src="/test.mp4" poster="/test.jpg" playing startAt={0.2} onPause={pause} />,
+  );
+  const media = container.querySelector("video");
+  if (!media) throw new Error("Missing video");
+  vi.mocked(HTMLMediaElement.prototype.play).mockRejectedValue(new Error("blocked"));
+  fireEvent.ended(media);
+  await screen.findByText("Натисни «Грати», щоб продовжити відео.");
+  expect(pause).toHaveBeenCalledTimes(1);
+});

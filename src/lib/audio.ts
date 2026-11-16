@@ -68,7 +68,10 @@ function ac() {
 
 /** A phone interruption leaves the context suspended; ask for it again on the next sound. */
 function ensureRunning(c: AudioContext) {
-  if (c.state === "suspended") void c.resume().catch(() => {});
+  if (c.state !== "running" && c.state !== "closed")
+    void c.resume().catch(() => {
+      if (c === ctx && musicStatus !== "idle") setMusicStatus("error");
+    });
 }
 
 export function unlockAudio() {

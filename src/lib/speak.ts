@@ -232,7 +232,10 @@ export function resumeSpeaking() {
       else setSpeechState("playing");
     })
     .catch(() => {
-      if (mine === token) setSpeechState("unavailable");
+      if (mine === token) {
+        setSpeechState("unavailable");
+        duckMusic(false);
+      }
     });
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.resume();
 }

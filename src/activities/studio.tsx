@@ -83,7 +83,9 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
     fill();
   };
   const spark = (e: React.PointerEvent, g: string) => {
-    const r = ref.current!.getBoundingClientRect();
+    const canvas = ref.current;
+    if (!canvas) return;
+    const r = canvas.getBoundingClientRect();
     const id = tid.current++;
     setTrail((a) => [...a.slice(-14), { id, x: e.clientX - r.left, y: e.clientY - r.top, g }]);
     timers.current.push(setTimeout(() => setTrail((a) => a.filter((q) => q.id !== id)), 700));
@@ -99,19 +101,23 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   };
   useEffect(fill, []);
   const pos = (e: React.PointerEvent) => {
-    const c = ref.current!;
+    const c = ref.current;
+    if (!c) return null;
     const r = c.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) return null;
     return [
       (e.clientX - r.left) * (c.width / r.width),
       (e.clientY - r.top) * (c.height / r.height),
     ] as const;
   };
   const down = (e: React.PointerEvent) => {
-    const g = ref.current?.getContext("2d");
-    if (!g) return;
+    const canvas = ref.current;
+    const g = canvas?.getContext("2d");
+    const point = pos(e);
+    if (!canvas || !g || !point) return;
+    const [x, y] = point;
     dirty.current = true;
     if (stamp) {
-      const [x, y] = pos(e);
       g.font = `${size * 9}px serif`;
       g.textAlign = "center";
       g.textBaseline = "middle";
@@ -121,9 +127,8 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
       setSaved(false);
       return;
     }
-    ref.current!.setPointerCapture(e.pointerId);
+    canvas.setPointerCapture(e.pointerId);
     drawing.current = true;
-    const [x, y] = pos(e);
     g.beginPath();
     g.moveTo(x, y);
     g.lineTo(x + 0.1, y);
@@ -140,8 +145,10 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   };
   const move = (e: React.PointerEvent) => {
     if (!drawing.current) return;
-    const g = ref.current!.getContext("2d")!;
-    const [x, y] = pos(e);
+    const g = ref.current?.getContext("2d");
+    const point = pos(e);
+    if (!g || !point) return;
+    const [x, y] = point;
     if (rainbow && !eraser) {
       hue.current = (hue.current + 6) % 360;
       g.strokeStyle = `hsl(${hue.current} 80% 60%)`;

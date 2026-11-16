@@ -35,6 +35,7 @@ export function StoryFilm({
   pauseOwner.current = onPause;
   const playingNow = useRef(playing);
   playingNow.current = playing;
+  const playbackGeneration = useRef(0);
   const [status, setStatus] = useState<"loading" | "ready" | "blocked" | "error">("loading");
   const [duration, setDuration] = useState(0);
   useEffect(() => setStatus("loading"), [src]);
@@ -49,6 +50,7 @@ export function StoryFilm({
   useEffect(() => {
     const media = video.current;
     if (!media) return;
+    playbackGeneration.current += 1;
     let active = true;
     if (playing) {
       void media
@@ -65,6 +67,7 @@ export function StoryFilm({
     } else media.pause();
     return () => {
       active = false;
+      playbackGeneration.current += 1;
       media.pause();
     };
   }, [playing, src]);
@@ -106,7 +109,19 @@ export function StoryFilm({
         // ignore a seek the browser refuses mid-teardown
       }
     }
-    if (playingNow.current) void media.play().catch(() => setStatus("blocked"));
+    if (playingNow.current) {
+      const generation = playbackGeneration.current;
+      void media
+        .play()
+        .then(() => {
+          if (generation !== playbackGeneration.current || !playingNow.current) media.pause();
+        })
+        .catch(() => {
+          if (generation !== playbackGeneration.current || !playingNow.current) return;
+          setStatus("blocked");
+          pauseOwner.current();
+        });
+    }
   };
 
   useEffect(() => {

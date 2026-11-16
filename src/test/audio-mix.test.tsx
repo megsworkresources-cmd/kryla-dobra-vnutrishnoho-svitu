@@ -47,7 +47,7 @@ function stubAudio() {
       }
     },
   );
-  return { gains, sources, construct };
+  return { gains, sources, construct, context };
 }
 
 beforeEach(() => {
@@ -120,5 +120,29 @@ it("retries a failed recording when the child returns to the page", async () => 
   vi.stubGlobal("fetch", retry);
   audio.playAmbient("garden");
   await vi.waitFor(() => expect(retry).toHaveBeenCalled());
+  audio.stopAmbient();
+});
+
+it("reports a rejected interruption resume instead of silently ignoring it", async () => {
+  const { context } = stubAudio();
+  const resume = vi.fn().mockRejectedValue(new Error("NotAllowedError"));
+  Object.assign(context, { resume });
+  const { update } = await import("@/lib/store");
+  update((s) => ({
+    ...s,
+    sound: true,
+    music: true,
+    sfx: true,
+    volume: 1,
+    musicVolume: 1,
+    effectsVolume: 1,
+  }));
+  const audio = await import("@/lib/audio");
+  audio.unlockAudio();
+  audio.playAmbient("garden");
+  context.state = "interrupted";
+  audio.chime(440);
+  await vi.waitFor(() => expect(audio.getMusicStatus()).toBe("error"));
+  expect(resume).toHaveBeenCalledTimes(1);
   audio.stopAmbient();
 });

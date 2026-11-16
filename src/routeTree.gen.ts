@@ -18,6 +18,7 @@ import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as GardenRouteImport } from './routes/garden'
 import { Route as HelperRouteImport } from './routes/helper'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SafeRouteImport } from './routes/safe'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -84,6 +85,11 @@ const GardenRoute = GardenRouteImport.update({
 const HelperRoute = HelperRouteImport.update({
   id: '/helper',
   path: '/helper',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -212,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/garden'
     | '/helper'
+    | '/privacy'
     | '/reset-password'
     | '/safe'
     | '/settings'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/garden'
     | '/helper'
+    | '/privacy'
     | '/reset-password'
     | '/safe'
     | '/settings'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/garden'
     | '/helper'
+    | '/privacy'
     | '/reset-password'
     | '/safe'
     | '/settings'
@@ -417,6 +429,7 @@ export interface RootRouteChildren {
   GamesRoute: typeof GamesRoute
   GardenRoute: typeof GardenRoute
   HelperRoute: typeof HelperRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SafeRoute: typeof SafeRoute
   SettingsRoute: typeof SettingsRoute
@@ -503,6 +516,13 @@ declare module '@tanstack/react-router' {
       path: '/helper'
       fullPath: '/helper'
       preLoaderRoute: typeof HelperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -693,6 +713,7 @@ const rootRouteChildren: RootRouteChildren = {
   GamesRoute: GamesRoute,
   GardenRoute: GardenRoute,
   HelperRoute: HelperRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SafeRoute: SafeRoute,
   SettingsRoute: SettingsRoute,

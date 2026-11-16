@@ -412,6 +412,11 @@ function Settings() {
           </p>
         </Section>
       </div>
+      <p className="mt-6 text-center text-sm">
+        <Link to="/privacy" className="underline">
+          {t("Політика конфіденційності")}
+        </Link>
+      </p>
     </Scene>
   );
 }

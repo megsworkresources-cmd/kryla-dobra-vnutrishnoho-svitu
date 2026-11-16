@@ -1,3 +1,4 @@
+import { ReportAi } from "@/components/GrownUpLink";
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { BookOpen, Sparkles, Square, Volume2 } from "lucide-react";
@@ -258,6 +259,14 @@ function StoryCompanion() {
                   </section>
                 ))}
               </div>
+              {source === "ai" && (
+                <div className="mt-4">
+                  <ReportAi
+                    kind="story"
+                    content={[story.title, ...story.scenes.map((x) => x.text)].join("\n")}
+                  />
+                </div>
+              )}
               <p className="mt-6 rounded-2xl bg-secondary p-4 font-bold">{story.closing}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Btn

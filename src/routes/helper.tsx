@@ -1,3 +1,4 @@
+import { ReportAi } from "@/components/GrownUpLink";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
@@ -227,6 +228,8 @@ export function Helper() {
                 </p>
               </div>
             )}
+            {/* Only the suggested activity is reported, never the child's words or a reply that may echo them. */}
+            <ReportAi kind="helper" content={`activity:${reply.activity} guide:${reply.guide}`} />
             <Btn
               variant="soft"
               onClick={() => {

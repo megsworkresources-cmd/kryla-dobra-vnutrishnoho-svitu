@@ -62,6 +62,23 @@ function Parents() {
       setSigningOut(false);
     }
   };
+  const [deleteStep, setDeleteStep] = useState<"idle" | "ask" | "busy" | "error">("idle");
+  const removeAccount = async () => {
+    setDeleteStep("busy");
+    try {
+      const { deleteMyAccount } = await import("@/lib/account.functions");
+      const res = await deleteMyAccount();
+      if (!res.ok) return setDeleteStep("error");
+      await signOutCaregiver({
+        cancel: () => queryClient.cancelQueries(),
+        clear: () => queryClient.clear(),
+        signOut: () => supabase.auth.signOut({ scope: "local" }),
+        navigate: () => navigate({ to: "/", replace: true }),
+      });
+    } catch {
+      setDeleteStep("error");
+    }
+  };
   const date = (ms?: number) =>
     ms ? new Date(ms).toLocaleDateString(localeOf(lang), { day: "numeric", month: "short" }) : "—";
 
@@ -87,6 +104,33 @@ function Parents() {
           <Btn variant="soft" disabled={signingOut} onClick={signOut}>
             {t("Вийти")}
           </Btn>
+        </div>
+        <div className="paper-card space-y-2 p-4 text-sm">
+          <p>
+            {t("Видалення акаунта прибирає ваш вхід і спільний соняшник. Малюнки та прогрес дитини залишаться на цьому пристрої.")}{" "}
+            <Link to="/privacy" className="underline">
+              {t("Політика конфіденційності")}
+            </Link>
+          </p>
+          {deleteStep === "idle" || deleteStep === "error" ? (
+            <Btn variant="soft" onClick={() => setDeleteStep("ask")}>
+              {t("Видалити акаунт")}
+            </Btn>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              <Btn disabled={deleteStep === "busy"} onClick={removeAccount}>
+                {t("Так, видалити назавжди")}
+              </Btn>
+              <Btn variant="soft" disabled={deleteStep === "busy"} onClick={() => setDeleteStep("idle")}>
+                {t("Скасувати")}
+              </Btn>
+            </div>
+          )}
+          {deleteStep === "error" && (
+            <p role="alert" className="text-destructive">
+              {t("Не вдалося видалити акаунт. Спробуйте ще раз.")}
+            </p>
+          )}
         </div>
         {signOutError && (
           <p role="alert" className="text-destructive">

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Pause, Play, Sprout } from "lucide-react";
 import { useEffect, useState } from "react";
+import { GrownUpLink } from "@/components/GrownUpLink";
 import { Btn, Scene } from "@/components/Scene";
 import { StoryFilm } from "@/components/StoryFilm";
 import { GROWTH_THRESHOLDS, growthPart, nextGrowthThreshold } from "@/content/growth";
@@ -77,22 +78,12 @@ function Garden() {
             </Btn>
           </div>
           <p className="px-4 pb-3 text-xs text-muted-foreground">
-            <a
-              href="https://commons.wikimedia.org/wiki/File:Sunflower_growing_time_lapse.gif"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-block py-1 underline"
-            >
+            <GrownUpLink href="https://commons.wikimedia.org/wiki/File:Sunflower_growing_time_lapse.gif">
               {t("Відео: Naturenow, CC BY-SA 4.0; перетворено з GIF у MP4.")}
-            </a>{" "}
-            <a
-              href="https://creativecommons.org/licenses/by-sa/4.0/"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-block py-1 underline"
-            >
+            </GrownUpLink>{" "}
+            <GrownUpLink href="https://creativecommons.org/licenses/by-sa/4.0/">
               CC BY-SA 4.0
-            </a>
+            </GrownUpLink>
           </p>
         </section>
 

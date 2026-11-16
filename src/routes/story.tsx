@@ -81,6 +81,7 @@ function StoryCompanion() {
   const [source, setSource] = useState<"ai" | "ready" | "app">("ai");
   const [hasRead, setHasRead] = useState(false);
   const request = useRef(0);
+  const told = useRef(0);
   const createStory = useServerFn(makeStory);
   const speech = useSpeechState();
   const speaking = speech === "loading" || speech === "playing";
@@ -102,6 +103,7 @@ function StoryCompanion() {
 
   const generate = async () => {
     const mine = ++request.current;
+    const variant = told.current++;
     stopSpeaking();
     setLoading(true);
     try {
@@ -109,11 +111,11 @@ function StoryCompanion() {
       if (mine !== request.current) return;
       // The app can always write a story itself, so creating one never dead-ends.
       show(
-        res.ok ? res.story : composedStory({ who, place, feeling, lang }),
+        res.ok ? res.story : composedStory({ who, place, feeling, lang, variant }),
         res.ok ? "ai" : "app",
       );
     } catch {
-      if (mine === request.current) show(composedStory({ who, place, feeling, lang }), "app");
+      if (mine === request.current) show(composedStory({ who, place, feeling, lang, variant }), "app");
     } finally {
       if (mine === request.current) setLoading(false);
     }

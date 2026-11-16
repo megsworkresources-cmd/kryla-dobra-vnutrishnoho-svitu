@@ -24,6 +24,22 @@ const PLACE_LINES: Record<string, string> = {
   path: "Стежка була звичайна, але кроки на ній були свої.",
   safe: "У безпечному місці було тепло, і ніхто не квапив.",
 };
+// Variations so "another story" never repeats the same tale twice in a row.
+const OPENINGS = [
+  "{who} прийшов у {place}. Там було тихо, і можна було не поспішати.",
+  "Одного ранку {who} вирушив у {place}, тримаючи в кишені маленький камінчик на щастя.",
+  "Увечері {who} тихенько зазирнув у {place} — там світився теплий вогник.",
+];
+const ENDINGS = [
+  "Спочатку {who} просто стояв. Потім зробив один маленький крок — невеликий, але свій.",
+  "{who} посміхнувся сам до себе й помахав місцю на прощання, знаючи, що можна повернутися.",
+  "Їжачок Ліхтарик присвітив стежку, і {who} спокійно рушив додому.",
+];
+const TITLES = [
+  "Казка про {place}, де було тепло",
+  "Маленька пригода в місці: {place}",
+  "Тихий вечір: {place}",
+];
 const FALLBACK_PLACE = "Було тихо, і можна було не поспішати.";
 
 /** App-written story from the same three approved choices: no network, no child text. */
@@ -32,24 +48,27 @@ export function composedStory(input: {
   place: string;
   feeling: BuiltFeeling;
   lang: Lang;
+  /** Which variation to tell; any integer works. */
+  variant?: number;
 }) {
+  const v = Math.abs(Math.trunc(input.variant ?? 0)) % OPENINGS.length;
   const name = tr(CHARACTERS[input.who].name, input.lang);
   const placeName = tr(
     PLACES.find((p) => p.id === input.place)?.name ?? "Чарівне місце",
     input.lang,
   );
   const scenes = [
-    "{who} прийшов у {place}. Там було тихо, і можна було не поспішати.",
+    OPENINGS[v]!,
     PLACE_LINES[input.place] ?? FALLBACK_PLACE,
     FEELING_LINES[input.feeling],
-    "Спочатку {who} просто стояв. Потім зробив один маленький крок — невеликий, але свій.",
+    ENDINGS[v]!,
   ].map((line) =>
     tr(line, input.lang, { who: name, place: placeName })
       .replaceAll("{who}", name)
       .replaceAll("{place}", placeName),
   );
   return {
-    title: tr("Казка про {place}, де було тепло", input.lang, { place: placeName }).replaceAll(
+    title: tr(TITLES[v]!, input.lang, { place: placeName }).replaceAll(
       "{place}",
       placeName,
     ),

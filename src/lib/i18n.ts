@@ -53,6 +53,16 @@ const EN: Record<string, string> = {
   "Спочатку {who} просто стояв. Потім зробив один маленький крок — невеликий, але свій.":
     "At first {who} just stood. Then came one small step — not big, but their own.",
   "Казка про {place}, де було тепло": "A story about {place}, where it was warm",
+  "Одного ранку {who} вирушив у {place}, тримаючи в кишені маленький камінчик на щастя.":
+    "One morning {who} set off to {place}, holding a little lucky pebble in a pocket.",
+  "Увечері {who} тихенько зазирнув у {place} — там світився теплий вогник.":
+    "In the evening {who} quietly peeked into {place}, where a warm little light was glowing.",
+  "{who} посміхнувся сам до себе й помахав місцю на прощання, знаючи, що можна повернутися.":
+    "{who} smiled and waved goodbye to the place, knowing it was always possible to come back.",
+  "Їжачок Ліхтарик присвітив стежку, і {who} спокійно рушив додому.":
+    "Lantern the Hedgehog lit up the path, and {who} calmly headed home.",
+  "Маленька пригода в місці: {place}": "A little adventure in {place}",
+  "Тихий вечір: {place}": "A quiet evening: {place}",
   "Ця казка не мусить закінчуватися правильно. Достатньо, що {who} був тут.":
     "This story does not have to end the right way. It is enough that {who} was here.",
   "Чарівне місце": "A magical place",

@@ -1,4 +1,4 @@
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { composedStory } from "@/content/story-builder";
 
 const base = { who: "solomiya", place: "meadow", feeling: "calm", lang: "uk" } as const;
@@ -42,4 +42,13 @@ it("never asks a child to hold their breath", () => {
     .toLowerCase();
   expect(all).not.toContain("затримуй");
   expect(all).not.toContain("hold your breath");
+});
+describe("app-written story variations", () => {
+  it("tells a different story when the child asks for another one", () => {
+    const base = { who: "taras" as const, place: "forest", feeling: "worried" as const, lang: "uk" as const };
+    const a = composedStory({ ...base, variant: 0 });
+    const b = composedStory({ ...base, variant: 1 });
+    expect(b.title).not.toBe(a.title);
+    expect(b.scenes[0]!.text).not.toBe(a.scenes[0]!.text);
+  });
 });

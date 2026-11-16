@@ -54,15 +54,23 @@ const EN: Record<string, string> = {
     "At first {who} just stood. Then came one small step — not big, but their own.",
   "Казка про {place}, де було тепло": "A story about {place}, where it was warm",
   "Політика конфіденційності": "Privacy policy",
+  "Статистика відвідувань": "Visit statistics",
+  "Lovable, сервіс, на якому працює застосунок, рахує відвідування без файлів cookie: нічого не зберігає на пристрої, не зберігає IP-адреси й не впізнає відвідувачів. Записуються відвідані сторінки, звідки прийшли, країна, браузер, система й тип пристрою, час на сторінці, швидкість, помилки, натискання кнопок і посилань та кілька подій застосунку (коли помічник зі штучним інтелектом у браузері читає карту застосунку). Докладні дані зберігаються 90 днів, щоденні підсумки — рік. Lovable збирає ці дані для нас; як він із ними поводиться, пояснює політика конфіденційності Lovable: lovable.dev/privacy.":
+    "Lovable, the service the app runs on, counts visits without cookies: it stores nothing on the device, keeps no IP addresses and doesn't identify visitors. It records the pages visited, where visitors came from, country, browser, operating system and device type, time on page, page speed, errors, clicks on buttons and links, and a few app events (when an AI assistant in the browser reads the app's map). Detailed data is kept for 90 days and daily summaries for a year. Lovable collects this data for us; Lovable's privacy policy at lovable.dev/privacy explains how it handles it.",
+  "Інші сервіси": "Other services",
+  "Шрифти завантажуються з Google Fonts, а музика — з нашого сховища файлів, тому ці сервіси бачать IP-адресу пристрою, як і будь-який сайт. Вхід дорослих і спільний сад працюють на нашому сервері в Lovable Cloud.":
+    "Fonts load from Google Fonts and music from our file storage, so those services see the device's IP address, as any website does. Grown-up sign-in and the shared garden run on our server in Lovable Cloud.",
   "Що Тихе Місце зберігає, що ніколи не надсилає і як видалити акаунт дорослого.": "What Quiet Place stores, what it never sends, and how to delete a grown-up account.",
   "Дані дитини залишаються на пристрої": "A child's data stays on the device",
   "Малюнки, вибір емоцій, прогрес і налаштування зберігаються лише на цьому пристрої. Дитині не потрібен акаунт, і ми не збираємо її ім’я, фото чи місцезнаходження.": "Drawings, feeling choices, progress and settings are stored only on this device. Children need no account, and we never collect their name, photo or location.",
   "Без реклами й відстеження": "No ads or tracking",
-  "У застосунку немає реклами, покупок, сторонньої аналітики чи відстеження між застосунками.": "The app has no ads, purchases, third-party analytics or cross-app tracking.",
+  "У застосунку немає реклами, покупок чи відстеження між застосунками.":
+    "The app has no ads, purchases or cross-app tracking.",
   "Акаунт дорослого": "Grown-up account",
   "Дорослий може створити акаунт з електронною поштою. Ми зберігаємо лише пошту й дані входу, а також стадію соняшника, якщо дорослий сам погодився поділитися нею в спільному саду.": "A grown-up can create an account with an email address. We store only the email and sign-in details, plus the sunflower stage if the grown-up chose to share it in the shared garden.",
   "Функції зі штучним інтелектом": "AI features",
-  "Казки, голоси та помічник почуттів працюють лише після входу дорослого. Текст, який пише дитина в помічнику, надсилається один раз для підбору вправи й не зберігається. Голоси озвучують лише фрази, написані в застосунку.": "Stories, voices and the feelings helper work only after a grown-up signs in. What a child types in the helper is sent once to pick an activity and is never stored. Voices read only lines written by the app.",
+  "Казки, голоси та помічник почуттів працюють лише після входу дорослого й обробляються моделями штучного інтелекту через Lovable AI. Для казки надсилаються лише три вибори дитини (персонаж, місце, настрій) — без імені чи власного тексту. Текст, який пише дитина в помічнику, надсилається один раз для підбору вправи й не зберігається. Голоси озвучують лише фрази, написані в застосунку. Без входу казки складаються на самому пристрої, а читає їх голос пристрою.":
+    "Stories, voices and the feelings helper work only after a grown-up signs in and are processed by AI models through Lovable AI. A story sends only the child's three choices (character, place, mood) — no name or own text. What a child types in the helper is sent once to pick an activity and is never stored. Voices read only lines written by the app. Without sign-in, stories are put together on the device and read by the device's own voice.",
   "Скарги на відповіді": "Reporting answers",
   "Якщо дорослий повідомляє про погану відповідь, ми зберігаємо лише цю відповідь штучного інтелекту, щоб перевірити її, без слів дитини.": "If a grown-up reports a bad answer, we keep only that AI answer to review it, never the child's words.",
   "Видалення": "Deletion",

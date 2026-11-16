@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 /**
  * All child data stays on this device (localStorage). Only the optional "Розкажи, як ти" text is sent once to Lovable AI and never stored.
@@ -69,6 +69,8 @@ export function getState() {
 
 let state: AppState = DEFAULTS;
 let loaded = false;
+/** True once this session has written the store; in-memory writes then win over storage. */
+let touched = false;
 const listeners = new Set<() => void>();
 
 function load() {
@@ -173,6 +175,7 @@ function persist() {
 
 export function update(fn: (s: AppState) => AppState) {
   load();
+  touched = true;
   state = fn(state);
   const saved = persist();
   listeners.forEach((l) => l());
@@ -184,8 +187,15 @@ function subscribe(l: () => void) {
   return () => listeners.delete(l);
 }
 
+/** Re-read the device store unless this session has already written it. */
+function refreshFromStorage() {
+  if (touched) return;
+  loaded = false;
+  load();
+}
+
 export function useStore<T>(select: (s: AppState) => T): T {
-  return useSyncExternalStore(
+  const value = useSyncExternalStore(
     subscribe,
     () => {
       load();
@@ -193,6 +203,15 @@ export function useStore<T>(select: (s: AppState) => T): T {
     },
     () => select(DEFAULTS),
   );
+  // Server markup is rendered before the device store can be read, so the first client
+  // paint shows the resting state. Re-read once after mount so saved progress appears
+  // immediately instead of a beat later.
+  const [, afterMount] = useState(false);
+  useEffect(() => {
+    refreshFromStorage();
+    afterMount(true);
+  }, []);
+  return value;
 }
 
 export const markDone = (id: string) =>

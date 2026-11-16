@@ -7,6 +7,7 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { loadEnv } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
 
 // The framework's dev asset proxy serves recorded films and images from Lovable,
 // but it reads LOVABLE_PREVIEW_HOST from process.env. Vite only exposes VITE_*
@@ -22,6 +23,39 @@ export default defineConfig({
       mcpPlugin({
         path: "/api/public/mcp",
         metadataPath: "/api/public/.well-known/oauth-protected-resource",
+      }),
+      VitePWA({
+        registerType: "autoUpdate",
+        injectRegister: null,
+        devOptions: { enabled: false },
+        manifest: false,
+        filename: "sw.js",
+        outDir: "dist/client",
+        workbox: {
+          globPatterns: ["**/*.{js,css,png,jpg,jpeg,webp,svg,woff2}"],
+          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+          navigateFallback: null,
+          cleanupOutdatedCaches: true,
+          runtimeCaching: [
+            {
+              urlPattern: ({ request, url }) =>
+                request.mode === "navigate" && !url.pathname.startsWith("/~oauth") && !url.pathname.startsWith("/api/"),
+              handler: "NetworkFirst",
+              options: { cacheName: "pages", networkTimeoutSeconds: 4, expiration: { maxEntries: 60 } },
+            },
+            {
+              urlPattern: ({ url, sameOrigin }) =>
+                sameOrigin && (url.pathname.startsWith("/__l5e/assets-v1/") || url.pathname.startsWith("/assets/")),
+              handler: "CacheFirst",
+              options: {
+                cacheName: "media",
+                expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
+                rangeRequests: true,
+                cacheableResponse: { statuses: [0, 200] },
+              },
+            },
+          ],
+        },
       }),
     ],
   },

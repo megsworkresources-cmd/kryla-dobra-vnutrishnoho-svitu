@@ -153,6 +153,14 @@
 @utility veil-bottom {
   background: var(--veil-bottom);
 }
+@utility veil-home {
+  background: linear-gradient(
+    to top,
+    oklch(0.975 0.018 85 / 0.9) 0%,
+    oklch(0.975 0.018 85 / 0.6) 18%,
+    transparent 40%
+  );
+}
 @utility veil-night {
   background: var(--veil-night);
 }

@@ -72,9 +72,9 @@ it("lowers the music while a character speaks and restores it afterwards", async
   const bus = gains[1]?.gain;
   if (!bus) throw new Error("ambient bus missing");
   audio.duckMusic(true);
-  expect(bus.setTargetAtTime).toHaveBeenLastCalledWith(0.105, 0, 0.12);
+  expect(bus.setTargetAtTime).toHaveBeenLastCalledWith(0.18, 0, 0.12);
   audio.duckMusic(false);
-  expect(bus.setTargetAtTime).toHaveBeenLastCalledWith(0.35, 0, 0.12);
+  expect(bus.setTargetAtTime).toHaveBeenLastCalledWith(0.6, 0, 0.12);
   audio.stopAmbient();
 });
 

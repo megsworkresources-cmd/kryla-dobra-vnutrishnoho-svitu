@@ -54,7 +54,8 @@ function ac() {
   }
   if (!ctx) {
     try {
-      ctx = new AudioContextClass();
+      // Larger buffers stop crackling on iPhone speakers.
+      ctx = new AudioContextClass({ latencyHint: "playback" });
     } catch {
       return null;
     }
@@ -293,7 +294,7 @@ export function useMusicStatus() {
 function applyAmbientGain() {
   if (!amb || !ctx || ctx.state === "closed") return;
   amb.bus.gain.setTargetAtTime(
-    0.35 * getState().musicVolume * (musicDucked ? 0.3 : 1),
+    0.6 * getState().musicVolume * (musicDucked ? 0.3 : 1),
     ctx.currentTime,
     0.12,
   );
@@ -335,7 +336,7 @@ export function playAmbient(kind: Ambient | null) {
   const bus = c.createGain();
   bus.gain.setValueAtTime(0, c.currentTime);
   bus.gain.linearRampToValueAtTime(
-    0.35 * s.musicVolume * (musicDucked ? 0.3 : 1),
+    0.6 * s.musicVolume * (musicDucked ? 0.3 : 1),
     c.currentTime + 3,
   );
   bus.connect(master);
@@ -345,7 +346,7 @@ export function playAmbient(kind: Ambient | null) {
   f.type = "lowpass";
   f.frequency.value = kind === "night" ? 300 : 600;
   const ng = c.createGain();
-  ng.gain.value = kind === "cozy" ? 0.08 : 0.16;
+  ng.gain.value = kind === "cozy" ? 0.03 : 0.05;
   n.connect(f).connect(ng).connect(bus);
   n.start();
   stops.push(() => n.stop());
@@ -462,7 +463,7 @@ function whenRunning(c: AudioContext, generation: number, ms = 5000) {
 }
 
 /** Never silently substitute a synthetic melody for an unavailable recording. */
-export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
+export function startMusic(bus: AudioNode, style: MusicStyle, _night: boolean) {
   const c = ac();
   if (!c || style === "nature") return () => {};
   const generation = audioGeneration;
@@ -483,9 +484,8 @@ export function startMusic(bus: AudioNode, style: MusicStyle, night: boolean) {
       source.loop = true;
       source.loopStart = Math.min(0.08, buffer.duration / 10);
       source.loopEnd = Math.max(source.loopStart + 0.1, buffer.duration - 0.08);
-      source.playbackRate.value = night ? 0.96 : 1;
       gain = c.createGain();
-      gain.gain.value = 0.72;
+      gain.gain.value = 1;
       source.connect(gain).connect(bus);
       source.start();
       setMusicStatus("playing");

@@ -7,6 +7,10 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Спершу спитай дорослого": "Ask a grown-up first",
+  "Дорослий, чи можна дитині зараз пограти в ігри?": "Grown-up, may the child play games now?",
+  "Так, можна грати": "Yes, they can play",
+  "Не зараз": "Not now",
   "Анонімні соняшники з добровільною згодою дорослих. Малюнки й почуття залишаються приватними.":
     "Anonymous sunflowers shared with caregiver consent. Drawings and feelings stay private.",
   "Сад ще прокидається.": "The garden is still waking up.",

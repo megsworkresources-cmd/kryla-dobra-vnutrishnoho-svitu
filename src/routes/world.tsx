@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { Btn } from "@/components/Scene";
 import { Settings2, Users } from "lucide-react";
 import map from "@/assets/world-map.jpg";
 import { PLACES } from "@/content/places";
@@ -27,8 +29,22 @@ export const Route = createFileRoute("/world")({
   component: World,
 });
 
+// Balanced zigzag so bubbles never crowd each other on narrow phones.
+const SPOTS = [
+  [28, 3],
+  [72, 14],
+  [30, 26],
+  [70, 38],
+  [28, 50],
+  [72, 62],
+  [30, 74],
+  [70, 86],
+] as const;
+
 function World() {
   const t = useT();
+  const navigate = useNavigate();
+  const [askGames, setAskGames] = useState(false);
   useWebMCP({
     name: "list_world_places",
     description:
@@ -41,13 +57,13 @@ function World() {
   });
 
   return (
-    <div className="relative flex h-dvh flex-col overflow-hidden bg-ink">
+    <div className="relative flex min-h-dvh flex-col bg-ink">
       <img
         src={map}
         alt={t("Чарівна долина з лісом, лугом, хмарним замком і нічним небом")}
         width={1088}
         height={1920}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="fixed inset-0 h-full w-full object-cover"
       />
       {/* butterflies */}
       <div
@@ -57,7 +73,7 @@ function World() {
         🦋
       </div>
 
-      <header className="relative z-20 flex flex-wrap items-center gap-2 p-3">
+      <header className="sticky top-0 z-20 flex flex-wrap items-center gap-2 p-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <Link
           to="/"
           className="paper-card flex h-12 min-w-0 flex-1 items-center px-4 font-display text-lg font-bold sm:flex-none"
@@ -81,13 +97,14 @@ function World() {
             <Users className="h-5 w-5" />
             <span className="hidden sm:inline">{t("Друзі")}</span>
           </Link>
-          <Link
-            to="/games"
+          <button
+            type="button"
+            onClick={() => setAskGames(true)}
             className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Ігри")}
           >
             🎮<span className="hidden sm:inline">{t("Ігри")}</span>
-          </Link>
+          </button>
           <Link
             to="/watch"
             className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
@@ -112,20 +129,20 @@ function World() {
         </div>
       </header>
 
-      <nav aria-label={t("Місця світу")} className="relative z-10 min-h-0 flex-1">
+      <nav aria-label={t("Місця світу")} className="relative z-10 min-h-[56rem] flex-1">
         {PLACES.map((p, i) => (
           <Link
             key={p.id}
             to={p.to}
             className="group absolute flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center justify-center animate-fade-up"
             style={{
-              left: `${Math.min(Math.max(p.x, 18), 82)}%`,
-              top: `${p.y * 0.8 + 1}%`,
+              left: `${SPOTS[i % SPOTS.length]![0]}%`,
+              top: `${SPOTS[i % SPOTS.length]![1]}%`,
               animationDelay: `${i * 80}ms`,
             }}
           >
             <span className="flex flex-col items-center">
-              <span className="relative h-14 w-14 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-16 sm:w-16">
+              <span className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-24 sm:w-24">
                 <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />
               </span>
               <span className="paper-card mt-1 whitespace-nowrap px-3 py-1 text-xs font-extrabold">
@@ -135,6 +152,27 @@ function World() {
           </Link>
         ))}
       </nav>
+      {askGames && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="games-consent-title"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-ink/50 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center"
+        >
+          <div className="paper-card w-full max-w-sm p-5 text-center">
+            <h2 id="games-consent-title" className="font-display text-2xl font-bold">
+              {t("Спершу спитай дорослого")}
+            </h2>
+            <p className="mt-2 text-base">{t("Дорослий, чи можна дитині зараз пограти в ігри?")}</p>
+            <div className="mt-4 flex flex-col gap-2">
+              <Btn onClick={() => navigate({ to: "/games" })}>{t("Так, можна грати")}</Btn>
+              <Btn variant="soft" onClick={() => setAskGames(false)}>
+                {t("Не зараз")}
+              </Btn>
+            </div>
+          </div>
+        </div>
+      )}
       <BottomNav />
     </div>
   );

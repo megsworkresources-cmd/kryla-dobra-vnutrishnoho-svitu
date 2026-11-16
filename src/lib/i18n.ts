@@ -59,6 +59,8 @@ const EN: Record<string, string> = {
     "Sunflowers from other families at their growth stage — no names or drawings.",
   "Подивися, як ростуть соняшники інших родин.": "See how sunflowers from other families grow.",
   "Сад зараз відпочиває. Спробуй пізніше.": "The garden is resting. Try again later.",
+  "Дитячі сторінки не потребують акаунта, реклами чи повідомлень. Малюнки, вправи й налаштування залишаються на пристрої. Дорослий акаунт потрібен лише для добровільного поширення стадії соняшника; текст помічника почуттів надсилається для обробки, але застосунок його не зберігає.":
+    "Child pages need no account, adverts or messages. Drawings, activities and settings stay on the device. A caregiver account is only for voluntarily sharing a sunflower stage; Feelings Helper text is sent for processing, but the app does not save it.",
   "Твій соняшник уже тут. Інші родини приєднаються, коли дорослі погодяться.":
     "Your sunflower is already here. Other families join when grown-ups agree.",
   "Підглянути картки": "Peek at cards",
@@ -71,6 +73,28 @@ const EN: Record<string, string> = {
   "Оновити сад": "Refresh garden",
   "Поширення вимкнено": "Sharing is off",
   "Соняшник поширено": "Sunflower is shared",
+  "Соняшник повністю розквітнув — це остання стадія росту.":
+    "The sunflower has fully bloomed — this is its final growth stage.",
+  "Слухати ще раз": "Listen again",
+  "Чудова мелодія!": "A wonderful melody!",
+  "Це єдине місце, де твої слова надсилаються для обробки, щоб підібрати вправу. Застосунок не зберігає твій текст.":
+    "This is the only place where your words are sent for processing to choose an activity. The app does not save your text.",
+  "Додай ще хоча б одну літеру, щоб персонажі зрозуміли.":
+    "Add at least one more letter so the characters can understand.",
+  "Наліпка: {n}": "Sticker: {n}",
+  "Колір: {n}": "Colour: {n}",
+  Метелик: "Butterfly",
+  Серце: "Heart",
+  Веселка: "Rainbow",
+  "Божа корівка": "Ladybird",
+  Чорний: "Black",
+  Жовтий: "Yellow",
+  Рожевий: "Pink",
+  Блакитний: "Blue",
+  Зелений: "Green",
+  Лавандовий: "Lavender",
+  Синій: "Dark blue",
+  Білий: "White",
   "Поки що немає спільних соняшників.": "No sunflowers are shared yet.",
   "Сад недоступний. Спробуйте ще раз.": "Garden unavailable. Please try again.",
   "Сад завантажується…": "Garden is loading…",

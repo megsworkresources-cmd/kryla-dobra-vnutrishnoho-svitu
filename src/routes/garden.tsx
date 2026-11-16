@@ -3,15 +3,13 @@ import { Pause, Play, Sprout } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Btn, Scene } from "@/components/Scene";
 import { StoryFilm } from "@/components/StoryFilm";
-import { growthPart } from "@/content/growth";
+import { GROWTH_THRESHOLDS, growthPart, nextGrowthThreshold } from "@/content/growth";
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { careCount, growthStage, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
-
-const NEXT: readonly number[] = [1, 3, 7, 12, 20];
 
 export const Route = createFileRoute("/garden")({
   head: () =>
@@ -34,15 +32,15 @@ function Garden() {
   const stage = growthStage(count);
   const h = ([6, 40, 70, 100, 125, 135] as const)[stage] ?? 6;
   const words = WORDS[stage] ?? WORDS[0];
-  const next = NEXT[stage] ?? count;
-  const previous = NEXT[stage - 1] ?? 0;
+  const next = nextGrowthThreshold(stage);
+  const previous = stage > 0 ? (GROWTH_THRESHOLDS[stage - 1] ?? 0) : 0;
   const [grown, setGrown] = useState(0);
   const [playing, setPlaying] = useState(true);
   useEffect(() => {
     const id = requestAnimationFrame(() => setGrown(1));
     return () => cancelAnimationFrame(id);
   }, [stage]);
-  const left = stage < 5 ? next - count : 0;
+  const left = next === null ? 0 : Math.max(0, next - count);
   return (
     <Scene image={placeImage("garden")} title="Сад соняшників" back="/world" compact>
       <div className="space-y-4 pt-[10vh]">
@@ -145,7 +143,7 @@ function Garden() {
               )}
               {stage === 3 && <circle cx="100" cy={200 - h} r="7" fill="var(--sage)" />}
             </g>
-            {stage < 5 &&
+            {next !== null &&
               [40, 100, 160].map((x, k) => (
                 <circle
                   key={x}
@@ -166,7 +164,7 @@ function Garden() {
           <p className="mt-3 text-sm font-semibold">
             {t("Маленьких справ турботи: {n}", { n: count })}
           </p>
-          {stage < 5 && (
+          {next !== null && (
             <>
               <div
                 className="mx-auto mt-3 h-3 max-w-xs overflow-hidden rounded-full bg-secondary"

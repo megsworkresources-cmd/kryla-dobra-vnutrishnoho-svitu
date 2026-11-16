@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Droplets, Pause, Play, RefreshCw } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
 import { StoryFilm } from "@/components/StoryFilm";
-import { growthPart } from "@/content/growth";
+import { coarseGrowthStage, growthGlyph, growthPart, isFinalGrowthStage } from "@/content/growth";
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { readCommunityGarden } from "@/lib/community-garden.functions";
@@ -15,8 +15,6 @@ import { careCount, growthStage, useStore, waterFlower } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
-
-const GLYPHS = ["🌰", "🌱", "🌿", "🌿", "🌼", "🌻"] as const;
 
 export const Route = createFileRoute("/community-garden")({
   head: () =>
@@ -41,7 +39,7 @@ function CommunityGarden() {
   const shared = garden.data?.stages ?? [];
   const [picked, setPicked] = useState<number | null>(null);
   const [playing, setPlaying] = useState(true);
-  const shownStage = picked === null ? ownStage : (shared[picked] ?? ownStage);
+  const shownStage = coarseGrowthStage(picked === null ? ownStage : (shared[picked] ?? ownStage));
   const shownName = picked === null ? null : picked + 1;
   const unavailable = garden.isError || garden.data?.ok === false;
 
@@ -91,8 +89,8 @@ function CommunityGarden() {
           <p className="mt-1 text-sm text-muted-foreground">
             {t("Обери квітку, щоб побачити, як вона росла.")}
           </p>
-          <ul className="mt-3 flex flex-wrap items-end justify-center gap-2">
-            <li>
+          <ul className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 pb-2">
+            <li className="shrink-0 snap-start">
               <Btn
                 variant="soft"
                 aria-pressed={picked === null}
@@ -103,7 +101,7 @@ function CommunityGarden() {
                 className="w-24 flex-col rounded-lg px-2 py-3"
               >
                 <span aria-hidden className="block text-4xl leading-none">
-                  {GLYPHS[ownStage] ?? "🌻"}
+                  {growthGlyph(ownStage)}
                 </span>
                 <span className="mt-2 block text-xs font-bold">{t("Твій соняшник")}</span>
                 <span className="block text-[11px] text-muted-foreground">
@@ -112,7 +110,7 @@ function CommunityGarden() {
               </Btn>
             </li>
             {shared.map((stage, i) => (
-              <li key={`${i}-${stage}`}>
+              <li key={`${i}-${stage}`} className="shrink-0 snap-start">
                 <Btn
                   variant="soft"
                   aria-pressed={picked === i}
@@ -127,7 +125,7 @@ function CommunityGarden() {
                     className={`block leading-none ${stage >= 5 ? "animate-sway" : ""}`}
                     style={{ fontSize: `${1.9 + stage * 0.16}rem` }}
                   >
-                    {GLYPHS[stage] ?? "🌻"}
+                    {growthGlyph(stage)}
                   </span>
                   <span className="mt-2 block text-xs font-bold">
                     {t("Квітка {n}", { n: i + 1 })}
@@ -196,6 +194,17 @@ function CommunityGarden() {
               quiet
             />
           </div>
+          {isFinalGrowthStage(shownStage) && (
+            <p
+              role="status"
+              className="mx-4 mt-4 rounded-2xl bg-secondary p-4 text-center font-bold text-secondary-foreground"
+            >
+              <span className="mr-2 inline-block text-2xl animate-sway" aria-hidden>
+                🌻
+              </span>
+              {t("Соняшник повністю розквітнув — це остання стадія росту.")}
+            </p>
+          )}
           <div className="flex flex-wrap justify-center gap-2 p-4">
             <Btn onClick={() => setPlaying(!playing)}>
               {playing ? <Pause size={18} /> : <Play size={18} />}

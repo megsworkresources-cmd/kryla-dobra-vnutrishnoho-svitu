@@ -55,6 +55,22 @@ it("advances through every pattern round and remembers the sunflower", () => {
   expect(getState().completed["games-pattern"]).toBe(1);
 });
 
+it("offers a clear replay after the six-note melody is complete", () => {
+  vi.spyOn(Math, "random").mockReturnValue(0);
+  render(<Melody />);
+  for (let length = 2; length <= 6; length += 1) {
+    act(() => vi.advanceTimersByTime(7000));
+    const notes = [0, 2, ...Array.from({ length: length - 2 }, () => 0)];
+    for (const note of notes)
+      fireEvent.click(screen.getByRole("button", { name: `Квітка ${note + 1}` }));
+  }
+  expect(screen.getByText("Чудова мелодія!")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Грати ще раз" }));
+  expect(screen.getByRole("status")).toHaveTextContent("Нот у мелодії: 2 з 6");
+  act(() => vi.advanceTimersByTime(2500));
+  expect(screen.getByRole("button", { name: "Квітка 1" })).toBeEnabled();
+});
+
 it("counts stars softly, accepts only the right number and moves on", () => {
   render(<Counting />);
   expect(screen.getByRole("status")).toHaveTextContent("Пораховано: 0 з 3");

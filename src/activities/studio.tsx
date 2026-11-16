@@ -9,6 +9,26 @@ import { chime, sfx } from "@/lib/audio";
 import { clearDraft, getDraft, saveDraft } from "@/lib/drafts";
 
 const STAMPS = ["🌻", "⭐", "🦋", "❤️", "🌈", "🐞", "☁️", "🌙"];
+const STAMP_NAMES = [
+  "Соняшник",
+  "Зірочка",
+  "Метелик",
+  "Серце",
+  "Веселка",
+  "Божа корівка",
+  "Хмарка",
+  "Місяць",
+] as const;
+const COLOR_NAMES = [
+  "Чорний",
+  "Жовтий",
+  "Рожевий",
+  "Блакитний",
+  "Зелений",
+  "Лавандовий",
+  "Синій",
+  "Білий",
+] as const;
 const NOTES = [523, 587, 659, 784, 880, 1047] as const;
 const noteAt = (i: number): number =>
   NOTES[((i % NOTES.length) + NOTES.length) % NOTES.length] ?? NOTES[0];
@@ -224,7 +244,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t("Наліпки")}>
-        {STAMPS.map((g) => (
+        {STAMPS.map((g, i) => (
           <button
             key={g}
             type="button"
@@ -233,7 +253,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
               setStamp(stamp === g ? null : g);
             }}
             aria-pressed={stamp === g}
-            aria-label={t("Наліпка")}
+            aria-label={t("Наліпка: {n}", { n: t(STAMP_NAMES[i] ?? g) })}
             className={`h-11 w-11 rounded-2xl text-2xl transition-transform ${stamp === g ? "scale-125 bg-honey/40 ring-4 ring-ring animate-wiggle" : "bg-secondary active:scale-90"}`}
           >
             {g}
@@ -257,7 +277,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
         </p>
       )}
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t("Кольори")}>
-        {COLORS.map((c) => (
+        {COLORS.map((c, i) => (
           <button
             key={c}
             onClick={() => {
@@ -266,7 +286,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
               setStamp(null);
               setRainbow(false);
             }}
-            aria-label={t("Колір")}
+            aria-label={t("Колір: {n}", { n: t(COLOR_NAMES[i] ?? c) })}
             aria-pressed={color === c && !eraser}
             className={`h-11 w-11 rounded-full border-4 ${color === c && !eraser ? "border-primary" : "border-paper"} shadow-soft`}
             style={{ background: c }}
@@ -456,11 +476,11 @@ export function ColorFlower() {
             })}
       </p>
       <div className="flex flex-wrap justify-center gap-2">
-        {COLORS.map((c) => (
+        {COLORS.map((c, i) => (
           <button
             key={c}
             onClick={() => setColor(c)}
-            aria-label={t("Колір")}
+            aria-label={t("Колір: {n}", { n: t(COLOR_NAMES[i] ?? c) })}
             aria-pressed={color === c}
             className={`h-11 w-11 rounded-full border-4 ${color === c ? "border-primary" : "border-paper"} shadow-soft`}
             style={{ background: c }}

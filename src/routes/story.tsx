@@ -12,7 +12,7 @@ import { pageHead } from "@/content/journeys";
 import { makeStory } from "@/lib/story.functions";
 import { markDone, useStore, type AgeBand } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
-import { speak, stopSpeaking } from "@/lib/speak";
+import { speak, stopSpeaking, useSpeechState } from "@/lib/speak";
 import { useServerFn } from "@tanstack/react-start";
 import { readyStory } from "@/content/ready-story";
 import { composedStory } from "@/content/story-builder";
@@ -79,8 +79,11 @@ function StoryCompanion() {
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(false);
   const [source, setSource] = useState<"ai" | "ready" | "app">("ai");
+  const [hasRead, setHasRead] = useState(false);
   const request = useRef(0);
   const createStory = useServerFn(makeStory);
+  const speech = useSpeechState();
+  const speaking = speech === "loading" || speech === "playing";
 
   useEffect(
     () => () => {
@@ -93,6 +96,7 @@ function StoryCompanion() {
   const show = (next: Story, from: "ai" | "app") => {
     setSource(from);
     setStory(next);
+    setHasRead(false);
     markDone("story");
   };
 
@@ -120,6 +124,7 @@ function StoryCompanion() {
     stopSpeaking();
     setStory(null);
     setSource("ai");
+    setHasRead(false);
     setLoading(false);
   };
   const openPrepared = () => {
@@ -127,6 +132,7 @@ function StoryCompanion() {
     stopSpeaking();
     setLoading(false);
     setSource("ready");
+    setHasRead(false);
     setStory(readyStory(lang));
   };
 
@@ -254,20 +260,27 @@ function StoryCompanion() {
               <div className="mt-4 flex flex-wrap gap-2">
                 <Btn
                   variant="soft"
-                  onClick={() =>
+                  aria-label={speaking ? t("Зупинити читання") : t("Слухати голосом пристрою")}
+                  onClick={() => {
+                    if (speaking) {
+                      stopSpeaking();
+                      return;
+                    }
+                    setHasRead(true);
                     speak(
                       [story.title, ...story.scenes.map((s) => s.text), story.closing].join(". "),
                       { force: true, localOnly: true, who },
-                    )
-                  }
+                    );
+                  }}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <Volume2 className="h-5 w-5" />
-                    {t("Слухати голосом пристрою")}
+                    {speaking ? <Square className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                    {speaking
+                      ? t("Зупинити читання")
+                      : hasRead
+                        ? t("Слухати ще раз")
+                        : t("Слухати голосом пристрою")}
                   </span>
-                </Btn>
-                <Btn variant="ghost" onClick={stopSpeaking} aria-label={t("Зупинити читання")}>
-                  <Square className="h-5 w-5" />
                 </Btn>
               </div>
               <p className="mt-2 text-sm text-muted-foreground">

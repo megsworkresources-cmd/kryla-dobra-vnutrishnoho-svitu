@@ -62,7 +62,13 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
         ref={bar}
         className={`fixed inset-x-0 bottom-0 z-40 border-t border-border backdrop-blur-md ${night ? "bg-night-bar" : "bg-background/95"}`}
       >
-        <div className="mx-auto w-full max-w-3xl px-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2">
+        <div
+          className="mx-auto w-full max-w-3xl px-3 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] pt-2"
+          style={{
+            paddingLeft: "max(0.75rem, env(safe-area-inset-left, 0px))",
+            paddingRight: "max(0.75rem, env(safe-area-inset-right, 0px))",
+          }}
+        >
           {sectionStops.length > 2 && (
             <nav
               ref={chips}

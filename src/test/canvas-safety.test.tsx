@@ -19,3 +19,11 @@ it("ignores drawing when the canvas context is unavailable", () => {
   }).not.toThrow();
   expect(HTMLCanvasElement.prototype.getContext).toHaveBeenCalled();
 });
+
+it("names every sticker and paint colour for screen-reader users", () => {
+  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
+  render(<Canvas id="canvas-labels" prompt="Малюй" />);
+  expect(screen.getByRole("button", { name: "Наліпка: Соняшник" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "Наліпка: Метелик" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "Колір: Блакитний" })).toBeVisible();
+});

@@ -99,6 +99,7 @@ export function Practice({
   const [checks, setChecks] = useState<Record<number, string[]>>({});
   const [done, setDone] = useState(false);
   const [offer, setOffer] = useState<Session | null>(null);
+  const [hydratedId, setHydratedId] = useState<string | null>(null);
   const [guide, friend] = castFor(id);
   const step = steps[index];
   const card = night ? "night-card" : "paper-card";
@@ -110,12 +111,19 @@ export function Practice({
 
   // Offer to carry on where the child stopped. Read after mount: no storage on the server.
   useEffect(() => {
+    setOffer(null);
+    setHydratedId(null);
     const saved = getSession(id);
-    if (saved && saved.step > 0 && steps.length > 1) setOffer(saved);
+    const hasFirstStepWork =
+      saved &&
+      (Object.values(saved.answers).some((value) => value.trim().length > 0) ||
+        Object.values(saved.checks).some((values) => values.length > 0));
+    if (saved && steps.length > 1 && (saved.step > 0 || hasFirstStepWork)) setOffer(saved);
+    setHydratedId(id);
   }, [id, steps.length]);
 
   useEffect(() => {
-    if (done || offer) return;
+    if (hydratedId !== id || done || offer) return;
     const payload = JSON.stringify([index, answers, checks]);
     if (payload === lastSaved.current) return;
     lastSaved.current = payload;
@@ -125,7 +133,7 @@ export function Practice({
       Object.fromEntries(Object.entries(answers).map(([k, v]) => [String(k), v])),
       Object.fromEntries(Object.entries(checks).map(([k, v]) => [String(k), v])),
     );
-  }, [id, index, answers, checks, done, offer]);
+  }, [id, index, answers, checks, done, offer, hydratedId]);
 
   // A new step renders above the current scroll position. Bring the step — or
   // the ending — back to the top. Skipped on first mount.
@@ -171,6 +179,7 @@ export function Practice({
   const restart = () => {
     clearSession(id);
     lastSaved.current = "";
+    setOffer(null);
     setIndex(0);
     setAnswers({});
     setChecks({});

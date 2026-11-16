@@ -44,6 +44,12 @@ export type Database = {
         Args: { new_stage: number; opt_in: boolean }
         Returns: undefined
       }
+      read_public_sunflower_stages: {
+        Args: never
+        Returns: {
+          stage: number
+        }[]
+      }
       read_shared_sunflowers: {
         Args: never
         Returns: {

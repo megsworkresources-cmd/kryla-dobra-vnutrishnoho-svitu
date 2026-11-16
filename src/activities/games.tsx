@@ -81,6 +81,7 @@ export function Melody() {
     }
     sfx("confirm");
     if (sequence.length >= MELODY_MAX) {
+      stop();
       setPhase("done");
       setMessage(t("Чудова мелодія! Ти повторив шість нот."));
       markDone("games-melody");
@@ -96,6 +97,20 @@ export function Melody() {
     setSequence(FIRST_MELODY);
     playSequence(FIRST_MELODY);
   };
+
+  if (phase === "done") {
+    return (
+      <div className="paper-card space-y-4 p-6 text-center">
+        <CharacterSay who="solomiya" mood="cheer" size="sm" text={message} />
+        <p className="font-display text-2xl font-bold">{t("Чудова мелодія!")}</p>
+        <p>{t("🌻 Твій соняшник у саду трохи підріс.")}</p>
+        <Btn onClick={reset}>
+          <RotateCcw size={18} />
+          {t("Грати ще раз")}
+        </Btn>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

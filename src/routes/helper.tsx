@@ -50,7 +50,7 @@ export function Helper() {
   const age = useStore((s) => s.age);
   const lang = useLang();
   const [text, setText] = useState("");
-  const [state, setState] = useState<"idle" | "loading" | "error" | "short">("idle");
+  const [state, setState] = useState<"idle" | "loading" | "error" | "short" | "signin">("idle");
   const [reply, setReply] = useState<Reply | null>(null);
   const request = useRef(0);
   const inFlight = useRef(false);
@@ -75,6 +75,12 @@ export function Helper() {
     sfx("select");
     setState("loading");
     try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: auth } = await supabase.auth.getSession();
+      if (!auth.session) {
+        setState("signin");
+        return;
+      }
       const res = await askHelper({ data: { text: clean, age: AGE_ASK[age], lang } });
       if (mine !== request.current) return;
       if (res.ok) {
@@ -151,7 +157,8 @@ export function Helper() {
                 value={text}
                 onChange={(e) => {
                   setText(e.target.value);
-                  if (state === "error" || state === "short") setState("idle");
+                  if (state === "error" || state === "short" || state === "signin")
+                    setState("idle");
                 }}
                 rows={3}
                 maxLength={300}
@@ -165,6 +172,18 @@ export function Helper() {
             {state === "short" && (
               <p className="paper-card p-4 text-center" role="alert">
                 {t("Додай ще хоча б одну літеру, щоб персонажі зрозуміли.")}
+              </p>
+            )}
+            {state === "signin" && (
+              <p className="paper-card p-4 text-center" role="alert">
+                {t("Попроси дорослого увійти, щоб персонажі могли підказати.")}{" "}
+                <Link
+                  to="/caregiver-login"
+                  search={{ redirect: "/helper" }}
+                  className="font-bold underline"
+                >
+                  {t("Для дорослих")}
+                </Link>
               </p>
             )}
             {state === "error" && (

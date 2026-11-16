@@ -7,6 +7,8 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Попроси дорослого увійти, щоб персонажі могли підказати.":
+    "Ask a grown-up to sign in so the characters can help.",
   "Спершу спитай дорослого": "Ask a grown-up first",
   "Дорослий, чи можна дитині зараз пограти в ігри?": "Grown-up, may the child play games now?",
   "Так, можна грати": "Yes, they can play",

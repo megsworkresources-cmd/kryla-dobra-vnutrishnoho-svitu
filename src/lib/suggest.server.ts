@@ -45,6 +45,7 @@ ${list}
     instructions:
       lang === "en" ? `${system}\nAlways answer in English (US), warmly and simply.` : system,
     messages: [{ role: "user", content: text }],
+    maxOutputTokens: 1500,
     providerOptions: {
       openai: {
         forceReasoning: true,

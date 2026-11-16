@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { tr } from "./i18n";
 
 export const StoryInput = z.object({
@@ -11,8 +12,19 @@ export const StoryInput = z.object({
 });
 
 export const makeStory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator(StoryInput)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { allowAi } = await import("./ai-quota.server");
+    if (!allowAi("story", context.userId, 6, 60 * 60 * 1000))
+      return {
+        ok: false as const,
+        error: "busy",
+        message: tr(
+          "Казка цього разу не склалася. Спробуй інший вибір або відкрий готову казку.",
+          data.lang,
+        ),
+      };
     const { generateStory, StoryError } = await import("./story.server");
     try {
       return {

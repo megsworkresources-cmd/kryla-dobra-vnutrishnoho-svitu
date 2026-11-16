@@ -190,10 +190,14 @@ export function speak(
   };
   const hit = cache.get(key);
   if (hit) return play(hit);
-  void import("./voice.functions")
-    .then(({ speakNatural }) =>
-      speakNatural({ data: { text, voice: voice as never, lang: s.lang, style } }),
-    )
+  // Natural voices need a signed-in grown-up on this device; otherwise use device speech.
+  void import("@/integrations/supabase/client")
+    .then(({ supabase }) => supabase.auth.getSession())
+    .then(async ({ data }) => {
+      if (!data.session) return { ok: false as const, error: "signed_out" };
+      const { speakNatural } = await import("./voice.functions");
+      return speakNatural({ data: { text, voice: voice as never, lang: s.lang, style } });
+    })
     .then((r) => {
       if (r.ok) {
         cache.set(key, r.audio);

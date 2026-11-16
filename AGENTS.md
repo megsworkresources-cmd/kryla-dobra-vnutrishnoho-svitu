@@ -36,3 +36,4 @@
 - Shared garden mutations accept only strict stage/consent input, use owner RLS and a locked-down anonymous projection RPC; explicit adult updates prevent child routes from sending data.
 - Keep human-cast cartoon and animal-cast bridge footage separate; video remains silent inline and captions/narration stay app-owned.
 - Public community garden reads use only the publishable stage projection and fail closed if unavailable; never bypass table RLS with an admin fallback.
+- AI server functions (voice, story, helper) require a signed-in account via requireSupabaseAuth plus a per-account in-memory cap and output caps, so anonymous callers cannot spend AI credits; signed-out children fall back to device speech, prepared stories and a sign-in prompt.

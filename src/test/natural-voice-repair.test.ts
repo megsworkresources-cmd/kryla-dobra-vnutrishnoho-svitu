@@ -1,4 +1,16 @@
 import { afterEach, expect, it, vi } from "vitest";
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    auth: {
+      getSession: () =>
+        Promise.resolve({
+          data: {
+            session: (globalThis as { __noSession?: boolean }).__noSession ? null : { user: {} },
+          },
+        }),
+    },
+  },
+}));
 vi.mock("@/lib/voice.functions", () => ({ speakNatural: vi.fn() }));
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -68,5 +80,35 @@ it("does not automatically repeat requests after insufficient credits", async ()
   await vi.waitFor(() => expect(speech.getSpeechState()).toBe("unavailable"));
   speech.speak("Інша фраза");
   expect(speakNatural).toHaveBeenCalledTimes(1);
+  speech.stopSpeaking();
+});
+
+it("never requests AI voices when no grown-up is signed in", async () => {
+  (globalThis as { __noSession?: boolean }).__noSession = true;
+  vi.stubGlobal(
+    "Audio",
+    class {
+      volume = 0;
+      play = vi.fn().mockResolvedValue(undefined);
+      pause = vi.fn();
+    },
+  );
+  const { update } = await import("@/lib/store");
+  update((s) => ({
+    ...s,
+    sound: true,
+    voice: true,
+    volume: 1,
+    voiceVolume: 1,
+    voiceEngine: "natural",
+  }));
+  const { speakNatural } = await import("@/lib/voice.functions");
+  vi.mocked(speakNatural).mockReset();
+  const speech = await import("@/lib/speak");
+  speech.unlockSpeech?.();
+  speech.speak("Привіт");
+  await new Promise((r) => setTimeout(r, 20));
+  expect(speakNatural).not.toHaveBeenCalled();
+  (globalThis as { __noSession?: boolean }).__noSession = false;
   speech.stopSpeaking();
 });

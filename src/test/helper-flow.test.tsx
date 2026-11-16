@@ -3,6 +3,18 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { Helper } from "@/routes/helper";
 import { askHelper } from "@/lib/suggest.functions";
 
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    auth: {
+      getSession: () =>
+        Promise.resolve({
+          data: {
+            session: (globalThis as { __noSession?: boolean }).__noSession ? null : { user: {} },
+          },
+        }),
+    },
+  },
+}));
 vi.mock("@/lib/suggest.functions", () => ({ askHelper: vi.fn() }));
 vi.mock("@/lib/audio", () => ({ sfx: vi.fn() }));
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
@@ -50,6 +62,7 @@ it("disables quick choices while one request is in flight", async () => {
   );
   render(<Helper />);
   fireEvent.click(screen.getByRole("button", { name: "я сумую" }));
+  await vi.waitFor(() => expect(askHelper).toHaveBeenCalledTimes(1));
   const other = screen.getByRole("button", { name: "мені страшно" });
   expect(other).toBeDisabled();
   fireEvent.click(other);
@@ -57,4 +70,14 @@ it("disables quick choices while one request is in flight", async () => {
   rejectRequest(new Error("offline"));
   expect(await screen.findByRole("alert")).toBeVisible();
   expect(screen.getByRole("button", { name: "мені страшно" })).toBeEnabled();
+});
+
+it("asks for a grown-up to sign in instead of calling the AI when signed out", async () => {
+  (globalThis as { __noSession?: boolean }).__noSession = true;
+  render(<Helper />);
+  fireEvent.change(screen.getByRole("textbox"), { target: { value: "мені сумно" } });
+  fireEvent.click(screen.getByRole("button", { name: "Підказати вправу" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Попроси дорослого увійти");
+  expect(askHelper).not.toHaveBeenCalled();
+  (globalThis as { __noSession?: boolean }).__noSession = false;
 });

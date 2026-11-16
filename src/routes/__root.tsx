@@ -93,6 +93,9 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   );
 }
 
+// Reload once when Safari can't load app files replaced by a newer publish.
+const STALE_CHUNK_RELOAD = `(function(){var k='tm-chunk-reload';function r(){try{var t=+sessionStorage.getItem(k)||0;if(Date.now()-t<10000)return;sessionStorage.setItem(k,String(Date.now()))}catch(e){}location.reload()}window.addEventListener('vite:preloadError',function(e){e.preventDefault();r()});window.addEventListener('unhandledrejection',function(e){var m=String(e.reason&&e.reason.message||e.reason||'');if(/Importing a module script failed|Failed to fetch dynamically imported module|error loading dynamically imported module/i.test(m))r()});window.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.type==='module')r()},true)})();`;
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
@@ -117,6 +120,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Philosopher:wght@400;700&display=swap",
       },
     ],
+    scripts: [{ children: STALE_CHUNK_RELOAD }],
   }),
   shellComponent: RootShell,
   component: RootComponent,

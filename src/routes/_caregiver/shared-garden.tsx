@@ -39,9 +39,11 @@ function SharedGarden() {
   const [consent, setConsent] = useState(false);
   const [playing, setPlaying] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
+  const [capped, setCapped] = useState(false);
   const mutation = useMutation({
     mutationFn: (sharing: boolean) => share({ data: { stage: sharing ? localStage : 0, sharing } }),
-    onSuccess: async () => {
+    onSuccess: async (res) => {
+      setCapped(Boolean(res.capped));
       setConsent(false);
       await client.invalidateQueries({ queryKey: key });
     },
@@ -85,6 +87,14 @@ function SharedGarden() {
               ? t("Зачекайте…")
               : t(own?.sharing ? "Соняшник поширено" : "Поширення вимкнено")}
           </p>
+          {capped && (
+            <p
+              role="status"
+              className="mt-2 rounded-2xl bg-secondary p-3 text-sm text-secondary-foreground"
+            >
+              {t("Соняшник росте поступово — одна стадія на день. Завтра він підросте ще.")}
+            </p>
+          )}
           {own && !own.sharing && (
             <label className="mt-4 flex min-h-14 cursor-pointer items-start gap-3 rounded-2xl bg-secondary p-4 text-sm leading-relaxed text-secondary-foreground">
               <input

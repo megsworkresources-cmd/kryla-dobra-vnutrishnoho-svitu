@@ -20,18 +20,21 @@ export type Database = {
           owner_id: string
           sharing: boolean
           stage: number
+          stage_updated_at: string
         }
         Insert: {
           flower_id?: string
           owner_id: string
           sharing?: boolean
           stage?: number
+          stage_updated_at?: string
         }
         Update: {
           flower_id?: string
           owner_id?: string
           sharing?: boolean
           stage?: number
+          stage_updated_at?: string
         }
         Relationships: []
       }
@@ -40,6 +43,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      grow_sunflower: {
+        Args: { new_stage: number; opt_in: boolean }
+        Returns: {
+          capped: boolean
+          stage: number
+        }[]
+      }
       publish_sunflower: {
         Args: { new_stage: number; opt_in: boolean }
         Returns: undefined

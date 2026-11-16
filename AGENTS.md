@@ -33,7 +33,7 @@
 - Keep ready-made story fallback browser-safe and app-written, and display it as prepared rather than AI-generated; network/configuration failures must not remove offline stories.
 - Measure the fixed navigation bar for its content spacer, so translated labels, large text and safe areas cannot obscure the last controls.
 - Derive narration controls from shared speech lifecycle state, not optimistic button toggles, so failed or completed playback cannot leave a false Stop state.
-- Shared garden mutations accept only strict stage/consent input, use owner RLS and a locked-down anonymous projection RPC; explicit adult updates prevent child routes from sending data.
+- Shared garden mutations go only through the definer grow_sunflower RPC (one stage per ~day, no direct table writes) with owner RLS for read/delete; explicit adult updates prevent child routes from sending data.
 - Keep human-cast cartoon and animal-cast bridge footage separate; video remains silent inline and captions/narration stay app-owned.
 - Public community garden reads use only the publishable stage projection and fail closed if unavailable; never bypass table RLS with an admin fallback.
 - AI server functions (voice, story, helper) require a signed-in account via requireSupabaseAuth plus a per-account in-memory cap and output caps, so anonymous callers cannot spend AI credits; signed-out children fall back to device speech, prepared stories and a sign-in prompt.

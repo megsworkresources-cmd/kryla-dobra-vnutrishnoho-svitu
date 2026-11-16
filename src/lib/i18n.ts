@@ -7,6 +7,8 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Соняшник росте поступово — одна стадія на день. Завтра він підросте ще.":
+    "The sunflower grows gradually — one stage a day. It will grow more tomorrow.",
   "Попроси дорослого увійти, щоб персонажі могли підказати.":
     "Ask a grown-up to sign in so the characters can help.",
   "Спершу спитай дорослого": "Ask a grown-up first",

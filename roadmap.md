@@ -1,5 +1,7 @@
 # Completion roadmap
 
+- [ ] Generate seven full story films and six character films in the approved style; expand Watch and verify continuous playback and replay.
+
 - [x] Final polish request: six generated character loops integrated with reduced-motion fallbacks; explicit melody replay and story narration replay; shared-garden iPhone safe areas, horizontal flower browsing and caregiver-first opt-in; centralized six-stage growth with safe full bloom; public stage projection deployed. 160 tests, lint and iPhone-sized browser flows pass; publishing requested separately.
 - [x] Uploaded transformation brief: audited remaining routes/components and repaired practice recovery, helper failures/races, privacy copy, drawing labels and duplicate voice synthesis; 160 tests and lint pass. Physical-device listening/interruption checks remain manual.
 

@@ -74,7 +74,21 @@ function ensureRunning(c: AudioContext) {
     });
 }
 
+/**
+ * iPhone mutes Web Audio (music, taps) when the side switch is on silent unless the
+ * page asks for a "playback" session (Safari 16.4+). Voices then also share it.
+ */
+function requestPlaybackSession() {
+  const nav = navigator as Navigator & { audioSession?: { type: string } };
+  try {
+    if (nav.audioSession && nav.audioSession.type !== "playback") nav.audioSession.type = "playback";
+  } catch {
+    // older Safari: no audio session control
+  }
+}
+
 export function unlockAudio() {
+  if (typeof navigator !== "undefined") requestPlaybackSession();
   if (!unlocked) {
     unlocked = true;
     notifyUnlocked();

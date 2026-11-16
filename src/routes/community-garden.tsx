@@ -145,9 +145,14 @@ function CommunityGarden() {
             </p>
           )}
           {unavailable && (
-            <p role="alert" className="mt-3 text-sm">
-              {t("Сад зараз відпочиває. Спробуй пізніше.")}
-            </p>
+            <div className="mt-3 space-y-1 text-sm" role="status">
+              <p className="font-bold">{t("Сад ще прокидається.")}</p>
+              <p className="text-muted-foreground">
+                {t(
+                  "Твій соняшник уже тут. Інші квітки з’являться, коли дорослі в родинах поділяться ними.",
+                )}
+              </p>
+            </div>
           )}
           {garden.data?.ok && !shared.length && (
             <>
@@ -210,7 +215,7 @@ function CommunityGarden() {
               href="https://creativecommons.org/licenses/by-sa/4.0/"
               target="_blank"
               rel="noreferrer"
-              className="underline"
+              className="inline-block py-1 underline"
             >
               CC BY-SA 4.0
             </a>

@@ -1,5 +1,6 @@
 # Completion roadmap
 
+- [x] Audit pass: removed the journey counter and progress bar from the bottom bar, moved the breathing flower and sea above the fold and dropped the duplicate motif there, removed the duplicated community garden heading, silenced the blocked-autoplay banner on decorative footage, gave the credit links a comfortable tap height, lazy-loaded list images, and softened the community garden's resting state. 144 tests pass.
 - [x] Polish request: story creation always finishes (app-written story when the AI key is absent), the breathing flower and wave are driven by a breath-period CSS animation instead of second-by-second state, the floating ear glyph is gone, and every exercise plus the created story carries an animated motif. 144 tests pass.
 - [x] Watering request: a once-a-day check-in on the community garden waters the child's sunflower, adds one care step locally (no data leaves the device) and feeds the same growth stages, so the flower and its film advance; missed days never take growth away. 139 tests pass.
 - [x] Public garden request: children open /community-garden with no adult sign-in; it reads only coarse stages from a stage-only projection (migration 0002 adds an anon-readable RPC, with a narrow server-side fallback) and never carries ids, owners or child data. 136 tests pass.

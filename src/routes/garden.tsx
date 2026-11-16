@@ -85,7 +85,7 @@ function Garden() {
               href="https://creativecommons.org/licenses/by-sa/4.0/"
               target="_blank"
               rel="noreferrer"
-              className="underline"
+              className="inline-block py-1 underline"
             >
               CC BY-SA 4.0
             </a>

@@ -9,6 +9,9 @@ import { getState, useStore, type Lang } from "./store";
 const EN: Record<string, string> = {
   "Анонімні соняшники з добровільною згодою дорослих. Малюнки й почуття залишаються приватними.":
     "Anonymous sunflowers shared with caregiver consent. Drawings and feelings stay private.",
+  "Сад ще прокидається.": "The garden is still waking up.",
+  "Твій соняшник уже тут. Інші квітки з’являться, коли дорослі в родинах поділяться ними.":
+    "Your sunflower is already here. Other flowers appear when grown-ups in their families share them.",
   "Можна було просто дихати й нічого не вирішувати.":
     "It was enough to breathe and decide nothing at all.",
   "Сум був поруч. {who} не проганяв його — просто сидів разом із ним.":

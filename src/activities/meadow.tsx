@@ -1,5 +1,5 @@
 import { CharacterSay } from "@/components/Character";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Guided, Narration } from "@/components/Activity";
@@ -197,20 +197,33 @@ function BreathVisual({
 }) {
   const t = useT();
   const period = inhale + exhale;
-  const peak = Math.round((inhale / period) * 100);
-  const name = `breath-${kind}-${inhale}-${exhale}`;
-  const rest = kind === "wave" ? "translateY(0px)" : "scale(0.56) rotate(0deg)";
-  const full = kind === "wave" ? "translateY(-46px)" : "scale(1) rotate(18deg)";
-  const style: CSSProperties = {
-    animation: `${name} ${period}s ease-in-out infinite`,
-    animationPlayState: running ? "running" : "paused",
-  };
+  // Driven by JavaScript (not CSS keyframes) so it still moves when the phone's
+  // "Reduce Motion" setting disables animations: the flower grows on each in-breath
+  // and shrinks on each out-breath; the sea rises and falls the same way.
+  const [open, setOpen] = useState(0);
+  const clock = useRef(0);
+  useEffect(() => {
+    if (!running) return;
+    let raf = 0;
+    let last = performance.now();
+    const tick = (now: number) => {
+      clock.current = (clock.current + (now - last) / 1000) % period;
+      last = now;
+      const c = clock.current;
+      const x = c < inhale ? c / inhale : 1 - (c - inhale) / exhale;
+      setOpen(0.5 - Math.cos(Math.PI * x) / 2);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [running, inhale, exhale, period]);
+  const transform =
+    kind === "wave"
+      ? `translateY(${(-56 * open).toFixed(1)}px)`
+      : `scale(${(0.5 + 0.55 * open).toFixed(3)}) rotate(${(20 * open).toFixed(1)}deg)`;
+  const style: CSSProperties = { transform, transformBox: "view-box" };
   return (
     <>
-      <style>{`@keyframes ${name} {
-  0%, 100% { transform: ${rest}; }
-  ${peak}% { transform: ${full}; }
-}`}</style>
       {kind === "wave" ? (
         <svg
           viewBox="0 0 240 150"
@@ -278,7 +291,7 @@ function BreathVisual({
               />
             ))}
           </g>
-          <circle cx="100" cy="95" r="22" fill="var(--ink)" opacity=".85" />
+          <circle cx="100" cy="95" r={18 + 8 * open} fill="var(--ink)" opacity=".85" />
           <circle cx="93" cy="89" r="4" fill="var(--paper)" opacity=".4" />
           {[34, 160, 172].map((x, k) => (
             <circle

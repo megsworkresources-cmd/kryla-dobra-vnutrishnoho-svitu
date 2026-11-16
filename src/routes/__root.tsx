@@ -244,6 +244,14 @@ function RootComponent() {
       }
     };
     window.addEventListener("keydown", onKey, true);
+    // iOS Safari only grants audio permission on touchend/click, not pointerdown.
+    const onActivate = () => {
+      unlockAudio();
+      unlockSpeech();
+      playAmbient(ambientFor(window.location.pathname));
+    };
+    window.addEventListener("touchend", onActivate, true);
+    window.addEventListener("click", onActivate, true);
     const onVisibility = () => {
       if (document.hidden) {
         stopSpeaking();
@@ -261,6 +269,8 @@ function RootComponent() {
     return () => {
       window.removeEventListener("pointerdown", onDown, true);
       window.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("touchend", onActivate, true);
+      window.removeEventListener("click", onActivate, true);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pagehide", onExit);
     };

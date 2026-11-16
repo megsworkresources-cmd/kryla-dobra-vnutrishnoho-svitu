@@ -31,8 +31,21 @@ let audio: HTMLAudioElement | null = null;
 let primedPlayer: HTMLAudioElement | null = null;
 let naturalPaused = false;
 /** Reuse the element unlocked synchronously by a real gesture, including on Safari. */
+let synthPrimed = false;
 export function unlockSpeech() {
-  if (typeof window === "undefined" || primedPlayer || !getState().sound) return;
+  if (typeof window === "undefined" || !getState().sound) return;
+  // iOS keeps device speech silent until speak() is first called inside a real gesture.
+  if (!synthPrimed && "speechSynthesis" in window && "SpeechSynthesisUtterance" in window) {
+    try {
+      const u = new SpeechSynthesisUtterance(" ");
+      u.volume = 0;
+      window.speechSynthesis.speak(u);
+      synthPrimed = true;
+    } catch {
+      // device speech unavailable
+    }
+  }
+  if (primedPlayer) return;
   const player = new Audio(
     "data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQIAAAAAAA==",
   );

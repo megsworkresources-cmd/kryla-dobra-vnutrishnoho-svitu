@@ -82,7 +82,8 @@ function ensureRunning(c: AudioContext) {
 function requestPlaybackSession() {
   const nav = navigator as Navigator & { audioSession?: { type: string } };
   try {
-    if (nav.audioSession && nav.audioSession.type !== "playback") nav.audioSession.type = "playback";
+    if (nav.audioSession && nav.audioSession.type !== "playback")
+      nav.audioSession.type = "playback";
   } catch {
     // older Safari: no audio session control
   }

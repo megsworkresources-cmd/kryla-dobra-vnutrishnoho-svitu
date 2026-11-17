@@ -45,7 +45,12 @@ it("never asks a child to hold their breath", () => {
 });
 describe("app-written story variations", () => {
   it("tells a different story when the child asks for another one", () => {
-    const base = { who: "taras" as const, place: "forest", feeling: "worried" as const, lang: "uk" as const };
+    const base = {
+      who: "taras" as const,
+      place: "forest",
+      feeling: "worried" as const,
+      lang: "uk" as const,
+    };
     const a = composedStory({ ...base, variant: 0 });
     const b = composedStory({ ...base, variant: 1 });
     expect(b.title).not.toBe(a.title);

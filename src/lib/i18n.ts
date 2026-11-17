@@ -60,27 +60,34 @@ const EN: Record<string, string> = {
   "Інші сервіси": "Other services",
   "Шрифти завантажуються з Google Fonts, а музика — з нашого сховища файлів, тому ці сервіси бачать IP-адресу пристрою, як і будь-який сайт. Вхід дорослих і спільний сад працюють на нашому сервері в Lovable Cloud.":
     "Fonts load from Google Fonts and music from our file storage, so those services see the device's IP address, as any website does. Grown-up sign-in and the shared garden run on our server in Lovable Cloud.",
-  "Що Тихе Місце зберігає, що ніколи не надсилає і як видалити акаунт дорослого.": "What Quiet Place stores, what it never sends, and how to delete a grown-up account.",
+  "Що Тихе Місце зберігає, що ніколи не надсилає і як видалити акаунт дорослого.":
+    "What Quiet Place stores, what it never sends, and how to delete a grown-up account.",
   "Дані дитини залишаються на пристрої": "A child's data stays on the device",
-  "Малюнки, вибір емоцій, прогрес і налаштування зберігаються лише на цьому пристрої. Дитині не потрібен акаунт, і ми не збираємо її ім’я, фото чи місцезнаходження.": "Drawings, feeling choices, progress and settings are stored only on this device. Children need no account, and we never collect their name, photo or location.",
+  "Малюнки, вибір емоцій, прогрес і налаштування зберігаються лише на цьому пристрої. Дитині не потрібен акаунт, і ми не збираємо її ім’я, фото чи місцезнаходження.":
+    "Drawings, feeling choices, progress and settings are stored only on this device. Children need no account, and we never collect their name, photo or location.",
   "Без реклами й відстеження": "No ads or tracking",
   "У застосунку немає реклами, покупок чи відстеження між застосунками.":
     "The app has no ads, purchases or cross-app tracking.",
   "Акаунт дорослого": "Grown-up account",
-  "Дорослий може створити акаунт з електронною поштою. Ми зберігаємо лише пошту й дані входу, а також стадію соняшника, якщо дорослий сам погодився поділитися нею в спільному саду.": "A grown-up can create an account with an email address. We store only the email and sign-in details, plus the sunflower stage if the grown-up chose to share it in the shared garden.",
+  "Дорослий може створити акаунт з електронною поштою. Ми зберігаємо лише пошту й дані входу, а також стадію соняшника, якщо дорослий сам погодився поділитися нею в спільному саду.":
+    "A grown-up can create an account with an email address. We store only the email and sign-in details, plus the sunflower stage if the grown-up chose to share it in the shared garden.",
   "Функції зі штучним інтелектом": "AI features",
   "Казки, голоси та помічник почуттів працюють лише після входу дорослого й обробляються моделями штучного інтелекту через Lovable AI. Для казки надсилаються лише три вибори дитини (персонаж, місце, настрій) — без імені чи власного тексту. Текст, який пише дитина в помічнику, надсилається один раз для підбору вправи й не зберігається. Голоси озвучують лише фрази, написані в застосунку. Без входу казки складаються на самому пристрої, а читає їх голос пристрою.":
     "Stories, voices and the feelings helper work only after a grown-up signs in and are processed by AI models through Lovable AI. A story sends only the child's three choices (character, place, mood) — no name or own text. What a child types in the helper is sent once to pick an activity and is never stored. Voices read only lines written by the app. Without sign-in, stories are put together on the device and read by the device's own voice.",
   "Скарги на відповіді": "Reporting answers",
-  "Якщо дорослий повідомляє про погану відповідь, ми зберігаємо лише цю відповідь штучного інтелекту, щоб перевірити її, без слів дитини.": "If a grown-up reports a bad answer, we keep only that AI answer to review it, never the child's words.",
-  "Видалення": "Deletion",
-  "Дорослий може будь-коли видалити акаунт на сторінці «Для дорослих». Дані на пристрої можна стерти там само кнопкою скидання прогресу.": "A grown-up can delete the account at any time on the For grown-ups page. Device data can be erased there too with the reset progress button.",
-  "Це посилання відкриє інший сайт. Дорослий, чи можна?": "This link opens another website. Grown-up, is that OK?",
+  "Якщо дорослий повідомляє про погану відповідь, ми зберігаємо лише цю відповідь штучного інтелекту, щоб перевірити її, без слів дитини.":
+    "If a grown-up reports a bad answer, we keep only that AI answer to review it, never the child's words.",
+  Видалення: "Deletion",
+  "Дорослий може будь-коли видалити акаунт на сторінці «Для дорослих». Дані на пристрої можна стерти там само кнопкою скидання прогресу.":
+    "A grown-up can delete the account at any time on the For grown-ups page. Device data can be erased there too with the reset progress button.",
+  "Це посилання відкриє інший сайт. Дорослий, чи можна?":
+    "This link opens another website. Grown-up, is that OK?",
   "Так, відкрити": "Yes, open it",
   "Дякуємо, відповідь надіслано на перевірку.": "Thank you, the answer was sent for review.",
   "Дорослим: повідомити про погану відповідь ШІ": "Grown-ups: report a bad AI answer",
   "Не вдалося надіслати. Спробуйте ще раз.": "Couldn't send. Please try again.",
-  "Видалення акаунта прибирає ваш вхід і спільний соняшник. Малюнки та прогрес дитини залишаться на цьому пристрої.": "Deleting the account removes your sign-in and shared sunflower. The child's drawings and progress stay on this device.",
+  "Видалення акаунта прибирає ваш вхід і спільний соняшник. Малюнки та прогрес дитини залишаться на цьому пристрої.":
+    "Deleting the account removes your sign-in and shared sunflower. The child's drawings and progress stay on this device.",
   "Видалити акаунт": "Delete account",
   "Так, видалити назавжди": "Yes, delete forever",
   "Не вдалося видалити акаунт. Спробуйте ще раз.": "Couldn't delete the account. Please try again.",

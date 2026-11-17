@@ -68,10 +68,7 @@ export function composedStory(input: {
       .replaceAll("{place}", placeName),
   );
   return {
-    title: tr(TITLES[v]!, input.lang, { place: placeName }).replaceAll(
-      "{place}",
-      placeName,
-    ),
+    title: tr(TITLES[v]!, input.lang, { place: placeName }).replaceAll("{place}", placeName),
     scenes: scenes.map((text) => ({ text })),
     closing: tr(
       "Ця казка не мусить закінчуватися правильно. Достатньо, що {who} був тут.",

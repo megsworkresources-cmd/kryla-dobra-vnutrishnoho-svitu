@@ -116,7 +116,8 @@ function StoryCompanion() {
         res.ok ? "ai" : "app",
       );
     } catch {
-      if (mine === request.current) show(composedStory({ who, place, feeling, lang, variant }), "app");
+      if (mine === request.current)
+        show(composedStory({ who, place, feeling, lang, variant }), "app");
     } finally {
       if (mine === request.current) setLoading(false);
     }

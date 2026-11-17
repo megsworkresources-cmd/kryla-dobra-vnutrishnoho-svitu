@@ -9,8 +9,7 @@ function Care() {
   return <p data-testid="care">{n}</p>;
 }
 
-const seed = (careSteps: number) =>
-  localStorage.setItem(KEY, JSON.stringify({ careSteps }));
+const seed = (careSteps: number) => localStorage.setItem(KEY, JSON.stringify({ careSteps }));
 
 it("re-reads progress saved on the device when a page mounts", async () => {
   seed(0);

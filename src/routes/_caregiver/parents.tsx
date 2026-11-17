@@ -107,7 +107,9 @@ function Parents() {
         </div>
         <div className="paper-card space-y-2 p-4 text-sm">
           <p>
-            {t("Видалення акаунта прибирає ваш вхід і спільний соняшник. Малюнки та прогрес дитини залишаться на цьому пристрої.")}{" "}
+            {t(
+              "Видалення акаунта прибирає ваш вхід і спільний соняшник. Малюнки та прогрес дитини залишаться на цьому пристрої.",
+            )}{" "}
             <Link to="/privacy" className="underline">
               {t("Політика конфіденційності")}
             </Link>
@@ -121,7 +123,11 @@ function Parents() {
               <Btn disabled={deleteStep === "busy"} onClick={removeAccount}>
                 {t("Так, видалити назавжди")}
               </Btn>
-              <Btn variant="soft" disabled={deleteStep === "busy"} onClick={() => setDeleteStep("idle")}>
+              <Btn
+                variant="soft"
+                disabled={deleteStep === "busy"}
+                onClick={() => setDeleteStep("idle")}
+              >
                 {t("Скасувати")}
               </Btn>
             </div>

@@ -39,13 +39,21 @@ export default defineConfig({
           runtimeCaching: [
             {
               urlPattern: ({ request, url }) =>
-                request.mode === "navigate" && !url.pathname.startsWith("/~oauth") && !url.pathname.startsWith("/api/"),
+                request.mode === "navigate" &&
+                !url.pathname.startsWith("/~oauth") &&
+                !url.pathname.startsWith("/api/"),
               handler: "NetworkFirst",
-              options: { cacheName: "pages", networkTimeoutSeconds: 4, expiration: { maxEntries: 60 } },
+              options: {
+                cacheName: "pages",
+                networkTimeoutSeconds: 4,
+                expiration: { maxEntries: 60 },
+              },
             },
             {
               urlPattern: ({ url, sameOrigin }) =>
-                sameOrigin && (url.pathname.startsWith("/__l5e/assets-v1/") || url.pathname.startsWith("/assets/")),
+                sameOrigin &&
+                (url.pathname.startsWith("/__l5e/assets-v1/") ||
+                  url.pathname.startsWith("/assets/")),
               handler: "CacheFirst",
               options: {
                 cacheName: "media",

@@ -20,7 +20,9 @@ export function GrownUpLink({ href, children }: { href: string; children: ReactN
         >
           <div className="paper-card w-full max-w-sm p-5 text-center text-card-foreground">
             <p className="font-display text-2xl font-bold">{t("Спершу спитай дорослого")}</p>
-            <p className="mt-2 text-base">{t("Це посилання відкриє інший сайт. Дорослий, чи можна?")}</p>
+            <p className="mt-2 text-base">
+              {t("Це посилання відкриє інший сайт. Дорослий, чи можна?")}
+            </p>
             <div className="mt-4 flex flex-col gap-2">
               <Btn
                 onClick={() => {
@@ -46,7 +48,11 @@ export function ReportAi({ kind, content }: { kind: "story" | "helper"; content:
   const t = useT();
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   if (state === "done")
-    return <p className="text-sm text-muted-foreground">{t("Дякуємо, відповідь надіслано на перевірку.")}</p>;
+    return (
+      <p className="text-sm text-muted-foreground">
+        {t("Дякуємо, відповідь надіслано на перевірку.")}
+      </p>
+    );
   return (
     <div className="text-sm">
       <button
@@ -66,7 +72,11 @@ export function ReportAi({ kind, content }: { kind: "story" | "helper"; content:
       >
         {t("Дорослим: повідомити про погану відповідь ШІ")}
       </button>
-      {state === "error" && <p role="alert" className="text-destructive">{t("Не вдалося надіслати. Спробуйте ще раз.")}</p>}
+      {state === "error" && (
+        <p role="alert" className="text-destructive">
+          {t("Не вдалося надіслати. Спробуйте ще раз.")}
+        </p>
+      )}
     </div>
   );
 }

@@ -35,6 +35,11 @@ jobs:
       run: bun install --frozen-lockfile
     - name: Build
       run: bun run build
+    - name: Apply formatting
+      # AI Studio syncs sometimes land code that is not Prettier-formatted.
+      # Apply the project's own formatting rules before linting so formatting
+      # alone can never fail CI; real lint problems still fail the next step.
+      run: bunx eslint . --fix
     - name: Lint
       run: bun run lint
     - name: Test

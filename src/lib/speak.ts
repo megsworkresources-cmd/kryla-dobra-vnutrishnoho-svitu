@@ -1,5 +1,5 @@
 import { getState } from "./store";
-import type { CharId } from '@/content/characters';
+import type { CharId } from "@/content/characters";
 import { duckMusic, isAudioUnlocked } from "./audio";
 import { useSyncExternalStore } from "react";
 

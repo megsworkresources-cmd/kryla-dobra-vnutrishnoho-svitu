@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Post-publish check for the published Lovable app.
+ * Post-deploy check for the production app.
  *
- * Verifies that the live page was built from the expected commit and that every
- * video record under src/assets/video streams with HTTP 206 and its recorded
- * byte size. Run after publishing:
+ * Verifies that the live page responds and that every video record under
+ * src/assets/video streams with HTTP 206 and its recorded byte size. When the
+ * host exposes a deployment commit marker, it also checks that commit.
  *
  *   bun run verify:deploy
  *   node scripts/verify-deploy.mjs --expect <sha>
@@ -15,7 +15,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-const DEFAULT_BASE = "https://kryla-dobra-vnutrishnoho-svitu.lovable.app";
+const DEFAULT_BASE = "https://kryla-dobra-vnutrishnoho-svitu.vercel.app";
 const VIDEO_RECORDS = path.resolve("src/assets/video");
 
 const { values } = parseArgs({
@@ -31,7 +31,7 @@ if (values.help) {
   console.log(`Usage: node scripts/verify-deploy.mjs [options]
 
   --base <url>    Site to check (default: ${DEFAULT_BASE})
-  --expect <sha>  Commit the deployment must contain (default: local HEAD)
+  --expect <sha>  Commit the deployment must contain (requires a commit marker)
   --skip-commit   Only check the page and video responses (local previews)
   -h, --help      Show this help`);
   process.exit(0);
@@ -61,6 +61,7 @@ function isAncestor(ancestor, descendant) {
   }
 }
 
+const expectExplicit = Boolean(values.expect);
 let expected = values.expect;
 if (!values["skip-commit"] && !expected) {
   try {
@@ -101,14 +102,18 @@ try {
 
 if (!values["skip-commit"]) {
   if (!deployed) {
-    fail("deployed commit: data-commit-sha not found (is this the Lovable production URL?)");
+    if (expectExplicit) {
+      fail("deployed commit: --expect was given but this host exposes no data-commit-sha marker");
+    } else {
+      console.log("• deployed commit marker not exposed by this host; skipping commit check");
+    }
   } else if (expected && deployed === expected) {
     pass(`deployed commit ${deployed.slice(0, 7)} matches HEAD`);
   } else if (expected && isAncestor(expected, deployed)) {
     pass(`deployed commit ${deployed.slice(0, 7)} includes ${expected.slice(0, 7)}`);
   } else if (expected) {
     fail(
-      `deployed commit ${deployed.slice(0, 7)} is behind ${expected.slice(0, 7)} — publish in Lovable and retry`,
+      `deployed commit ${deployed.slice(0, 7)} is behind ${expected.slice(0, 7)} — deploy the current commit and retry`,
     );
   }
 }

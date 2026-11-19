@@ -1,5 +1,7 @@
 # Completion roadmap
 
+- [ ] Replace unfinished films with a gentle, already-published Ukrainian cartoon. Blocked: no matching film with verified rights for app redistribution/adaptation found; Ukrainian CC coverage of Alike lists noncommercial/no-derivatives restrictions, and a third-party Cossacks upload does not establish rights-holder permission. Existing films preserved pending a rights-holder license or an approved alternative.
+
 - [ ] Generate the remaining five full story films (kite, paints, lullaby, rain, woodland bridge) and six character films in the approved storybook style; add all to Watch and verify continuous playback and replay. Three full story films are already integrated. Blocked: both the media CLI and video tool reject the first 30-second kite render for insufficient workspace credits (estimated 27.75 credits for that film); no new footage created or app changes made.
 
 - [x] Final polish request: six generated character loops integrated with reduced-motion fallbacks; explicit melody replay and story narration replay; shared-garden iPhone safe areas, horizontal flower browsing and caregiver-first opt-in; centralized six-stage growth with safe full bloom; public stage projection deployed. 160 tests, lint and iPhone-sized browser flows pass; publishing requested separately.

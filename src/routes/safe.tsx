@@ -75,7 +75,7 @@ function Safe() {
                   <button
                     onClick={() => removeComfort(i)}
                     aria-label={t("Прибрати: {l}", { l: t(c) })}
-                    className="flex h-10 w-10 items-center justify-center"
+                    className="flex h-11 w-11 items-center justify-center"
                   >
                     <X size={18} />
                   </button>

@@ -277,8 +277,11 @@ function RootComponent() {
   }, []);
   useEffect(() => {
     playAmbient(music ? ambientFor(pathname) : null);
+  }, [pathname, music, musicStyle]);
+  // A page sound belongs to navigation, not to moving a volume slider.
+  useEffect(() => {
     sfx("page");
-  }, [pathname, music, musicStyle, musicVolume, volume]);
+  }, [pathname]);
   useEffect(() => {
     const seg = pathname.split("/")[1];
     if (seg && PLACES.some((p) => p.id === seg)) markVisit(seg);

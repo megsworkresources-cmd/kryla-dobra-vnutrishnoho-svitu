@@ -6,7 +6,7 @@ import night from "@/assets/night.jpg";
 import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
 import { MagicStage } from "@/components/MagicStage";
-import { Motif } from "@/components/Motif";
+import { StoryPreview } from "@/components/StoryPreview";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { PLACES } from "@/content/places";
 import { pageHead } from "@/content/journeys";
@@ -83,9 +83,11 @@ function StoryCompanion() {
   const [hasRead, setHasRead] = useState(false);
   const request = useRef(0);
   const told = useRef(0);
+  const inFlight = useRef(false);
   const createStory = useServerFn(makeStory);
   const speech = useSpeechState();
   const speaking = speech === "loading" || speech === "playing";
+  const feelingIcon = FEELINGS.find(([id]) => id === feeling)?.[2] ?? "✨";
 
   useEffect(
     () => () => {
@@ -103,6 +105,8 @@ function StoryCompanion() {
   };
 
   const generate = async () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     const mine = ++request.current;
     const variant = told.current++;
     stopSpeaking();
@@ -119,6 +123,7 @@ function StoryCompanion() {
       if (mine === request.current)
         show(composedStory({ who, place, feeling, lang, variant }), "app");
     } finally {
+      inFlight.current = false;
       if (mine === request.current) setLoading(false);
     }
   };
@@ -157,84 +162,89 @@ function StoryCompanion() {
         />
 
         {!story ? (
-          <div className="paper-card space-y-5 p-5 text-card-foreground">
-            <fieldset>
-              <legend className="font-display text-xl font-bold">{t("1. Хто буде героєм?")}</legend>
-              <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-6">
-                {(Object.keys(CHARACTERS) as CharId[]).map((id) => (
-                  <Choice
-                    key={id}
-                    selected={who === id}
-                    onClick={() => setWho(id)}
-                    label={t("Обрати {n}", { n: t(CHARACTERS[id].name) })}
-                  >
-                    <img
-                      loading="lazy"
-                      decoding="async"
-                      src={CHARACTERS[id].image}
-                      alt=""
-                      className="mx-auto h-14 w-14 object-contain"
-                    />
-                    <span className="mt-1 block truncate text-xs">{t(CHARACTERS[id].name)}</span>
-                  </Choice>
-                ))}
-              </div>
-            </fieldset>
-            <fieldset>
-              <legend className="font-display text-xl font-bold">{t("2. Куди вирушимо?")}</legend>
-              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {PLACES.map((p) => (
-                  <Choice
-                    key={p.id}
-                    selected={place === p.id}
-                    onClick={() => {
-                      if (isStoryPlace(p.id)) setPlace(p.id);
-                    }}
-                    label={t("Обрати місце: {n}", { n: t(p.name) })}
-                  >
-                    <span className="block leading-tight">{t(p.name)}</span>
-                  </Choice>
-                ))}
-              </div>
-            </fieldset>
-            <fieldset>
-              <legend className="font-display text-xl font-bold">
-                {t("3. Який настрій у казки?")}
-              </legend>
-              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {FEELINGS.map(([id, label, icon]) => (
-                  <Choice
-                    key={id}
-                    selected={feeling === id}
-                    onClick={() => setFeeling(id)}
-                    label={t("Обрати настрій: {n}", { n: t(label) })}
-                  >
-                    <span className="mr-1" aria-hidden>
-                      {icon}
-                    </span>
-                    {t(label)}
-                  </Choice>
-                ))}
-              </div>
-            </fieldset>
-            <p className="rounded-2xl bg-secondary p-3 text-sm text-secondary-foreground">
-              {t(
-                "До Claude надсилаються лише твій вік, мова й три вибори вище. Без імені, власних слів і збереження казки.",
-              )}
-            </p>
-            <Btn onClick={() => void generate()} disabled={loading} className="w-full">
-              <span className="inline-flex items-center gap-2">
-                <Sparkles className="h-5 w-5" />
-                {loading ? t("Claude складає казку…") : t("Створити мою казку")}
-              </span>
-            </Btn>
-            <Btn variant="soft" onClick={openPrepared} className="w-full">
-              {t("Обрати готову казку")}
-            </Btn>
-          </div>
+          <>
+            <StoryPreview place={place} icon={feelingIcon} />
+            <div className="paper-card space-y-5 p-5 text-card-foreground">
+              <fieldset>
+                <legend className="font-display text-xl font-bold">
+                  {t("1. Хто буде героєм?")}
+                </legend>
+                <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-6">
+                  {(Object.keys(CHARACTERS) as CharId[]).map((id) => (
+                    <Choice
+                      key={id}
+                      selected={who === id}
+                      onClick={() => setWho(id)}
+                      label={t("Обрати {n}", { n: t(CHARACTERS[id].name) })}
+                    >
+                      <img
+                        loading="lazy"
+                        decoding="async"
+                        src={CHARACTERS[id].image}
+                        alt=""
+                        className="mx-auto h-14 w-14 object-contain"
+                      />
+                      <span className="mt-1 block truncate text-xs">{t(CHARACTERS[id].name)}</span>
+                    </Choice>
+                  ))}
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend className="font-display text-xl font-bold">{t("2. Куди вирушимо?")}</legend>
+                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {PLACES.map((p) => (
+                    <Choice
+                      key={p.id}
+                      selected={place === p.id}
+                      onClick={() => {
+                        if (isStoryPlace(p.id)) setPlace(p.id);
+                      }}
+                      label={t("Обрати місце: {n}", { n: t(p.name) })}
+                    >
+                      <span className="block leading-tight">{t(p.name)}</span>
+                    </Choice>
+                  ))}
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend className="font-display text-xl font-bold">
+                  {t("3. Який настрій у казки?")}
+                </legend>
+                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {FEELINGS.map(([id, label, icon]) => (
+                    <Choice
+                      key={id}
+                      selected={feeling === id}
+                      onClick={() => setFeeling(id)}
+                      label={t("Обрати настрій: {n}", { n: t(label) })}
+                    >
+                      <span className="mr-1" aria-hidden>
+                        {icon}
+                      </span>
+                      {t(label)}
+                    </Choice>
+                  ))}
+                </div>
+              </fieldset>
+              <p className="rounded-2xl bg-secondary p-3 text-sm text-secondary-foreground">
+                {t(
+                  "До Claude надсилаються лише твій вік, мова й три вибори вище. Без імені, власних слів і збереження казки.",
+                )}
+              </p>
+              <Btn onClick={() => void generate()} disabled={loading} className="w-full">
+                <span className="inline-flex items-center gap-2">
+                  <Sparkles className="h-5 w-5" />
+                  {loading ? t("Claude складає казку…") : t("Створити мою казку")}
+                </span>
+              </Btn>
+              <Btn variant="soft" onClick={openPrepared} className="w-full">
+                {t("Обрати готову казку")}
+              </Btn>
+            </div>
+          </>
         ) : (
           <article className="animate-fade-up space-y-4" aria-live="polite">
-            <Motif place={place} id="story" night />
+            <StoryPreview who={who} place={place} icon={feelingIcon} showHero />
             <div className="paper-card overflow-hidden p-5 text-card-foreground sm:p-6">
               <p className="text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
                 {t(
@@ -250,9 +260,16 @@ function StoryCompanion() {
                 {story.scenes.map((scene, i) => (
                   <section
                     key={`${i}-${scene.text.slice(0, 20)}`}
-                    className="animate-step"
+                    className="animate-step relative overflow-hidden rounded-2xl border border-border/60 bg-secondary/25 p-4"
                     style={{ animationDelay: `${i * 120}ms` }}
                   >
+                    <span
+                      aria-hidden
+                      className="absolute right-3 top-3 text-lg animate-float"
+                      style={{ animationDelay: `${i * 0.35}s` }}
+                    >
+                      {feelingIcon}
+                    </span>
                     <h3 className="text-sm font-extrabold uppercase tracking-wide text-primary">
                       {t("Сцена {n}", { n: i + 1 })}
                     </h3>
@@ -268,7 +285,10 @@ function StoryCompanion() {
                   />
                 </div>
               )}
-              <p className="mt-6 rounded-2xl bg-secondary p-4 font-bold">{story.closing}</p>
+              <div className="mt-6 space-y-2">
+                <StoryPreview who={who} place={place} icon={feelingIcon} showHero compact />
+                <p className="rounded-2xl bg-secondary p-4 font-bold">{story.closing}</p>
+              </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Btn
                   variant="soft"

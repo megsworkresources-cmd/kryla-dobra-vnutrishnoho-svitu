@@ -383,7 +383,8 @@ export function playAmbient(kind: Ambient | null) {
     style: s.musicStyle,
     bus,
     stop: () => {
-      ambientGeneration += 1;
+      // The generation is bumped by stopAmbient immediately, not here: this
+      // stop may run 320ms later and must not invalidate the next scene.
       stops.forEach((stop) => {
         try {
           stop();
@@ -509,9 +510,19 @@ export function startMusic(bus: AudioNode, style: MusicStyle, _night: boolean) {
 }
 
 export function stopAmbient() {
-  amb?.stop();
+  const current = amb;
   amb = null;
+  ambientGeneration += 1;
   setMusicStatus("idle");
+  if (!current) return;
+  const c = ctx;
+  if (!c || c.state === "closed") {
+    current.stop();
+    return;
+  }
+  // Short fade-out so leaving a page never ends a track with a click.
+  current.bus.gain.setTargetAtTime(0, c.currentTime, 0.08);
+  window.setTimeout(() => current.stop(), 320);
 }
 
 /* ---------- Nature sounds chosen by the child ---------- */
@@ -543,7 +554,8 @@ export function playSoundscape(kind: Soundscape) {
   ensureRunning(c);
   stopSoundscape();
   const bus = c.createGain();
-  bus.gain.value = 0.5 * s.effectsVolume;
+  bus.gain.setValueAtTime(0, c.currentTime);
+  bus.gain.linearRampToValueAtTime(0.5 * s.effectsVolume, c.currentTime + 0.2);
   bus.connect(master);
   const stops: (() => void)[] = [];
   if (kind === "crickets") {
@@ -608,9 +620,18 @@ export function playSoundscape(kind: Soundscape) {
 }
 
 export function stopSoundscape() {
-  scape?.stop();
+  const current = scape;
   scape = null;
   setScapeKind(null);
+  if (!current) return;
+  const c = ctx;
+  if (!c || c.state === "closed") {
+    current.stop();
+    return;
+  }
+  // The nature sound fades out instead of cutting off mid-noise.
+  current.bus.gain.setTargetAtTime(0, c.currentTime, 0.08);
+  window.setTimeout(() => current.stop(), 320);
 }
 
 export function ambientFor(pathname: string): Ambient | null {

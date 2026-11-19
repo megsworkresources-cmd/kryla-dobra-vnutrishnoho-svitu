@@ -1457,6 +1457,7 @@ const EN: Record<string, string> = {
     "The storyteller is unavailable right now. Choose a ready-made story in the Night Sky.",
   "Нова казка з Claude": "A new story with Claude",
   "Сцена {n}": "Scene {n}",
+  Сцени: "Scenes",
   "Слухати голосом пристрою": "Listen with the device voice",
   "Зупинити читання": "Stop reading",
   "Читання відбувається на цьому пристрої; текст казки нікуди не надсилається для озвучення.":

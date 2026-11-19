@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Btn } from "@/components/Scene";
 import { useT } from "@/lib/i18n";
 
@@ -6,6 +6,46 @@ import { useT } from "@/lib/i18n";
 export function GrownUpLink({ href, children }: { href: string; children: ReactNode }) {
   const t = useT();
   const [ask, setAsk] = useState(false);
+  const dialog = useRef<HTMLDivElement>(null);
+
+  // Keep keyboard focus inside the grown-up check, close on Escape and restore
+  // focus to the link afterwards, so the dialog is usable without a mouse.
+  useEffect(() => {
+    if (!ask) return;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const buttons = () =>
+      Array.from(dialog.current?.querySelectorAll<HTMLButtonElement>("button") ?? []);
+    // The safe choice ("Not now") gets focus, never the outbound link.
+    const items = buttons();
+    items[items.length - 1]?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setAsk(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const focusable = buttons();
+      if (!focusable.length) return;
+      const index = focusable.indexOf(document.activeElement as HTMLButtonElement);
+      if (event.shiftKey && index <= 0) {
+        event.preventDefault();
+        focusable[focusable.length - 1]?.focus();
+      } else if (!event.shiftKey && index === focusable.length - 1) {
+        event.preventDefault();
+        focusable[0]?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+      previous?.focus();
+    };
+  }, [ask]);
+
   return (
     <>
       <button type="button" onClick={() => setAsk(true)} className="inline-block py-1 underline">
@@ -13,6 +53,7 @@ export function GrownUpLink({ href, children }: { href: string; children: ReactN
       </button>
       {ask && (
         <div
+          ref={dialog}
           role="dialog"
           aria-modal="true"
           aria-label={t("Спершу спитай дорослого")}

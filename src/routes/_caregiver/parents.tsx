@@ -223,7 +223,7 @@ function Parents() {
             const n = items.filter((a) => completed[a.key]).length;
             return (
               <details key={p.id} className="mt-2 rounded-2xl bg-secondary p-3">
-                <summary className="flex min-h-10 cursor-pointer items-center justify-between gap-2 font-bold">
+                <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 font-bold">
                   <span>{t(p.name)}</span>
                   <span className="text-sm tabular-nums text-muted-foreground">
                     {n}/{items.length}

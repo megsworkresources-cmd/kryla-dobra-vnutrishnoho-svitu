@@ -15,6 +15,7 @@ export interface AppState {
   drawings: { id: string; data: string; at: number }[];
   visits: Record<string, { n: number; last: number }>; // placeId -> visits
   lastDone: Record<string, number>; // activityId -> last completion time
+  watch: Record<string, number>; // cartoonId -> last scene shown
   voice: boolean;
   reduceMotion: boolean;
   sound: boolean; // master switch
@@ -43,6 +44,7 @@ const DEFAULTS: AppState = {
   drawings: [],
   visits: {},
   lastDone: {},
+  watch: {},
   voice: true,
   reduceMotion: false,
   sound: true,
@@ -109,6 +111,15 @@ function load() {
         state[key] = Object.fromEntries(
           Object.entries(state[key]).filter(
             ([, value]) => typeof value === "number" && Number.isSafeInteger(value) && value >= 0,
+          ),
+        );
+      }
+      if (!state.watch || typeof state.watch !== "object" || Array.isArray(state.watch)) {
+        state.watch = {};
+      } else {
+        state.watch = Object.fromEntries(
+          Object.entries(state.watch).filter(
+            ([, value]) => Number.isSafeInteger(value) && value >= 0,
           ),
         );
       }
@@ -221,6 +232,12 @@ export const markDone = (id: string) =>
     lastDone: { ...s.lastDone, [id]: Date.now() },
   }));
 
+export const setWatchPosition = (id: string, scene: number) => {
+  const next = Math.max(0, Math.trunc(scene));
+  if (getState().watch[id] === next) return;
+  update((s) => ({ ...s, watch: { ...s.watch, [id]: next } }));
+};
+
 export const markVisit = (place: string) =>
   update((s) => ({
     ...s,
@@ -234,6 +251,7 @@ export const resetProgress = () =>
     completed: {},
     lastDone: {},
     visits: {},
+    watch: {},
     careSteps: 0,
     wateredOn: null,
   }));
@@ -276,11 +294,15 @@ export function pick<T>(age: AgeBand, v: { young: T; mid: T; older: T }) {
   return v[age];
 }
 
-export const addDrawing = (data: string) =>
-  update((s) => ({
+export const addDrawing = (data: string) => {
+  const at = Date.now();
+  // A random suffix keeps two drawings saved in the same millisecond distinct.
+  const id = `${at}-${Math.random().toString(36).slice(2, 8)}`;
+  return update((s) => ({
     ...s,
-    drawings: [...s.drawings, { id: `${Date.now()}`, data, at: Date.now() }].slice(-30),
+    drawings: [...s.drawings, { id, data, at }].slice(-30),
   }));
+};
 export const removeDrawing = (id: string) =>
   update((s) => ({ ...s, drawings: s.drawings.filter((d) => d.id !== id) }));
 export const addComfort = (text: string) =>

@@ -91,7 +91,7 @@ it("plays and stops nature sounds through the shared audio context", async () =>
   expect(playing?.start).toHaveBeenCalledTimes(1);
   audio.stopSoundscape();
   expect(audio.getSoundscape()).toBeNull();
-  expect(playing?.stop).toHaveBeenCalledTimes(1);
+  await vi.waitFor(() => expect(playing?.stop).toHaveBeenCalledTimes(1));
 });
 
 it("keeps nature sounds silent while the master switch is off", async () => {

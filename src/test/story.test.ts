@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { StoryInput } from "@/lib/story.functions";
 import { neighbours } from "@/content/sequence";
-import { readyStory } from "@/content/ready-story";
+import { readyStories, readyStory, type ReadyStoryId } from "@/content/ready-story";
 
 const choices = {
   who: "solomiya",
@@ -21,6 +21,29 @@ describe("Claude story companion", () => {
     expect(en.scenes.every((s) => !/[А-Яа-яЇїІіЄєҐґ]/.test(s.text))).toBe(true);
     expect(uk.closing.length).toBeGreaterThan(30);
   });
+  it("offers both folk tale retellings fully written in Ukrainian and English", () => {
+    const uk = readyStories("uk");
+    const en = readyStories("en");
+    expect(uk.map((story) => story.id)).toEqual(["seed", "mitten", "bun"]);
+    expect(en.map((story) => story.title)).toEqual([
+      "The seed's adventure",
+      "The Mitten",
+      "The Bun",
+    ]);
+
+    const ids: ReadyStoryId[] = ["seed", "mitten", "bun"];
+    for (const id of ids) {
+      const ua = readyStory("uk", id);
+      const eng = readyStory("en", id);
+      expect(ua.scenes).toHaveLength(4);
+      expect(eng.scenes).toHaveLength(4);
+      expect(ua.scenes.every((scene) => /[А-Яа-яЇїІіЄєҐґ]/.test(scene.text))).toBe(true);
+      expect(eng.scenes.every((scene) => !/[А-Яа-яЇїІіЄєҐґ]/.test(scene.text))).toBe(true);
+      expect(ua.closing.length).toBeGreaterThan(20);
+      expect(ua.title).not.toBe(eng.title);
+    }
+  });
+
   it("accepts only preset choices and does not accept child-typed text", () => {
     const parsed = StoryInput.parse({ ...choices, text: "a private secret" });
     expect(parsed).toEqual(choices);

@@ -15,7 +15,7 @@ import { markDone, useStore, type AgeBand } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
 import { speak, stopSpeaking, useSpeechState } from "@/lib/speak";
 import { useServerFn } from "@tanstack/react-start";
-import { readyStory } from "@/content/ready-story";
+import { readyStories, readyStory, type ReadyStoryId } from "@/content/ready-story";
 import { composedStory } from "@/content/story-builder";
 
 export const Route = createFileRoute("/story")({
@@ -81,6 +81,7 @@ function StoryCompanion() {
   const [loading, setLoading] = useState(false);
   const [source, setSource] = useState<"ai" | "ready" | "app">("ai");
   const [hasRead, setHasRead] = useState(false);
+  const [preparedOpen, setPreparedOpen] = useState(false);
   const request = useRef(0);
   const told = useRef(0);
   const inFlight = useRef(false);
@@ -107,6 +108,7 @@ function StoryCompanion() {
   const generate = async () => {
     if (inFlight.current) return;
     inFlight.current = true;
+    setPreparedOpen(false);
     const mine = ++request.current;
     const variant = told.current++;
     stopSpeaking();
@@ -135,14 +137,16 @@ function StoryCompanion() {
     setSource("ai");
     setHasRead(false);
     setLoading(false);
+    setPreparedOpen(false);
   };
-  const openPrepared = () => {
+  const openPrepared = (id: ReadyStoryId) => {
     request.current += 1;
     stopSpeaking();
     setLoading(false);
     setSource("ready");
     setHasRead(false);
-    setStory(readyStory(lang));
+    setPreparedOpen(false);
+    setStory(readyStory(lang, id));
   };
 
   return (
@@ -237,9 +241,33 @@ function StoryCompanion() {
                   {loading ? t("Claude складає казку…") : t("Створити мою казку")}
                 </span>
               </Btn>
-              <Btn variant="soft" onClick={openPrepared} className="w-full">
+              <Btn
+                variant="soft"
+                onClick={() => setPreparedOpen((open) => !open)}
+                aria-pressed={preparedOpen}
+                className="w-full"
+              >
                 {t("Обрати готову казку")}
               </Btn>
+              {preparedOpen && (
+                <div className="space-y-2 rounded-2xl border-2 border-border bg-background p-3">
+                  <h3 className="font-display text-lg font-bold">{t("Готові казки")}</h3>
+                  {readyStories(lang).map((prepared) => (
+                    <Btn
+                      key={prepared.id}
+                      variant="soft"
+                      aria-label={t("Відкрити казку: {n}", { n: prepared.title })}
+                      onClick={() => openPrepared(prepared.id)}
+                      className="w-full rounded-2xl px-4 py-3 text-left"
+                    >
+                      <span className="block">{prepared.title}</span>
+                      <span className="mt-0.5 block text-xs font-normal leading-snug text-muted-foreground">
+                        {prepared.desc}
+                      </span>
+                    </Btn>
+                  ))}
+                </div>
+              )}
             </div>
           </>
         ) : (

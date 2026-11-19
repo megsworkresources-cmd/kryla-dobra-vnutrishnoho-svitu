@@ -30,7 +30,9 @@ export default defineConfig({
         devOptions: { enabled: false },
         manifest: false,
         filename: "sw.js",
-        outDir: "dist/client",
+        // TanStack Start emits the deployable client bundle to .output/public.
+        // Keeping Workbox on dist/client creates an empty, unused service worker.
+        outDir: ".output/public",
         workbox: {
           globPatterns: ["**/*.{js,css,png,jpg,jpeg,webp,svg,woff2}"],
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,

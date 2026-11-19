@@ -1,6 +1,6 @@
 # Completion roadmap
 
-- [ ] Generate seven full story films and six character films in the approved style; expand Watch and verify continuous playback and replay.
+- [ ] Generate the remaining five full story films (kite, paints, lullaby, rain, woodland bridge) and six character films in the approved storybook style; add all to Watch and verify continuous playback and replay. Three full story films are already integrated. Blocked: both the media CLI and video tool reject the first 30-second kite render for insufficient workspace credits (estimated 27.75 credits for that film); no new footage created or app changes made.
 
 - [x] Final polish request: six generated character loops integrated with reduced-motion fallbacks; explicit melody replay and story narration replay; shared-garden iPhone safe areas, horizontal flower browsing and caregiver-first opt-in; centralized six-stage growth with safe full bloom; public stage projection deployed. 160 tests, lint and iPhone-sized browser flows pass; publishing requested separately.
 - [x] Uploaded transformation brief: audited remaining routes/components and repaired practice recovery, helper failures/races, privacy copy, drawing labels and duplicate voice synthesis; 160 tests and lint pass. Physical-device listening/interruption checks remain manual.

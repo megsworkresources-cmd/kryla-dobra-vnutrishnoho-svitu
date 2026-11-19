@@ -1,4 +1,4 @@
-export type CaregiverAuthMode = "signin" | "signup" | "forgot" | "update";
+export type CaregiverAuthMode = "signin" | "signup" | "forgot" | "resend" | "update";
 
 type AuthFailure = { code?: string; status?: number; name?: string };
 
@@ -7,6 +7,8 @@ const CODE_MESSAGES: Record<string, string> = {
   invalid_credentials: "Не вдалося увійти. Перевірте пошту й пароль.",
   user_already_exists: "Акаунт з цією поштою вже існує. Увійдіть або відновіть пароль.",
   email_exists: "Акаунт з цією поштою вже існує. Увійдіть або відновіть пароль.",
+  email_already_confirmed: "Ця електронна пошта вже підтверджена. Увійдіть.",
+  user_not_found: "Акаунт не знайдено. Перевірте адресу або створіть новий.",
   weak_password: "Пароль має містити щонайменше 8 символів.",
   same_password: "Новий пароль має відрізнятися від старого.",
   email_address_invalid: "Перевірте адресу електронної пошти.",
@@ -29,6 +31,10 @@ const CODE_MESSAGES: Record<string, string> = {
   reauthentication_needed: "Сесія завершилася. Увійдіть ще раз.",
 };
 
+export function isEmailNotConfirmed(error: unknown): boolean {
+  return (error as { code?: string } | null)?.code === "email_not_confirmed";
+}
+
 /** Maps a Supabase Auth error to safe, actionable copy for the caregiver forms. */
 export function caregiverAuthError(error: unknown, mode: CaregiverAuthMode): string {
   const failure = (error ?? {}) as AuthFailure;
@@ -42,6 +48,7 @@ export function caregiverAuthError(error: unknown, mode: CaregiverAuthMode): str
   }
 
   if (mode === "signin") return "Не вдалося увійти. Перевірте пошту й пароль.";
+  if (mode === "resend") return "Не вдалося надіслати лист. Спробуйте пізніше.";
   if (mode === "update") {
     return "Не вдалося зберегти пароль. Відкрийте новий лист відновлення й спробуйте ще раз.";
   }

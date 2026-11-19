@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { caregiverAuthError } from "@/lib/caregiver-auth-error";
+import { caregiverAuthError, isEmailNotConfirmed } from "@/lib/caregiver-auth-error";
 
 describe("caregiver auth errors", () => {
   it("explains an unconfirmed account", () => {
     expect(caregiverAuthError({ code: "email_not_confirmed", status: 400 }, "signin")).toContain(
       "Підтвердьте",
     );
+    expect(isEmailNotConfirmed({ code: "email_not_confirmed" })).toBe(true);
+    expect(isEmailNotConfirmed({ code: "invalid_credentials" })).toBe(false);
   });
 
   it("keeps invalid credentials actionable without leaking details", () => {
@@ -35,6 +37,13 @@ describe("caregiver auth errors", () => {
     expect(caregiverAuthError(new Error("offline"), "signin")).toBe(
       "Не вдалося увійти. Перевірте пошту й пароль.",
     );
+    expect(caregiverAuthError({}, "resend")).toContain("надіслати лист");
     expect(caregiverAuthError({}, "update")).toContain("Відкрийте новий лист");
+  });
+
+  it("explains an already confirmed email", () => {
+    expect(caregiverAuthError({ code: "email_already_confirmed" }, "resend")).toContain(
+      "вже підтверджена",
+    );
   });
 });

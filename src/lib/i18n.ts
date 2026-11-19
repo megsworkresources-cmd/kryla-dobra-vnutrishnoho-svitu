@@ -1390,6 +1390,13 @@ const EN: Record<string, string> = {
   "Сесія завершилася. Увійдіть ще раз.": "Your session has ended. Sign in again.",
   "Не вдалося з'єднатися. Перевірте інтернет і спробуйте ще раз.":
     "Couldn't connect. Check your internet and try again.",
+  "Надіслати лист ще раз": "Resend confirmation email",
+  "Лист надіслано ще раз. Перевірте пошту й підтвердьте адресу, потім увійдіть.":
+    "Email sent again. Check your inbox, confirm your address, then sign in.",
+  "Не вдалося надіслати лист. Спробуйте пізніше.": "Couldn't send the email. Try again later.",
+  "Ця електронна пошта вже підтверджена. Увійдіть.": "This email is already confirmed. Sign in.",
+  "Акаунт не знайдено. Перевірте адресу або створіть новий.":
+    "Account not found. Check the address or create a new one.",
   "Вхід для дорослих": "Adult sign-in",
   "Створити акаунт дорослого": "Create an adult account",
   "Відновити пароль": "Reset password",

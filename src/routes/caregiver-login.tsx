@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { safeReturnPath } from "@/lib/caregiver-guard";
 import { useT } from "@/lib/i18n";
 import { RECOVERY_KEY, recoveryRequested } from "@/lib/caregiver-session";
-import { caregiverAuthError } from "@/lib/caregiver-auth-error";
+import { caregiverAuthError, isEmailNotConfirmed } from "@/lib/caregiver-auth-error";
 
 type Mode = "signin" | "signup" | "forgot";
 
@@ -41,6 +41,8 @@ function CaregiverLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [canResend, setCanResend] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   const tRef = useRef(t);
@@ -77,8 +79,9 @@ function CaregiverLogin() {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (busy) return;
+    if (busy || resending) return;
     setBusy(true);
+    setCanResend(false);
     setMsg(null);
     try {
       if (mode === "signin") {
@@ -96,6 +99,7 @@ function CaregiverLogin() {
         if (error) throw error;
         setMsg({ kind: "ok", text: t("Перевірте пошту й підтвердьте адресу, потім увійдіть.") });
         setMode("signin");
+        setCanResend(true);
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
@@ -104,12 +108,41 @@ function CaregiverLogin() {
         setMsg({ kind: "ok", text: t("Якщо такий акаунт є, ми надіслали лист для зміни пароля.") });
       }
     } catch (error) {
+      setCanResend(isEmailNotConfirmed(error));
       setMsg({
         kind: "err",
         text: t(caregiverAuthError(error, mode)),
       });
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function resend() {
+    if (busy || resending || !email) return;
+    setResending(true);
+    setMsg(null);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/caregiver-login?redirect=${encodeURIComponent(redirect)}`,
+        },
+      });
+      if (error) throw error;
+      setCanResend(false);
+      setMsg({
+        kind: "ok",
+        text: t("Лист надіслано ще раз. Перевірте пошту й підтвердьте адресу, потім увійдіть."),
+      });
+    } catch (error) {
+      setMsg({
+        kind: "err",
+        text: t(caregiverAuthError(error, "resend")),
+      });
+    } finally {
+      setResending(false);
     }
   }
 
@@ -131,7 +164,7 @@ function CaregiverLogin() {
           onSubmit={submit}
           className="paper-card space-y-4 p-5"
           aria-labelledby="cg-h"
-          aria-busy={busy}
+          aria-busy={busy || resending}
         >
           <h2 id="cg-h" className="font-display text-2xl font-bold">
             {t(heading)}
@@ -169,7 +202,18 @@ function CaregiverLogin() {
               {msg.text}
             </p>
           )}
-          <Btn type="submit" disabled={busy} className="w-full">
+          {canResend && (
+            <Btn
+              type="button"
+              variant="soft"
+              disabled={busy || resending}
+              onClick={resend}
+              className="w-full"
+            >
+              {resending ? t("Надсилаємо лист…") : t("Надіслати лист ще раз")}
+            </Btn>
+          )}
+          <Btn type="submit" disabled={busy || resending} className="w-full">
             {busy
               ? t(
                   { signin: "Входимо…", signup: "Створюємо акаунт…", forgot: "Надсилаємо лист…" }[
@@ -185,6 +229,7 @@ function CaregiverLogin() {
                 variant="ghost"
                 onClick={() => {
                   setMode("signin");
+                  setCanResend(false);
                   setMsg(null);
                 }}
               >
@@ -197,6 +242,7 @@ function CaregiverLogin() {
                 variant="ghost"
                 onClick={() => {
                   setMode("signup");
+                  setCanResend(false);
                   setMsg(null);
                 }}
               >
@@ -209,6 +255,7 @@ function CaregiverLogin() {
                 variant="ghost"
                 onClick={() => {
                   setMode("forgot");
+                  setCanResend(false);
                   setMsg(null);
                 }}
               >

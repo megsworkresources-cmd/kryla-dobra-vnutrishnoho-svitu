@@ -55,7 +55,8 @@ export default defineConfig({
               urlPattern: ({ url, sameOrigin }) =>
                 sameOrigin &&
                 (url.pathname.startsWith("/__l5e/assets-v1/") ||
-                  url.pathname.startsWith("/assets/")),
+                  url.pathname.startsWith("/assets/") ||
+                  url.pathname.startsWith("/media/")),
               handler: "CacheFirst",
               options: {
                 cacheName: "media",

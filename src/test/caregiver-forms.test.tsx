@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Route as LoginRoute } from "@/routes/caregiver-login";
 import { Route as ResetRoute } from "@/routes/reset-password";
 import { supabase } from "@/integrations/supabase/client";
+import { startResendCooldown } from "@/lib/caregiver-session";
 
 const mocks = vi.hoisted(() => ({ navigate: vi.fn() }));
 
@@ -116,6 +117,25 @@ describe("caregiver form states", () => {
     expect(resendButton).toBeDisabled();
     fireEvent.click(resendButton);
     expect(auth.resend).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the resend cooldown after the page reloads", async () => {
+    vi.mocked(auth.signInWithPassword).mockResolvedValue({
+      error: { code: "email_not_confirmed", status: 400 },
+    } as never);
+    vi.mocked(auth.resend).mockResolvedValue({ error: null } as never);
+    startResendCooldown();
+    render(<Login />);
+    fireEvent.change(screen.getByLabelText("Електронна пошта дорослого"), {
+      target: { value: "adult@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "password1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Увійти" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Підтвердьте");
+    const resendButton = screen.getByRole("button", { name: /Надіслати лист ще раз/ });
+    expect(resendButton).toBeDisabled();
+    fireEvent.click(resendButton);
+    expect(auth.resend).not.toHaveBeenCalled();
   });
 
   it("offers a resend after sign-up while confirmation is pending", async () => {

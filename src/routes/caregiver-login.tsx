@@ -4,7 +4,13 @@ import { Btn, Scene } from "@/components/Scene";
 import { supabase } from "@/integrations/supabase/client";
 import { safeReturnPath } from "@/lib/caregiver-guard";
 import { useT } from "@/lib/i18n";
-import { RECOVERY_KEY, recoveryRequested } from "@/lib/caregiver-session";
+import {
+  clearResendCooldown,
+  RECOVERY_KEY,
+  recoveryRequested,
+  resendCooldownLeft,
+  startResendCooldown,
+} from "@/lib/caregiver-session";
 import { caregiverAuthError, isEmailNotConfirmed } from "@/lib/caregiver-auth-error";
 
 type Mode = "signin" | "signup" | "forgot";
@@ -33,9 +39,6 @@ export const Route = createFileRoute("/caregiver-login")({
 const field =
   "mt-1 block min-h-12 w-full rounded-2xl border-2 border-border bg-background px-4 text-base text-foreground";
 
-/** Supabase's built-in mailer allows about two emails an hour, so resends wait a minute. */
-const RESEND_COOLDOWN_S = 60;
-
 function CaregiverLogin() {
   const t = useT();
   const navigate = useNavigate();
@@ -46,7 +49,7 @@ function CaregiverLogin() {
   const [busy, setBusy] = useState(false);
   const [resending, setResending] = useState(false);
   const [canResend, setCanResend] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
+  const [cooldown, setCooldown] = useState(() => resendCooldownLeft());
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   const tRef = useRef(t);
@@ -56,6 +59,9 @@ function CaregiverLogin() {
     if (cooldown <= 0) return;
     const id = window.setTimeout(() => setCooldown((s) => Math.max(0, s - 1)), 1000);
     return () => window.clearTimeout(id);
+  }, [cooldown]);
+  useEffect(() => {
+    if (cooldown === 0) clearResendCooldown();
   }, [cooldown]);
   // Already signed in → go straight back.
   useEffect(() => {
@@ -111,7 +117,7 @@ function CaregiverLogin() {
         setMode("signin");
         setCanResend(true);
         // Sign-up already sent one email.
-        setCooldown(RESEND_COOLDOWN_S);
+        setCooldown(startResendCooldown());
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
@@ -154,7 +160,7 @@ function CaregiverLogin() {
       });
     } finally {
       // Failed attempts count against the quota too, so wait between any attempts.
-      setCooldown(RESEND_COOLDOWN_S);
+      setCooldown(startResendCooldown());
       setResending(false);
     }
   }

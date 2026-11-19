@@ -112,7 +112,10 @@ describe("caregiver form states", () => {
         emailRedirectTo: `${window.location.origin}/caregiver-login?redirect=%2Fparents`,
       },
     });
-    expect(screen.queryByRole("button", { name: "Надіслати лист ще раз" })).toBeNull();
+    const resendButton = screen.getByRole("button", { name: /Надіслати лист ще раз/ });
+    expect(resendButton).toBeDisabled();
+    fireEvent.click(resendButton);
+    expect(auth.resend).toHaveBeenCalledTimes(1);
   });
 
   it("offers a resend after sign-up while confirmation is pending", async () => {
@@ -125,7 +128,7 @@ describe("caregiver form states", () => {
     fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "password1" } });
     fireEvent.click(screen.getByRole("button", { name: "Створити акаунт" }));
     expect(await screen.findByRole("status")).toHaveTextContent("Перевірте пошту");
-    expect(screen.getByRole("button", { name: "Надіслати лист ще раз" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Надіслати лист ще раз/ })).toBeDisabled();
   });
 
   it("requests recovery with the local reset address and shows the safe success message", async () => {

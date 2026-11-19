@@ -1391,6 +1391,7 @@ const EN: Record<string, string> = {
   "Не вдалося з'єднатися. Перевірте інтернет і спробуйте ще раз.":
     "Couldn't connect. Check your internet and try again.",
   "Надіслати лист ще раз": "Resend confirmation email",
+  "Надіслати лист ще раз ({s} с)": "Resend confirmation email ({s} s)",
   "Лист надіслано ще раз. Перевірте пошту й підтвердьте адресу, потім увійдіть.":
     "Email sent again. Check your inbox, confirm your address, then sign in.",
   "Не вдалося надіслати лист. Спробуйте пізніше.": "Couldn't send the email. Try again later.",

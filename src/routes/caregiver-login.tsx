@@ -33,6 +33,9 @@ export const Route = createFileRoute("/caregiver-login")({
 const field =
   "mt-1 block min-h-12 w-full rounded-2xl border-2 border-border bg-background px-4 text-base text-foreground";
 
+/** Supabase's built-in mailer allows about two emails an hour, so resends wait a minute. */
+const RESEND_COOLDOWN_S = 60;
+
 function CaregiverLogin() {
   const t = useT();
   const navigate = useNavigate();
@@ -43,10 +46,17 @@ function CaregiverLogin() {
   const [busy, setBusy] = useState(false);
   const [resending, setResending] = useState(false);
   const [canResend, setCanResend] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   const tRef = useRef(t);
   tRef.current = t;
+  // Countdown that keeps repeated presses from spending the email quota.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = window.setTimeout(() => setCooldown((s) => Math.max(0, s - 1)), 1000);
+    return () => window.clearTimeout(id);
+  }, [cooldown]);
   // Already signed in → go straight back.
   useEffect(() => {
     let active = true;
@@ -100,6 +110,8 @@ function CaregiverLogin() {
         setMsg({ kind: "ok", text: t("Перевірте пошту й підтвердьте адресу, потім увійдіть.") });
         setMode("signin");
         setCanResend(true);
+        // Sign-up already sent one email.
+        setCooldown(RESEND_COOLDOWN_S);
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
@@ -119,7 +131,7 @@ function CaregiverLogin() {
   }
 
   async function resend() {
-    if (busy || resending || !email) return;
+    if (busy || resending || cooldown > 0 || !email) return;
     setResending(true);
     setMsg(null);
     try {
@@ -131,7 +143,6 @@ function CaregiverLogin() {
         },
       });
       if (error) throw error;
-      setCanResend(false);
       setMsg({
         kind: "ok",
         text: t("Лист надіслано ще раз. Перевірте пошту й підтвердьте адресу, потім увійдіть."),
@@ -142,6 +153,8 @@ function CaregiverLogin() {
         text: t(caregiverAuthError(error, "resend")),
       });
     } finally {
+      // Failed attempts count against the quota too, so wait between any attempts.
+      setCooldown(RESEND_COOLDOWN_S);
       setResending(false);
     }
   }
@@ -206,11 +219,15 @@ function CaregiverLogin() {
             <Btn
               type="button"
               variant="soft"
-              disabled={busy || resending}
+              disabled={busy || resending || cooldown > 0}
               onClick={resend}
               className="w-full"
             >
-              {resending ? t("Надсилаємо лист…") : t("Надіслати лист ще раз")}
+              {resending
+                ? t("Надсилаємо лист…")
+                : cooldown > 0
+                  ? t("Надіслати лист ще раз ({s} с)", { s: cooldown })
+                  : t("Надіслати лист ще раз")}
             </Btn>
           )}
           <Btn type="submit" disabled={busy || resending} className="w-full">

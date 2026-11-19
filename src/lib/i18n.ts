@@ -1370,6 +1370,26 @@ const EN: Record<string, string> = {
     "If that account exists, we've sent a password reset email.",
   "Не вдалося увійти. Перевірте пошту й пароль.":
     "Couldn't sign in. Check your email and password.",
+  "Підтвердьте електронну пошту за посиланням із листа, потім увійдіть.":
+    "Confirm your email using the link in the message, then sign in.",
+  "Акаунт з цією поштою вже існує. Увійдіть або відновіть пароль.":
+    "An account with this email already exists. Sign in or reset your password.",
+  "Пароль має містити щонайменше 8 символів.": "The password must contain at least 8 characters.",
+  "Новий пароль має відрізнятися від старого.":
+    "The new password must be different from the old one.",
+  "Перевірте адресу електронної пошти.": "Check the email address.",
+  "Створення акаунтів зараз вимкнено.": "Account creation is currently disabled.",
+  "Вхід через електронну пошту тимчасово недоступний.": "Email sign-in is temporarily unavailable.",
+  "Забагато листів або спроб. Спробуйте пізніше.": "Too many emails or attempts. Try again later.",
+  "Посилання для входу налаштоване неправильно. Спробуйте пізніше.":
+    "The sign-in link is misconfigured. Try again later.",
+  "Посилання прострочене або вже використане. Запросіть нове.":
+    "The link has expired or was already used. Request a new one.",
+  "Перевірка безпеки не пройдена. Оновіть сторінку й спробуйте ще раз.":
+    "The security check failed. Refresh the page and try again.",
+  "Сесія завершилася. Увійдіть ще раз.": "Your session has ended. Sign in again.",
+  "Не вдалося з'єднатися. Перевірте інтернет і спробуйте ще раз.":
+    "Couldn't connect. Check your internet and try again.",
   "Вхід для дорослих": "Adult sign-in",
   "Створити акаунт дорослого": "Create an adult account",
   "Відновити пароль": "Reset password",

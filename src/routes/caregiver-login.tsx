@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { safeReturnPath } from "@/lib/caregiver-guard";
 import { useT } from "@/lib/i18n";
 import { RECOVERY_KEY, recoveryRequested } from "@/lib/caregiver-session";
+import { caregiverAuthError } from "@/lib/caregiver-auth-error";
 
 type Mode = "signin" | "signup" | "forgot";
 
@@ -102,13 +103,10 @@ function CaregiverLogin() {
         if (error) throw error;
         setMsg({ kind: "ok", text: t("Якщо такий акаунт є, ми надіслали лист для зміни пароля.") });
       }
-    } catch {
+    } catch (error) {
       setMsg({
         kind: "err",
-        text:
-          mode === "signin"
-            ? t("Не вдалося увійти. Перевірте пошту й пароль.")
-            : t("Не вдалося завершити дію. Перевірте дані й спробуйте ще раз."),
+        text: t(caregiverAuthError(error, mode)),
       });
     } finally {
       setBusy(false);

@@ -38,6 +38,7 @@ function Welcome() {
         className="absolute inset-0 h-full w-full object-cover animate-kenburns"
       />
       <div className="absolute inset-0 veil-home" aria-hidden />
+      <div className="absolute inset-0 veil-top" aria-hidden />
       {/* drifting dandelion seeds */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {[12, 38, 64, 80].map((l, i) => (
@@ -52,15 +53,13 @@ function Welcome() {
         <LangToggle />
       </div>
       <div className="relative z-10 px-6 pt-20 text-center animate-fade-up">
-        <h1 className="font-display text-6xl font-bold text-ink drop-shadow-sm sm:text-7xl">
-          {t("Тихе Місце")}
-        </h1>
-        <p className="mt-3 font-display text-2xl text-paper [text-shadow:0_1px_6px_var(--color-ink)]">
+        <h1 className="font-display text-6xl font-bold text-ink sm:text-7xl">{t("Тихе Місце")}</h1>
+        <p className="mt-3 font-display text-2xl font-semibold text-ink">
           {t("Тут ти можеш бути собою")}
         </p>
       </div>
       <div className="relative z-10 mt-auto px-6 pb-4 text-center animate-fade-up">
-        <p className="mx-auto max-w-sm text-base font-semibold text-paper [text-shadow:0_1px_6px_var(--color-ink)]">
+        <p className="mx-auto max-w-sm rounded-2xl bg-paper/85 px-4 py-3 text-base font-semibold leading-relaxed text-ink backdrop-blur-sm">
           {t("Чарівний світ, де можна відчувати, мріяти, дихати й відпочивати — скільки захочеш.")}
         </p>
         <Link

@@ -164,6 +164,15 @@
 @utility veil-night {
   background: var(--veil-night);
 }
+/* Lightens the top of a photo so dark title text stays readable over any part of it. */
+@utility veil-top {
+  background: linear-gradient(
+    to bottom,
+    oklch(0.975 0.018 85 / 0.88) 0%,
+    oklch(0.975 0.018 85 / 0.7) 22%,
+    transparent 48%
+  );
+}
 @utility shadow-soft {
   box-shadow: var(--shadow-soft);
 }
@@ -485,6 +494,15 @@ html[data-text="xl"] {
   font-size: 125%;
 }
 
+/* Reduced motion keeps arrivals gentle: movement is replaced by a short fade, never a snap. */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -493,12 +511,25 @@ html[data-text="xl"] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+  .animate-fade-up,
+  .animate-pop,
+  .animate-flip,
+  .animate-glow-on {
+    animation-name: fade-in !important;
+    animation-duration: 200ms !important;
+  }
 }
 .reduce-motion *,
 .reduce-motion *::before,
 .reduce-motion *::after {
   animation: none !important;
   transition-duration: 0.001ms !important;
+}
+.reduce-motion .animate-fade-up,
+.reduce-motion .animate-pop,
+.reduce-motion .animate-flip,
+.reduce-motion .animate-glow-on {
+  animation: fade-in 200ms ease-out both !important;
 }
 
 @utility bg-night-bar {

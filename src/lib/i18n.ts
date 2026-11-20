@@ -7,7 +7,6 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
-  "Назад": "Back",
   "Казка на ніч": "Bedtime story",
   "Затишна історія про спокійну ніч, вечірній ритуал і сміливість.": "A cosy story about a calm night, evening rituals and courage.",
   "Поговорімо разом": "Let’s talk together",

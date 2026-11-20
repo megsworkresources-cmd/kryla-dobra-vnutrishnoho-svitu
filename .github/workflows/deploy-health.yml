@@ -33,6 +33,8 @@ jobs:
           # Public project URL; override with a repository variable if it changes.
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ftqdpebplmucvnzyltry.supabase.co' }}
         run: node scripts/verify-deploy.mjs
+      - name: Simulate failure for notification test
+        run: exit 1
       - name: Report failure
         # Runs even when checkout or setup failed, using GH_REPO instead of a worktree.
         if: failure()

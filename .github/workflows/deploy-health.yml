@@ -33,8 +33,6 @@ jobs:
           # Public project URL; override with a repository variable if it changes.
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ftqdpebplmucvnzyltry.supabase.co' }}
         run: node scripts/verify-deploy.mjs
-      - name: Simulate failure for notification test
-        run: exit 1
       - name: Report failure
         # Runs even when checkout or setup failed, using GH_REPO instead of a worktree.
         if: failure()
@@ -47,14 +45,14 @@ jobs:
           COMMIT: ${{ github.sha }}
         run: |
           title="[deploy-health] Production check failed"
-          body=$(printf '%s\n' \
-            "The production deployment health check failed." \
-            "" \
-            "- Run: $RUN_URL" \
-            "- Trigger: $EVENT" \
-            "- Commit: $COMMIT" \
-            "- Site: https://kryla-dobra-vnutrishnoho-svitu.vercel.app" \
-            "" \
+          body=$(printf '%s\\n' \\
+            "The production deployment health check failed." \\
+            "" \\
+            "- Run: $RUN_URL" \\
+            "- Trigger: $EVENT" \\
+            "- Commit: $COMMIT" \\
+            "- Site: https://kryla-dobra-vnutrishnoho-svitu.vercel.app" \\
+            "" \\
             "Inspect the failed step in the run log. This issue is reused for consecutive failures; close it once the check is green.")
           existing=$(gh issue list --state open --search 'deploy-health in:title' --json number,title --jq '.[] | select(.title == "[deploy-health] Production check failed") | .number' | head -n 1)
           if [ -n "$existing" ]; then

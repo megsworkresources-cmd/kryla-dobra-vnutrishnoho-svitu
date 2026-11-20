@@ -327,6 +327,8 @@ const EN: Record<string, string> = {
   "Твій соняшник": "Your sunflower",
   "Твій соняшник сьогодні": "Your sunflower today",
   "Дивитися ріст": "Watch it grow",
+  "У саду {n} квітка": "Flowers in the garden: {n}",
+  "У саду {n} квітки": "Flowers in the garden: {n}",
   "У саду {n} квіток": "Flowers in the garden: {n}",
   "Обери квітку, щоб побачити, як вона росла.": "Choose a flower to see how it grew.",
   "Як росте обрана квітка": "How the chosen flower grows",
@@ -1555,6 +1557,14 @@ export function tr(s: string, lang: Lang, vars?: Record<string, string | number>
   let out = lang === "en" ? (EN[s] ?? s) : s;
   if (vars) out = out.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
   return out;
+}
+
+const UK_PLURALS = new Intl.PluralRules("uk");
+
+/** Ukrainian count agreement: 1 квітка, 2–4 квітки, 0/5+ квіток. */
+export function pluralUk(n: number, one: string, few: string, many: string): string {
+  const rule = UK_PLURALS.select(n);
+  return rule === "one" ? one : rule === "few" ? few : many;
 }
 
 /** Non-reactive translate (route head(), loaders, server code paths). */

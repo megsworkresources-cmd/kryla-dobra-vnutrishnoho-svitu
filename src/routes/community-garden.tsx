@@ -15,7 +15,7 @@ import { savedGardenNote } from "@/content/community-garden-note";
 import { canWater, localDay } from "@/content/watering";
 import { sfx } from "@/lib/audio";
 import { careCount, growthStage, useStore, waterFlower } from "@/lib/store";
-import { useT } from "@/lib/i18n";
+import { pluralUk, useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
 
@@ -99,7 +99,17 @@ function CommunityGarden() {
 
         <section className="paper-card p-4">
           {(!failed || usingSaved) && (
-            <p className="text-sm font-bold">{t("У саду {n} квіток", { n: shared.length + 1 })}</p>
+            <p className="text-sm font-bold">
+              {t(
+                pluralUk(
+                  shared.length + 1,
+                  "У саду {n} квітка",
+                  "У саду {n} квітки",
+                  "У саду {n} квіток",
+                ),
+                { n: shared.length + 1 },
+              )}
+            </p>
           )}
           <p className="mt-1 text-sm text-muted-foreground">
             {t("Обери квітку, щоб побачити, як вона росла.")}

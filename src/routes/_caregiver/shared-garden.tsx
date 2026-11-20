@@ -10,7 +10,7 @@ import { pageHead } from "@/content/journeys";
 import { coarseGrowthStage, growthGlyph, growthPart, isFinalGrowthStage } from "@/content/growth";
 import { readGarden, shareSunflower } from "@/lib/shared-garden.functions";
 import { careCount, growthStage, useStore } from "@/lib/store";
-import { useT } from "@/lib/i18n";
+import { pluralUk, useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
 
@@ -153,7 +153,15 @@ function SharedGarden() {
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-3">
             <h2 className="min-w-0 font-display text-2xl font-bold">{t("Спільний сад")}</h2>
             <p className="shrink-0 text-sm text-muted-foreground">
-              {t("У саду {n} квіток", { n: flowers.length + 1 })}
+              {t(
+                pluralUk(
+                  flowers.length + 1,
+                  "У саду {n} квітка",
+                  "У саду {n} квітки",
+                  "У саду {n} квіток",
+                ),
+                { n: flowers.length + 1 },
+              )}
             </p>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">

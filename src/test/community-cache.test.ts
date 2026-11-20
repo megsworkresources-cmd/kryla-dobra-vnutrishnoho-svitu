@@ -1,5 +1,5 @@
 import { beforeEach, expect, it, vi } from "vitest";
-import { readSavedGarden, saveGarden } from "@/lib/community-cache";
+import { readSavedGarden, saveGarden, SAVE_TTL_MS } from "@/lib/community-cache";
 
 const KEY = "tyhe-mistse-community-garden-v1";
 
@@ -20,22 +20,41 @@ it("keeps the coarse stages this device last saw and when it saw them", () => {
 it("drops anything that is not a coarse stage from a saved snapshot", () => {
   window.localStorage.setItem(
     KEY,
-    JSON.stringify({ stages: [{ stage: 1, owner_id: "adult" }, { stage: 6 }, 2, "3"], at: 1234 }),
+    JSON.stringify({
+      stages: [{ stage: 1, owner_id: "adult" }, { stage: 6 }, 2, "3"],
+      at: Date.now(),
+    }),
   );
-  expect(readSavedGarden()).toEqual({ stages: [1, 2], at: 1234 });
+  expect(readSavedGarden().stages).toEqual([1, 2]);
   window.localStorage.setItem(KEY, "not json");
   expect(readSavedGarden()).toEqual({ stages: [], at: null });
   window.localStorage.setItem(KEY, JSON.stringify(["2"]));
   expect(readSavedGarden()).toEqual({ stages: [], at: null });
 });
 
-it("treats a missing or impossible save time as unknown", () => {
-  window.localStorage.setItem(KEY, JSON.stringify({ stages: [2] }));
-  expect(readSavedGarden()).toEqual({ stages: [2], at: null });
-  window.localStorage.setItem(KEY, JSON.stringify({ stages: [2], at: "yesterday" }));
-  expect(readSavedGarden()).toEqual({ stages: [2], at: null });
-  window.localStorage.setItem(KEY, JSON.stringify({ stages: [2], at: -5 }));
-  expect(readSavedGarden()).toEqual({ stages: [2], at: null });
+it("expires a snapshot after a few days instead of showing old flowers", () => {
+  window.localStorage.setItem(KEY, JSON.stringify({ stages: [2], at: Date.now() }));
+  expect(readSavedGarden().stages).toEqual([2]);
+
+  window.localStorage.setItem(
+    KEY,
+    JSON.stringify({ stages: [2], at: Date.now() - SAVE_TTL_MS - 60_000 }),
+  );
+  expect(readSavedGarden()).toEqual({ stages: [], at: null });
+
+  // Just inside the window is still usable.
+  window.localStorage.setItem(
+    KEY,
+    JSON.stringify({ stages: [2], at: Date.now() - SAVE_TTL_MS + 60_000 }),
+  );
+  expect(readSavedGarden().stages).toEqual([2]);
+});
+
+it("treats an undated or impossible save time as expired", () => {
+  for (const at of [undefined, "yesterday", -5, 0]) {
+    window.localStorage.setItem(KEY, JSON.stringify({ stages: [2], at }));
+    expect(readSavedGarden()).toEqual({ stages: [], at: null });
+  }
 });
 
 it("keeps the page working when storage refuses a write", () => {

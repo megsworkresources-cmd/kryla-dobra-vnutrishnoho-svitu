@@ -51,8 +51,7 @@ function CommunityGarden() {
   const failed = garden.isError || garden.data?.ok === false;
   const usingSaved = failed && saved.stages.length > 0;
   const shared = usingSaved ? saved.stages : (garden.data?.stages ?? []);
-  const savedAge = (at: number | null) => {
-    if (!at) return t("Показано збережений сад. Онови, щоб побачити нові квітки.");
+  const savedAge = (at: number) => {
     const dayStart = (date: Date) =>
       new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
     const days = Math.round((dayStart(new Date()) - dayStart(new Date(at))) / 86_400_000);
@@ -164,7 +163,7 @@ function CommunityGarden() {
               {t("Сад завантажується…")}
             </p>
           )}
-          {usingSaved && (
+          {usingSaved && saved.at !== null && (
             <p className="mt-3 text-sm text-muted-foreground" role="status">
               {savedAge(saved.at)}
             </p>

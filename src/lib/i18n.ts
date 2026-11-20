@@ -172,27 +172,27 @@ const EN: Record<string, string> = {
   Рукавичка: "The Mitten",
   "Народна казка про тепло, у якому всім вистачає місця.":
     "A folk tale about warmth with room for everyone.",
-  "Одного зимового дня дід ішов лісом і загубив рукавичку. Вона впала на сніг і лежала тепла, наче маленька хатинка.":
-    "One winter day a grandfather was walking through the forest and lost his mitten. It fell on the snow and lay there warm as a tiny house.",
-  "Першою прибігла мишка. «Ой, яке затишне місце!» — сказала вона й оселилася всередині. Слідом прискакала жабка й теж попросилася погрітися.":
+  "Одного зимового дня дід ішов лісом і загубив рукавичку. Вона впала на сніг і лежала ще тепла від дідової руки, наче маленька хатинка.":
+    "One winter day a grandfather was walking through the forest and lost his mitten. It fell on the snow and lay there still warm from his hand, like a little house.",
+  "Першою прибігла мишка. «Ой, яке затишне місце!» — сказала вона й залізла всередину. Слідом прискакала жабка й теж попросилася погрітися.":
     "The first to arrive was a little mouse. “Oh, what a cozy place!” she said, and moved in. A frog came hopping after her and asked to warm up too.",
-  "Потім прийшли зайчик, лисичка й вовчик. Кожен тулився до інших, рукавичка ставала все тіснішою, та ніхто не хотів іти геть.":
+  "Потім прийшли зайчик, лисичка й вовчик. Кожен тулився до сусіда, рукавичка ставала все тіснішою, та ніхто не хотів іти геть.":
     "Then came a hare, a fox and a little wolf. Each one nestled closer to the others, and the mitten grew tighter and tighter, but nobody wanted to leave.",
   "Нарешті прийшов ведмідь. Рукавичка тріснула, і звірі покотилися у сніг, сміючись. Дід знайшов їх усіх разом і пошив їм велику теплу рукавичку.":
     "At last a bear arrived. The mitten burst, and the animals tumbled into the snow, laughing. The grandfather found them all together and sewed them a big warm mitten.",
-  "Іноді тепло народжується там, де тісно, але ніхто не жене іншого геть.":
-    "Sometimes warmth is born in a crowded place where nobody sends anyone away.",
+  "Іноді тепло народжується там, де тісно, але ніхто нікого не жене геть.":
+    "Sometimes warmth is born in a crowded place where nobody is turned away.",
   Колобок: "The Bun",
   "Народна казка про мандрівку й повернення додому.":
     "A folk tale about wandering and coming home.",
-  "Бабуся спекла колобка — рум’яного й круглого, наче маленьке сонечко. Він лежав на вікні, дивився на сад і мріяв побачити, що там, за тином.":
-    "A grandmother baked a bun — golden and round as a little sun. It lay on the windowsill, looked out at the garden and dreamed of seeing what lay beyond the fence.",
-  "Колобок покотився стежкою. Назустріч йому заєць: «Який же ти круглий!» — «Я колобок, я від бабусі втік», — заспівав колобок і покотився далі.":
-    "The bun rolled down the path. A hare came toward him. “How round you are!” — “I am the bun, I ran away from grandmother,” the bun sang and rolled on.",
-  "Він зустрів вовка й лисичку, і всім було цікаво слухати його пісеньку. Та надвечір стежка потемніла, і колобок відчув, що скучає за теплим вікном.":
-    "He met a wolf and a fox, and everyone enjoyed listening to his little song. But as evening came the path grew dark, and the bun felt that he missed the warm windowsill.",
-  "Лисичка не стала його їсти — вона показала йому коротшу дорогу додому. Бабуся й дідусь обійняли колобка, а він розповів їм про всіх, кого зустрів.":
-    "The fox did not eat him — she showed him a shorter way home. Grandmother and grandfather hugged the bun, and he told them about everyone he had met.",
+  "Бабуся спекла колобка — рум’яного й круглого, наче маленьке сонечко. Дідусь поставив його на віконце охолонути. Там колобок дивився на сад і мріяв побачити, що там, за тином.":
+    "A grandmother baked a bun — golden and round as a little sun. Grandfather set it on the windowsill to cool. There the bun looked out at the garden and dreamed of seeing what lay beyond the fence.",
+  "Колобок покотився стежкою. Назустріч йому — заєць: «Який же ти круглий!» — «Я колобок, я від бабусі втік», — заспівав колобок і покотився далі.":
+    "The bun rolled down the path. A hare came toward him. “How round you are!” — “I am the bun, I ran away from my grandmother,” the bun sang and rolled on.",
+  "Він зустрів вовка й лисичку, і всі радо слухали його пісеньку. Та надвечір стежка потемніла, і колобок відчув, що сумує за теплим віконцем.":
+    "He met a wolf and a fox, and everyone loved his little song. But as evening came, the path grew dark, and the bun began to miss the warm windowsill.",
+  "Лисичка помітила це й показала йому коротшу дорогу додому. Бабуся й дідусь обійняли колобка, а він розповів їм про всіх, кого зустрів.":
+    "The fox saw that he was homesick and showed him a shorter way home. His grandmother and grandfather hugged him, and he told them about everyone he had met.",
   "Можна мандрувати світом і повертатися додому — там на тебе чекають.":
     "You can wander the world and still come home — someone is waiting for you there.",
   "Знайдено пар: {n} із {total}": "Pairs found: {n} of {total}",

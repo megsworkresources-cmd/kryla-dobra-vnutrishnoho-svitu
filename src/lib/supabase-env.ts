@@ -61,4 +61,3 @@ export function supabasePublishableKey(): string | undefined {
   }
   return BUILD_PUBLISHABLE_KEY || runtimeKey;
 }
-

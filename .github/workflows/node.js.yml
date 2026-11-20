@@ -35,6 +35,8 @@ jobs:
         package-manager-cache: false
     - name: Install dependencies
       run: bun install --frozen-lockfile
+    - name: Reject service-role Supabase client imports
+      run: node scripts/no-service-role-client-guard.mjs
     - name: Typecheck
       run: bunx tsc --noEmit
     - name: Build

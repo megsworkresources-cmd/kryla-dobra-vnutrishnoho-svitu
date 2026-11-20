@@ -175,7 +175,7 @@ export const RESOURCES: Resource[] = [
       { label: b("Лінія для дітей і молоді", "Children’s and youth hotline"), tel: "116111", note: b("безкоштовно, анонімно, в Україні", "free, anonymous, within Ukraine") },
       { label: b("Лінія для дітей і молоді", "Children’s and youth hotline"), tel: "0800500225" },
       { label: b("Насильство і торгівля людьми", "Domestic violence & trafficking"), tel: "116123" },
-      { label: b("Насильство і торгівля людьми", "Domestic violence & trafficking"), tel: "0800500335" },
+      { label: b("Насильство і торгівля людьми (інший номер)", "Domestic violence & trafficking (alternative number)"), tel: "0800500335" },
     ],
   },
   {
@@ -308,17 +308,17 @@ export const RESOURCES: Resource[] = [
 
 /** Numbers for "Need help right now?" — all are Ukrainian lines. */
 export const CRISIS: Contact[] = [
-  { label: b("Екстрена допомога (де працює)", "Emergency (where operational)"), tel: "112" },
+  { label: b("Єдиний номер екстреної допомоги (у країнах ЄС теж)", "Single emergency number (also across the EU)"), tel: "112" },
   { label: b("Пожежна і рятувальна служба", "Fire and rescue"), tel: "101" },
   { label: b("Поліція", "Police"), tel: "102" },
   { label: b("Швидка медична допомога", "Ambulance"), tel: "103" },
   { label: b("Лінія для дітей і молоді — Ла Страда", "Children’s & youth hotline — La Strada"), tel: "116111", note: b("безкоштовно, анонімно", "free, anonymous") },
-  { label: b("Лінія для дітей і молоді — Ла Страда", "Children’s & youth hotline — La Strada"), tel: "0800500225" },
+  { label: b("Лінія для дітей і молоді — Ла Страда (інший номер)", "Children’s & youth hotline — La Strada (alternative number)"), tel: "0800500225" },
   { label: b("Голоси дітей", "Voices of Children"), tel: "0800210106", note: b("09:00–20:00 за київським часом", "09:00–20:00 Kyiv time") },
   { label: b("UA Mental Help", "UA Mental Help"), tel: "0800331200", note: b("10:00–21:00 за київським часом", "10:00–21:00 Kyiv time") },
   { label: b("Національна психологічна асоціація", "National Psychological Association"), tel: "0800100102", note: b("години не підтверджено", "hours not confirmed") },
   { label: b("Насильство і торгівля людьми", "Domestic violence & trafficking"), tel: "116123" },
-  { label: b("Насильство і торгівля людьми", "Domestic violence & trafficking"), tel: "0800500335" },
+  { label: b("Насильство і торгівля людьми (інший номер)", "Domestic violence & trafficking (alternative number)"), tel: "0800500335" },
   { label: b("Урядова лінія з питань насильства", "Government support line (violence)"), tel: "1547", note: b("умови роботи не підтверджено", "current arrangements not confirmed") },
   { label: b("Урядова лінія для ВПО", "Government line for displaced people"), tel: "1548", note: b("доступність не підтверджено", "availability not confirmed") },
 ];

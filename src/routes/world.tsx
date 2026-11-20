@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Btn } from "@/components/Scene";
 import { Settings2, Users } from "lucide-react";
 import map from "@/assets/world-map.jpg";
-import { PLACES } from "@/content/places";
+import { PLACES, placeImage } from "@/content/places";
 import { BottomNav } from "@/components/BottomNav";
 import { LangToggle } from "@/components/LangToggle";
 import { t, useT } from "@/lib/i18n";
@@ -30,16 +30,16 @@ export const Route = createFileRoute("/world")({
 });
 
 // Balanced zigzag so bubbles never crowd each other on narrow phones.
-const SPOTS = [
-  [28, 3],
-  [72, 14],
-  [30, 26],
-  [70, 38],
-  [28, 50],
-  [72, 62],
-  [30, 74],
-  [70, 86],
+const SPOTS = Array.from({ length: 11 }, (_, i) => [i % 2 ? 72 : 28, 2 + i * 8.6] as const);
+
+/** Small story bubbles sit in the centre gaps between the zigzag places. */
+const EXTRAS = [
+  { to: "/bedtime", label: "Казка на ніч", img: "sky", pos: 2 },
+  { to: "/stroll", label: "Повільна прогулянка", img: "meadow", pos: 5 },
+  { to: "/puddles", label: "Калюжки", img: "clouds", pos: 8 },
 ] as const;
+
+const PLACE_SLOTS = SPOTS.map((_, i) => i).filter((i) => !EXTRAS.some((e) => e.pos === i));
 
 function World() {
   const t = useT();
@@ -129,8 +129,8 @@ function World() {
         </div>
       </header>
 
-      <nav aria-label={t("Місця світу")} className="relative z-10 min-h-[56rem] flex-1">
-        {PLACES.map((p, i) => (
+      <nav aria-label={t("Місця світу")} className="relative z-10 min-h-[72rem] flex-1">
+        {PLACES.map((p, idx) => { const i = PLACE_SLOTS[idx] ?? idx; return (
           <Link
             key={p.id}
             to={p.to}
@@ -149,6 +149,19 @@ function World() {
                 {t(p.name)}
               </span>
             </span>
+          </Link>
+        ); })}
+        {EXTRAS.map((e) => (
+          <Link
+            key={e.to}
+            to={e.to}
+            className="group absolute flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center animate-fade-up"
+            style={{ left: `${SPOTS[e.pos]![0]}%`, top: `${SPOTS[e.pos]![1]}%` }}
+          >
+            <span className="relative h-14 w-14 overflow-hidden rounded-full border-4 border-honey shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-16 sm:w-16">
+              <img src={placeImage(e.img)} alt="" className="h-full w-full object-cover" loading="lazy" />
+            </span>
+            <span className="paper-card mt-1 whitespace-nowrap px-2 py-0.5 text-[11px] font-extrabold">{t(e.label)}</span>
           </Link>
         ))}
       </nav>

@@ -9,7 +9,13 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     await context.supabase.from("shared_sunflowers").delete().eq("owner_id", context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
-    if (error) return { ok: false as const };
+    if (error) {
+      // Status and code only: the key itself never reaches the logs.
+      console.error(
+        `[account] admin deleteUser failed [${error.status ?? "?"} ${error.code ?? "?"}]: ${error.message}`,
+      );
+      return { ok: false as const };
+    }
     return { ok: true as const };
   });
 

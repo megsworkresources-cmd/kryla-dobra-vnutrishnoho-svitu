@@ -50,5 +50,11 @@ export function supabasePublishableKey(): string | undefined {
 
 /** Service-role secrets stay runtime-only and are never inlined into a build. */
 export function supabaseServiceRoleKey(): string | undefined {
-  return runtimeEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const key = runtimeEnv("SUPABASE_SERVICE_ROLE_KEY");
+  if (key && (key === BUILD_PUBLISHABLE_KEY || key.startsWith("sb_publishable_"))) {
+    console.error(
+      "[Supabase] SUPABASE_SERVICE_ROLE_KEY holds a publishable key; admin account deletion cannot work.",
+    );
+  }
+  return key;
 }

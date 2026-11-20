@@ -20,6 +20,12 @@ Vercel does not expose the `data-commit-sha` marker, so the check skips the comm
 
 A custom domain is not connected yet; when one is added in Vercel → Project → Settings → Domains, also add it to Supabase Auth → URL Configuration and update the canonical host.
 
+## Branch protection
+
+`main` is protected. A pull request must pass the required **Node.js CI** check **`build (22.x)`** and be up to date with `main` before it can merge. The check comes from `.github/workflows/node.js.yml`; if the Node.js matrix changes, update the required check name in **Settings → Branches**, or PRs can never merge.
+
+Administrators are deliberately **exempt** (`enforce_admins` off). Required status checks reject direct pushes, and a brand-new commit cannot have a passing check before it is pushed, so enforcing them for admins would reject every direct push to `main` with `GH006: Required status check "build (22.x)" is failing`. That includes Lovable's syncs and automation pushes. Do not enable **Include administrators** / `enforce_admins` unless every change, including Lovable's sync, moves to pull requests first.
+
 ## Build with Lovable
 
 Continue developing this project in the [Lovable editor](https://lovable.dev/projects/83788524-c3a7-44e7-8dfd-a1c09853ba2e).

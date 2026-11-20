@@ -22,6 +22,12 @@ const EN: Record<string, string> = {
     "Your sunflower is still here. Try refreshing the garden a little later.",
   "Показано збережений сад. Онови, щоб побачити нові квітки.":
     "Showing the saved garden. Refresh to see new flowers.",
+  "Показано сад, збережений сьогодні. Онови, щоб побачити нові квітки.":
+    "Showing the garden saved today. Refresh to see new flowers.",
+  "Показано сад, збережений учора. Онови, щоб побачити нові квітки.":
+    "Showing the garden saved yesterday. Refresh to see new flowers.",
+  "Показано сад, збережений {n} дн. тому. Онови, щоб побачити нові квітки.":
+    "Showing the garden saved {n} days ago. Refresh to see new flowers.",
   "Можна було просто дихати й нічого не вирішувати.":
     "It was enough to breathe and decide nothing at all.",
   "Сум був поруч. {who} не проганяв його — просто сидів разом із ним.":

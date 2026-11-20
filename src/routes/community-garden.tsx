@@ -10,7 +10,7 @@ import { coarseGrowthStage, growthGlyph, growthPart, isFinalGrowthStage } from "
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { readCommunityGarden } from "@/lib/community-garden.functions";
-import { readSavedStages, saveStages } from "@/lib/community-cache";
+import { readSavedGarden, saveGarden, type SavedGarden } from "@/lib/community-cache";
 import { canWater, localDay } from "@/content/watering";
 import { sfx } from "@/lib/audio";
 import { careCount, growthStage, useStore, waterFlower } from "@/lib/store";
@@ -40,17 +40,26 @@ function CommunityGarden() {
   const ownStage = growthStage(count);
   // A transient read failure must not hide flowers this device already saw;
   // only the same coarse stages are kept, never owners or child data.
-  const [saved, setSaved] = useState<number[]>([]);
-  useEffect(() => setSaved(readSavedStages()), []);
+  const [saved, setSaved] = useState<SavedGarden>({ stages: [], at: null });
+  useEffect(() => setSaved(readSavedGarden()), []);
   useEffect(() => {
     if (!garden.data?.ok) return;
     const stages = garden.data.stages ?? [];
-    setSaved(stages);
-    saveStages(stages);
+    setSaved({ stages, at: Date.now() });
+    saveGarden(stages);
   }, [garden.data]);
   const failed = garden.isError || garden.data?.ok === false;
-  const usingSaved = failed && saved.length > 0;
-  const shared = usingSaved ? saved : (garden.data?.stages ?? []);
+  const usingSaved = failed && saved.stages.length > 0;
+  const shared = usingSaved ? saved.stages : (garden.data?.stages ?? []);
+  const savedAge = (at: number | null) => {
+    if (!at) return t("Показано збережений сад. Онови, щоб побачити нові квітки.");
+    const dayStart = (date: Date) =>
+      new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    const days = Math.round((dayStart(new Date()) - dayStart(new Date(at))) / 86_400_000);
+    if (days <= 0) return t("Показано сад, збережений сьогодні. Онови, щоб побачити нові квітки.");
+    if (days === 1) return t("Показано сад, збережений учора. Онови, щоб побачити нові квітки.");
+    return t("Показано сад, збережений {n} дн. тому. Онови, щоб побачити нові квітки.", { n: days });
+  };
   const [picked, setPicked] = useState<number | null>(null);
   const [playing, setPlaying] = useState(true);
   const shownStage = coarseGrowthStage(picked === null ? ownStage : (shared[picked] ?? ownStage));
@@ -157,7 +166,7 @@ function CommunityGarden() {
           )}
           {usingSaved && (
             <p className="mt-3 text-sm text-muted-foreground" role="status">
-              {t("Показано збережений сад. Онови, щоб побачити нові квітки.")}
+              {savedAge(saved.at)}
             </p>
           )}
           {failed && !usingSaved && (

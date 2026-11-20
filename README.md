@@ -20,6 +20,8 @@ Vercel does not expose the `data-commit-sha` marker, so the check skips the comm
 
 The production check also probes Supabase Auth with an expired token: it confirms the Site URL fallback, the `/caregiver-login` and `/reset-password` callbacks, and that a foreign origin is rejected. It creates no account and sends no email. Pass `--skip-auth` to bypass it; a custom `--base` skips it automatically.
 
+The same check runs daily at 06:17 UTC in GitHub Actions (`.github/workflows/deploy-health.yml`) and can be started manually from the Actions tab with **Run workflow**.
+
 A custom domain is not connected yet; when one is added in Vercel → Project → Settings → Domains, also add it to Supabase Auth → URL Configuration and update the canonical host.
 
 ## Branch protection

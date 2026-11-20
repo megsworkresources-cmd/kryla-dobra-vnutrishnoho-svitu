@@ -8,7 +8,8 @@
  * and surface as "Unauthorized: Invalid token".
  */
 const BUILD_URL = import.meta.env["VITE_SUPABASE_URL"] as string | undefined;
-const BUILD_PUBLISHABLE_KEY = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string | undefined;
+const BUILD_PUBLISHABLE_KEY = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as
+  string | undefined;
 
 function runtimeEnv(key: string): string | undefined {
   return typeof process === "undefined" ? undefined : process.env[key];

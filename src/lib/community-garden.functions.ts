@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { cleanStages } from "@/content/community";
+import { supabaseProjectUrl, supabasePublishableKey } from "@/lib/supabase-env";
 
 /**
  * The only data a child's device may read about other families: how many
@@ -13,8 +14,8 @@ import { cleanStages } from "@/content/community";
  */
 export const readCommunityGarden = createServerFn({ method: "GET" }).handler(async () => {
   setResponseHeader("Cache-Control", "no-store");
-  const url = process.env["SUPABASE_URL"];
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["SUPABASE_ANON_KEY"];
+  const url = supabaseProjectUrl();
+  const key = supabasePublishableKey() ?? process.env["SUPABASE_ANON_KEY"];
   if (!url || !key) return { ok: false as const, stages: [] as number[] };
   try {
     const publicClient = createClient(url, key, {

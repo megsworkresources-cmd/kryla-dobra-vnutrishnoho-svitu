@@ -308,7 +308,9 @@ function Parents() {
           {confirm ? (
             <div className="paper-card space-y-3 p-4">
               <p className="text-sm">
-                {t("Стерти записи про місця й вправи? Малюнки та налаштування залишаться.")}
+                {t(
+                  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться, а збережений спільний сад очиститься.",
+                )}
               </p>
               <div className="flex justify-center gap-2">
                 <Btn variant="soft" onClick={() => setConfirm(false)}>

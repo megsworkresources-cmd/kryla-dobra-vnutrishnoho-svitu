@@ -1385,8 +1385,8 @@ const EN: Record<string, string> = {
   Малюнки: "Drawings",
   "Усі малюнки": "All drawings",
   "Малюнків поки немає.": "No drawings yet.",
-  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться.":
-    "Erase the records of places and exercises? Drawings and settings will stay.",
+  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться, а збережений спільний сад очиститься.":
+    "Erase the records of places and exercises? Drawings and settings will stay, and the saved shared garden will be cleared.",
   Скасувати: "Cancel",
   Стерти: "Erase",
   "Очистити прогрес": "Clear progress",

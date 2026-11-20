@@ -6,6 +6,11 @@
  * src/assets/video streams with HTTP 206 and its recorded byte size. When the
  * host exposes a deployment commit marker, it also checks that commit.
  *
+ * On the production URL it also probes Supabase Auth with an expired token to
+ * confirm the Site URL and the signup/reset callbacks still point at this
+ * deployment, and that a foreign redirect origin is rejected. The probe creates
+ * no account and sends no email.
+ *
  *   bun run verify:deploy
  *   node scripts/verify-deploy.mjs --expect <sha>
  *   node scripts/verify-deploy.mjs --base http://127.0.0.1:3000 --skip-commit
@@ -15,6 +20,12 @@ import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
+try {
+  process.loadEnvFile?.(".env");
+} catch {
+  // A missing .env is fine; the auth checks are skipped without a Supabase URL.
+}
+
 const DEFAULT_BASE = "https://kryla-dobra-vnutrishnoho-svitu.vercel.app";
 const VIDEO_RECORDS = path.resolve("src/assets/video");
 
@@ -23,6 +34,7 @@ const { values } = parseArgs({
     base: { type: "string", default: DEFAULT_BASE },
     expect: { type: "string" },
     "skip-commit": { type: "boolean", default: false },
+    "skip-auth": { type: "boolean", default: false },
     help: { type: "boolean", short: "h", default: false },
   },
 });
@@ -33,6 +45,7 @@ if (values.help) {
   --base <url>    Site to check (default: ${DEFAULT_BASE})
   --expect <sha>  Commit the deployment must contain (requires a commit marker)
   --skip-commit   Only check the page and video responses (local previews)
+  --skip-auth     Skip the Supabase Auth redirect checks
   -h, --help      Show this help`);
   process.exit(0);
 }
@@ -115,6 +128,109 @@ if (!values["skip-commit"]) {
     fail(
       `deployed commit ${deployed.slice(0, 7)} is behind ${expected.slice(0, 7)} — deploy the current commit and retry`,
     );
+  }
+}
+
+function parseRedirect(location) {
+  try {
+    return new URL(location);
+  } catch {
+    return null;
+  }
+}
+
+/** Uses an expired token, so this only exercises redirect validation. */
+async function probeAuthRedirect(supabaseUrl, redirectTo) {
+  const params = new URLSearchParams({
+    token: "deploy-check-invalid-token",
+    type: "signup",
+  });
+  if (redirectTo) params.set("redirect_to", redirectTo);
+  const response = await fetch(`${supabaseUrl}/auth/v1/verify?${params.toString()}`, {
+    redirect: "manual",
+  });
+  await response.body?.cancel().catch(() => {});
+  return { status: response.status, location: response.headers.get("location") ?? "" };
+}
+
+if (values["skip-auth"]) {
+  console.log("• auth redirects: skipped by --skip-auth");
+} else if (base !== DEFAULT_BASE) {
+  console.log("• auth redirects: skipped for a custom --base");
+} else {
+  const supabaseUrl = (
+    process.env["VITE_SUPABASE_URL"] ||
+    process.env["SUPABASE_URL"] ||
+    ""
+  ).replace(/\/+$/, "");
+  if (!supabaseUrl) {
+    console.log("• auth redirects: skipped (VITE_SUPABASE_URL is not set)");
+  } else {
+    const site = new URL(base).origin;
+    try {
+      const fallback = await probeAuthRedirect(supabaseUrl);
+      const fallbackUrl = parseRedirect(fallback.location);
+      if (
+        fallback.status !== 303 ||
+        !fallbackUrl ||
+        fallbackUrl.origin !== site ||
+        fallbackUrl.pathname !== "/" ||
+        !fallbackUrl.hash.startsWith("#error=")
+      ) {
+        fail(
+          `auth Site URL: expected a fallback to ${site}/, got ${fallback.location || `HTTP ${fallback.status}`} — update Supabase Auth → URL Configuration → Site URL`,
+        );
+      } else {
+        pass(`auth Site URL falls back to ${site}/`);
+      }
+
+      const signup = await probeAuthRedirect(
+        supabaseUrl,
+        `${site}/caregiver-login?redirect=%2Fparents`,
+      );
+      const signupUrl = parseRedirect(signup.location);
+      if (
+        signup.status !== 303 ||
+        !signupUrl ||
+        signupUrl.origin !== site ||
+        signupUrl.pathname !== "/caregiver-login" ||
+        signupUrl.searchParams.get("redirect") !== "/parents" ||
+        !signupUrl.hash.startsWith("#error=")
+      ) {
+        fail(
+          `auth signup callback: ${site}/caregiver-login was not honored — add it to Supabase Auth → Redirect URLs`,
+        );
+      } else {
+        pass("auth signup callback /caregiver-login is allowed");
+      }
+
+      const reset = await probeAuthRedirect(supabaseUrl, `${site}/reset-password`);
+      const resetUrl = parseRedirect(reset.location);
+      if (
+        reset.status !== 303 ||
+        !resetUrl ||
+        resetUrl.origin !== site ||
+        resetUrl.pathname !== "/reset-password" ||
+        !resetUrl.hash.startsWith("#error=")
+      ) {
+        fail(
+          `auth reset callback: ${site}/reset-password was not honored — add it to Supabase Auth → Redirect URLs`,
+        );
+      } else {
+        pass("auth reset callback /reset-password is allowed");
+      }
+
+      const foreign = await probeAuthRedirect(supabaseUrl, "https://example.com/caregiver-login");
+      if (parseRedirect(foreign.location)?.origin === "https://example.com") {
+        fail(
+          "auth redirects: foreign origin example.com was honored — remove wildcard entries from Supabase Auth → Redirect URLs",
+        );
+      } else {
+        pass("auth redirects: foreign origin is rejected");
+      }
+    } catch (error) {
+      fail(`auth redirects: ${error.message}`);
+    }
   }
 }
 

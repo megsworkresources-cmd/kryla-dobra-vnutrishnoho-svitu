@@ -18,6 +18,8 @@ bun run verify:deploy
 
 Vercel does not expose the `data-commit-sha` marker, so the check skips the commit comparison unless `--expect <sha>` is passed. Caregiver sign-in redirects use the current origin, so add **https://kryla-dobra-vnutrishnoho-svitu.vercel.app** to Supabase Auth → URL Configuration (Site URL and Redirect URLs).
 
+The production check also probes Supabase Auth with an expired token: it confirms the Site URL fallback, the `/caregiver-login` and `/reset-password` callbacks, and that a foreign origin is rejected. It creates no account and sends no email. Pass `--skip-auth` to bypass it; a custom `--base` skips it automatically.
+
 A custom domain is not connected yet; when one is added in Vercel → Project → Settings → Domains, also add it to Supabase Auth → URL Configuration and update the canonical host.
 
 ## Branch protection

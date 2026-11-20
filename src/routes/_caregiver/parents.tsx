@@ -112,6 +112,10 @@ function Parents() {
             )}{" "}
             <Link to="/privacy" className="underline">
               {t("Політика конфіденційності")}
+            </Link>{" "}
+            ·{" "}
+            <Link to="/resources" className="underline">
+              {t("Ресурси для батьків")}
             </Link>
           </p>
           {deleteStep === "idle" || deleteStep === "error" ? (

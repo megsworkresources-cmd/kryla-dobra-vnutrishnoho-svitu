@@ -39,3 +39,4 @@
 - AI server functions (voice, story, helper) require a signed-in account via requireSupabaseAuth plus a per-account in-memory cap and output caps, so anonymous callers cannot spend AI credits; signed-out children fall back to device speech, prepared stories and a sign-in prompt.
 - Offline/home-screen support: vite-plugin-pwa generateSW (manifest in public/), registered only from `src/lib/pwa-register.ts`, which refuses dev/iframe/preview hosts; navigations NetworkFirst so deploys stay fresh.
 - Outside links on child pages go through GrownUpLink (adult check) and AI output offers ReportAi, storing only AI output, never child text, to meet kids-app store rules.
+- Family resource directory data is bilingual in `src/content/resources.i18n.ts` (each entry holds uk+en); unknown facts stay undefined and render as "not confirmed" so contacts are never invented.

@@ -33,6 +33,7 @@ export const ORDER: Stop[] = (() => {
   list.push(
     { to: "/parents", label: "Для дорослих" },
     { to: "/shared-garden", label: "Спільний сад" },
+    { to: "/resources", label: "Ресурси для батьків" },
     { to: "/privacy", label: "Політика конфіденційності" },
   );
   return list;

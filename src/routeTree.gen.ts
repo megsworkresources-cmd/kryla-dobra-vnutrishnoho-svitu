@@ -20,6 +20,7 @@ import { Route as GardenRouteImport } from './routes/garden'
 import { Route as HelperRouteImport } from './routes/helper'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SafeRouteImport } from './routes/safe'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StoryRouteImport } from './routes/story'
@@ -96,6 +97,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesRoute = ResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SafeRoute = SafeRouteImport.update({
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/helper': typeof HelperRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/story': typeof StoryRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/helper': typeof HelperRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/story': typeof StoryRoute
@@ -298,6 +306,7 @@ export interface FileRoutesById {
   '/helper': typeof HelperRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/story': typeof StoryRoute
@@ -335,6 +344,7 @@ export interface FileRouteTypes {
     | '/helper'
     | '/privacy'
     | '/reset-password'
+    | '/resources'
     | '/safe'
     | '/settings'
     | '/story'
@@ -370,6 +380,7 @@ export interface FileRouteTypes {
     | '/helper'
     | '/privacy'
     | '/reset-password'
+    | '/resources'
     | '/safe'
     | '/settings'
     | '/story'
@@ -406,6 +417,7 @@ export interface FileRouteTypes {
     | '/helper'
     | '/privacy'
     | '/reset-password'
+    | '/resources'
     | '/safe'
     | '/settings'
     | '/story'
@@ -443,6 +455,7 @@ export interface RootRouteChildren {
   HelperRoute: typeof HelperRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ResourcesRoute: typeof ResourcesRoute
   SafeRoute: typeof SafeRoute
   SettingsRoute: typeof SettingsRoute
   StoryRoute: typeof StoryRoute
@@ -543,6 +556,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/safe': {
@@ -735,6 +755,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelperRoute: HelperRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ResourcesRoute: ResourcesRoute,
   SafeRoute: SafeRoute,
   SettingsRoute: SettingsRoute,
   StoryRoute: StoryRoute,

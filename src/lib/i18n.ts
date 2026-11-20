@@ -8,7 +8,6 @@ import { getState, useStore, type Lang } from "./store";
  */
 const EN: Record<string, string> = {
   "Назад": "Back",
-  "Далі": "Next",
   "Казка на ніч": "Bedtime story",
   "Затишна історія про спокійну ніч, вечірній ритуал і сміливість.": "A cosy story about a calm night, evening rituals and courage.",
   "Поговорімо разом": "Let’s talk together",

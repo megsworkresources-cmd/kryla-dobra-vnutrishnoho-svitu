@@ -8,6 +8,7 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import { assertNoServiceRoleClientImports } from "./scripts/no-service-role-client-guard.mjs";
 
 // The framework's dev asset proxy serves recorded films and images from Lovable,
 // but it reads LOVABLE_PREVIEW_HOST from process.env. Vite only exposes VITE_*
@@ -20,6 +21,14 @@ if (!process.env["LOVABLE_PREVIEW_HOST"] && localEnv["LOVABLE_PREVIEW_HOST"])
 export default defineConfig({
   vite: {
     plugins: [
+      {
+        // The generated service-role client bypasses RLS; no app code may import it.
+        name: "no-service-role-supabase-client",
+        apply: "build",
+        buildStart() {
+          assertNoServiceRoleClientImports();
+        },
+      },
       mcpPlugin({
         path: "/api/public/mcp",
         metadataPath: "/api/public/.well-known/oauth-protected-resource",

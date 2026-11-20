@@ -27,7 +27,6 @@ const EN: Record<string, string> = {
   "Розглянь луг і порахуй метеликів, сонечок і соняшники.": "Look at the meadow and count butterflies, ladybirds and sunflowers.",
   "Раунд {n} із {m}": "Round {n} of {m}",
   "Намалюй, що допомагає тобі почуватися безпечно й затишно.": "Draw what helps you feel safe and cosy.",
-  "Ідеї": "Ideas",
   "Полотно для малювання": "Drawing canvas",
   "Колір {n}": "Colour {n}",
   "Разом": "Together",

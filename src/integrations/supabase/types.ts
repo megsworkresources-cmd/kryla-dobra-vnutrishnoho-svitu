@@ -67,6 +67,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_my_account: {
+        Args: never
+        Returns: undefined
+      }
       grow_sunflower: {
         Args: { new_stage: number; opt_in: boolean }
         Returns: {

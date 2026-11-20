@@ -1,24 +1,20 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader, setResponseHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
+import { supabaseProjectUrl, supabasePublishableKey } from "@/lib/supabase-env";
 
-// The public project config is inlined at build time from the same values the
-// browser uses, so server validation always targets the deployed project even
-// when runtime SUPABASE_* env vars are missing or point at an internal host.
-const SUPABASE_URL =
-  import.meta.env["VITE_SUPABASE_URL"] ||
-  (typeof process === "undefined" ? undefined : process.env["SUPABASE_URL"]);
-const SUPABASE_KEY =
-  import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
-  (typeof process === "undefined" ? undefined : process.env["SUPABASE_PUBLISHABLE_KEY"]);
+// Server validation targets the same project the browser signs in to; see
+// supabase-env.ts for why build-time values win over runtime SUPABASE_* vars.
 
 /** Server-side check: the bearer token is validated by the auth server before anything is returned. */
 export const verifyCaregiver = createServerFn({ method: "POST" }).handler(async () => {
   setResponseHeader("Cache-Control", "no-store");
   const token = getRequestHeader("authorization")?.replace(/^Bearer /, "");
-  if (!token || !SUPABASE_URL || !SUPABASE_KEY) throw new Error("Unauthorized");
+  const url = supabaseProjectUrl();
+  const key = supabasePublishableKey();
+  if (!token || !url || !key) throw new Error("Unauthorized");
 
-  const client = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  const client = createClient(url, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     global: { headers: { Authorization: `Bearer ${token}` } },
   });

@@ -44,8 +44,17 @@ export function supabaseProjectUrl(): string | undefined {
   return (BUILD_URL || runtimeUrl)?.replace(/\/+$/, "");
 }
 
+let warnedAboutKeyMismatch = false;
+
 export function supabasePublishableKey(): string | undefined {
-  return BUILD_PUBLISHABLE_KEY || runtimeEnv("SUPABASE_PUBLISHABLE_KEY");
+  const runtimeKey = runtimeEnv("SUPABASE_PUBLISHABLE_KEY");
+  if (!warnedAboutKeyMismatch && BUILD_PUBLISHABLE_KEY && runtimeKey && runtimeKey !== BUILD_PUBLISHABLE_KEY) {
+    warnedAboutKeyMismatch = true;
+    console.warn(
+      "[Supabase] SUPABASE_PUBLISHABLE_KEY differs from the built project's key; using the build-time key.",
+    );
+  }
+  return BUILD_PUBLISHABLE_KEY || runtimeKey;
 }
 
 /** Service-role secrets stay runtime-only and are never inlined into a build. */

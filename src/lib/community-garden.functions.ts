@@ -15,7 +15,7 @@ import { supabaseProjectUrl, supabasePublishableKey } from "@/lib/supabase-env";
 export const readCommunityGarden = createServerFn({ method: "GET" }).handler(async () => {
   setResponseHeader("Cache-Control", "no-store");
   const url = supabaseProjectUrl();
-  const key = supabasePublishableKey() ?? process.env["SUPABASE_ANON_KEY"];
+  const key = supabasePublishableKey();
   if (!url || !key) return { ok: false as const, stages: [] as number[] };
   try {
     const publicClient = createClient(url, key, {

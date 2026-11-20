@@ -48,7 +48,12 @@ let warnedAboutKeyMismatch = false;
 
 export function supabasePublishableKey(): string | undefined {
   const runtimeKey = runtimeEnv("SUPABASE_PUBLISHABLE_KEY");
-  if (!warnedAboutKeyMismatch && BUILD_PUBLISHABLE_KEY && runtimeKey && runtimeKey !== BUILD_PUBLISHABLE_KEY) {
+  if (
+    !warnedAboutKeyMismatch &&
+    BUILD_PUBLISHABLE_KEY &&
+    runtimeKey &&
+    runtimeKey !== BUILD_PUBLISHABLE_KEY
+  ) {
     warnedAboutKeyMismatch = true;
     console.warn(
       "[Supabase] SUPABASE_PUBLISHABLE_KEY differs from the built project's key; using the build-time key.",

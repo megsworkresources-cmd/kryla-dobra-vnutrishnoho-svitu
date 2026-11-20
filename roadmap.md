@@ -1,5 +1,7 @@
 # Completion roadmap
 
+- [x] Original bedtime story (/bedtime), slow-walk noticing game (/stroll) and puddle rain-song game with off-screen and no-mess options (/puddles), linked into Back/Next after the story maker; all three finish in a phone-sized browser test. Still open from the same brief: maze, counting/observation game, safe-and-comfortable drawing, caregiver connection activity.
+
 - [ ] Replace unfinished films with a gentle, already-published Ukrainian cartoon. Blocked: no matching film with verified rights for app redistribution/adaptation found; Ukrainian CC coverage of Alike lists noncommercial/no-derivatives restrictions, and a third-party Cossacks upload does not establish rights-holder permission. Existing films preserved pending a rights-holder license or an approved alternative.
 
 - [ ] Generate the remaining five full story films (kite, paints, lullaby, rain, woodland bridge) and six character films in the approved storybook style; add all to Watch and verify continuous playback and replay. Three full story films are already integrated. Blocked: both the media CLI and video tool reject the first 30-second kite render for insufficient workspace credits (estimated 27.75 credits for that film); no new footage created or app changes made.

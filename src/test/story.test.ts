@@ -56,6 +56,9 @@ describe("Claude story companion", () => {
 
   it("is connected to the shared Back and Next path", () => {
     expect(neighbours("/watch").next?.to).toBe("/story");
-    expect(neighbours("/story").next?.to).toBe("/garden");
+    expect(neighbours("/story").next?.to).toBe("/bedtime");
+    expect(neighbours("/bedtime").next?.to).toBe("/stroll");
+    expect(neighbours("/stroll").next?.to).toBe("/puddles");
+    expect(neighbours("/puddles").next?.to).toBe("/garden");
   });
 });

@@ -7,6 +7,20 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Назад": "Back",
+  "Далі": "Next",
+  "Казка на ніч": "Bedtime story",
+  "Затишна історія про спокійну ніч, вечірній ритуал і сміливість.": "A cosy story about a calm night, evening rituals and courage.",
+  "Поговорімо разом": "Let’s talk together",
+  "Повільна прогулянка": "The slow walk",
+  "Знаходь маленькі дива на лузі й помічай звуки, запахи й дотики.": "Find small wonders in the meadow and notice sounds, smells and textures.",
+  "Маленьке диво {n}": "Small wonder {n}",
+  "Знайдено див: {n} із {m}": "Wonders found: {n} of {m}",
+  "Калюжки": "Puddles",
+  "Торкайся калюжок і складай тиху дощову пісню. Є варіанти без екрана.": "Tap the puddles to make a quiet rain song. Off-screen options included.",
+  "Калюжка: торкнися, щоб упала крапля": "Puddle: tap to drop a raindrop",
+  "Крапель: {n} із {m}": "Drops: {n} of {m}",
+  "Без екрана": "Off-screen",
   "Ресурси для батьків": "Parent Resources",
   "Перевірений довідник організацій, гарячих ліній і порад для українських родин.":
     "A checked directory of organisations, helplines and advice for Ukrainian families.",

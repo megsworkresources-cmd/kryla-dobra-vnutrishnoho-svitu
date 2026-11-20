@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CaregiverRouteRouteImport } from './routes/_caregiver/route'
+import { Route as BedtimeRouteImport } from './routes/bedtime'
 import { Route as CaregiverLoginRouteImport } from './routes/caregiver-login'
 import { Route as CommunityGardenRouteImport } from './routes/community-garden'
 import { Route as ExploreRouteImport } from './routes/explore'
@@ -19,11 +20,13 @@ import { Route as GamesRouteImport } from './routes/games'
 import { Route as GardenRouteImport } from './routes/garden'
 import { Route as HelperRouteImport } from './routes/helper'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PuddlesRouteImport } from './routes/puddles'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SafeRouteImport } from './routes/safe'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StoryRouteImport } from './routes/story'
+import { Route as StrollRouteImport } from './routes/stroll'
 import { Route as WatchRouteImport } from './routes/watch'
 import { Route as WorldRouteImport } from './routes/world'
 import { Route as CaregiverParentsRouteImport } from './routes/_caregiver/parents'
@@ -52,6 +55,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const CaregiverRouteRoute = CaregiverRouteRouteImport.update({
   id: '/_caregiver',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BedtimeRoute = BedtimeRouteImport.update({
+  id: '/bedtime',
+  path: '/bedtime',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CaregiverLoginRoute = CaregiverLoginRouteImport.update({
@@ -94,6 +102,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PuddlesRoute = PuddlesRouteImport.update({
+  id: '/puddles',
+  path: '/puddles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -117,6 +130,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const StoryRoute = StoryRouteImport.update({
   id: '/story',
   path: '/story',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StrollRoute = StrollRouteImport.update({
+  id: '/stroll',
+  path: '/stroll',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WatchRoute = WatchRouteImport.update({
@@ -223,6 +241,7 @@ const ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bedtime': typeof BedtimeRoute
   '/caregiver-login': typeof CaregiverLoginRoute
   '/community-garden': typeof CommunityGardenRoute
   '/explore': typeof ExploreRoute
@@ -231,11 +250,13 @@ export interface FileRoutesByFullPath {
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
   '/privacy': typeof PrivacyRoute
+  '/puddles': typeof PuddlesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/story': typeof StoryRoute
+  '/stroll': typeof StrollRoute
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
@@ -259,6 +280,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bedtime': typeof BedtimeRoute
   '/caregiver-login': typeof CaregiverLoginRoute
   '/community-garden': typeof CommunityGardenRoute
   '/explore': typeof ExploreRoute
@@ -267,11 +289,13 @@ export interface FileRoutesByTo {
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
   '/privacy': typeof PrivacyRoute
+  '/puddles': typeof PuddlesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/story': typeof StoryRoute
+  '/stroll': typeof StrollRoute
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
@@ -297,6 +321,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_caregiver': typeof CaregiverRouteRouteWithChildren
+  '/bedtime': typeof BedtimeRoute
   '/caregiver-login': typeof CaregiverLoginRoute
   '/community-garden': typeof CommunityGardenRoute
   '/explore': typeof ExploreRoute
@@ -305,11 +330,13 @@ export interface FileRoutesById {
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
   '/privacy': typeof PrivacyRoute
+  '/puddles': typeof PuddlesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/safe': typeof SafeRoute
   '/settings': typeof SettingsRoute
   '/story': typeof StoryRoute
+  '/stroll': typeof StrollRoute
   '/watch': typeof WatchRoute
   '/world': typeof WorldRoute
   '/_caregiver/parents': typeof CaregiverParentsRoute
@@ -335,6 +362,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/bedtime'
     | '/caregiver-login'
     | '/community-garden'
     | '/explore'
@@ -343,11 +371,13 @@ export interface FileRouteTypes {
     | '/garden'
     | '/helper'
     | '/privacy'
+    | '/puddles'
     | '/reset-password'
     | '/resources'
     | '/safe'
     | '/settings'
     | '/story'
+    | '/stroll'
     | '/watch'
     | '/world'
     | '/parents'
@@ -371,6 +401,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/bedtime'
     | '/caregiver-login'
     | '/community-garden'
     | '/explore'
@@ -379,11 +410,13 @@ export interface FileRouteTypes {
     | '/garden'
     | '/helper'
     | '/privacy'
+    | '/puddles'
     | '/reset-password'
     | '/resources'
     | '/safe'
     | '/settings'
     | '/story'
+    | '/stroll'
     | '/watch'
     | '/world'
     | '/parents'
@@ -408,6 +441,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_caregiver'
+    | '/bedtime'
     | '/caregiver-login'
     | '/community-garden'
     | '/explore'
@@ -416,11 +450,13 @@ export interface FileRouteTypes {
     | '/garden'
     | '/helper'
     | '/privacy'
+    | '/puddles'
     | '/reset-password'
     | '/resources'
     | '/safe'
     | '/settings'
     | '/story'
+    | '/stroll'
     | '/watch'
     | '/world'
     | '/_caregiver/parents'
@@ -446,6 +482,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CaregiverRouteRoute: typeof CaregiverRouteRouteWithChildren
+  BedtimeRoute: typeof BedtimeRoute
   CaregiverLoginRoute: typeof CaregiverLoginRoute
   CommunityGardenRoute: typeof CommunityGardenRoute
   ExploreRoute: typeof ExploreRoute
@@ -454,11 +491,13 @@ export interface RootRouteChildren {
   GardenRoute: typeof GardenRoute
   HelperRoute: typeof HelperRoute
   PrivacyRoute: typeof PrivacyRoute
+  PuddlesRoute: typeof PuddlesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ResourcesRoute: typeof ResourcesRoute
   SafeRoute: typeof SafeRoute
   SettingsRoute: typeof SettingsRoute
   StoryRoute: typeof StoryRoute
+  StrollRoute: typeof StrollRoute
   WatchRoute: typeof WatchRoute
   WorldRoute: typeof WorldRoute
   AuthConfirmRoute: typeof AuthConfirmRoute
@@ -493,6 +532,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof CaregiverRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bedtime': {
+      id: '/bedtime'
+      path: '/bedtime'
+      fullPath: '/bedtime'
+      preLoaderRoute: typeof BedtimeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/caregiver-login': {
@@ -551,6 +597,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/puddles': {
+      id: '/puddles'
+      path: '/puddles'
+      fullPath: '/puddles'
+      preLoaderRoute: typeof PuddlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -584,6 +637,13 @@ declare module '@tanstack/react-router' {
       path: '/story'
       fullPath: '/story'
       preLoaderRoute: typeof StoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stroll': {
+      id: '/stroll'
+      path: '/stroll'
+      fullPath: '/stroll'
+      preLoaderRoute: typeof StrollRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/watch': {
@@ -746,6 +806,7 @@ const CaregiverRouteRouteWithChildren = CaregiverRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CaregiverRouteRoute: CaregiverRouteRouteWithChildren,
+  BedtimeRoute: BedtimeRoute,
   CaregiverLoginRoute: CaregiverLoginRoute,
   CommunityGardenRoute: CommunityGardenRoute,
   ExploreRoute: ExploreRoute,
@@ -754,11 +815,13 @@ const rootRouteChildren: RootRouteChildren = {
   GardenRoute: GardenRoute,
   HelperRoute: HelperRoute,
   PrivacyRoute: PrivacyRoute,
+  PuddlesRoute: PuddlesRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ResourcesRoute: ResourcesRoute,
   SafeRoute: SafeRoute,
   SettingsRoute: SettingsRoute,
   StoryRoute: StoryRoute,
+  StrollRoute: StrollRoute,
   WatchRoute: WatchRoute,
   WorldRoute: WorldRoute,
   AuthConfirmRoute: AuthConfirmRoute,

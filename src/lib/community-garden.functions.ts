@@ -31,9 +31,17 @@ export const readCommunityGarden = createServerFn({ method: "GET" }).handler(asy
       },
     });
     const { data, error } = await publicClient.rpc("read_public_sunflower_stages");
-    if (error) return { ok: false as const, stages: [] as number[] };
+    if (error) {
+      console.error(
+        `[community-garden] public projection failed [${error.code ?? "?"}]: ${error.message || "no message"}`,
+      );
+      return { ok: false as const, stages: [] as number[] };
+    }
     return { ok: true as const, stages: cleanStages(data) };
-  } catch {
+  } catch (error) {
+    console.error(
+      `[community-garden] public projection request failed: ${error instanceof Error ? error.message : "unknown"}`,
+    );
     return { ok: false as const, stages: [] as number[] };
   }
 });

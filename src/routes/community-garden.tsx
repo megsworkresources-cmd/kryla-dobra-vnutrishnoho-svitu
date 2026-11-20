@@ -145,11 +145,9 @@ function CommunityGarden() {
           )}
           {unavailable && (
             <div className="mt-3 space-y-1 text-sm" role="status">
-              <p className="font-bold">{t("Сад ще прокидається.")}</p>
+              <p className="font-bold">{t("Не вдалося завантажити спільний сад.")}</p>
               <p className="text-muted-foreground">
-                {t(
-                  "Твій соняшник уже тут. Інші квітки з’являться, коли дорослі в родинах поділяться ними.",
-                )}
+                {t("Твій соняшник залишається тут. Спробуй оновити сад трохи пізніше.")}
               </p>
             </div>
           )}

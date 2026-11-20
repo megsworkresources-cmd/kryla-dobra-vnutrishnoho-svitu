@@ -17,9 +17,9 @@ const EN: Record<string, string> = {
   "Не зараз": "Not now",
   "Анонімні соняшники з добровільною згодою дорослих. Малюнки й почуття залишаються приватними.":
     "Anonymous sunflowers shared with caregiver consent. Drawings and feelings stay private.",
-  "Сад ще прокидається.": "The garden is still waking up.",
-  "Твій соняшник уже тут. Інші квітки з’являться, коли дорослі в родинах поділяться ними.":
-    "Your sunflower is already here. Other flowers appear when grown-ups in their families share them.",
+  "Не вдалося завантажити спільний сад.": "Couldn't load the shared garden.",
+  "Твій соняшник залишається тут. Спробуй оновити сад трохи пізніше.":
+    "Your sunflower is still here. Try refreshing the garden a little later.",
   "Можна було просто дихати й нічого не вирішувати.":
     "It was enough to breathe and decide nothing at all.",
   "Сум був поруч. {who} не проганяв його — просто сидів разом із ним.":

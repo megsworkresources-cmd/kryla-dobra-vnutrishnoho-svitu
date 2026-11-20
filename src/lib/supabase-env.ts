@@ -62,13 +62,3 @@ export function supabasePublishableKey(): string | undefined {
   return BUILD_PUBLISHABLE_KEY || runtimeKey;
 }
 
-/** Service-role secrets stay runtime-only and are never inlined into a build. */
-export function supabaseServiceRoleKey(): string | undefined {
-  const key = runtimeEnv("SUPABASE_SERVICE_ROLE_KEY");
-  if (key && (key === BUILD_PUBLISHABLE_KEY || key.startsWith("sb_publishable_"))) {
-    console.error(
-      "[Supabase] SUPABASE_SERVICE_ROLE_KEY holds a publishable key; admin operations cannot work.",
-    );
-  }
-  return key;
-}

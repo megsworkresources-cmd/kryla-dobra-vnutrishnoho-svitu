@@ -655,6 +655,10 @@ export function ambientFor(pathname: string): Ambient | null {
         bedtime: "night",
         stroll: "meadow",
         puddles: "clouds",
+        maze: "night",
+        count: "meadow",
+        "safe-drawing": "cozy",
+        together: "cozy",
       } as Record<string, Ambient>
     )[seg] ?? null
   );

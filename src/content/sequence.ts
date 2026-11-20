@@ -21,6 +21,10 @@ export const ORDER: Stop[] = (() => {
     { to: "/bedtime", label: "Казка на ніч" },
     { to: "/stroll", label: "Повільна прогулянка" },
     { to: "/puddles", label: "Калюжки" },
+    { to: "/maze", label: "Стежка Ліхтарика" },
+    { to: "/count", label: "Уважний луг" },
+    { to: "/safe-drawing", label: "Що мені допомагає" },
+    { to: "/together", label: "Разом" },
   ];
   for (const p of PLACES) {
     list.push({ to: p.to, label: p.name });

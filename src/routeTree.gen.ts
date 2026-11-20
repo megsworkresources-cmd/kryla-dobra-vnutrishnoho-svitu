@@ -27,6 +27,7 @@ import { Route as WatchRouteImport } from './routes/watch'
 import { Route as WorldRouteImport } from './routes/world'
 import { Route as CaregiverParentsRouteImport } from './routes/_caregiver/parents'
 import { Route as CaregiverSharedGardenRouteImport } from './routes/_caregiver/shared-garden'
+import { Route as AuthConfirmRouteImport } from './routes/auth.confirm'
 import { Route as CloudsIndexRouteImport } from './routes/clouds.index'
 import { Route as CloudsIdRouteImport } from './routes/clouds.$id'
 import { Route as ForestIndexRouteImport } from './routes/forest.index'
@@ -132,6 +133,11 @@ const CaregiverSharedGardenRoute = CaregiverSharedGardenRouteImport.update({
   path: '/shared-garden',
   getParentRoute: () => CaregiverRouteRoute,
 } as any)
+const AuthConfirmRoute = AuthConfirmRouteImport.update({
+  id: '/auth/confirm',
+  path: '/auth/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CloudsIndexRoute = CloudsIndexRouteImport.update({
   id: '/clouds/',
   path: '/clouds/',
@@ -227,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
   '/shared-garden': typeof CaregiverSharedGardenRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
   '/shared-garden': typeof CaregiverSharedGardenRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -297,6 +305,7 @@ export interface FileRoutesById {
   '/world': typeof WorldRoute
   '/_caregiver/parents': typeof CaregiverParentsRoute
   '/_caregiver/shared-garden': typeof CaregiverSharedGardenRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -333,6 +342,7 @@ export interface FileRouteTypes {
     | '/world'
     | '/parents'
     | '/shared-garden'
+    | '/auth/confirm'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -367,6 +377,7 @@ export interface FileRouteTypes {
     | '/world'
     | '/parents'
     | '/shared-garden'
+    | '/auth/confirm'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -402,6 +413,7 @@ export interface FileRouteTypes {
     | '/world'
     | '/_caregiver/parents'
     | '/_caregiver/shared-garden'
+    | '/auth/confirm'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -436,6 +448,7 @@ export interface RootRouteChildren {
   StoryRoute: typeof StoryRoute
   WatchRoute: typeof WatchRoute
   WorldRoute: typeof WorldRoute
+  AuthConfirmRoute: typeof AuthConfirmRoute
   CloudsIdRoute: typeof CloudsIdRoute
   ForestIdRoute: typeof ForestIdRoute
   MeadowIdRoute: typeof MeadowIdRoute
@@ -581,6 +594,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CaregiverSharedGardenRouteImport
       parentRoute: typeof CaregiverRouteRoute
     }
+    '/auth/confirm': {
+      id: '/auth/confirm'
+      path: '/auth/confirm'
+      fullPath: '/auth/confirm'
+      preLoaderRoute: typeof AuthConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/clouds/': {
       id: '/clouds/'
       path: '/clouds'
@@ -720,6 +740,7 @@ const rootRouteChildren: RootRouteChildren = {
   StoryRoute: StoryRoute,
   WatchRoute: WatchRoute,
   WorldRoute: WorldRoute,
+  AuthConfirmRoute: AuthConfirmRoute,
   CloudsIdRoute: CloudsIdRoute,
   ForestIdRoute: ForestIdRoute,
   MeadowIdRoute: MeadowIdRoute,

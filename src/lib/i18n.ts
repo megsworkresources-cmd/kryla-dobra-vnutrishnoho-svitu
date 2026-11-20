@@ -1447,6 +1447,16 @@ const EN: Record<string, string> = {
   "Зберегти пароль": "Save password",
   "Відкрийте це посилання з листа для зміни пароля.":
     "Open this page from the link in your password reset email.",
+  "Підтвердження адреси": "Email confirmation",
+  "Підтвердження адреси — Тихе Місце": "Email confirmation — Quiet Place",
+  "Підтвердіть електронну пошту дорослого, щоб увійти до панелі прогресу.":
+    "Confirm the adult's email to open the progress dashboard.",
+  "Підтвердження електронної пошти дорослого.": "Confirming the adult's email address.",
+  "Посилання не спрацювало. Увійдіть або надішліть лист ще раз.":
+    "That link didn't work. Sign in or send the email again.",
+  "Перейти до входу": "Go to sign-in",
+  "Адресу підтверджено. Переходимо далі…": "Email confirmed. Taking you onward…",
+  "Підтверджуємо адресу…": "Confirming your email…",
   "Уся мапа — Тихе Місце": "Full map — Quiet Place",
   "Розглянь увесь чарівний світ: наближай, рухай мапу й обирай місце.":
     "Explore the whole magical world: zoom, move the map and pick a place.",

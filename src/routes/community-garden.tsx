@@ -58,7 +58,9 @@ function CommunityGarden() {
     const days = Math.round((dayStart(new Date()) - dayStart(new Date(at))) / 86_400_000);
     if (days <= 0) return t("Показано сад, збережений сьогодні. Онови, щоб побачити нові квітки.");
     if (days === 1) return t("Показано сад, збережений учора. Онови, щоб побачити нові квітки.");
-    return t("Показано сад, збережений {n} дн. тому. Онови, щоб побачити нові квітки.", { n: days });
+    return t("Показано сад, збережений {n} дн. тому. Онови, щоб побачити нові квітки.", {
+      n: days,
+    });
   };
   const [picked, setPicked] = useState<number | null>(null);
   const [playing, setPlaying] = useState(true);

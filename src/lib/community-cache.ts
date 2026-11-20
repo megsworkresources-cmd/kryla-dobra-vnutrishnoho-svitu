@@ -41,6 +41,17 @@ export function readSavedGarden(): SavedGarden {
   }
 }
 
+/** Removes the snapshot, e.g. when a grown-up clears this device's progress. */
+export function clearSavedGarden(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    window.localStorage.removeItem(KEY);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function saveGarden(stages: number[]): boolean {
   if (typeof window === "undefined") return false;
   try {

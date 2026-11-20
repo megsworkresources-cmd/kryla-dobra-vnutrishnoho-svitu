@@ -11,6 +11,7 @@ import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { readCommunityGarden } from "@/lib/community-garden.functions";
 import { readSavedGarden, saveGarden, type SavedGarden } from "@/lib/community-cache";
+import { savedGardenNote } from "@/content/community-garden-note";
 import { canWater, localDay } from "@/content/watering";
 import { sfx } from "@/lib/audio";
 import { careCount, growthStage, useStore, waterFlower } from "@/lib/store";
@@ -51,16 +52,7 @@ function CommunityGarden() {
   const failed = garden.isError || garden.data?.ok === false;
   const usingSaved = failed && saved.stages.length > 0;
   const shared = usingSaved ? saved.stages : (garden.data?.stages ?? []);
-  const savedAge = (at: number) => {
-    const dayStart = (date: Date) =>
-      new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-    const days = Math.round((dayStart(new Date()) - dayStart(new Date(at))) / 86_400_000);
-    if (days <= 0) return t("Показано сад, збережений сьогодні. Онови, щоб побачити нові квітки.");
-    if (days === 1) return t("Показано сад, збережений учора. Онови, щоб побачити нові квітки.");
-    return t("Показано сад, збережений {n} дн. тому. Онови, щоб побачити нові квітки.", {
-      n: days,
-    });
-  };
+  const savedNote = saved.at === null ? null : savedGardenNote(saved.at);
   const [picked, setPicked] = useState<number | null>(null);
   const [playing, setPlaying] = useState(true);
   const shownStage = coarseGrowthStage(picked === null ? ownStage : (shared[picked] ?? ownStage));
@@ -165,9 +157,9 @@ function CommunityGarden() {
               {t("Сад завантажується…")}
             </p>
           )}
-          {usingSaved && saved.at !== null && (
+          {usingSaved && savedNote && (
             <p className="mt-3 text-sm text-muted-foreground" role="status">
-              {savedAge(saved.at)}
+              {t(savedNote.key, savedNote.vars)}
             </p>
           )}
           {failed && !usingSaved && (

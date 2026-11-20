@@ -1,4 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { clearSavedGarden } from "@/lib/community-cache";
 
 /**
  * All child data stays on this device (localStorage). Only the optional "Розкажи, як ти" text is sent once to Lovable AI and never stored.
@@ -245,7 +246,10 @@ export const markVisit = (place: string) =>
   }));
 
 /** Wipes only progress records (not settings or drawings). */
-export const resetProgress = () =>
+export const resetProgress = () => {
+  // Other families' cached flowers are progress-shaped too: a reset device
+  // should not keep falling back to them.
+  clearSavedGarden();
   update((s) => ({
     ...s,
     completed: {},
@@ -255,6 +259,7 @@ export const resetProgress = () =>
     careSteps: 0,
     wateredOn: null,
   }));
+};
 
 /** One watering per local day; growth never decreases and nothing leaves the device. */
 export const waterFlower = (day: string) =>

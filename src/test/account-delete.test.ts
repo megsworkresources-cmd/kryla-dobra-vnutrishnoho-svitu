@@ -66,11 +66,31 @@ it("falls back to the admin client where the RPC is not installed yet", async ()
   quiet.mockRestore();
 });
 
+it("also falls back when Postgres reports the function as undefined", async () => {
+  const quiet = vi.spyOn(console, "error").mockImplementation(() => {});
+  mocks.rpc.mockResolvedValue({ data: null, error: { code: "42883", message: "undefined" } });
+  mocks.adminDelete.mockResolvedValue({ error: null });
+
+  expect(await run()).toEqual({ ok: true });
+  expect(mocks.adminDelete).toHaveBeenCalledWith("owner");
+  quiet.mockRestore();
+});
+
 it("reports failure when neither path can delete the account", async () => {
   const quiet = vi.spyOn(console, "error").mockImplementation(() => {});
-  mocks.rpc.mockResolvedValue({ data: null, error: { code: "42501", message: "denied" } });
+  mocks.rpc.mockResolvedValue({ data: null, error: { code: "PGRST202", message: "not found" } });
   mocks.adminDelete.mockResolvedValue({ error: { status: 401, code: "invalid_key" } });
 
   expect(await run()).toEqual({ ok: false });
+  quiet.mockRestore();
+});
+
+it("does not switch to the admin key when the RPC fails for another reason", async () => {
+  const quiet = vi.spyOn(console, "error").mockImplementation(() => {});
+  mocks.rpc.mockResolvedValue({ data: null, error: { code: "42501", message: "denied" } });
+
+  expect(await run()).toEqual({ ok: false });
+  expect(mocks.removeOwnRow).not.toHaveBeenCalled();
+  expect(mocks.adminDelete).not.toHaveBeenCalled();
   quiet.mockRestore();
 });

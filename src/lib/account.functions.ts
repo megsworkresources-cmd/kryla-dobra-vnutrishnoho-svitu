@@ -3,6 +3,13 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /**
+ * PostgREST says the function does not exist; that is the only case where the
+ * legacy service-role path is still attempted. A permission or runtime error
+ * must surface as a failure instead of silently switching credentials.
+ */
+const RPC_NOT_INSTALLED = new Set(["PGRST202", "42883"]);
+
+/**
  * Apple requires in-app account deletion: removes the grown-up's shared
  * sunflower and account. The security-definer RPC deletes only the caller's own
  * rows, so no service-role key is needed; the admin call stays as a fallback
@@ -16,6 +23,7 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     console.error(
       `[account] delete_my_account RPC failed [${rpcError.code ?? "?"}]: ${rpcError.message || "no message"}`,
     );
+    if (!RPC_NOT_INSTALLED.has(rpcError.code ?? "")) return { ok: false as const };
 
     await context.supabase.from("shared_sunflowers").delete().eq("owner_id", context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

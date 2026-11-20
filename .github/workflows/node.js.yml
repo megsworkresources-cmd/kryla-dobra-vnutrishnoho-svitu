@@ -11,6 +11,9 @@ on:
 
 permissions:
   contents: write
+  checks: read
+  pull-requests: read
+  statuses: read
 
 jobs:
   build:
@@ -37,6 +40,12 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Reject service-role Supabase client imports
         run: node scripts/no-service-role-client-guard.mjs
+      - name: Verify this CI check is required on the base branch
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHECK_NAME: ${{ github.job }} (${{ matrix.node-version }})
+        run: node scripts/verify-required-check.mjs
       - name: Typecheck
         run: bunx tsc --noEmit
       - name: Build

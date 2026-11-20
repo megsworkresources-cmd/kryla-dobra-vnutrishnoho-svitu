@@ -22,7 +22,7 @@ A custom domain is not connected yet; when one is added in Vercel → Project �
 
 ## Branch protection
 
-`main` is protected. A pull request must pass the required **Node.js CI** check **`build (22.x)`** and be up to date with `main` before it can merge. The check comes from `.github/workflows/node.js.yml`; if the Node.js matrix changes, update the required check name in **Settings → Branches**, or PRs can never merge. Each pull-request job also verifies that its own `build (<version>)` check is marked required, so a matrix change without the matching protection update fails CI with an explicit message.
+`main` is protected. A pull request must pass the required **Node.js CI** checks **`build (22.x)`** and **`build (24.x)`** and be up to date with `main` before it can merge. The check comes from `.github/workflows/node.js.yml`; if the Node.js matrix changes, update the required check name in **Settings → Branches**, or PRs can never merge. Each pull-request job also verifies that its own `build (<version>)` check is marked required, so a matrix change without the matching protection update fails CI with an explicit message.
 
 Administrators are deliberately **exempt** (`enforce_admins` off). Required status checks reject direct pushes, and a brand-new commit cannot have a passing check before it is pushed, so enforcing them for admins would reject every direct push to `main` with `GH006: Required status check "build (22.x)" is failing`. That includes Lovable's syncs and automation pushes. Do not enable **Include administrators** / `enforce_admins` unless every change, including Lovable's sync, moves to pull requests first.
 

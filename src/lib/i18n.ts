@@ -20,6 +20,8 @@ const EN: Record<string, string> = {
   "Не вдалося завантажити спільний сад.": "Couldn't load the shared garden.",
   "Твій соняшник залишається тут. Спробуй оновити сад трохи пізніше.":
     "Your sunflower is still here. Try refreshing the garden a little later.",
+  "Показано збережений сад. Онови, щоб побачити нові квітки.":
+    "Showing the saved garden. Refresh to see new flowers.",
   "Можна було просто дихати й нічого не вирішувати.":
     "It was enough to breathe and decide nothing at all.",
   "Сум був поруч. {who} не проганяв його — просто сидів разом із ним.":

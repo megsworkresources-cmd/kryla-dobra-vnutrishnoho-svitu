@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -10,6 +10,7 @@ import { coarseGrowthStage, growthGlyph, growthPart, isFinalGrowthStage } from "
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { readCommunityGarden } from "@/lib/community-garden.functions";
+import { readSavedStages, saveStages } from "@/lib/community-cache";
 import { canWater, localDay } from "@/content/watering";
 import { sfx } from "@/lib/audio";
 import { careCount, growthStage, useStore, waterFlower } from "@/lib/store";
@@ -37,12 +38,23 @@ function CommunityGarden() {
   const wateredOn = useStore((s) => s.wateredOn);
   const careSteps = useStore((s) => s.careSteps);
   const ownStage = growthStage(count);
-  const shared = garden.data?.stages ?? [];
+  // A transient read failure must not hide flowers this device already saw;
+  // only the same coarse stages are kept, never owners or child data.
+  const [saved, setSaved] = useState<number[]>([]);
+  useEffect(() => setSaved(readSavedStages()), []);
+  useEffect(() => {
+    if (!garden.data?.ok) return;
+    const stages = garden.data.stages ?? [];
+    setSaved(stages);
+    saveStages(stages);
+  }, [garden.data]);
+  const failed = garden.isError || garden.data?.ok === false;
+  const usingSaved = failed && saved.length > 0;
+  const shared = usingSaved ? saved : (garden.data?.stages ?? []);
   const [picked, setPicked] = useState<number | null>(null);
   const [playing, setPlaying] = useState(true);
   const shownStage = coarseGrowthStage(picked === null ? ownStage : (shared[picked] ?? ownStage));
-  const shownName = picked === null ? null : picked + 1;
-  const unavailable = garden.isError || garden.data?.ok === false;
+  const shownName = picked === null || picked >= shared.length ? null : picked + 1;
 
   return (
     <Scene image={placeImage("garden")} title="Спільний сад" back="/garden" compact>
@@ -84,7 +96,7 @@ function CommunityGarden() {
         </section>
 
         <section className="paper-card p-4">
-          {!unavailable && (
+          {(!failed || usingSaved) && (
             <p className="text-sm font-bold">{t("У саду {n} квіток", { n: shared.length + 1 })}</p>
           )}
           <p className="mt-1 text-sm text-muted-foreground">
@@ -143,7 +155,12 @@ function CommunityGarden() {
               {t("Сад завантажується…")}
             </p>
           )}
-          {unavailable && (
+          {usingSaved && (
+            <p className="mt-3 text-sm text-muted-foreground" role="status">
+              {t("Показано збережений сад. Онови, щоб побачити нові квітки.")}
+            </p>
+          )}
+          {failed && !usingSaved && (
             <div className="mt-3 space-y-1 text-sm" role="status">
               <p className="font-bold">{t("Не вдалося завантажити спільний сад.")}</p>
               <p className="text-muted-foreground">

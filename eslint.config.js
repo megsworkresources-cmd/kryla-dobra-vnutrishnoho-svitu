@@ -14,7 +14,6 @@ export default tseslint.config(
       // Lovable-managed files are regenerated; lint the app-owned callers instead.
       "src/integrations/supabase/auth-attacher.ts",
       "src/integrations/supabase/auth-middleware.ts",
-      "src/integrations/supabase/client.server.ts",
       "src/integrations/supabase/client.ts",
       "src/integrations/supabase/previewAuthStorage.ts",
       "src/integrations/supabase/types.ts",

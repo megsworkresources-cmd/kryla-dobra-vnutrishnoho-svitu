@@ -1,6 +1,6 @@
 import lantern from "@/assets/video/lantern-story-full.mp4.asset.json";
 import sunflower from "@/assets/video/sunflower-story-full.mp4.asset.json";
-import kite from "@/assets/video/kite-breeze.mp4.asset.json";
+import kite from "@/assets/video/kite-story-full.mp4.asset.json";
 import bridge from "@/assets/video/bridge-story-full.mp4.asset.json";
 import paints from "@/assets/video/painting-friends.mp4.asset.json";
 import goodnight from "@/assets/video/goodnight-friends.mp4.asset.json";

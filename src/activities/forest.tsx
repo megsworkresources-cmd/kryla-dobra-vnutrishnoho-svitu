@@ -7,6 +7,7 @@ import { EMOTIONS, emotionAt, SCENARIOS, SORT_ITEMS } from "@/content/emotions";
 import { markDone, pick, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import { CHARACTERS, castFor } from "@/content/characters";
+import { Narration } from "@/components/Activity";
 
 /* 1. Meet the emotions */
 export function EmotionGallery() {
@@ -235,11 +236,13 @@ export function BodyMap() {
     );
   return (
     <div className="space-y-4">
-      <p className="paper-card p-4 text-base">
-        {t(
+      <CharacterSay
+        who="solomiya"
+        size="sm"
+        text={t(
           "Обери почуття. Потім торкнися місць, де ти його відчуваєш. Правильних відповідей немає — у кожного по-своєму.",
         )}
-      </p>
+      />
       <div className="flex gap-2 overflow-x-auto pb-1">
         {EMOTIONS.slice(0, 6).map((e) => (
           <button
@@ -292,6 +295,14 @@ export function BodyMap() {
               <li key={b}>• {t(b)}</li>
             ))}
           </ul>
+          <div className="mt-3">
+            <Narration
+              autoSpeak={false}
+              text={[t(emo.name), t("Часто відчувається як:"), ...emo.body.map((b) => t(b))].join(
+                ". ",
+              )}
+            />
+          </div>
           {mine.length > 0 && (
             <p className="mt-3 font-semibold">
               {t("Ти позначив: {z}", {

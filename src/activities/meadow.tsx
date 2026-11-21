@@ -25,7 +25,7 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
     document.addEventListener("visibilitychange", pauseWhenHidden);
     return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
   }, []);
-  const inhale = age === "young" ? 3 : 4;
+  const inhale = age === "young" ? 4 : 5;
   const exhale = kind === "flower" ? inhale + 2 : inhale;
   const period = inhale + exhale;
   const isInhale = elapsed % period < inhale;

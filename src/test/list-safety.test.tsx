@@ -23,7 +23,7 @@ vi.mock("@tanstack/react-router", async (importOriginal) => {
 });
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
-vi.mock("@/lib/audio", () => ({ chime: vi.fn(), sfx: vi.fn() }));
+vi.mock("@/lib/audio", () => ({ chime: vi.fn(), sfx: vi.fn(), duckMusic: vi.fn() }));
 afterEach(() => {
   cleanup();
   vi.useRealTimers();

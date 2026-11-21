@@ -18,6 +18,17 @@ afterEach(() => {
 });
 
 for (const kind of ["flower", "wave"] as const) {
+  it(`${kind} keeps the young-child inhale slow for four seconds without a hold`, () => {
+    vi.useFakeTimers();
+    update((s) => ({ ...s, lang: "uk", age: "young", reduceMotion: true, voice: false }));
+    render(<Breathing kind={kind} />);
+    fireEvent.click(screen.getByRole("button", { name: /^Почати$/ }));
+    act(() => vi.advanceTimersByTime(3000));
+    expect(screen.getByText("Вдих")).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(1000));
+    expect(screen.getByText("Видих")).toBeInTheDocument();
+  });
+
   it(`${kind} cancels its animation clock on pause and exit`, () => {
     update((s) => ({ ...s, lang: "uk", reduceMotion: false, voice: false }));
     const request = vi.fn(() => 42);

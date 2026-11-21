@@ -74,7 +74,7 @@ function Puddles() {
           <img
             src={placeImage("clouds")}
             alt=""
-            className="h-full w-full scale-y-[-1] object-cover opacity-80"
+            className="h-full w-full object-cover opacity-80"
           />
           {rings.map((r) => (
             <span

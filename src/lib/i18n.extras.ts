@@ -13,8 +13,10 @@ export const EXTRAS: Record<string, string> = {
   "Дослідники стежинок": "Trail Explorers",
   "Мій острівець спокою": "My Island of Calm",
   "Розфарбуй нічне небо добрими снами.": "Paint the night sky with kind dreams.",
-  "Подивись крізь чарівну лупу на крихітних сусідів.": "Look through a magic magnifier at tiny neighbours.",
-  "Мандруй із краплинкою від хмаринки до річки.": "Travel with a raindrop from a cloud to the river.",
+  "Подивись крізь чарівну лупу на крихітних сусідів.":
+    "Look through a magic magnifier at tiny neighbours.",
+  "Мандруй із краплинкою від хмаринки до річки.":
+    "Travel with a raindrop from a cloud to the river.",
   "Йди стежкою, шукай сліди й слухай ліс.": "Walk the trail, find tracks and listen to the forest.",
   "Збудуй свій тихий острівець — для тебе одного.": "Build your own quiet island — just for you.",
   "Розділи пригоди": "Adventure chapters",

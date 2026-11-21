@@ -1,5 +1,8 @@
 # Completion roadmap
 
+- [x] Experience audit tranche 2: 33 routes × 4 viewports × UA/EN checked; fixed English adventure/Back-Next translations and small credit/privacy links; all five adventures played in UA/EN. Report: docs/audit-2026-11-21-tranche2.md.
+- [ ] Next tranche: per-route audio/video lifecycle trace and media mapping list; caregiver and shared-garden opt-in/opt-out walk; deeper per-activity feedback polish.
+
 - [x] Screenshot edits: slower sunflower opening/closing and wave rising/falling (4-second young-child inhale, 5-second older inhale, no holds); shared spoken body-feelings guidance and tap-to-listen descriptions; upright puddle image. Body/puddle controls verified at 320px/393px; breathing movement, pause/resume, completion and system reduced motion verified. All 265 tests and full lint pass; automatic build OK. Physical-device listening remains unverified; no deployment.
 
 - [ ] Integrate the strongest calming components from the requested source app, guided by the uploaded brief and reusing existing breathing, feelings, drawing, favorites and audio tools. Inspected app-source-code.zip safely: 277 files, an older copy of the existing app (152 inspected non-image files identical), not an export containing the distinct new calming screen or First/Then routines. The source audio wrapper adds no playback capability and has an empty cleanup effect; its older voice handler lacks the current authentication/quotas. No source code, migrations, configuration or media imported to avoid regressions. Blocked pending the intended calming-tool source export; share link redirects to Google sign-in. Inspection ledger: .lovable/migrate-external-project/ledger.json. Preserve current app/privacy/navigation; no deployment or infrastructure changes.

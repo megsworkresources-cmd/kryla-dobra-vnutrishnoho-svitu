@@ -413,7 +413,10 @@ function Settings() {
         </Section>
       </div>
       <p className="mt-6 text-center text-sm">
-        <Link to="/privacy" className="underline">
+        <Link
+          to="/privacy"
+          className="inline-flex min-h-11 items-center px-2 underline underline-offset-2"
+        >
           {t("Політика конфіденційності")}
         </Link>
       </p>

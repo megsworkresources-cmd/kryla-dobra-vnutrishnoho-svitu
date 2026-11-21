@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { EXTRAS } from "./i18n.extras";
 import { getState, useStore, type Lang } from "./store";
 
 /**
@@ -1589,13 +1590,20 @@ let APP_LINES: Set<string> | null = null;
 /** True only for app-written lines (dictionary sources or translations). */
 export function isAppLine(s: string): boolean {
   if (!APP_LINES)
-    APP_LINES = new Set([...Object.keys(EN), ...Object.values(EN)].map((x) => x.trim()));
+    APP_LINES = new Set(
+      [
+        ...Object.keys(EN),
+        ...Object.values(EN),
+        ...Object.keys(EXTRAS),
+        ...Object.values(EXTRAS),
+      ].map((x) => x.trim()),
+    );
   return APP_LINES.has(s.trim());
 }
 
 /** Translate one string for an explicit language (usable on the server). */
 export function tr(s: string, lang: Lang, vars?: Record<string, string | number>): string {
-  let out = lang === "en" ? (EN[s] ?? s) : s;
+  let out = lang === "en" ? (EN[s] ?? EXTRAS[s] ?? s) : s;
   if (vars) out = out.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
   return out;
 }

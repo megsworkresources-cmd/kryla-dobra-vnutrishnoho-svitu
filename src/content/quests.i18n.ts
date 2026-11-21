@@ -51,9 +51,24 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Торкнися трьох іскор.", "Tap the three sparks."),
         spots: [
-          { icon: "💙", x: 22, y: 30, text: b("Синій — колір спокійного моря.", "Blue — the colour of a calm sea.") },
-          { icon: "💛", x: 70, y: 22, text: b("Жовтий — тепле сонечко ранку.", "Yellow — the warm morning sun.") },
-          { icon: "💚", x: 50, y: 62, text: b("Зелений — м’яка трава під ногами.", "Green — soft grass under your feet.") },
+          {
+            icon: "💙",
+            x: 22,
+            y: 30,
+            text: b("Синій — колір спокійного моря.", "Blue — the colour of a calm sea."),
+          },
+          {
+            icon: "💛",
+            x: 70,
+            y: 22,
+            text: b("Жовтий — тепле сонечко ранку.", "Yellow — the warm morning sun."),
+          },
+          {
+            icon: "💚",
+            x: 50,
+            y: 62,
+            text: b("Зелений — м’яка трава під ногами.", "Green — soft grass under your feet."),
+          },
         ],
       },
       {
@@ -65,9 +80,30 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Торкнися хмаринок-снів.", "Tap the dream clouds."),
         spots: [
-          { icon: "🐋", x: 25, y: 40, text: b("Сон про кита, що співає колискову.", "A dream of a whale singing a lullaby.") },
-          { icon: "🎈", x: 72, y: 35, text: b("Сон про повітряну кульку над полем соняшників.", "A dream of a balloon over a sunflower field.") },
-          { icon: "🏡", x: 48, y: 70, text: b("Сон про теплу хатинку, де пахне пиріжками.", "A dream of a warm cottage that smells of pastries.") },
+          {
+            icon: "🐋",
+            x: 25,
+            y: 40,
+            text: b("Сон про кита, що співає колискову.", "A dream of a whale singing a lullaby."),
+          },
+          {
+            icon: "🎈",
+            x: 72,
+            y: 35,
+            text: b(
+              "Сон про повітряну кульку над полем соняшників.",
+              "A dream of a balloon over a sunflower field.",
+            ),
+          },
+          {
+            icon: "🏡",
+            x: 48,
+            y: 70,
+            text: b(
+              "Сон про теплу хатинку, де пахне пиріжками.",
+              "A dream of a warm cottage that smells of pastries.",
+            ),
+          },
         ],
       },
       {
@@ -77,11 +113,32 @@ export const QUESTS: Record<QuestId, Quest> = {
           "Кольорові сни повертаються додому. Позіхни разом із Ліхтариком і поклади руку на серце — воно стукає повільніше.",
           "The colourful dreams come home. Yawn with Lantern and rest a hand on your heart — it beats more slowly now.",
         ),
-        task: b("Торкнися вогників, щоб засвітити шлях додому.", "Tap the lights to brighten the way home."),
+        task: b(
+          "Торкнися вогників, щоб засвітити шлях додому.",
+          "Tap the lights to brighten the way home.",
+        ),
         spots: [
-          { icon: "🌙", x: 78, y: 18, text: b("Місяць тихо світить на дорогу.", "The moon gently lights the road.") },
-          { icon: "🕯️", x: 30, y: 55, text: b("Свічка у вікні каже: тут безпечно.", "A candle in the window says: it is safe here.") },
-          { icon: "⭐", x: 60, y: 40, text: b("Зірочка підморгує: добраніч.", "A little star winks: good night.") },
+          {
+            icon: "🌙",
+            x: 78,
+            y: 18,
+            text: b("Місяць тихо світить на дорогу.", "The moon gently lights the road."),
+          },
+          {
+            icon: "🕯️",
+            x: 30,
+            y: 55,
+            text: b(
+              "Свічка у вікні каже: тут безпечно.",
+              "A candle in the window says: it is safe here.",
+            ),
+          },
+          {
+            icon: "⭐",
+            x: 60,
+            y: 40,
+            text: b("Зірочка підморгує: добраніч.", "A little star winks: good night."),
+          },
         ],
       },
     ],
@@ -111,9 +168,30 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Знайди трьох крихітних сусідів.", "Find three tiny neighbours."),
         spots: [
-          { icon: "🐞", x: 30, y: 65, text: b("Сонечко рахує свої крапочки: одна, дві, сім!", "A ladybird counts her spots: one, two, seven!") },
-          { icon: "🐌", x: 65, y: 75, text: b("Равлик не поспішає — і завжди встигає.", "The snail never hurries — and always arrives.") },
-          { icon: "🐝", x: 55, y: 30, text: b("Бджілка ділиться пилком з квіткою.", "A bee shares pollen with a flower.") },
+          {
+            icon: "🐞",
+            x: 30,
+            y: 65,
+            text: b(
+              "Сонечко рахує свої крапочки: одна, дві, сім!",
+              "A ladybird counts her spots: one, two, seven!",
+            ),
+          },
+          {
+            icon: "🐌",
+            x: 65,
+            y: 75,
+            text: b(
+              "Равлик не поспішає — і завжди встигає.",
+              "The snail never hurries — and always arrives.",
+            ),
+          },
+          {
+            icon: "🐝",
+            x: 55,
+            y: 30,
+            text: b("Бджілка ділиться пилком з квіткою.", "A bee shares pollen with a flower."),
+          },
         ],
       },
       {
@@ -125,9 +203,24 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Торкнися росинок.", "Tap the dewdrops."),
         spots: [
-          { icon: "💧", x: 25, y: 45, text: b("У цій росинці — сонце.", "In this dewdrop — the sun.") },
-          { icon: "💧", x: 50, y: 60, text: b("У цій — пташка, що пролітає.", "In this one — a passing bird.") },
-          { icon: "💧", x: 75, y: 40, text: b("А в цій — твоя усмішка.", "And in this one — your smile.") },
+          {
+            icon: "💧",
+            x: 25,
+            y: 45,
+            text: b("У цій росинці — сонце.", "In this dewdrop — the sun."),
+          },
+          {
+            icon: "💧",
+            x: 50,
+            y: 60,
+            text: b("У цій — пташка, що пролітає.", "In this one — a passing bird."),
+          },
+          {
+            icon: "💧",
+            x: 75,
+            y: 40,
+            text: b("А в цій — твоя усмішка.", "And in this one — your smile."),
+          },
         ],
       },
       {
@@ -139,13 +232,31 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Знайди помічників у лісі.", "Find the helpers in the forest."),
         spots: [
-          { icon: "🐜", x: 35, y: 70, text: b("Мурашки працюють дружно.", "The ants work as a team.") },
-          { icon: "🍄", x: 65, y: 65, text: b("Грибочок — парасолька для жучка.", "A mushroom is an umbrella for a beetle.") },
-          { icon: "🦔", x: 50, y: 45, text: b("Їжачок показує стежку додому.", "A hedgehog shows the path home.") },
+          {
+            icon: "🐜",
+            x: 35,
+            y: 70,
+            text: b("Мурашки працюють дружно.", "The ants work as a team."),
+          },
+          {
+            icon: "🍄",
+            x: 65,
+            y: 65,
+            text: b("Грибочок — парасолька для жучка.", "A mushroom is an umbrella for a beetle."),
+          },
+          {
+            icon: "🦔",
+            x: 50,
+            y: 45,
+            text: b("Їжачок показує стежку додому.", "A hedgehog shows the path home."),
+          },
         ],
       },
     ],
-    closing: b("Яке маленьке диво тобі сподобалося найбільше?", "Which tiny wonder did you like most?"),
+    closing: b(
+      "Яке маленьке диво тобі сподобалося найбільше?",
+      "Which tiny wonder did you like most?",
+    ),
     choices: [
       { icon: "🐞", text: b("Сонечко", "Ladybird") },
       { icon: "💧", text: b("Росинка", "Dewdrop") },
@@ -166,11 +277,19 @@ export const QUESTS: Record<QuestId, Quest> = {
           "Краплинка Кап жила в пухнастій хмаринці. Одного дня вона трохи злякалася: пора падати вниз! Дарина каже: «Страшно — це нормально. Видихни повільно».",
           "A raindrop named Drip lived in a fluffy cloud. One day she felt a little scared: time to fall! Daryna says: “Feeling scared is okay. Breathe out slowly.”",
         ),
-        task: b("Допоможи краплинці: торкнися сусідок-краплинок.", "Help the raindrop: tap her raindrop friends."),
+        task: b(
+          "Допоможи краплинці: торкнися сусідок-краплинок.",
+          "Help the raindrop: tap her raindrop friends.",
+        ),
         spots: [
           { icon: "💧", x: 30, y: 35, text: b("«Ми полетимо разом!»", "“We will fly together!”") },
           { icon: "💧", x: 55, y: 25, text: b("«Тримайся за мене».", "“Hold on to me.”") },
-          { icon: "💧", x: 75, y: 45, text: b("«Внизу нас чекають квіти».", "“The flowers are waiting below.”") },
+          {
+            icon: "💧",
+            x: 75,
+            y: 45,
+            text: b("«Внизу нас чекають квіти».", "“The flowers are waiting below.”"),
+          },
         ],
       },
       {
@@ -182,9 +301,24 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Напої рослини в саду.", "Water the plants in the garden."),
         spots: [
-          { icon: "🌻", x: 30, y: 50, text: b("Соняшник підняв голівку.", "The sunflower lifted its head.") },
-          { icon: "🌷", x: 60, y: 65, text: b("Тюльпан розкрив пелюстки.", "The tulip opened its petals.") },
-          { icon: "🌱", x: 75, y: 40, text: b("Паросток сказав: «Дякую!»", "The sprout said: “Thank you!”") },
+          {
+            icon: "🌻",
+            x: 30,
+            y: 50,
+            text: b("Соняшник підняв голівку.", "The sunflower lifted its head."),
+          },
+          {
+            icon: "🌷",
+            x: 60,
+            y: 65,
+            text: b("Тюльпан розкрив пелюстки.", "The tulip opened its petals."),
+          },
+          {
+            icon: "🌱",
+            x: 75,
+            y: 40,
+            text: b("Паросток сказав: «Дякую!»", "The sprout said: “Thank you!”"),
+          },
         ],
       },
       {
@@ -196,9 +330,25 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Проведи краплинку річкою.", "Guide the raindrop down the river."),
         spots: [
-          { icon: "🪨", x: 25, y: 70, text: b("Камінчик — Кап обережно оминає його.", "A pebble — Drip flows gently around it.") },
+          {
+            icon: "🪨",
+            x: 25,
+            y: 70,
+            text: b(
+              "Камінчик — Кап обережно оминає його.",
+              "A pebble — Drip flows gently around it.",
+            ),
+          },
           { icon: "🐟", x: 55, y: 60, text: b("Рибка махає хвостиком.", "A fish waves its tail.") },
-          { icon: "☀️", x: 78, y: 20, text: b("Сонечко обіцяє: «Ти повернешся додому».", "The sun promises: “You will return home.”") },
+          {
+            icon: "☀️",
+            x: 78,
+            y: 20,
+            text: b(
+              "Сонечко обіцяє: «Ти повернешся додому».",
+              "The sun promises: “You will return home.”",
+            ),
+          },
         ],
       },
     ],
@@ -228,9 +378,24 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Знайди три дороговкази.", "Find three trail signs."),
         spots: [
-          { icon: "🪧", x: 25, y: 60, text: b("Дороговказ: «До лісу — 100 кроків».", "A sign: “Forest — 100 steps.”") },
-          { icon: "🧭", x: 60, y: 70, text: b("Компас показує на північ.", "The compass points north.") },
-          { icon: "🪶", x: 72, y: 35, text: b("Пір’їнка — тут пролітала сойка.", "A feather — a jay flew by here.") },
+          {
+            icon: "🪧",
+            x: 25,
+            y: 60,
+            text: b("Дороговказ: «До лісу — 100 кроків».", "A sign: “Forest — 100 steps.”"),
+          },
+          {
+            icon: "🧭",
+            x: 60,
+            y: 70,
+            text: b("Компас показує на північ.", "The compass points north."),
+          },
+          {
+            icon: "🪶",
+            x: 72,
+            y: 35,
+            text: b("Пір’їнка — тут пролітала сойка.", "A feather — a jay flew by here."),
+          },
         ],
       },
       {
@@ -242,9 +407,24 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Знайди, хто видає звуки.", "Find who is making the sounds."),
         spots: [
-          { icon: "🐦", x: 30, y: 30, text: b("Синичка співає: «Цінь-цінь».", "A tit sings: “Tsin-tsin.”") },
-          { icon: "🪵", x: 55, y: 65, text: b("Дятел стукає: тук-тук.", "A woodpecker taps: tok-tok.") },
-          { icon: "🍃", x: 75, y: 45, text: b("Листя шепоче на вітрі.", "Leaves whisper in the wind.") },
+          {
+            icon: "🐦",
+            x: 30,
+            y: 30,
+            text: b("Синичка співає: «Цінь-цінь».", "A tit sings: “Tsin-tsin.”"),
+          },
+          {
+            icon: "🪵",
+            x: 55,
+            y: 65,
+            text: b("Дятел стукає: тук-тук.", "A woodpecker taps: tok-tok."),
+          },
+          {
+            icon: "🍃",
+            x: 75,
+            y: 45,
+            text: b("Листя шепоче на вітрі.", "Leaves whisper in the wind."),
+          },
         ],
       },
       {
@@ -256,9 +436,24 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Знайди сліди звірят.", "Find the animal tracks."),
         spots: [
-          { icon: "🐾", x: 30, y: 70, text: b("Лисичка пробігла до нори.", "A fox ran to its den.") },
-          { icon: "🐇", x: 60, y: 60, text: b("Зайчик стрибав між кущами.", "A hare hopped between the bushes.") },
-          { icon: "🦌", x: 75, y: 35, text: b("Олениця пила воду зі струмка.", "A doe drank from the stream.") },
+          {
+            icon: "🐾",
+            x: 30,
+            y: 70,
+            text: b("Лисичка пробігла до нори.", "A fox ran to its den."),
+          },
+          {
+            icon: "🐇",
+            x: 60,
+            y: 60,
+            text: b("Зайчик стрибав між кущами.", "A hare hopped between the bushes."),
+          },
+          {
+            icon: "🦌",
+            x: 75,
+            y: 35,
+            text: b("Олениця пила воду зі струмка.", "A doe drank from the stream."),
+          },
         ],
       },
     ],
@@ -288,9 +483,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Обери, що буде на березі.", "Choose what will be on the shore."),
         spots: [
-          { icon: "🐚", x: 25, y: 70, text: b("Мушля, що шумить морем.", "A shell that hums like the sea.") },
+          {
+            icon: "🐚",
+            x: 25,
+            y: 70,
+            text: b("Мушля, що шумить морем.", "A shell that hums like the sea."),
+          },
           { icon: "🏖️", x: 55, y: 60, text: b("Теплий м’який пісок.", "Warm, soft sand.") },
-          { icon: "🌊", x: 78, y: 45, text: b("Хвилі, що дихають разом із тобою.", "Waves that breathe along with you.") },
+          {
+            icon: "🌊",
+            x: 78,
+            y: 45,
+            text: b("Хвилі, що дихають разом із тобою.", "Waves that breathe along with you."),
+          },
         ],
       },
       {
@@ -302,9 +507,24 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Посади рослини.", "Plant the island garden."),
         spots: [
-          { icon: "🌴", x: 30, y: 40, text: b("Дерево дає прохолодну тінь.", "A tree gives cool shade.") },
-          { icon: "🌻", x: 55, y: 65, text: b("Соняшник повертається до тебе.", "A sunflower turns towards you.") },
-          { icon: "🌸", x: 75, y: 50, text: b("Квіти тихенько пахнуть.", "Flowers smell gently sweet.") },
+          {
+            icon: "🌴",
+            x: 30,
+            y: 40,
+            text: b("Дерево дає прохолодну тінь.", "A tree gives cool shade."),
+          },
+          {
+            icon: "🌻",
+            x: 55,
+            y: 65,
+            text: b("Соняшник повертається до тебе.", "A sunflower turns towards you."),
+          },
+          {
+            icon: "🌸",
+            x: 75,
+            y: 50,
+            text: b("Квіти тихенько пахнуть.", "Flowers smell gently sweet."),
+          },
         ],
       },
       {

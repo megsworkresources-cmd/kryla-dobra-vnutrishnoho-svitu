@@ -105,7 +105,11 @@ export function QuestView({ id }: { id: QuestId }) {
           <>
             <CharacterSay who={lastWho} text={L(quest.closing)} action="settle" />
             <div className="paper-card space-y-4 p-4 text-center">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3" role="group" aria-label={L(quest.closing)}>
+              <div
+                className="grid grid-cols-1 gap-3 sm:grid-cols-3"
+                role="group"
+                aria-label={L(quest.closing)}
+              >
                 {quest.choices.map((c, k) => (
                   <button
                     key={k}
@@ -114,7 +118,9 @@ export function QuestView({ id }: { id: QuestId }) {
                     aria-pressed={choice === k}
                     className={`flex min-h-16 items-center justify-center gap-2 rounded-2xl border-2 px-4 py-3 text-lg font-bold transition focus-visible:ring-4 focus-visible:ring-ring ${choice === k ? "border-primary bg-primary/15" : "border-border bg-card"}`}
                   >
-                    <span aria-hidden className="text-2xl">{c.icon}</span>
+                    <span aria-hidden className="text-2xl">
+                      {c.icon}
+                    </span>
                     {L(c.text)}
                   </button>
                 ))}

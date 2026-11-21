@@ -6,7 +6,7 @@ import { useT } from "@/lib/i18n";
 export function GrownUpLink({
   href,
   children,
-  className = "inline-block py-1 underline",
+  className = "inline-flex min-h-11 items-center py-1 underline underline-offset-2",
 }: {
   href: string;
   children: ReactNode;

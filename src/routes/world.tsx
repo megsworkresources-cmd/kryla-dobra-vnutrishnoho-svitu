@@ -184,8 +184,14 @@ function World() {
           </Link>
         ))}
       </nav>
-      <section aria-labelledby="quests-title" className="relative z-10 mx-auto w-full max-w-3xl px-4 pb-8">
-        <h2 id="quests-title" className="paper-card mx-auto mb-3 w-fit px-4 py-1 font-display text-xl font-bold">
+      <section
+        aria-labelledby="quests-title"
+        className="relative z-10 mx-auto w-full max-w-3xl px-4 pb-8"
+      >
+        <h2
+          id="quests-title"
+          className="paper-card mx-auto mb-3 w-fit px-4 py-1 font-display text-xl font-bold"
+        >
           {t("Нові пригоди")}
         </h2>
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -197,7 +203,12 @@ function World() {
                   to={`/${id}`}
                   className="paper-card group flex h-full flex-col overflow-hidden transition hover:-translate-y-0.5 focus-visible:ring-4 focus-visible:ring-ring"
                 >
-                  <img src={placeImage(q.img)} alt="" loading="lazy" className="aspect-[4/3] w-full object-cover" />
+                  <img
+                    src={placeImage(q.img)}
+                    alt=""
+                    loading="lazy"
+                    className="aspect-[4/3] w-full object-cover"
+                  />
                   <span className="p-3">
                     <span className="block font-extrabold leading-tight">{t(q.title)}</span>
                     <span className="mt-1 block text-sm text-muted-foreground">{t(q.blurb)}</span>

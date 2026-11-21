@@ -7,6 +7,8 @@ import { useStore } from "./store";
  * Ukrainian stays the source language; these are the translations shown in EN mode.
  */
 export const EXTRAS: Record<string, string> = {
+  "Організації, гарячі лінії та поради для українських родин. Актуальні умови уточнюйте в організації.":
+    "Organizations, helplines and guidance for Ukrainian families. Confirm current arrangements with the organization.",
   "Немає інтернету. Турботу збережено на пристрої; поширення недоступне. Після повернення зв’язку натисніть потрібну дію ще раз.":
     "You're offline. Care is saved on this device; sharing is unavailable. When connected again, choose your action again.",
   "Поточний стан поширення не підтверджено.": "The current sharing status is not confirmed.",

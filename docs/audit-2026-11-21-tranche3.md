@@ -14,7 +14,7 @@
 | Quests, games, breathing | chimes/notes | synthesized | present |
 
 Orphaned assets (unreferenced, kept, not deleted): bridge-friends.mp4, kite-breeze.mp4, lantern-friends.mp4, sunflower-field.mp4.
-Missing media: dedicated paints/lullaby/rain/woodland full films are still short clips (credit-blocked). The user's 6.6 s Hailuo "shadow-to-bloom" storyboard is NOT in the repo; not added. No book art/text used.
+Missing media: dedicated paints/lullaby/rain/woodland full films are still short clips (historically credit-blocked). Corrected uploaded inventory: user reports **six MP4s: three Hailuo variants and three watermarked Renderforest variants**. No raw copies available in the upload mount/mirror or archive; duration/content/licensing unverified, none added. The earlier 6.6s single-clip description must not be treated as the full set. No book art/text used.
 
 ## B. Engine defect fixed
 `resumeSpeaking()` after pausing device speech set state to "loading" and never left it when the browser did not fire `onresume` (Safari behaviour), leaving a false Stop control. Now resumes directly to "playing". Regression test in `src/test/phone-repairs.test.tsx`.
@@ -88,3 +88,7 @@ Read-only `supabase.read_query` checks against the attached database:
 - Actual production output and production precache/installed-app offline launch remain unverified. Chromium offline UI tests and the prior generated-worker fixture do not establish production offline launch. Physical iPhone/Android sound, real lock-screen/interruption behavior, sign-up email delivery and recovery remain device/service-dependent acceptance items.
 
 Final rerun after the Refresh safeguard: `bun run lint` exit 0; `bunx vitest run` exit 0, 55 files / 281 tests (start 20:40:47 UTC); `PYTHONDONTWRITEBYTECODE=1 python3 scripts/verify-media-garden.py` exit 0, same 12 focused scenarios, zero page errors. Managed log at that check: **2026-11-21T20:40:14Z: build OK**, with no separate typecheck record. Subsequent harness changes only prevent bytecode artifacts and capture safe media-state diagnostics on a failed playback check.
+
+Queued-work resolution: `get_tasks {}` reports **no unfinished tasks**, and saved verification commit **47dc424** exists after 8227ec9. No hanging worker to resume/cancel and no paid operation/credit failure this turn. Completed accessible bilingual resource and asset review; report `resources-assets-review-2026-11-21.md`. Six reported MP4 bytes absent; no watermark-removal or unlicensed integration. Managed-check command/output limitations above still apply; current managed build status is checked after edits, never substituted for a standalone typecheck.
+
+Final queued-pass checks (20:50 UTC): lint exit 0; full vitest exit 0, **56 files / 296 tests**; focused media/garden acceptance exit 0, 12 scenarios/no page errors; resource browser check exit 0, six UK/EN viewport scenarios. Managed log **2026-11-21T20:50:01Z: build OK**; exact managed command/typecheck result still unavailable. Existing privacy and caregiver logic preserved; no Cloud writes or deployment.

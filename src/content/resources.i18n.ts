@@ -5,7 +5,7 @@
  * values stay `undefined` and render as "Не підтверджено / Not confirmed".
  */
 export type Bi = { uk: string; en: string };
-export const VERIFIED_ON = "2026-11-20";
+export const VERIFIED_ON = "2026-11-21";
 
 export const CATEGORIES = {
   kids: { uk: "Ментальне здоров’я дітей", en: "Children’s mental health" },
@@ -244,8 +244,8 @@ export const RESOURCES: Resource[] = [
     name: b("UA Mental Help", "UA Mental Help"),
     url: "https://www.uamentalhelp.org/en",
     desc: b(
-      "Фонд ментального здоров’я: консультації психологів і психіатрів, кризова підтримка, групи, програми для дітей і молоді, онлайн-чат.",
-      "Mental health foundation: psychological and psychiatric consultations, crisis support, groups, programmes for children and youth, online chat.",
+      "Фонд ментального здоров’я: психологічні консультації, гаряча лінія, онлайн-чат і матеріали для самодопомоги. Умови конкретних програм уточнюйте на сайті.",
+      "Mental health foundation: psychological consultations, a hotline, online chat and self-help materials. Check eligibility for individual programmes on the site.",
     ),
     cats: ["kids", "teens", "crisis", "parenting"],
     ages: ["a7", "a13", "a18", "parents"],
@@ -291,7 +291,7 @@ export const RESOURCES: Resource[] = [
     regions: ["online"],
     services: ["learn", "online"],
     langs: ["uk", "en"],
-    check: "blocked",
+    check: "ok",
     kind: "info",
   },
   {
@@ -510,7 +510,7 @@ export const RESOURCES: Resource[] = [
     regions: ["ua", "online"],
     services: ["online", "learn"],
     langs: ["uk"],
-    check: "ok",
+    check: "blocked",
     kind: "government",
   },
   {
@@ -772,7 +772,7 @@ export const RESOURCES: Resource[] = [
   },
   {
     id: "angels",
-    name: b("Янголи поруч", "Angels Care"),
+    name: b("Опіка Ангела", "Angels Care"),
     url: "https://angelscare.org.ua/",
     desc: b(
       "Підтримка батьків після втрати вагітності або дитини. Наявність послуг уточнюйте на сайті.",
@@ -878,8 +878,8 @@ export const LIBRARY: { title: Bi; tips: Bi[] }[] = [
         "Predictable routines and warnings about changes help children tolerate uncertainty.",
       ),
       b(
-        "Підтримуйте маленькі сміливі кроки замість повного уникання страшного.",
-        "Encourage small brave steps rather than avoiding the feared thing completely.",
+        "Підтримуйте маленькі кроки, до яких дитина готова, без примусу. Якщо тривога заважає повсякденному життю, зверніться до фахівця.",
+        "Support small steps your child feels ready for, without pressure. If anxiety disrupts everyday life, consult a professional.",
       ),
     ],
   },
@@ -979,8 +979,8 @@ export const UI = {
   ),
   helpNow: b("Потрібна допомога зараз?", "Need help right now?"),
   helpNote: b(
-    "Усі номери нижче працюють лише в Україні. За кордоном телефонуйте до місцевих екстрених служб і служб захисту дітей. У разі безпосередньої небезпеки — одразу до екстрених служб, а не до довідника.",
-    "All numbers below work only within Ukraine. Abroad, call your local emergency and child protection services. In immediate danger, call emergency services right away rather than relying on a directory.",
+    "112 — номер екстреної допомоги в Україні та країнах ЄС. Інші номери нижче призначені для України; доступність із-за кордону не підтверджено. В інших країнах звертайтеся до місцевих екстрених служб. У разі безпосередньої небезпеки — одразу до екстрених служб, а не до довідника.",
+    "112 is the emergency number in Ukraine and EU countries. The other numbers below are intended for Ukraine; access from abroad is not confirmed. Elsewhere, contact local emergency services. In immediate danger, call emergency services right away rather than relying on a directory.",
   ),
   findSupport: b("Знайти підтримку", "Find support"),
   search: b("Пошук: організація, тема, ключове слово", "Search: organisation, topic, keyword"),

@@ -23,7 +23,7 @@ export const Route = createFileRoute("/resources")({
   head: () =>
     pageHead(
       "Ресурси для батьків",
-      "Перевірений довідник організацій, гарячих ліній і порад для українських родин.",
+      "Організації, гарячі лінії та поради для українських родин. Актуальні умови уточнюйте в організації.",
     ),
   component: Resources,
 });
@@ -68,8 +68,12 @@ function Card({ r, L }: { r: Resource; L: (b: Bi) => string }) {
           {initials}
         </div>
         <div className="min-w-0">
-          <h3 className="font-display text-lg font-bold leading-tight">{r.name.uk}</h3>
-          {r.name.en !== r.name.uk && <p className="text-sm text-muted-foreground">{r.name.en}</p>}
+          <h3 className="font-display text-lg font-bold leading-tight">{L(r.name)}</h3>
+          {r.name.en !== r.name.uk && (
+            <p className="text-sm text-muted-foreground">
+              {L(r.name) === r.name.uk ? r.name.en : r.name.uk}
+            </p>
+          )}
           <p className="mt-1 inline-block rounded-full bg-accent/40 px-2 text-xs">
             {L(UI.kind[r.kind])}
           </p>

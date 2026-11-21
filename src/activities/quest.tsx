@@ -66,7 +66,6 @@ export function QuestView({ id }: { id: QuestId }) {
 
         {chapter ? (
           <>
-            <CharacterSay who={chapter.who} text={said ? L(said) : L(chapter.text)} action="look" />
             <div
               key={step}
               className="relative mx-auto aspect-[4/3] w-full max-w-xl animate-fade-in overflow-hidden rounded-3xl shadow-soft"
@@ -91,6 +90,12 @@ export function QuestView({ id }: { id: QuestId }) {
                 );
               })}
             </div>
+            <CharacterSay
+              who={chapter.who}
+              text={said ? L(said) : L(chapter.text)}
+              action="look"
+              size="sm"
+            />
             <div className="paper-card space-y-3 p-4 text-center">
               <p className="font-semibold">{L(chapter.task)}</p>
               <p className="text-sm text-muted-foreground" aria-live="polite">

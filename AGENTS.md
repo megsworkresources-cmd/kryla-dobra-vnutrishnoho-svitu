@@ -45,3 +45,5 @@
 - Share Workbox options with the standalone browser acceptance fixture, so caching tests exercise the production policy without registering workers in preview.
 - Drive all breathing-scene motion from one pauseable clock and suppress visual frames for saved or system reduced motion; independent decorative loops must not outlive Pause.
 - Story adventures share one QuestView module with bilingual content in src/content/quests.i18n.ts; each adventure is a thin route.
+- Recorded videos share browser-only focus ownership and honor saved/system reduced motion; late playback and background events cannot restart exited footage.
+- Shared-garden mutations use networkMode always with an offline guard and no retry, never Query's deferred mutation queue; offline status cannot imply confirmed sharing.

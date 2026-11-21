@@ -167,9 +167,9 @@ function Watch() {
               <li key={c.id}>
                 <button
                   onClick={() => setClip(c)}
-                  className="paper-card group w-full overflow-hidden p-0 text-left transition active:scale-95"
+                  className="paper-card group flex h-full w-full flex-col overflow-hidden rounded-lg p-0 text-left transition active:scale-95"
                 >
-                  <div className="relative aspect-video overflow-hidden">
+                  <div className="relative aspect-video w-full shrink-0 overflow-hidden">
                     <img
                       src={c.shots[0]?.img}
                       alt=""
@@ -178,7 +178,7 @@ function Watch() {
                     />
                     <span className="absolute inset-0 flex items-center justify-center">
                       <span className="flex h-12 w-12 items-center justify-center rounded-full bg-card/90 shadow-soft">
-                        <Play className="h-6 w-6" />
+                        <Play className="h-6 w-6" aria-hidden />
                       </span>
                     </span>
                     <span className="absolute left-2 top-2 text-2xl" aria-hidden>

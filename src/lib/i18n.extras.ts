@@ -7,6 +7,11 @@ import { useStore } from "./store";
  * Ukrainian stays the source language; these are the translations shown in EN mode.
  */
 export const EXTRAS: Record<string, string> = {
+  "Немає інтернету. Турботу збережено на пристрої; поширення недоступне. Після повернення зв’язку натисніть потрібну дію ще раз.":
+    "You're offline. Care is saved on this device; sharing is unavailable. When connected again, choose your action again.",
+  "Поточний стан поширення не підтверджено.": "The current sharing status is not confirmed.",
+  "Твій сад збережено на цьому пристрої. Інтернет для нього не потрібен.":
+    "Your garden is saved on this device. It doesn't need the internet.",
   "Кольорові сни": "Colourful Dreams",
   "Світ маленьких див": "World of Tiny Wonders",
   "Пригоди дощової краплинки": "The Raindrop's Adventure",

@@ -1,5 +1,7 @@
 # Completion roadmap
 
+- [x] Current homepage request: reserved illustration space on short phones and reduced narrow-screen title wrapping; eight UA/EN browser scenarios passed at 320×568, 375×667, 393×852 and desktop, with controls clear of fixed navigation. Full lint and 258 tests passed; generated-worker fixture has five verified precache assets and passes offline/fallback/eight sensitive-route exclusions. No deployment. Standalone production verification remains blocked: this workflow permits automatic app builds only, local dist/client and .output/public are absent, and hosted preview /sw.js returns HTTP 401. Details: docs/verification-2026-11-21-home.md.
+
 - [ ] Acceptance continuation: rerun full lint/tests and available automatic build checks; exercise real game/maze/drawing controls at phone widths; add a generated-Workbox local service-worker harness using the app's exact caching policy. Distinguish fixture checks from unavailable production-artifact and physical-device checks; do not deploy.
 
 - [x] Repair reported PWA build failure: worker destination, precache scan and verification now share Lovable's resolved deployed client output (dist/client), not .output/public. Six PWA regression tests pass; lint clean; automatic build/typecheck OK at 17:40:20 UTC. No deployment; physical offline acceptance remains open.

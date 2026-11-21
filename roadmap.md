@@ -72,3 +72,6 @@
 - [x] Richer drawing pages, thought-feeling-action game and stories
 
 - [ ] After the paints, lullaby, rain and woodland bridge films are in Watch, add a World map bubble for each linking to its film. Blocked: films not generated (workspace out of credits).
+
+- [x] Five original adventures (Кольорові сни, Світ маленьких див, Пригоди дощової краплинки, Дослідники стежинок, Мій острівець спокою): three illustrated chapters each with discoveries, character narration, gentle closing choice and replay; on the World page and in Back/Next. Raindrop journey played end-to-end at 393px with no page errors; 272 tests. No deployment.
+- [ ] Wider polish program (every-screen audit, new films, real-device audio, production offline check): continuing; films blocked by credits, physical devices unavailable.

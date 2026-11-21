@@ -60,6 +60,7 @@ describe("Claude story companion", () => {
     expect(neighbours("/bedtime").next?.to).toBe("/stroll");
     expect(neighbours("/stroll").next?.to).toBe("/puddles");
     expect(neighbours("/puddles").next?.to).toBe("/maze");
-    expect(neighbours("/together").next?.to).toBe("/garden");
+    expect(neighbours("/together").next?.to).toBe("/dreams");
+    expect(neighbours("/island").next?.to).toBe("/garden");
   });
 });

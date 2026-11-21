@@ -7,6 +7,21 @@ import { useStore } from "./store";
  * Ukrainian stays the source language; these are the translations shown in EN mode.
  */
 export const EXTRAS: Record<string, string> = {
+  "Кольорові сни": "Colourful Dreams",
+  "Світ маленьких див": "World of Tiny Wonders",
+  "Пригоди дощової краплинки": "The Raindrop's Adventure",
+  "Дослідники стежинок": "Trail Explorers",
+  "Мій острівець спокою": "My Island of Calm",
+  "Розфарбуй нічне небо добрими снами.": "Paint the night sky with kind dreams.",
+  "Подивись крізь чарівну лупу на крихітних сусідів.": "Look through a magic magnifier at tiny neighbours.",
+  "Мандруй із краплинкою від хмаринки до річки.": "Travel with a raindrop from a cloud to the river.",
+  "Йди стежкою, шукай сліди й слухай ліс.": "Walk the trail, find tracks and listen to the forest.",
+  "Збудуй свій тихий острівець — для тебе одного.": "Build your own quiet island — just for you.",
+  "Розділи пригоди": "Adventure chapters",
+  "Розділ {i} з {n}": "Chapter {i} of {n}",
+  "До кінця пригоди": "To the end of the adventure",
+  "Чудово. Цей спокій тепер із тобою.": "Lovely. This calm is with you now.",
+  "Нові пригоди": "New adventures",
   "Торкайся, коли помітиш — можна в будь-якому порядку.":
     "Tap each one as you notice it — any order is fine.",
   "Позначено {i} з {n}": "Marked {i} of {n}",

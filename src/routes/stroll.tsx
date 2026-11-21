@@ -10,7 +10,11 @@ import { markDone } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/stroll")({
-  head: () => pageHead("Повільна прогулянка", "Знаходь маленькі дива на лузі й помічай звуки, запахи й дотики."),
+  head: () =>
+    pageHead(
+      "Повільна прогулянка",
+      "Знаходь маленькі дива на лузі й помічай звуки, запахи й дотики.",
+    ),
   component: Stroll,
 });
 
@@ -36,7 +40,11 @@ function Stroll() {
   return (
     <Scene title="Повільна прогулянка" back="/world" compact>
       <div className="space-y-4">
-        <CharacterSay who="marko" text={spot ? L(spot.text) : all ? L(STROLL.reflect) : L(STROLL.intro)} action="look" />
+        <CharacterSay
+          who="marko"
+          text={spot ? L(spot.text) : all ? L(STROLL.reflect) : L(STROLL.intro)}
+          action="look"
+        />
         <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft">
           <img src={placeImage("meadow")} alt="" className="h-full w-full object-cover" />
           {STROLL.spots.map((s, k) => (
@@ -49,7 +57,9 @@ function Stroll() {
               style={{ left: `${s.x}%`, top: `${s.y}%` }}
               className={`absolute flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-card text-2xl transition ${found.includes(k) ? "bg-card" : "bg-card/50"}`}
             >
-              <span aria-hidden className={found.includes(k) ? "" : "animate-float"}>{found.includes(k) ? s.icon : "✨"}</span>
+              <span aria-hidden className={found.includes(k) ? "" : "animate-float"}>
+                {found.includes(k) ? s.icon : "✨"}
+              </span>
             </button>
           ))}
         </div>
@@ -58,7 +68,17 @@ function Stroll() {
         </p>
         <div className="paper-card space-y-2 p-4">
           <p>{L(STROLL.move)}</p>
-          {all && <Btn variant="soft" onClick={() => { setFound([]); setOpen(null); }}>{t("Ще раз")}</Btn>}
+          {all && (
+            <Btn
+              variant="soft"
+              onClick={() => {
+                setFound([]);
+                setOpen(null);
+              }}
+            >
+              {t("Ще раз")}
+            </Btn>
+          )}
         </div>
       </div>
     </Scene>

@@ -29,6 +29,7 @@ function handleAudioStateChange(changedContext: AudioContext) {
     audioGeneration += 1;
     ambientGeneration += 1;
     stopAmbient();
+    stopSoundscape();
     try {
       master?.disconnect();
     } catch {
@@ -118,6 +119,7 @@ export function destroyAudio() {
   audioGeneration += 1;
   ambientGeneration += 1;
   stopAmbient();
+  stopSoundscape();
   if (master) {
     try {
       master.disconnect();
@@ -516,13 +518,14 @@ export function stopAmbient() {
   setMusicStatus("idle");
   if (!current) return;
   const c = ctx;
+  // Cancel recordings and pending decode callbacks synchronously. A delayed stop can
+  // otherwise start a recording after its owner exited, or overlap the next page.
   if (!c || c.state === "closed") {
     current.stop();
     return;
   }
-  // Short fade-out so leaving a page never ends a track with a click.
-  current.bus.gain.setTargetAtTime(0, c.currentTime, 0.08);
-  window.setTimeout(() => current.stop(), 320);
+  // No pending source may outlive its owning page.
+  current.stop();
 }
 
 /* ---------- Nature sounds chosen by the child ---------- */
@@ -629,9 +632,8 @@ export function stopSoundscape() {
     current.stop();
     return;
   }
-  // The nature sound fades out instead of cutting off mid-noise.
-  current.bus.gain.setTargetAtTime(0, c.currentTime, 0.08);
-  window.setTimeout(() => current.stop(), 320);
+  // Selection changes and exits stop before another source can start.
+  current.stop();
 }
 
 export function ambientFor(pathname: string): Ambient | null {

@@ -9,6 +9,8 @@ import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { assertNoServiceRoleClientImports } from "./scripts/no-service-role-client-guard.mjs";
+import { finalizePwa } from "./scripts/pwa-build";
+import { canCacheNavigation } from "./src/lib/pwa-policy";
 
 // The framework's dev asset proxy serves recorded films and images from Lovable,
 // but it reads LOVABLE_PREVIEW_HOST from process.env. Vite only exposes VITE_*
@@ -42,22 +44,32 @@ export default defineConfig({
         // TanStack Start emits the deployable client bundle to .output/public.
         // Keeping Workbox on dist/client creates an empty, unused service worker.
         outDir: ".output/public",
+        integration: {
+          configureOptions(config, options) {
+            // Scan the directory that actually exists at the client closeBundle stage.
+            const clientOutput =
+              config.environments?.["client"]?.build.outDir ?? config.build.outDir;
+            options.workbox = { ...options.workbox, globDirectory: clientOutput };
+          },
+        },
         workbox: {
-          globPatterns: ["**/*.{js,css,png,jpg,jpeg,webp,svg,woff2}"],
+          globPatterns: [
+            "**/*.{js,css,png,jpg,jpeg,webp,svg,woff2,mp3}",
+            "offline.html",
+            "manifest.webmanifest",
+          ],
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
           navigateFallback: null,
           cleanupOutdatedCaches: true,
           runtimeCaching: [
             {
-              urlPattern: ({ request, url }) =>
-                request.mode === "navigate" &&
-                !url.pathname.startsWith("/~oauth") &&
-                !url.pathname.startsWith("/api/"),
+              urlPattern: canCacheNavigation,
               handler: "NetworkFirst",
               options: {
                 cacheName: "pages",
                 networkTimeoutSeconds: 4,
                 expiration: { maxEntries: 60 },
+                precacheFallback: { fallbackURL: "/offline.html" },
               },
             },
             {
@@ -65,6 +77,7 @@ export default defineConfig({
                 sameOrigin &&
                 (url.pathname.startsWith("/__l5e/assets-v1/") ||
                   url.pathname.startsWith("/assets/") ||
+                  url.pathname.startsWith("/audio/") ||
                   url.pathname.startsWith("/media/")),
               handler: "CacheFirst",
               options: {
@@ -77,6 +90,7 @@ export default defineConfig({
           ],
         },
       }),
+      finalizePwa(),
     ],
   },
   tanstackStart: {

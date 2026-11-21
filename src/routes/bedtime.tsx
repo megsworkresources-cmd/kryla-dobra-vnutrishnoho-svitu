@@ -20,13 +20,13 @@ function Bedtime() {
   const L = (x: Bi) => (lang === "en" ? x.en : x.uk);
   const [i, setI] = useState(0);
   const last = BEDTIME.beats.length - 1;
-  const beat = BEDTIME.beats[Math.min(i, last)]!;
+  const beat = BEDTIME.beats[Math.min(i, last)];
   const end = i > last;
   return (
     <Scene image={placeImage("sky")} night title="Казка на ніч" back="/world" compact>
       <div className="space-y-5 pt-[7vh] sm:pt-[14vh]">
         <h2 className="night-card p-4 font-display text-2xl font-bold">{L(BEDTIME.title)}</h2>
-        {!end ? (
+        {!end && beat ? (
           <>
             <CharacterSay who={beat.who} text={L(beat.text)} night action="settle" />
             <p className="text-center text-sm" aria-live="polite">

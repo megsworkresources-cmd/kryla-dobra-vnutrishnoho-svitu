@@ -24,16 +24,26 @@ function Together() {
   const draw = () => {
     chime(520);
     setI((x) => x + 1);
-    setCount((n) => { if (n + 1 === 3) markDone("together"); return n + 1; });
+    setCount((n) => {
+      if (n + 1 === 3) markDone("together");
+      return n + 1;
+    });
   };
   return (
     <Scene title="Разом" back="/world" compact>
       <div className="space-y-4">
         <CharacterSay who="daryna" text={L(TOGETHER.intro)} />
-        <div aria-live="polite" className="paper-card mx-auto flex min-h-40 max-w-md items-center justify-center p-6 text-center font-display text-xl">
+        <div
+          aria-live="polite"
+          className="paper-card mx-auto flex min-h-40 max-w-md items-center justify-center p-6 text-center font-display text-xl"
+        >
           {card ? L(card) : "🃏"}
         </div>
-        <div className="flex justify-center"><Btn variant="honey" onClick={draw}>{card ? t("Наступна картка") : t("Витягнути картку")}</Btn></div>
+        <div className="flex justify-center">
+          <Btn variant="honey" onClick={draw}>
+            {card ? t("Наступна картка") : t("Витягнути картку")}
+          </Btn>
+        </div>
         <p className="text-center text-sm">{t("Карток зіграно: {n}", { n: count })}</p>
         <p className="paper-card p-4 text-sm">{L(TOGETHER.adult)}</p>
       </div>

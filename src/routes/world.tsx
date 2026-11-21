@@ -9,6 +9,7 @@ import { LangToggle } from "@/components/LangToggle";
 import { t, useT } from "@/lib/i18n";
 import { useWebMCP } from "use-webmcp-tool";
 import { runWebMCPTool } from "@/lib/webmcp-telemetry";
+import { itemAtOr } from "@/content/list";
 
 export const Route = createFileRoute("/world")({
   head: () => ({
@@ -133,38 +134,52 @@ function World() {
       </header>
 
       <nav aria-label={t("Місця світу")} className="relative z-10 min-h-[92rem] flex-1">
-        {PLACES.map((p, idx) => { const i = PLACE_SLOTS[idx] ?? idx; return (
-          <Link
-            key={p.id}
-            to={p.to}
-            className="group absolute flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center justify-center animate-fade-up"
-            style={{
-              left: `${SPOTS[i % SPOTS.length]![0]}%`,
-              top: `${SPOTS[i % SPOTS.length]![1]}%`,
-              animationDelay: `${i * 80}ms`,
-            }}
-          >
-            <span className="flex flex-col items-center">
-              <span className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-24 sm:w-24">
-                <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />
+        {PLACES.map((p, idx) => {
+          const i = PLACE_SLOTS[idx] ?? idx;
+          const spot = itemAtOr(SPOTS, i, [28, 2]);
+          return (
+            <Link
+              key={p.id}
+              to={p.to}
+              className="group absolute flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center justify-center animate-fade-up"
+              style={{
+                left: `${spot[0]}%`,
+                top: `${spot[1]}%`,
+                animationDelay: `${i * 80}ms`,
+              }}
+            >
+              <span className="flex flex-col items-center">
+                <span className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-24 sm:w-24">
+                  <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />
+                </span>
+                <span className="paper-card mt-1 whitespace-nowrap px-3 py-1 text-xs font-extrabold">
+                  {t(p.name)}
+                </span>
               </span>
-              <span className="paper-card mt-1 whitespace-nowrap px-3 py-1 text-xs font-extrabold">
-                {t(p.name)}
-              </span>
-            </span>
-          </Link>
-        ); })}
+            </Link>
+          );
+        })}
         {EXTRAS.map((e) => (
           <Link
             key={e.to}
             to={e.to}
             className="group absolute flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center animate-fade-up"
-            style={{ left: `${SPOTS[e.pos]![0]}%`, top: `${SPOTS[e.pos]![1]}%` }}
+            style={{
+              left: `${itemAtOr(SPOTS, e.pos, [28, 2])[0]}%`,
+              top: `${itemAtOr(SPOTS, e.pos, [28, 2])[1]}%`,
+            }}
           >
             <span className="relative h-14 w-14 overflow-hidden rounded-full border-4 border-honey shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-16 sm:w-16">
-              <img src={placeImage(e.img)} alt="" className="h-full w-full object-cover" loading="lazy" />
+              <img
+                src={placeImage(e.img)}
+                alt=""
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
             </span>
-            <span className="paper-card mt-1 whitespace-nowrap px-2 py-0.5 text-[11px] font-extrabold">{t(e.label)}</span>
+            <span className="paper-card mt-1 whitespace-nowrap px-2 py-0.5 text-[11px] font-extrabold">
+              {t(e.label)}
+            </span>
           </Link>
         ))}
       </nav>

@@ -10,7 +10,8 @@ import { markDone } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/puddles")({
-  head: () => pageHead("Калюжки", "Торкайся калюжок і складай тиху дощову пісню. Є варіанти без екрана."),
+  head: () =>
+    pageHead("Калюжки", "Торкайся калюжок і складай тиху дощову пісню. Є варіанти без екрана."),
   component: Puddles,
 });
 
@@ -36,23 +37,45 @@ function Puddles() {
     const ring = { id: ++id.current, x, y };
     setRings((rs) => [...rs.slice(-8), ring]);
     // Rings leave by timer, so reduced motion never blocks the game.
-    timers.current.push(window.setTimeout(() => setRings((rs) => rs.filter((q) => q.id !== ring.id)), 1200));
-    setDrops((d) => { if (d + 1 === GOAL) markDone("puddles"); return d + 1; });
+    timers.current.push(
+      window.setTimeout(() => setRings((rs) => rs.filter((q) => q.id !== ring.id)), 1200),
+    );
+    setDrops((d) => {
+      if (d + 1 === GOAL) markDone("puddles");
+      return d + 1;
+    });
   };
 
   return (
     <Scene title="Калюжки" back="/world" compact>
       <div className="space-y-4">
-        <CharacterSay who="olenka" text={done ? L(PUDDLES.done) : L(PUDDLES.intro)} mood={done ? "cheer" : "talk"} />
+        <CharacterSay
+          who="olenka"
+          text={done ? L(PUDDLES.done) : L(PUDDLES.intro)}
+          mood={done ? "cheer" : "talk"}
+        />
         <div
           role="button"
           tabIndex={0}
           aria-label={t("Калюжка: торкнися, щоб упала крапля")}
           onPointerDown={drop}
-          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); chime(440); setDrops((d) => { if (d + 1 === GOAL) markDone("puddles"); return d + 1; }); } }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              chime(440);
+              setDrops((d) => {
+                if (d + 1 === GOAL) markDone("puddles");
+                return d + 1;
+              });
+            }
+          }}
           className="relative mx-auto aspect-[4/3] w-full max-w-xl cursor-pointer touch-none overflow-hidden rounded-[45%_55%_50%_50%] shadow-soft focus-visible:ring-4 focus-visible:ring-ring"
         >
-          <img src={placeImage("clouds")} alt="" className="h-full w-full scale-y-[-1] object-cover opacity-80" />
+          <img
+            src={placeImage("clouds")}
+            alt=""
+            className="h-full w-full scale-y-[-1] object-cover opacity-80"
+          />
           {rings.map((r) => (
             <span
               key={r.id}
@@ -65,7 +88,13 @@ function Puddles() {
         <p className="text-center text-sm" aria-live="polite">
           {t("Крапель: {n} із {m}", { n: Math.min(drops, GOAL), m: GOAL })}
         </p>
-        {done && <div className="flex justify-center"><Btn variant="soft" onClick={() => setDrops(0)}>{t("Ще раз")}</Btn></div>}
+        {done && (
+          <div className="flex justify-center">
+            <Btn variant="soft" onClick={() => setDrops(0)}>
+              {t("Ще раз")}
+            </Btn>
+          </div>
+        )}
         <section className="paper-card space-y-2 p-4">
           <h2 className="font-display text-lg font-bold">{t("Без екрана")}</h2>
           <p>{L(PUDDLES.away)}</p>

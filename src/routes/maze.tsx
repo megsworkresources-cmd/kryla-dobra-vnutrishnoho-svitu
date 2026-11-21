@@ -8,6 +8,7 @@ import type { Bi } from "@/content/adventures.i18n";
 import { chime } from "@/lib/audio";
 import { markDone, pick, useStore } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
+import { mazeStep as step, type MazePosition as P } from "@/content/play";
 
 export const Route = createFileRoute("/maze")({
   head: () =>
@@ -15,17 +16,10 @@ export const Route = createFileRoute("/maze")({
   component: Maze,
 });
 
-type P = [number, number];
 const find = (g: string[], ch: string): P => {
   const r = g.findIndex((row) => row.includes(ch));
   return [Math.max(0, r), Math.max(0, (g[r] ?? "").indexOf(ch))];
 };
-
-/** Pure move rule: walls and edges block, everything else is walkable. */
-export function step(g: string[], [r, c]: P, dr: number, dc: number): P | null {
-  const cell = g[r + dr]?.[c + dc];
-  return cell === undefined || cell === "#" ? null : [r + dr, c + dc];
-}
 
 function Maze() {
   const t = useT();

@@ -8,33 +8,40 @@ import { getState, useStore, type Lang } from "./store";
  */
 const EN: Record<string, string> = {
   "Казка на ніч": "Bedtime story",
-  "Затишна історія про спокійну ніч, вечірній ритуал і сміливість.": "A cosy story about a calm night, evening rituals and courage.",
+  "Затишна історія про спокійну ніч, вечірній ритуал і сміливість.":
+    "A cosy story about a calm night, evening rituals and courage.",
   "Поговорімо разом": "Let’s talk together",
   "Повільна прогулянка": "The slow walk",
-  "Знаходь маленькі дива на лузі й помічай звуки, запахи й дотики.": "Find small wonders in the meadow and notice sounds, smells and textures.",
+  "Знаходь маленькі дива на лузі й помічай звуки, запахи й дотики.":
+    "Find small wonders in the meadow and notice sounds, smells and textures.",
   "Маленьке диво {n}": "Small wonder {n}",
   "Знайдено див: {n} із {m}": "Wonders found: {n} of {m}",
-  "Калюжки": "Puddles",
+  Калюжки: "Puddles",
   "Зберегти в галерею": "Save to gallery",
   "Стежка Ліхтарика": "Lantern’s Path",
-  "Проведи Їжачка Ліхтарика лабіринтом до теплої хатинки.": "Guide Lantern the Hedgehog through the maze to the warm cottage.",
-  "Лабіринт": "Maze",
+  "Проведи Їжачка Ліхтарика лабіринтом до теплої хатинки.":
+    "Guide Lantern the Hedgehog through the maze to the warm cottage.",
+  Лабіринт: "Maze",
   "Ліхтарик тут": "Lantern is here",
-  "Хатинка": "Cottage",
-  "Кущик": "Bush",
-  "Стежка": "Path",
+  Хатинка: "Cottage",
+  Кущик: "Bush",
+  Стежка: "Path",
   "Уважний луг": "The Noticing Meadow",
-  "Розглянь луг і порахуй метеликів, сонечок і соняшники.": "Look at the meadow and count butterflies, ladybirds and sunflowers.",
+  "Розглянь луг і порахуй метеликів, сонечок і соняшники.":
+    "Look at the meadow and count butterflies, ladybirds and sunflowers.",
   "Раунд {n} із {m}": "Round {n} of {m}",
-  "Намалюй, що допомагає тобі почуватися безпечно й затишно.": "Draw what helps you feel safe and cosy.",
+  "Намалюй, що допомагає тобі почуватися безпечно й затишно.":
+    "Draw what helps you feel safe and cosy.",
   "Полотно для малювання": "Drawing canvas",
   "Колір {n}": "Colour {n}",
-  "Разом": "Together",
-  "Гра для дитини й дорослого: картки на увагу, слухання й тепло.": "A child-and-grown-up game: cards for attention, listening and warmth.",
+  Разом: "Together",
+  "Гра для дитини й дорослого: картки на увагу, слухання й тепло.":
+    "A child-and-grown-up game: cards for attention, listening and warmth.",
   "Наступна картка": "Next card",
   "Витягнути картку": "Draw a card",
   "Карток зіграно: {n}": "Cards played: {n}",
-  "Торкайся калюжок і складай тиху дощову пісню. Є варіанти без екрана.": "Tap the puddles to make a quiet rain song. Off-screen options included.",
+  "Торкайся калюжок і складай тиху дощову пісню. Є варіанти без екрана.":
+    "Tap the puddles to make a quiet rain song. Off-screen options included.",
   "Калюжка: торкнися, щоб упала крапля": "Puddle: tap to drop a raindrop",
   "Крапель: {n} із {m}": "Drops: {n} of {m}",
   "Без екрана": "Off-screen",

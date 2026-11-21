@@ -2,6 +2,7 @@ import { CHARACTERS, type CharId } from "@/content/characters";
 import { PLACES } from "@/content/places";
 import { tr } from "@/lib/i18n";
 import type { Lang } from "@/lib/store";
+import { itemAtOr } from "./list";
 
 export type BuiltFeeling = "calm" | "sad" | "worried" | "angry" | "proud" | "curious";
 
@@ -51,24 +52,26 @@ export function composedStory(input: {
   /** Which variation to tell; any integer works. */
   variant?: number;
 }) {
-  const v = Math.abs(Math.trunc(input.variant ?? 0)) % OPENINGS.length;
+  const v = Number.isFinite(input.variant) ? Math.abs(Math.trunc(input.variant ?? 0)) : 0;
   const name = tr(CHARACTERS[input.who].name, input.lang);
   const placeName = tr(
     PLACES.find((p) => p.id === input.place)?.name ?? "Чарівне місце",
     input.lang,
   );
   const scenes = [
-    OPENINGS[v]!,
+    itemAtOr(OPENINGS, v, FALLBACK_PLACE),
     PLACE_LINES[input.place] ?? FALLBACK_PLACE,
     FEELING_LINES[input.feeling],
-    ENDINGS[v]!,
+    itemAtOr(ENDINGS, v, FALLBACK_PLACE),
   ].map((line) =>
     tr(line, input.lang, { who: name, place: placeName })
       .replaceAll("{who}", name)
       .replaceAll("{place}", placeName),
   );
   return {
-    title: tr(TITLES[v]!, input.lang, { place: placeName }).replaceAll("{place}", placeName),
+    title: tr(itemAtOr(TITLES, v, "Казка про {place}, де було тепло"), input.lang, {
+      place: placeName,
+    }).replaceAll("{place}", placeName),
     scenes: scenes.map((text) => ({ text })),
     closing: tr(
       "Ця казка не мусить закінчуватися правильно. Достатньо, що {who} був тут.",

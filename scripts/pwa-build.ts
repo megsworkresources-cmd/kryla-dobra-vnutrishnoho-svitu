@@ -1,6 +1,14 @@
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import type { Plugin } from "vite";
+
+/** Lovable deploys the resolved client directory (currently dist/client), not .output/public. */
+export function clientOutputDirectory(config: {
+  build: { outDir: string };
+  environments?: Record<string, { build?: { outDir?: string } }>;
+}) {
+  return config.environments?.["client"]?.build?.outDir ?? config.build.outDir;
+}
 
 export function inspectPrecache(source: string) {
   const manifest = source.match(/precacheAndRoute\((\[[\s\S]*?\])/);
@@ -14,7 +22,14 @@ export function inspectPrecache(source: string) {
   return urls;
 }
 
-/** Nitro copies client assets after the client closeBundle hook; verify the final shipped worker. */
+export async function verifyPwaOutput(output: string) {
+  const source = await readFile(join(output, "sw.js"), "utf8");
+  const urls = inspectPrecache(source);
+  await Promise.all(urls.map((url) => readFile(join(output, url))));
+  return urls.length;
+}
+
+/** Generate and verify beside the same resolved client files the host actually deploys. */
 export function finalizePwa(): Plugin {
   return {
     name: "verify-final-pwa-output",
@@ -28,12 +43,10 @@ export function finalizePwa(): Plugin {
         const api = plugin?.api as { generateSW?: () => Promise<unknown> } | undefined;
         if (!api?.generateSW) throw new Error("PWA generation API is unavailable");
         await api.generateSW();
-        const output = join(builder.config.root, ".output/public");
-        const source = await readFile(join(output, "sw.js"), "utf8");
-        const urls = inspectPrecache(source);
-        await Promise.all(urls.map((url) => readFile(join(output, url))));
+        const output = resolve(builder.config.root, clientOutputDirectory(builder.config));
+        const count = await verifyPwaOutput(output);
         console.info(
-          `[PWA verified] ${urls.length} precached files exist in the deployable output`,
+          `[PWA verified] ${count} precached files exist in the deployable client output`,
         );
       },
     },

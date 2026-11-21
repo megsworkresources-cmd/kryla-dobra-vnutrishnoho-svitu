@@ -18,9 +18,9 @@ Followed the priority change: the unfinished My Quiet Place/First–Then integra
 
 ## PWA repair and limitation
 
-Source inspection confirmed the lifecycle mismatch: VitePWA's client `closeBundle` runs before Nitro copies the built client files into `.output/public`. Scanning that destination at the earlier hook can miss the application bundle.
+Follow-up correction after the reported build failure: this project's Lovable configuration deploys the resolved client directory, currently `dist/client`, rather than the assumed `.output/public`. The failed run generated 96 precache entries but verified an icon in the wrong directory, causing ENOENT.
 
-The integration now scans the **resolved actual client output** for generation, keeps `/sw.js` in the existing deployable destination, then regenerates and checks it after final asset copying. The production verification hook fails if the worker lacks JavaScript, CSS, the offline fallback or the install icon, or references files absent from the final output. HTML navigation remains NetworkFirst; existing media remains CacheFirst. Existing local recordings are included in the asset patterns. No handwritten service worker was introduced.
+Generation, scanning and verification now use the **same resolved actual client output**, placing `/sw.js` alongside the install icon and other deployed assets. The production verification hook still fails if the worker lacks JavaScript, CSS, the offline fallback or the install icon, or references absent files. A real temporary-file regression reproduces a missing icon and verifies the correct directory succeeds. Six focused PWA tests pass, lint is clean, and the automatic build/typecheck signal is OK after the correction. HTML navigation remains NetworkFirst; existing media remains CacheFirst. Existing local recordings are included in the asset patterns. No handwritten service worker was introduced.
 
 A bilingual offline page is precached for previously unopened pages. Account, caregiver, password, OAuth and API navigations are excluded from runtime caching. The existing preview/dev registration guards are unchanged.
 

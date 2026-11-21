@@ -41,4 +41,4 @@
 - Outside links on child pages go through GrownUpLink (adult check) and AI output offers ReportAi, storing only AI output, never child text, to meet kids-app store rules.
 - Family resource directory data is bilingual in `src/content/resources.i18n.ts` (each entry holds uk+en); unknown facts stay undefined and render as "not confirmed" so contacts are never invented.
 - Fixed-list access uses browser-safe content helpers with explicit fallbacks; routes export only their route so activity rules remain independently testable.
-- PWA generation scans the resolved client output, then validates the final worker after Nitro copies assets; account/OAuth pages are never runtime-cached.
+- PWA generation, precache scanning and verification share the resolved deployed client directory; never assume .output/public. Account/OAuth pages are never runtime-cached.

@@ -9,7 +9,7 @@ import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { assertNoServiceRoleClientImports } from "./scripts/no-service-role-client-guard.mjs";
-import { finalizePwa } from "./scripts/pwa-build";
+import { clientOutputDirectory, finalizePwa } from "./scripts/pwa-build";
 import { canCacheNavigation } from "./src/lib/pwa-policy";
 
 // The framework's dev asset proxy serves recorded films and images from Lovable,
@@ -41,14 +41,11 @@ export default defineConfig({
         devOptions: { enabled: false },
         manifest: false,
         filename: "sw.js",
-        // TanStack Start emits the deployable client bundle to .output/public.
-        // Keeping Workbox on dist/client creates an empty, unused service worker.
-        outDir: ".output/public",
         integration: {
           configureOptions(config, options) {
-            // Scan the directory that actually exists at the client closeBundle stage.
-            const clientOutput =
-              config.environments?.["client"]?.build.outDir ?? config.build.outDir;
+            // Generation, precache scanning and verification must share the deployed directory.
+            const clientOutput = clientOutputDirectory(config);
+            options.outDir = clientOutput;
             options.workbox = { ...options.workbox, globDirectory: clientOutput };
           },
         },

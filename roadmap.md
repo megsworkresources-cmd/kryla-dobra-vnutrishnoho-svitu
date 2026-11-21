@@ -1,5 +1,7 @@
 # Completion roadmap
 
+- [ ] Integrate the strongest calming components from the requested source app, guided by the uploaded brief and reusing existing breathing, feelings, drawing, favorites and audio tools. Blocked: https://kryla-dobra-vnutrishnoho-svitu.ai.studio returns HTTP 404 and no accessible workspace project matched that address; waiting for a working share link or source ZIP. Preserve current app/privacy/navigation; no deployment or infrastructure changes.
+
 - [x] Current homepage request: reserved illustration space on short phones and reduced narrow-screen title wrapping; eight UA/EN browser scenarios passed at 320×568, 375×667, 393×852 and desktop, with controls clear of fixed navigation. Full lint and 258 tests passed; generated-worker fixture has five verified precache assets and passes offline/fallback/eight sensitive-route exclusions. No deployment. Standalone production verification remains blocked: this workflow permits automatic app builds only, local dist/client and .output/public are absent, and hosted preview /sw.js returns HTTP 401. Details: docs/verification-2026-11-21-home.md.
 
 - [ ] Acceptance continuation: rerun full lint/tests and available automatic build checks; exercise real game/maze/drawing controls at phone widths; add a generated-Workbox local service-worker harness using the app's exact caching policy. Distinguish fixture checks from unavailable production-artifact and physical-device checks; do not deploy.

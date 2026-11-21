@@ -54,3 +54,5 @@
 - [x] Games page (/games) and cartoons page (/watch); sparkle burst on every touch
 - [x] Tappable magic strip in every step-by-step exercise and on every finish screen
 - [x] Richer drawing pages, thought-feeling-action game and stories
+
+- [ ] After the paints, lullaby, rain and woodland bridge films are in Watch, add a World map bubble for each linking to its film. Blocked: films not generated (workspace out of credits).

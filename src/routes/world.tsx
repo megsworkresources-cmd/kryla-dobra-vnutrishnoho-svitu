@@ -30,13 +30,16 @@ export const Route = createFileRoute("/world")({
 });
 
 // Balanced zigzag so bubbles never crowd each other on narrow phones.
-const SPOTS = Array.from({ length: 11 }, (_, i) => [i % 2 ? 72 : 28, 2 + i * 8.6] as const);
+const SPOTS = Array.from({ length: 14 }, (_, i) => [i % 2 ? 72 : 28, 2 + i * 6.7] as const);
 
 /** Small story bubbles sit in the centre gaps between the zigzag places. */
 const EXTRAS = [
   { to: "/bedtime", label: "Казка на ніч", img: "sky", pos: 2 },
-  { to: "/stroll", label: "Повільна прогулянка", img: "meadow", pos: 5 },
-  { to: "/puddles", label: "Калюжки", img: "clouds", pos: 8 },
+  { to: "/stroll", label: "Повільна прогулянка", img: "meadow", pos: 4 },
+  { to: "/puddles", label: "Калюжки", img: "clouds", pos: 6 },
+  { to: "/maze", label: "Стежка Ліхтарика", img: "path", pos: 9 },
+  { to: "/count", label: "Уважний луг", img: "garden", pos: 11 },
+  { to: "/together", label: "Разом", img: "safe", pos: 13 },
 ] as const;
 
 const PLACE_SLOTS = SPOTS.map((_, i) => i).filter((i) => !EXTRAS.some((e) => e.pos === i));
@@ -129,7 +132,7 @@ function World() {
         </div>
       </header>
 
-      <nav aria-label={t("Місця світу")} className="relative z-10 min-h-[72rem] flex-1">
+      <nav aria-label={t("Місця світу")} className="relative z-10 min-h-[92rem] flex-1">
         {PLACES.map((p, idx) => { const i = PLACE_SLOTS[idx] ?? idx; return (
           <Link
             key={p.id}

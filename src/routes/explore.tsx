@@ -46,6 +46,7 @@ function Explore() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-ink">
       <header className="z-20 flex items-center justify-between gap-2 p-3">
+        <h1 className="sr-only">{t("Уся мапа")}</h1>
         <Link
           to="/world"
           className="paper-card flex h-12 items-center gap-1 px-4 text-sm font-bold"
@@ -95,7 +96,7 @@ function Explore() {
                         style={{ left: `${s.x}%`, top: `${s.y}%` }}
                       >
                         <span
-                          className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-paper text-lg shadow-lift transition ${active ? "scale-125 bg-primary" : "bg-paper/90"}`}
+                          className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-paper text-lg shadow-lift transition-transform duration-(--dur-base) ease-(--ease-enter) ${active ? "scale-125 bg-primary" : "bg-paper/90"}`}
                           aria-hidden
                         >
                           {s.icon}

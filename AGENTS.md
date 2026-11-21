@@ -43,3 +43,4 @@
 - Fixed-list access uses browser-safe content helpers with explicit fallbacks; routes export only their route so activity rules remain independently testable.
 - PWA generation, precache scanning and verification share the resolved deployed client directory; never assume .output/public. Account/OAuth pages are never runtime-cached.
 - Share Workbox options with the standalone browser acceptance fixture, so caching tests exercise the production policy without registering workers in preview.
+- Drive all breathing-scene motion from one pauseable clock and suppress visual frames for saved or system reduced motion; independent decorative loops must not outlive Pause.

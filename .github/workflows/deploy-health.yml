@@ -45,15 +45,17 @@ jobs:
           COMMIT: ${{ github.sha }}
         run: |
           title="[deploy-health] Production check failed"
-          body=$(printf '%s\\n' \\
-            "The production deployment health check failed." \\
-            "" \\
-            "- Run: $RUN_URL" \\
-            "- Trigger: $EVENT" \\
-            "- Commit: $COMMIT" \\
-            "- Site: https://kryla-dobra-vnutrishnoho-svitu.vercel.app" \\
-            "" \\
-            "Inspect the failed step in the run log. This issue is reused for consecutive failures; close it once the check is green.")
+          body=$(cat <<EOF
+The production deployment health check failed.
+
+- Run: $RUN_URL
+- Trigger: $EVENT
+- Commit: $COMMIT
+- Site: https://kryla-dobra-vnutrishnoho-svitu.vercel.app
+
+Inspect the failed step in the run log. This issue is reused for consecutive failures; close it once the check is green.
+EOF
+          )
           existing=$(gh issue list --state open --search 'deploy-health in:title' --json number,title --jq '.[] | select(.title == "[deploy-health] Production check failed") | .number' | head -n 1)
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --body "$body"

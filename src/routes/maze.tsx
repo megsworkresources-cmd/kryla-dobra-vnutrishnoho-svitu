@@ -82,7 +82,7 @@ function Maze() {
         <div
           role="grid"
           aria-label={t("Лабіринт")}
-          className="paper-card mx-auto grid w-full max-w-md gap-px p-0.5"
+          className="paper-card mx-auto grid w-[calc(100%+1rem)] max-w-md gap-px p-0.5"
           style={{ gridTemplateColumns: `repeat(${n}, 1fr)` }}
         >
           {grid.flatMap((row, r) =>

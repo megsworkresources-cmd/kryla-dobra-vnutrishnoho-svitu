@@ -15,7 +15,7 @@ export function LangToggle({ night }: { night?: boolean | undefined }) {
       }}
       aria-pressed={lang === l}
       aria-label={name}
-      className={`h-11 min-w-11 rounded-full px-2.5 text-xs font-extrabold press ${lang === l ? "bg-primary text-primary-foreground" : night ? "opacity-70" : "opacity-60"}`}
+      className={`h-11 min-w-11 rounded-full px-2.5 text-xs font-extrabold press ${lang === l ? "bg-primary text-primary-foreground" : night ? "opacity-90" : "text-muted-foreground"}`}
     >
       {label}
     </button>

@@ -47,7 +47,7 @@ function CommunityGarden() {
   return (
     <Scene image={placeImage("garden")} title="Спільний сад" back="/garden" compact>
       <div className="space-y-4 pt-[6vh]">
-        <p className="text-sm text-muted-foreground">
+        <p className="rounded-2xl bg-paper/85 px-3 py-2 text-sm text-muted-foreground backdrop-blur-sm">
           {t(
             "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.",
           )}

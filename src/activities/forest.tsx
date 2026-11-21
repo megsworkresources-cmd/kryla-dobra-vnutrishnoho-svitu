@@ -378,7 +378,7 @@ export function SortGame() {
   const target = picked ? BASKETS.findIndex((b) => b.kind === picked) : -1;
   return (
     <div className="space-y-5" key={round}>
-      <div className="flex items-center justify-between text-sm">
+      <div className="flex items-center justify-between rounded-2xl bg-paper/85 px-3 py-2 text-sm backdrop-blur-sm">
         <span className="text-muted-foreground">
           {t("Картка {i} з {n}", { i: i + 1, n: SORT_ITEMS.length })}
         </span>

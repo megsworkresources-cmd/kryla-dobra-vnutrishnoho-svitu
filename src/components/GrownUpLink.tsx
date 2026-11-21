@@ -3,7 +3,15 @@ import { Btn } from "@/components/Scene";
 import { useT } from "@/lib/i18n";
 
 /** Outside links ask a grown-up first (App Store kids rule), then open in a new tab. */
-export function GrownUpLink({ href, children }: { href: string; children: ReactNode }) {
+export function GrownUpLink({
+  href,
+  children,
+  className = "inline-block py-1 underline",
+}: {
+  href: string;
+  children: ReactNode;
+  className?: string;
+}) {
   const t = useT();
   const [ask, setAsk] = useState(false);
   const dialog = useRef<HTMLDivElement>(null);
@@ -48,7 +56,7 @@ export function GrownUpLink({ href, children }: { href: string; children: ReactN
 
   return (
     <>
-      <button type="button" onClick={() => setAsk(true)} className="inline-block py-1 underline">
+      <button type="button" onClick={() => setAsk(true)} className={className}>
         {children}
       </button>
       {ask && (

@@ -101,3 +101,40 @@ it("an unannounced connection loss fails immediately instead of becoming a pause
   await act(async () => {});
   expect(mocks.share).not.toHaveBeenCalled();
 });
+
+it("does not confirm cached sharing while a reconnect read is still pending", async () => {
+  mocks.read.mockResolvedValue({ own: { stage: 1, sharing: true }, flowers: [] });
+  mount();
+  await screen.findByText("Соняшник поширено");
+  act(() => connect(false));
+  let resolveRead:
+    ((value: { own: { stage: number; sharing: boolean }; flowers: [] }) => void) | undefined;
+  mocks.read.mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        resolveRead = resolve;
+      }),
+  );
+  act(() => connect(true));
+  await waitFor(() => expect(mocks.read).toHaveBeenCalledTimes(2));
+  expect(screen.queryByText("Соняшник поширено")).not.toBeInTheDocument();
+  expect(screen.getByText("Поточний стан поширення не підтверджено.")).toBeInTheDocument();
+  if (!resolveRead) throw new Error("Reconnect did not request the garden");
+  await act(async () => resolveRead?.({ own: { stage: 1, sharing: true }, flowers: [] }));
+  await screen.findByText("Соняшник поширено");
+});
+
+it("a lost withdrawal response cannot present cached sharing as confirmed", async () => {
+  mocks.read.mockResolvedValue({ own: { stage: 1, sharing: true }, flowers: [] });
+  mocks.share.mockRejectedValue(new Error("Connection interrupted"));
+  mount();
+  await screen.findByText("Соняшник поширено");
+  fireEvent.click(screen.getByRole("button", { name: "Припинити поширення" }));
+  await screen.findByRole("alert");
+  expect(screen.queryByText("Соняшник поширено")).not.toBeInTheDocument();
+  expect(screen.getByText("Поточний стан поширення не підтверджено.")).toBeInTheDocument();
+  expect(mocks.share).toHaveBeenCalledTimes(1);
+  fireEvent.click(screen.getByRole("button", { name: "Оновити сад" }));
+  await screen.findByText("Соняшник поширено");
+  expect(mocks.share).toHaveBeenCalledTimes(1);
+});

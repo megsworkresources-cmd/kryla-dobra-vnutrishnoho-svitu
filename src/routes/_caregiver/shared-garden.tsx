@@ -103,7 +103,7 @@ function SharedGarden() {
           <p role="status" className="mt-3 font-bold text-primary" aria-live="polite">
             {mutation.isPending
               ? t("Зачекайте…")
-              : !online || garden.isError
+              : !online || garden.isError || garden.isFetching || mutation.isError
                 ? t("Поточний стан поширення не підтверджено.")
                 : !own
                   ? t("Сад завантажується…")
@@ -255,8 +255,11 @@ function SharedGarden() {
           <Btn
             className="mt-3 w-full sm:w-auto"
             variant="soft"
-            disabled={!online || garden.isFetching}
-            onClick={() => void garden.refetch()}
+            disabled={!online || garden.isFetching || mutation.isPending}
+            onClick={() => {
+              mutation.reset();
+              void garden.refetch();
+            }}
           >
             <RefreshCw size={18} />
             {t("Оновити сад")}

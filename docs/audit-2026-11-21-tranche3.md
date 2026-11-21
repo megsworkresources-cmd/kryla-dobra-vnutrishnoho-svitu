@@ -14,7 +14,7 @@
 | Quests, games, breathing | chimes/notes | synthesized | present |
 
 Orphaned assets (unreferenced, kept, not deleted): bridge-friends.mp4, kite-breeze.mp4, lantern-friends.mp4, sunflower-field.mp4.
-Missing media: dedicated paints/lullaby/rain/woodland full films are still short clips (historically credit-blocked). Corrected uploaded inventory: user reports **six MP4s: three Hailuo variants and three watermarked Renderforest variants**. No raw copies available in the upload mount/mirror or archive; duration/content/licensing unverified, none added. The earlier 6.6s single-clip description must not be treated as the full set. No book art/text used.
+Missing media: dedicated paints/lullaby/rain/woodland full films are still short clips (historically credit-blocked). Corrected uploaded inventory (user filesystem correction, 2026-11-21 20:52 UTC): **six MP4s**, not five. Hailuo `...Shadow_to_Bloom...mp4`: two 896×512 / 30fps / 6.6s copies and one 1344×768 / 24fps / 6.592s variant. `output_720x1280...mp4`: 630×360 / 24fps / 10.228s, 910×512 / 30fps / 8.067s, and 1280×720 / 30fps / 8.067s; all three depict the same Renderforest-watermarked scene per user. Metadata/content correction is user-supplied, not independently measured/viewed. Raw bytes were inaccessible in the prior review environment; licensing remains unverified, none added. Full table/access distinction: docs/resources-assets-review-2026-11-21.md. No book art/text used.
 
 ## B. Engine defect fixed
 `resumeSpeaking()` after pausing device speech set state to "loading" and never left it when the browser did not fire `onresume` (Safari behaviour), leaving a false Stop control. Now resumes directly to "playing". Regression test in `src/test/phone-repairs.test.tsx`.

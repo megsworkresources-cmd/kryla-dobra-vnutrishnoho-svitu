@@ -27,22 +27,22 @@
 
 `python3 /tmp/browser/resources/check_resources.py` exit 0: `/resources` at **320×568, 393×852 and 1280×1800 × UK/EN** (six scenarios). All 39 cards, search for angelscare, language-specific primary title, empty result, reset and early-childhood filter passed. No horizontal overflow or page errors. Phone screenshots inspected: readable card fields, bilingual names, contact controls and fixed navigation. Browser does not establish real emergency-call connectivity or physical iPhone behavior.
 
-## Six-MP4 correction — reported inventory, not inspected footage
+## Six-MP4 correction — user filesystem inventory, not independently inspected footage
 
-The intended uploaded set is **six MP4s**, per the user's correction:
+The uploaded set totals **six MP4s**, per the user's direct filesystem inventory correction (2026-11-21, 20:52 UTC): **three Hailuo `...Shadow_to_Bloom...mp4` files and three `output_720x1280...mp4` files**. Five is an incorrect count. Filename patterns below are supplied fragments, not invented full filenames. Dimensions are actual reported frame sizes, regardless of the output filename:
 
-| Reported item | Family | Watermark / provenance | Actual access |
-|---|---|---|---|
-| Hailuo variant 1 | Hailuo | Not inspected | File absent |
-| Hailuo variant 2 | Hailuo | Not inspected | File absent |
-| Hailuo variant 3 | Hailuo | Not inspected | File absent |
-| Renderforest variant 1 | Renderforest | User reports watermark | File absent |
-| Renderforest variant 2 | Renderforest | User reports watermark | File absent |
-| Renderforest variant 3 | Renderforest | User reports watermark | File absent |
+| Reported item / filename pattern | Frame size | Frame rate | Duration | Content / provenance | Independent access in previous review |
+|---|---|---|---|---|---|
+| Hailuo copy 1: `...Shadow_to_Bloom...mp4` | 896×512 | 30 fps | 6.6 s | Hailuo; watermark/licensing not independently inspected | Raw bytes unavailable |
+| Hailuo copy 2: `...Shadow_to_Bloom...mp4` | 896×512 | 30 fps | 6.6 s | Second copy with the same reported metadata; byte identity not verified | Raw bytes unavailable |
+| Hailuo variant 3: `...Shadow_to_Bloom...mp4` | 1344×768 | 24 fps | 6.592 s | Hailuo alternate variant | Raw bytes unavailable |
+| Output variant 1: `output_720x1280...mp4` | 630×360 | 24 fps | 10.228 s | Renderforest-watermarked scene, per user | Raw bytes unavailable |
+| Output variant 2: `output_720x1280...mp4` | 910×512 | 30 fps | 8.067 s | Same Renderforest-watermarked scene, per user | Raw bytes unavailable |
+| Output variant 3: `output_720x1280...mp4` | 1280×720 | 30 fps | 8.067 s | Same Renderforest-watermarked scene, per user | Raw bytes unavailable |
 
-Checked both read-only upload mount and mirror recursively: **zero raw MP4/MOV/WebM uploads**. The available `app-source-code.zip` contains nine existing `.mp4.asset.json` pointers, **not raw MP4 footage**, no Hailuo/Renderforest-named entries. There are no exact filenames, durations, dimensions, watermark frames or license documents for the six reported variants available to this turn. The earlier single “6.6s Hailuo” mention is not a complete inventory and cannot establish a six-file set or repository presence.
+The previous review checked both read-only upload mount and mirror recursively and found **zero accessible raw MP4/MOV/WebM uploads in that environment**. The available `app-source-code.zip` contained nine existing `.mp4.asset.json` pointers, **not raw MP4 footage**, no Hailuo/Renderforest-named entries. That access limitation does not contradict the user's six-file filesystem inventory. Dimensions, rates, durations and the shared Renderforest scene are now recorded from the user's correction, not claimed as independently measured or viewed. Full filenames, hashes, watermark frames and license documents remain unavailable to that review. The earlier single “6.6s Hailuo” mention is not a complete inventory and cannot establish repository presence.
 
-Precisely blocked: actual six-video visual/audio/duration/quality/provenance review requires those bytes or accessible source references; no available mount/archive contains them. No substitute existing film claimed as one of these six. No render, download, paid generation, watermark removal or media integration attempted. Watermarked previews do not establish redistribution rights; preserve them only as reported candidates until source/licensing can be inspected.
+Precisely blocked: independent six-video visual/audio/metadata/quality/provenance review requires those bytes or accessible source references; the previous review could not access them in its mount/archive. No new filesystem inspection or playback test was performed for this documentation correction. No substitute existing film claimed as one of these six. No render, download, paid generation, watermark removal or media integration attempted. Watermarked previews do not establish redistribution rights; preserve them only as reported candidates until source/licensing can be inspected.
 
 ### Accessible assets reviewed
 

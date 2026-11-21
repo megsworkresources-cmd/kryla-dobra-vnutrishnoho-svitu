@@ -25,6 +25,7 @@ function SafeDrawing() {
   const [colors, setColors] = useState<string[]>([]);
   const [color, setColor] = useState(0);
   const [saved, setSaved] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
 
   useEffect(() => {
     const cs = getComputedStyle(document.documentElement);
@@ -62,6 +63,7 @@ function SafeDrawing() {
     ctx.lineTo(x, y);
     ctx.stroke();
     setSaved(false);
+    setSaveFailed(false);
   };
   const moveTo = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const ctx = ref.current?.getContext("2d");
@@ -77,13 +79,15 @@ function SafeDrawing() {
       getComputedStyle(document.documentElement).getPropertyValue("--card").trim() || "white";
     ctx.fillRect(0, 0, 800, 600);
     setSaved(false);
+    setSaveFailed(false);
   };
   const save = () => {
     const c = ref.current;
     if (!c) return;
-    addDrawing(c.toDataURL("image/jpeg", 0.7));
-    markDone("safe-drawing");
-    setSaved(true);
+    const persisted = addDrawing(c.toDataURL("image/jpeg", 0.7));
+    if (persisted) markDone("safe-drawing");
+    setSaved(persisted);
+    setSaveFailed(!persisted);
   };
 
   return (
@@ -127,6 +131,13 @@ function SafeDrawing() {
           </Btn>
           <Btn onClick={save}>{t("Зберегти в галерею")}</Btn>
         </div>
+        {saveFailed && (
+          <p role="alert">
+            {t(
+              "Не вдалося зберегти на пристрої. Малюнок поки доступний тут; перевір вільне місце й спробуй ще раз.",
+            )}
+          </p>
+        )}
         <p className="paper-card p-4 text-sm">{L(SAFE_DRAW.note)}</p>
       </div>
     </Scene>

@@ -42,3 +42,4 @@
 - Family resource directory data is bilingual in `src/content/resources.i18n.ts` (each entry holds uk+en); unknown facts stay undefined and render as "not confirmed" so contacts are never invented.
 - Fixed-list access uses browser-safe content helpers with explicit fallbacks; routes export only their route so activity rules remain independently testable.
 - PWA generation, precache scanning and verification share the resolved deployed client directory; never assume .output/public. Account/OAuth pages are never runtime-cached.
+- Share Workbox options with the standalone browser acceptance fixture, so caching tests exercise the production policy without registering workers in preview.

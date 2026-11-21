@@ -10,7 +10,7 @@ import { loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { assertNoServiceRoleClientImports } from "./scripts/no-service-role-client-guard.mjs";
 import { clientOutputDirectory, finalizePwa } from "./scripts/pwa-build";
-import { canCacheNavigation } from "./src/lib/pwa-policy";
+import { pwaWorkboxOptions } from "./scripts/pwa-workbox";
 
 // The framework's dev asset proxy serves recorded films and images from Lovable,
 // but it reads LOVABLE_PREVIEW_HOST from process.env. Vite only exposes VITE_*
@@ -49,43 +49,7 @@ export default defineConfig({
             options.workbox = { ...options.workbox, globDirectory: clientOutput };
           },
         },
-        workbox: {
-          globPatterns: [
-            "**/*.{js,css,png,jpg,jpeg,webp,svg,woff2,mp3}",
-            "offline.html",
-            "manifest.webmanifest",
-          ],
-          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
-          navigateFallback: null,
-          cleanupOutdatedCaches: true,
-          runtimeCaching: [
-            {
-              urlPattern: canCacheNavigation,
-              handler: "NetworkFirst",
-              options: {
-                cacheName: "pages",
-                networkTimeoutSeconds: 4,
-                expiration: { maxEntries: 60 },
-                precacheFallback: { fallbackURL: "/offline.html" },
-              },
-            },
-            {
-              urlPattern: ({ url, sameOrigin }) =>
-                sameOrigin &&
-                (url.pathname.startsWith("/__l5e/assets-v1/") ||
-                  url.pathname.startsWith("/assets/") ||
-                  url.pathname.startsWith("/audio/") ||
-                  url.pathname.startsWith("/media/")),
-              handler: "CacheFirst",
-              options: {
-                cacheName: "media",
-                expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
-                rangeRequests: true,
-                cacheableResponse: { statuses: [0, 200] },
-              },
-            },
-          ],
-        },
+        workbox: pwaWorkboxOptions(),
       }),
       finalizePwa(),
     ],

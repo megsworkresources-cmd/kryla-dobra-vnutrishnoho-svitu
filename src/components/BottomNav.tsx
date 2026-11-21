@@ -142,7 +142,7 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
                   className="flex min-h-14 min-w-0 flex-col items-end justify-center gap-0.5 rounded-2xl bg-primary px-3 text-right text-primary-foreground shadow-soft"
                   aria-label={t("Далі: {l}", { l: t(next.label) })}
                 >
-                  <span className="flex items-center gap-1 text-[0.65rem] font-extrabold uppercase tracking-wide opacity-80">
+                  <span className="flex items-center gap-1 text-[0.65rem] font-extrabold uppercase tracking-wide">
                     {t("Далі")}
                     <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
                   </span>

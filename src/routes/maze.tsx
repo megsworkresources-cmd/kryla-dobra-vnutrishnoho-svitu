@@ -79,31 +79,34 @@ function Maze() {
           className="paper-card mx-auto grid w-full max-w-md gap-px p-0"
           style={{ gridTemplateColumns: `repeat(${n}, 1fr)` }}
         >
-          {grid.flatMap((row, r) =>
-            [...row].map((ch, c) => {
-              const here = pos[0] === r && pos[1] === c;
-              const adj = Math.abs(pos[0] - r) + Math.abs(pos[1] - c) === 1;
-              return (
-                <button
-                  key={`${r}-${c}`}
-                  type="button"
-                  aria-label={
-                    here
-                      ? t("Ліхтарик тут")
-                      : ch === "E"
-                        ? t("Хатинка")
-                        : ch === "#"
-                          ? t("Кущик")
-                          : t("Стежка")
-                  }
-                  onClick={() => adj && move(r - pos[0], c - pos[1])}
-                  className={`flex aspect-square items-center justify-center rounded-lg text-lg sm:text-2xl ${ch === "#" ? "bg-primary/70" : "bg-secondary"} ${adj && ch !== "#" && !done ? "ring-2 ring-accent" : ""}`}
-                >
-                  {here ? "🦔" : ch === "E" ? "🏡" : ch === "#" ? "🌳" : ""}
-                </button>
-              );
-            }),
-          )}
+          {grid.map((row, r) => (
+            <div key={r} role="row" className="contents">
+              {[...row].map((ch, c) => {
+                const here = pos[0] === r && pos[1] === c;
+                const adj = Math.abs(pos[0] - r) + Math.abs(pos[1] - c) === 1;
+                return (
+                  <div key={`${r}-${c}`} role="gridcell" className="contents">
+                    <button
+                      type="button"
+                      aria-label={
+                        here
+                          ? t("Ліхтарик тут")
+                          : ch === "E"
+                            ? t("Хатинка")
+                            : ch === "#"
+                              ? t("Кущик")
+                              : t("Стежка")
+                      }
+                      onClick={() => adj && move(r - pos[0], c - pos[1])}
+                      className={`flex aspect-square items-center justify-center rounded-lg text-lg sm:text-2xl ${ch === "#" ? "bg-primary/70" : "bg-secondary"} ${adj && ch !== "#" && !done ? "ring-2 ring-accent" : ""}`}
+                    >
+                      {here ? "🦔" : ch === "E" ? "🏡" : ch === "#" ? "🌳" : ""}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </div>
         <div className="mx-auto grid max-w-[14rem] grid-cols-3 gap-2">
           <span />

@@ -1,5 +1,7 @@
 # Completion roadmap
 
+- [ ] Acceptance continuation: rerun full lint/tests and available automatic build checks; exercise real game/maze/drawing controls at phone widths; add a generated-Workbox local service-worker harness using the app's exact caching policy. Distinguish fixture checks from unavailable production-artifact and physical-device checks; do not deploy.
+
 - [x] Repair reported PWA build failure: worker destination, precache scan and verification now share Lovable's resolved deployed client output (dist/client), not .output/public. Six PWA regression tests pass; lint clean; automatic build/typecheck OK at 17:40:20 UTC. No deployment; physical offline acceptance remains open.
 
 - [x] Stabilization repairs: removed unfinished calming feature; safe fixed-list access in counting/bedtime/world/stories/cartoon/practice/character/place helpers; fixed synchronous ambient cancellation, nature-source teardown, device-speech pause/resume and effect-volume synchronization; removed route Fast Refresh warnings and source formatting errors. No deployment or database changes.

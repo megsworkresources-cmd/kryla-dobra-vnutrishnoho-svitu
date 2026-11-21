@@ -204,7 +204,7 @@ export function Btn({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "min-h-12 min-w-11 rounded-full px-5 font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:saturate-50",
+        "inline-flex min-h-12 min-w-11 items-center justify-center gap-2 rounded-full px-5 text-center font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:saturate-50",
         v,
         className,
       )}

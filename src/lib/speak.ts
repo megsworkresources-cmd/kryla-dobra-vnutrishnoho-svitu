@@ -262,11 +262,21 @@ export function resumeSpeaking() {
     resume();
     return;
   }
+  const player = audio;
+  // Device speech has no media element: Safari may never fire onresume, so a
+  // "loading" state here would leave a false Stop button forever.
+  if (!player) {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.resume();
+      setSpeechState("playing");
+      duckMusic(true);
+    } else setSpeechState("idle");
+    return;
+  }
   setSpeechState("loading");
   const mine = token;
-  const player = audio;
   void player
-    ?.play()
+    .play()
     .then(() => {
       if (mine !== token) player.pause();
       else setSpeechState("playing");
@@ -277,7 +287,6 @@ export function resumeSpeaking() {
         duckMusic(false);
       }
     });
-  if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.resume();
 }
 export function stopSpeaking() {
   token++;

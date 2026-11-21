@@ -120,3 +120,40 @@ it("device speech updates real pause/resume state and ignores events after exit"
   utterance.onresume?.({} as SpeechSynthesisEvent);
   expect(getSpeechState()).toBe("idle");
 });
+
+it("resuming paused device speech never leaves a stuck loading state", () => {
+  let utterance: SpeechSynthesisUtterance | undefined;
+  const resume = vi.fn();
+  vi.stubGlobal("speechSynthesis", {
+    cancel: vi.fn(),
+    resume,
+    pause: vi.fn(),
+    getVoices: () => [],
+    speak: (u: SpeechSynthesisUtterance) => {
+      utterance = u;
+    },
+  });
+  vi.stubGlobal(
+    "SpeechSynthesisUtterance",
+    class {
+      constructor(public text: string) {}
+    },
+  );
+  update((s) => ({
+    ...s,
+    sound: true,
+    voice: true,
+    volume: 1,
+    voiceVolume: 1,
+    voiceEngine: "device",
+  }));
+  unlockAudio();
+  speak("Привіт", { localOnly: true });
+  utterance?.onstart?.({} as SpeechSynthesisEvent);
+  pauseSpeaking();
+  expect(getSpeechState()).toBe("paused");
+  resumeSpeaking();
+  expect(resume).toHaveBeenCalled();
+  expect(getSpeechState()).toBe("playing");
+  stopSpeaking();
+});

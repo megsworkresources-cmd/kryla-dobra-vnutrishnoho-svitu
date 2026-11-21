@@ -1,7 +1,8 @@
 # Completion roadmap
 
 - [x] Experience audit tranche 2: 33 routes × 4 viewports × UA/EN checked; fixed English adventure/Back-Next translations and small credit/privacy links; all five adventures played in UA/EN. Report: docs/audit-2026-11-21-tranche2.md.
-- [ ] Next tranche: per-route audio/video lifecycle trace and media mapping list; caregiver and shared-garden opt-in/opt-out walk; deeper per-activity feedback polish.
+- [x] Tranche 3: media inventory, device-speech resume fix, icon-button layout fix, caregiver gating and sunflower opt-in/opt-out verified. Report: docs/audit-2026-11-21-tranche3.md.
+- [ ] Next: verify video play-then-leave and offline shared-garden state in browser; per-activity feedback polish; decide on 4 orphaned clips.
 
 - [x] Screenshot edits: slower sunflower opening/closing and wave rising/falling (4-second young-child inhale, 5-second older inhale, no holds); shared spoken body-feelings guidance and tap-to-listen descriptions; upright puddle image. Body/puddle controls verified at 320px/393px; breathing movement, pause/resume, completion and system reduced motion verified. All 265 tests and full lint pass; automatic build OK. Physical-device listening remains unverified; no deployment.
 

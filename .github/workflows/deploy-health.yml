@@ -45,7 +45,7 @@ jobs:
           COMMIT: ${{ github.sha }}
         run: |
           title="[deploy-health] Production check failed"
-          body="$(printf '%s\\n' \
+          body="$(printf '%s\n' \
             'The production deployment health check failed.' \
             '' \
             "- Run: $RUN_URL" \

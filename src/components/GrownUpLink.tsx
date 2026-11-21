@@ -8,7 +8,11 @@ export function GrownUpLink({ href, children }: { href: string; children: ReactN
   const [ask, setAsk] = useState(false);
   return (
     <>
-      <button type="button" onClick={() => setAsk(true)} className="inline-block py-1 underline">
+      <button
+        type="button"
+        onClick={() => setAsk(true)}
+        className="inline-flex min-h-11 items-center text-left underline"
+      >
         {children}
       </button>
       {ask && (

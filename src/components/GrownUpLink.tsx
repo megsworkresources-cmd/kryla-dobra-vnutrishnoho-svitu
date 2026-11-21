@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Btn } from "@/components/Scene";
 import { useT } from "@/lib/i18n";
 
@@ -59,35 +60,37 @@ export function GrownUpLink({
       <button type="button" onClick={() => setAsk(true)} className={className}>
         {children}
       </button>
-      {ask && (
-        <div
-          ref={dialog}
-          role="dialog"
-          aria-modal="true"
-          aria-label={t("Спершу спитай дорослого")}
-          className="fixed inset-0 z-50 flex items-end justify-center bg-ink/50 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center"
-        >
-          <div className="paper-card w-full max-w-sm p-5 text-center text-card-foreground">
-            <p className="font-display text-2xl font-bold">{t("Спершу спитай дорослого")}</p>
-            <p className="mt-2 text-base">
-              {t("Це посилання відкриє інший сайт. Дорослий, чи можна?")}
-            </p>
-            <div className="mt-4 flex flex-col gap-2">
-              <Btn
-                onClick={() => {
-                  setAsk(false);
-                  window.open(href, "_blank", "noopener,noreferrer");
-                }}
-              >
-                {t("Так, відкрити")}
-              </Btn>
-              <Btn variant="soft" onClick={() => setAsk(false)}>
-                {t("Не зараз")}
-              </Btn>
+      {ask &&
+        createPortal(
+          <div
+            ref={dialog}
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("Спершу спитай дорослого")}
+            className="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-ink/50 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center"
+          >
+            <div className="paper-card max-h-full w-full max-w-sm overflow-y-auto p-5 text-center text-card-foreground">
+              <p className="font-display text-2xl font-bold">{t("Спершу спитай дорослого")}</p>
+              <p className="mt-2 text-base">
+                {t("Це посилання відкриє інший сайт. Дорослий, чи можна?")}
+              </p>
+              <div className="mt-4 flex flex-col gap-2">
+                <Btn
+                  onClick={() => {
+                    setAsk(false);
+                    window.open(href, "_blank", "noopener,noreferrer");
+                  }}
+                >
+                  {t("Так, відкрити")}
+                </Btn>
+                <Btn variant="soft" onClick={() => setAsk(false)}>
+                  {t("Не зараз")}
+                </Btn>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

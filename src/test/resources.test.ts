@@ -3,6 +3,8 @@ import {
   AGES,
   CATEGORIES,
   CRISIS,
+  EMERGENCY_CONTACTS,
+  SUPPORT_CONTACTS,
   LIBRARY,
   REGIONS,
   RESOURCES,
@@ -10,9 +12,9 @@ import {
 } from "@/content/resources.i18n";
 
 describe("family resource directory", () => {
-  it("retains 39 unique bilingual resources with valid filter references and official HTTPS links", () => {
-    expect(RESOURCES).toHaveLength(39);
-    expect(new Set(RESOURCES.map((r) => r.id)).size).toBe(39);
+  it("retains 41 unique bilingual resources with valid filter references and official HTTPS links", () => {
+    expect(RESOURCES).toHaveLength(41);
+    expect(new Set(RESOURCES.map((r) => r.id)).size).toBe(41);
     for (const r of RESOURCES) {
       expect(new URL(r.url).protocol).toBe("https:");
       expect(r.name.uk.trim().length).toBeGreaterThan(0);
@@ -50,5 +52,20 @@ describe("family resource directory", () => {
   it("unknown prices remain unknown rather than defaulting to free", () => {
     expect(RESOURCES.find((r) => r.id === "learningua")?.cost).toBeUndefined();
     expect(RESOURCES.find((r) => r.id === "ilearn")?.cost).toBeUndefined();
+  });
+  it("separates dispatch numbers from non-emergency children’s support lines", () => {
+    expect(EMERGENCY_CONTACTS.map((c) => c.tel)).toEqual(["112", "101", "102", "103"]);
+    expect(SUPPORT_CONTACTS.map((c) => c.tel)).toContain("116111");
+    expect(SUPPORT_CONTACTS.map((c) => c.tel)).toContain("0800500225");
+    expect(SUPPORT_CONTACTS.some((c) => EMERGENCY_CONTACTS.includes(c))).toBe(false);
+    expect(EMERGENCY_CONTACTS.length + SUPPORT_CONTACTS.length).toBe(CRISIS.length);
+  });
+  it("uses the requested authoritative help URLs and limits the mixed-topic video channel to adult selection", () => {
+    expect(RESOURCES.find((r) => r.id === "npa")?.url).toBe("https://help.npa-ua.org/");
+    expect(RESOURCES.find((r) => r.id === "unicef-video")?.url).toBe(
+      "https://www.youtube.com/@UNICEFUkraine1997",
+    );
+    expect(RESOURCES.find((r) => r.id === "unicef-video")?.ages).toEqual(["parents", "pros"]);
+    expect(RESOURCES.find((r) => r.id === "numo")?.url).toBe("https://numo.mon.gov.ua/");
   });
 });

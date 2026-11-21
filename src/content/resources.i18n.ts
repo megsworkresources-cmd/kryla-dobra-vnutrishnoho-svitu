@@ -297,14 +297,14 @@ export const RESOURCES: Resource[] = [
   {
     id: "npa",
     name: b("Національна психологічна асоціація", "National Psychological Association of Ukraine"),
-    url: "https://npa-ua.org/",
+    url: "https://help.npa-ua.org/",
     desc: b(
-      "Професійна асоціація психологів: інформація про психологічну підтримку та освіта з ментального здоров’я.",
-      "Professional association: information about psychological support and mental health education.",
+      "Безкоштовна психологічна лінія для людей в Україні й українців за кордоном. Номери для інших країн та умови підтримки дітей уточнюйте на офіційному сайті. Це не екстрена служба.",
+      "Free psychological helpline for people in Ukraine and Ukrainians abroad. Check the official site for overseas numbers and arrangements for children. This is not an emergency service.",
     ),
     cats: ["crisis", "kids"],
     ages: ["parents", "pros"],
-    regions: UA,
+    regions: ["ua", "online"],
     services: ["hotline", "learn"],
     langs: ["uk"],
     check: "ok",
@@ -313,7 +313,7 @@ export const RESOURCES: Resource[] = [
       {
         label: b("Лінія підтримки", "Support line"),
         tel: "0800100102",
-        note: b("Години роботи не підтверджено", "Hours not confirmed"),
+        note: b("Години уточнюйте на офіційному сайті", "Check the official site for hours"),
       },
     ],
   },
@@ -518,8 +518,8 @@ export const RESOURCES: Resource[] = [
     name: b("НУМО", "NUMO"),
     url: "https://numo.mon.gov.ua/",
     desc: b(
-      "Дошкільне навчання: розвивальні ігри, мова і мислення, заняття разом з батьками.",
-      "Preschool learning: educational games, language and thinking, parent-guided activities.",
+      "Платформа МОН і ЮНІСЕФ для розвитку дошкільнят. Онлайн-садок має відеозаняття для дітей 3–6 років разом із дорослими; це освітні матеріали, не лікування.",
+      "Ministry of Education and UNICEF preschool development platform. Its online kindergarten offers video activities for ages 3–6 with an adult; these are educational materials, not treatment.",
     ),
     cats: ["early", "education"],
     ages: ["a0", "a4", "parents"],
@@ -611,18 +611,21 @@ export const RESOURCES: Resource[] = [
   },
   {
     id: "unhcr",
-    name: b("УВКБ ООН в Україні", "UNHCR Ukraine"),
-    url: "https://help.unhcr.org/ukraine/",
-    desc: b(
-      "Інформація для переміщених осіб і біженців: захист, правова інформація, психологічна підтримка, гуманітарні послуги.",
-      "Information for displaced people and refugees: protection, legal information, psychological support, humanitarian services.",
+    name: b(
+      "УВКБ ООН: психологічна підтримка в Україні",
+      "UNHCR: psychological support in Ukraine",
     ),
-    cats: ["displaced", "abroad", "legal"],
+    url: "https://help.unhcr.org/ukraine/uk/ukraine-uk-where-to-seek-help-ua/supporting-your-feelings-and-worries-ua/",
+    desc: b(
+      "Офіційний довідник безкоштовної психологічної підтримки: лінії допомоги та регіональні партнери. Актуальні номери, години й умови допомоги дітям перевіряйте на сайті; не замінює екстрені служби.",
+      "Official directory of free psychological support: helplines and regional partners. Check the site for current numbers, hours and arrangements for children; not a substitute for emergency services.",
+    ),
+    cats: ["displaced", "abroad", "kids", "parenting"],
     ages: ["parents"],
     regions: ["ua", "online"],
     services: ["learn"],
     langs: ["uk", "en"],
-    check: "blocked",
+    check: "ok",
     kind: "info",
   },
   {
@@ -786,6 +789,41 @@ export const RESOURCES: Resource[] = [
     check: "ok",
     kind: "peer",
   },
+  {
+    id: "kmu-support",
+    name: b(
+      "Кабінет Міністрів: куди звертатися за допомогою",
+      "Cabinet of Ministers: where to seek help",
+    ),
+    url: "https://www.kmu.gov.ua/news/vseukrainska-prohrama-mentalnoho-zdorovia-ty-iak-kudy-zvertatysia-za-dopomohoiu",
+    desc: b(
+      "Офіційна публікація від 2 червня 2023 року підтверджує дитячу та молодіжну лінію 116 111 (мобільні) і 0 800 500 225 (мобільні та стаціонарні). Поточні години уточнюйте в оператора; лінія підтримки не є екстреною службою.",
+      "Official publication dated 2 June 2023 lists the children’s and youth helpline: 116 111 (mobile) and 0 800 500 225 (mobile and landline). Check current hours with the provider; the helpline is not an emergency service.",
+    ),
+    cats: ["protection", "kids", "teens", "parenting"],
+    ages: ["parents", "pros"],
+    regions: UA,
+    services: ["learn"],
+    langs: ["uk"],
+    check: "ok",
+    kind: "government",
+  },
+  {
+    id: "unicef-video",
+    name: b("ЮНІСЕФ Україна: офіційний відеоканал", "UNICEF Ukraine: official video channel"),
+    url: "https://www.youtube.com/@UNICEFUkraine1997",
+    desc: b(
+      "Для дорослих, які обирають відео для спільного перегляду: освіта, права дітей і батьківство. Канал також містить матеріали про війну та мінну безпеку — спершу перегляньте самі й оберіть відповідне віку. YouTube може показувати рекламу та рекомендації.",
+      "For adults selecting videos to watch together: education, children’s rights and parenting. The channel also covers war and mine safety — preview first and choose age-appropriate content. YouTube may show advertisements and recommendations.",
+    ),
+    cats: ["education", "parenting", "protection"],
+    ages: ["parents", "pros"],
+    regions: ["ua", "online"],
+    services: ["learn", "online"],
+    langs: ["uk"],
+    check: "ok",
+    kind: "info",
+  },
 ];
 
 /** Numbers for "Need help right now?" — all are Ukrainian lines. */
@@ -825,7 +863,7 @@ export const CRISIS: Contact[] = [
   {
     label: b("Національна психологічна асоціація", "National Psychological Association"),
     tel: "0800100102",
-    note: b("години не підтверджено", "hours not confirmed"),
+    note: b("години уточнюйте на офіційному сайті", "check the official site for hours"),
   },
   { label: b("Насильство і торгівля людьми", "Domestic violence & trafficking"), tel: "116123" },
   {
@@ -846,6 +884,11 @@ export const CRISIS: Contact[] = [
     note: b("доступність не підтверджено", "availability not confirmed"),
   },
 ];
+
+/** Emergency dispatch is separate from counselling and administrative helplines. */
+const emergencyNumbers = new Set(["112", "101", "102", "103"]);
+export const EMERGENCY_CONTACTS = CRISIS.filter((c) => emergencyNumbers.has(c.tel ?? ""));
+export const SUPPORT_CONTACTS = CRISIS.filter((c) => !emergencyNumbers.has(c.tel ?? ""));
 
 /** Parent education library: short, original, non-clinical guidance. */
 export const LIBRARY: { title: Bi; tips: Bi[] }[] = [
@@ -978,6 +1021,8 @@ export const UI = {
     "You are not alone. Help is available. Your child’s emotional well-being matters — and you deserve support too.",
   ),
   helpNow: b("Потрібна допомога зараз?", "Need help right now?"),
+  emergency: b("Негайна небезпека — екстрені служби", "Immediate danger — emergency services"),
+  support: b("Лінії підтримки — не екстрені служби", "Support lines — not emergency services"),
   helpNote: b(
     "112 — номер екстреної допомоги в Україні та країнах ЄС. Інші номери нижче призначені для України; доступність із-за кордону не підтверджено. В інших країнах звертайтеся до місцевих екстрених служб. У разі безпосередньої небезпеки — одразу до екстрених служб, а не до довідника.",
     "112 is the emergency number in Ukraine and EU countries. The other numbers below are intended for Ukraine; access from abroad is not confirmed. Elsewhere, contact local emergency services. In immediate danger, call emergency services right away rather than relying on a directory.",

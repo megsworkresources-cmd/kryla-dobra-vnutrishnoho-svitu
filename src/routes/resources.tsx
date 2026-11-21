@@ -7,7 +7,8 @@ import { useLang } from "@/lib/i18n";
 import {
   AGES,
   CATEGORIES,
-  CRISIS,
+  EMERGENCY_CONTACTS,
+  SUPPORT_CONTACTS,
   LIBRARY,
   REGIONS,
   RESOURCES,
@@ -193,8 +194,15 @@ function Resources() {
             {L(UI.helpNow)}
           </h2>
           <p className="mt-1 text-sm">{L(UI.helpNote)}</p>
-          <ul className="mt-3 space-y-1.5">
-            {CRISIS.map((c, i) => (
+          <h3 className="mt-4 font-bold">{L(UI.emergency)}</h3>
+          <ul className="mt-2 space-y-1.5">
+            {EMERGENCY_CONTACTS.map((c, i) => (
+              <Phone key={i} c={c} L={L} />
+            ))}
+          </ul>
+          <h3 className="mt-5 font-bold">{L(UI.support)}</h3>
+          <ul className="mt-2 space-y-1.5">
+            {SUPPORT_CONTACTS.map((c, i) => (
               <Phone key={i} c={c} L={L} />
             ))}
           </ul>

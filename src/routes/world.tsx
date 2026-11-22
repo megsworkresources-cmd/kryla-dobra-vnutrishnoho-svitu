@@ -79,6 +79,7 @@ function World() {
       </div>
 
       <header className="sticky top-0 z-20 flex flex-wrap items-center gap-2 p-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+        <h1 className="sr-only">{t("Мапа світу")}</h1>
         <Link
           to="/"
           className="paper-card flex h-12 min-w-0 flex-1 items-center px-4 font-display text-lg font-bold sm:flex-none"
@@ -151,7 +152,7 @@ function World() {
               }}
             >
               <span className="flex flex-col items-center">
-                <span className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-24 sm:w-24">
+                <span className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-paper shadow-lift transition-transform duration-(--dur-base) ease-(--ease-enter) group-hover:scale-110 group-active:scale-95 sm:h-24 sm:w-24">
                   <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />
                 </span>
                 <span className="paper-card mt-1 whitespace-nowrap px-3 py-1 text-xs font-extrabold">
@@ -171,7 +172,7 @@ function World() {
               top: `${itemAtOr(SPOTS, e.pos, [28, 2])[1]}%`,
             }}
           >
-            <span className="relative h-14 w-14 overflow-hidden rounded-full border-4 border-honey shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-16 sm:w-16">
+            <span className="relative h-14 w-14 overflow-hidden rounded-full border-4 border-honey shadow-lift transition-transform duration-(--dur-base) ease-(--ease-enter) group-hover:scale-110 group-active:scale-95 sm:h-16 sm:w-16">
               <img
                 src={placeImage(e.img)}
                 alt=""
@@ -179,7 +180,7 @@ function World() {
                 loading="lazy"
               />
             </span>
-            <span className="paper-card mt-1 whitespace-nowrap px-2 py-0.5 text-[11px] font-extrabold">
+            <span className="paper-card mt-1 whitespace-nowrap px-2 py-0.5 text-xs font-extrabold">
               {t(e.label)}
             </span>
           </Link>

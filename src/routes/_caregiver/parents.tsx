@@ -110,7 +110,7 @@ function Parents() {
             {t(
               "Видалення акаунта прибирає ваш вхід і спільний соняшник. Малюнки та прогрес дитини залишаться на цьому пристрої.",
             )}{" "}
-            <Link to="/privacy" className="underline">
+            <Link to="/privacy" className="inline-flex min-h-11 items-center underline">
               {t("Політика конфіденційності")}
             </Link>{" "}
             ·{" "}

@@ -84,7 +84,7 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
                     to={stop.to as never}
                     activeOptions={{ exact: true }}
                     aria-current={here ? "page" : undefined}
-                    className={`flex min-h-11 shrink-0 snap-center items-center rounded-full px-4 text-sm font-bold leading-tight ${
+                    className={`press flex min-h-11 shrink-0 snap-center items-center rounded-full px-4 text-sm font-bold leading-tight ${
                       here ? "bg-primary text-primary-foreground shadow-soft" : card
                     }`}
                   >
@@ -95,7 +95,7 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
             </nav>
           )}
 
-          <div className="mb-1.5 truncate text-[0.7rem] font-extrabold uppercase tracking-wide">
+          <div className="mb-1.5 truncate text-center text-xs font-extrabold uppercase tracking-wide">
             {t(current?.label ?? "Тихе Місце")}
           </div>
 
@@ -108,10 +108,10 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
                 <Link
                   to={back.to as never}
                   activeOptions={{ exact: true }}
-                  className={`${card} flex min-h-14 min-w-0 flex-col justify-center gap-0.5 px-3 text-left`}
+                  className={`${card} press flex min-h-14 min-w-0 flex-col justify-center gap-0.5 px-3 text-left`}
                   aria-label={t("Назад: {l}", { l: t(back.label) })}
                 >
-                  <span className="flex items-center gap-1 text-[0.65rem] font-extrabold uppercase tracking-wide opacity-70">
+                  <span className="flex items-center gap-1 text-xs font-extrabold uppercase tracking-wide opacity-80">
                     <ChevronLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
                     {t("Назад")}
                   </span>
@@ -127,7 +127,7 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
               aria-label={t("Мапа світу")}
               title={t("Мапа світу")}
               aria-current={path === "/world" ? "page" : undefined}
-              className={`${card} grid h-14 w-14 shrink-0 place-items-center rounded-full ${
+              className={`${card} press grid h-14 w-14 shrink-0 place-items-center rounded-full ${
                 path === "/world" ? "ring-4 ring-ring" : ""
               }`}
             >
@@ -139,10 +139,10 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
                 <Link
                   to={next.to as never}
                   activeOptions={{ exact: true }}
-                  className="flex min-h-14 min-w-0 flex-col items-end justify-center gap-0.5 rounded-2xl bg-primary px-3 text-right text-primary-foreground shadow-soft"
+                  className="press flex min-h-14 min-w-0 flex-col items-end justify-center gap-0.5 rounded-2xl bg-primary px-3 text-right text-primary-foreground shadow-soft"
                   aria-label={t("Далі: {l}", { l: t(next.label) })}
                 >
-                  <span className="flex items-center gap-1 text-[0.65rem] font-extrabold uppercase tracking-wide">
+                  <span className="flex items-center gap-1 text-xs font-extrabold uppercase tracking-wide">
                     {t("Далі")}
                     <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
                   </span>

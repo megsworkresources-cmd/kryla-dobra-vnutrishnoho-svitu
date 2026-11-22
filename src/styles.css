@@ -48,6 +48,12 @@
 
 :root {
   --radius: 1.25rem;
+  /* Motion system: 100ms micro feedback, 250ms standard, 450ms large; one easing to enter, one to leave. */
+  --dur-fast: 100ms;
+  --dur-base: 250ms;
+  --dur-slow: 450ms;
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.64, 0, 0.78, 0);
   --paper: oklch(0.975 0.018 85);
   --ink: oklch(0.28 0.035 60);
   --background: var(--paper);
@@ -61,7 +67,7 @@
   --secondary: oklch(0.93 0.04 85);
   --secondary-foreground: var(--ink);
   --muted: oklch(0.94 0.02 85);
-  --muted-foreground: oklch(0.48 0.03 60);
+  --muted-foreground: oklch(0.42 0.03 60);
   --accent: oklch(0.82 0.13 80);
   --accent-foreground: oklch(0.3 0.05 60);
   --destructive: oklch(0.58 0.17 30);
@@ -132,6 +138,16 @@
     outline: 3px solid var(--ring);
     outline-offset: 2px;
     border-radius: 12px;
+  }
+}
+
+/* Press feedback on every tappable control: transform only, micro duration. */
+@utility press {
+  transition-property: transform;
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-enter);
+  &:active {
+    transform: scale(0.94);
   }
 }
 

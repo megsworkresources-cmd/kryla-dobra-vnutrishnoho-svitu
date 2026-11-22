@@ -66,7 +66,7 @@ function CommunityGarden() {
     <Scene image={placeImage("garden")} title="Спільний сад" back="/garden" compact>
       <div className="space-y-4 pt-[6vh]">
         {!online && <GardenOfflineNotice />}
-        <p className="text-sm text-muted-foreground">
+        <p className="rounded-2xl bg-paper/85 px-3 py-2 text-sm text-muted-foreground backdrop-blur-sm">
           {t(
             "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.",
           )}
@@ -122,53 +122,53 @@ function CommunityGarden() {
           <ul className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 pb-2">
             <li className="shrink-0 snap-start">
               <div className="flex w-24 flex-col gap-2">
-              <Btn
-                variant="soft"
-                aria-pressed={picked === null}
-                onClick={() => {
-                  setPicked(null);
-                  setPlaying(true);
-                }}
-                className="w-full flex-col rounded-lg px-2 py-3"
-              >
-                <span aria-hidden className="block text-4xl leading-none">
-                  {growthGlyph(ownStage)}
-                </span>
-                <span className="mt-2 block text-xs font-bold">{t("Твій соняшник")}</span>
-                <span className="block text-[11px] text-muted-foreground">
-                  {t("Стадія {n} з 5", { n: ownStage })}
-                </span>
-              </Btn>
-              <SunflowerStoryLink name={t("Твій соняшник")} />
+                <Btn
+                  variant="soft"
+                  aria-pressed={picked === null}
+                  onClick={() => {
+                    setPicked(null);
+                    setPlaying(true);
+                  }}
+                  className="w-full flex-col rounded-lg px-2 py-3"
+                >
+                  <span aria-hidden className="block text-4xl leading-none">
+                    {growthGlyph(ownStage)}
+                  </span>
+                  <span className="mt-2 block text-xs font-bold">{t("Твій соняшник")}</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {t("Стадія {n} з 5", { n: ownStage })}
+                  </span>
+                </Btn>
+                <SunflowerStoryLink name={t("Твій соняшник")} />
               </div>
             </li>
             {shared.map((stage, i) => (
               <li key={`${i}-${stage}`} className="shrink-0 snap-start">
                 <div className="flex w-24 flex-col gap-2">
-                <Btn
-                  variant="soft"
-                  aria-pressed={picked === i}
-                  onClick={() => {
-                    setPicked(i);
-                    setPlaying(true);
-                  }}
-                  className="w-full flex-col rounded-lg px-2 py-3"
-                >
-                  <span
-                    aria-hidden
-                    className={`block leading-none ${stage >= 5 ? "animate-sway" : ""}`}
-                    style={{ fontSize: `${1.9 + stage * 0.16}rem` }}
+                  <Btn
+                    variant="soft"
+                    aria-pressed={picked === i}
+                    onClick={() => {
+                      setPicked(i);
+                      setPlaying(true);
+                    }}
+                    className="w-full flex-col rounded-lg px-2 py-3"
                   >
-                    {growthGlyph(stage)}
-                  </span>
-                  <span className="mt-2 block text-xs font-bold">
-                    {t("Квітка {n}", { n: i + 1 })}
-                  </span>
-                  <span className="block text-[11px] text-muted-foreground">
-                    {t("Стадія {n} з 5", { n: stage })}
-                  </span>
-                </Btn>
-                <SunflowerStoryLink name={t("Квітка {n}", { n: i + 1 })} />
+                    <span
+                      aria-hidden
+                      className={`block leading-none ${stage >= 5 ? "animate-sway" : ""}`}
+                      style={{ fontSize: `${1.9 + stage * 0.16}rem` }}
+                    >
+                      {growthGlyph(stage)}
+                    </span>
+                    <span className="mt-2 block text-xs font-bold">
+                      {t("Квітка {n}", { n: i + 1 })}
+                    </span>
+                    <span className="block text-xs text-muted-foreground">
+                      {t("Стадія {n} з 5", { n: stage })}
+                    </span>
+                  </Btn>
+                  <SunflowerStoryLink name={t("Квітка {n}", { n: i + 1 })} />
                 </div>
               </li>
             ))}

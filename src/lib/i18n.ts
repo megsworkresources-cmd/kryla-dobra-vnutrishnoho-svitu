@@ -8,7 +8,7 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
-  "Казка": "Story",
+  Казка: "Story",
   "Казка на ніч": "Bedtime story",
   "Затишна історія про спокійну ніч, вечірній ритуал і сміливість.":
     "A cosy story about a calm night, evening rituals and courage.",

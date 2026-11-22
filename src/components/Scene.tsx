@@ -29,7 +29,7 @@ export function Scene({ image, night, title, back, favHref, children, compact }:
   const t = useT();
   const favs = useStore((s) => s.favorites);
   const isFav = favHref ? favs.includes(favHref) : false;
-  const btn = `${night ? "night-card" : "paper-card"} flex h-12 items-center justify-center transition active:scale-90`;
+  const btn = `${night ? "night-card" : "paper-card"} press flex h-12 min-w-11 items-center justify-center`;
 
   return (
     <div
@@ -204,6 +204,7 @@ export function Btn({
       onClick={onClick}
       disabled={disabled}
       className={cn(
+        "press min-h-12 min-w-11 rounded-full px-5 font-bold shadow-soft hover:brightness-105 disabled:cursor-not-allowed disabled:saturate-50",
         "inline-flex min-h-12 min-w-11 items-center justify-center gap-2 rounded-full px-5 text-center font-bold shadow-soft transition hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:saturate-50",
         v,
         className,

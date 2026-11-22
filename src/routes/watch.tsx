@@ -5,7 +5,7 @@ import { Btn, Scene } from "@/components/Scene";
 import { CartoonStage } from "@/components/CartoonStage";
 import { StoryFilm } from "@/components/StoryFilm";
 import { STORY_MEDIA } from "@/content/story-media";
-import { WATCH_CLIPS, type WatchClip } from "@/content/watch-clips";
+import { WATCH_CLIPS, watchFilmId, type WatchClip } from "@/content/watch-clips";
 import { pageHead } from "@/content/journeys";
 import { setWatchPosition, useStore } from "@/lib/store";
 import { useAudioUnlocked } from "@/lib/audio";
@@ -13,6 +13,7 @@ import { speak, stopSpeaking, useSpeechState } from "@/lib/speak";
 import { useT, useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/watch")({
+  validateSearch: (search: Record<string, unknown>) => ({ film: watchFilmId(search.film) }),
   head: () => pageHead("Мультики", "Короткі анімовані українські мультики з героями Тихого Місця."),
   component: Watch,
 });
@@ -21,8 +22,14 @@ const SHOT_MS = 7000;
 
 function Watch() {
   const t = useT();
-  const [clip, setClip] = useState<WatchClip | null>(null);
+  const { film } = Route.useSearch();
+  const [clip, setClip] = useState<WatchClip | null>(
+    () => WATCH_CLIPS.find((candidate) => candidate.id === film) ?? null,
+  );
   const positions = useStore((s) => s.watch);
+  useEffect(() => {
+    setClip(WATCH_CLIPS.find((candidate) => candidate.id === film) ?? null);
+  }, [film]);
   return (
     <Scene title="Мультики" back="/world">
       {clip ? (

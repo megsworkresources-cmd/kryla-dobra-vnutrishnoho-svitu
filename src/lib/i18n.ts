@@ -430,6 +430,10 @@ const EN: Record<string, string> = {
   "На добраніч, Тихе Місце. На добраніч, друже.": "Good night, Quiet Place. Good night, friend.",
   "Короткі мультики з нашими друзями. Обери, що подивитися!":
     "Short cartoons with our friends. Pick one to watch!",
+  "Грати: {title}": "Play: {title}",
+  "Відео не вдалося відтворити. Казка з картинками готова — натисни «Грати».":
+    "The video couldn't play. The illustrated story is ready — press Play.",
+  "Спробувати відео ще": "Try the video again",
   Кінець: "The end",
   "← Усі мультики": "← All cartoons",
   Грати: "Play",

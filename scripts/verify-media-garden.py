@@ -24,11 +24,11 @@ OUT = Path("/tmp/browser/remaining")
 OUT.mkdir(parents=True, exist_ok=True)
 ORIGIN = "http://localhost:8080"
 WORDS = {
-    "en": {"card": "The Sunflower Who Looked for the Sun", "map": "World map (main menu)",
+    "en": {"card": "Play: The Sunflower Who Looked for the Sun", "map": "World map (main menu)",
            "unconfirmed": "The current sharing status is not confirmed.", "shared": "Sunflower is shared",
            "share": "Share sunflower", "stop": "Stop sharing", "refresh": "Refresh garden",
            "off": "Sharing is off", "retry": "Garden unavailable. Please try again."},
-    "uk": {"card": "Соняшник, що шукав сонце", "map": "Мапа світу (головне меню)",
+    "uk": {"card": "Грати: Соняшник, що шукав сонце", "map": "Мапа світу (головне меню)",
            "unconfirmed": "Поточний стан поширення не підтверджено.", "shared": "Соняшник поширено",
            "share": "Поділитися соняшником", "stop": "Припинити поширення", "refresh": "Оновити сад",
            "off": "Поширення вимкнено", "retry": "Сад недоступний. Спробуйте ще раз."},

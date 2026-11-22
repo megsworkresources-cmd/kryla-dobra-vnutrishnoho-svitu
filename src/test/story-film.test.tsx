@@ -57,6 +57,23 @@ it("handles missing media, allows reload, and pauses on page interruption", () =
   expect(pause).toHaveBeenCalledTimes(2);
 });
 
+it("notifies a story owner when its film fails", () => {
+  const failure = vi.fn();
+  const { container } = render(
+    <StoryFilm
+      src="/missing.mp4"
+      poster="/test.jpg"
+      playing={false}
+      onPause={vi.fn()}
+      onError={failure}
+    />,
+  );
+  const media = container.querySelector("video");
+  if (!media) throw new Error("Missing video");
+  fireEvent.error(media);
+  expect(failure).toHaveBeenCalledTimes(1);
+});
+
 it("does not restart footage when only the owner's callback changes", () => {
   const { rerender } = render(
     <StoryFilm src="/test.mp4" poster="/test.jpg" playing onPause={() => {}} />,

@@ -2,171 +2,47 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
-import { CartoonStage, type CartoonShot } from "@/components/CartoonStage";
+import { CartoonStage } from "@/components/CartoonStage";
 import { StoryFilm } from "@/components/StoryFilm";
 import { STORY_MEDIA } from "@/content/story-media";
+import { WATCH_CLIPS, type WatchClip } from "@/content/watch-clips";
 import { pageHead } from "@/content/journeys";
 import { setWatchPosition, useStore } from "@/lib/store";
 import { useAudioUnlocked } from "@/lib/audio";
 import { speak, stopSpeaking, useSpeechState } from "@/lib/speak";
 import { useT, useLang } from "@/lib/i18n";
-import welcome from "@/assets/welcome.jpg";
-import meadow from "@/assets/meadow.jpg";
-import night from "@/assets/night.jpg";
-import forest from "@/assets/forest.jpg";
-import clouds from "@/assets/clouds.jpg";
-import path from "@/assets/path.jpg";
-import studio from "@/assets/studio.jpg";
-import safe from "@/assets/safe.jpg";
 
 export const Route = createFileRoute("/watch")({
   head: () => pageHead("Мультики", "Короткі анімовані українські мультики з героями Тихого Місця."),
   component: Watch,
 });
 
-type Shot = CartoonShot;
-interface Clip {
-  id: string;
-  title: string;
-  icon: string;
-  shots: Shot[];
-}
-
-/** Original animated clips made from the app's own artwork — free of any third-party licence. */
-const CLIPS: Clip[] = [
-  {
-    id: "sunflower",
-    title: "Соняшник, що шукав сонце",
-    icon: "🌻",
-    shots: [
-      { img: welcome, who: "solomiya", text: "Біля білої хатки ріс маленький соняшник.", fx: "🌻" },
-      { img: meadow, who: "solomiya", text: "Щоранку він повертав голівку до сонця.", fx: "☀️" },
-      { img: welcome, who: "daryna", text: "Одного дня хмарка сховала сонечко.", fx: "☁️" },
-      {
-        img: meadow,
-        who: "solomiya",
-        text: "Соняшник зачекав, подихав спокійно — і сонце повернулося.",
-        fx: "🌼",
-      },
-    ],
-  },
-  {
-    id: "hedgehog",
-    title: "Ліхтарик і світлячки",
-    icon: "🦔",
-    shots: [
-      {
-        img: forest,
-        who: "lihtaryk",
-        text: "У нічному лісі їжачок Ліхтарик засвітив свій ліхтарик.",
-        fx: "🏮",
-      },
-      {
-        img: forest,
-        who: "lihtaryk",
-        text: "До нього злетілися світлячки — кожен зі своїм почуттям.",
-        fx: "✨",
-      },
-      { img: night, who: "olenka", text: "Разом вони освітили стежку додому.", fx: "🌙" },
-    ],
-  },
-  {
-    id: "kite",
-    title: "Повітряний змій Тараса",
-    icon: "🪁",
-    shots: [
-      {
-        img: clouds,
-        who: "taras",
-        text: "Тарас змайстрував повітряного змія у синьо-жовту смужку.",
-        fx: "🪁",
-      },
-      { img: clouds, who: "taras", text: "Вітер підхопив його високо-високо до хмар.", fx: "💨" },
-      {
-        img: meadow,
-        who: "marko",
-        text: "Марко намалював змія в блокноті, щоб запам'ятати цей день.",
-        fx: "✏️",
-      },
-    ],
-  },
-  {
-    id: "bridge",
-    title: "Сміливий місток",
-    icon: "🌉",
-    shots: [
-      { img: path, who: "daryna", text: "Дарина побачила місток над струмком.", fx: "🌉" },
-      {
-        img: path,
-        who: "daryna",
-        text: "Було трохи страшно. Вона зробила один маленький крок.",
-        fx: "👣",
-      },
-      {
-        img: path,
-        who: "taras",
-        text: "А потім ще один. І ось вона вже на іншому березі!",
-        fx: "🎉",
-      },
-    ],
-  },
-  {
-    id: "paints",
-    title: "Чарівні фарби Марка",
-    icon: "🎨",
-    shots: [
-      { img: studio, who: "marko", text: "Марко відкрив коробку чарівних фарб.", fx: "🎨" },
-      {
-        img: studio,
-        who: "marko",
-        text: "Синя фарба — для спокою, жовта — для радості.",
-        fx: "💙",
-      },
-      {
-        img: safe,
-        who: "olenka",
-        text: "Разом з Оленкою вони розмалювали затишну кімнату.",
-        fx: "🏡",
-      },
-    ],
-  },
-  {
-    id: "lullaby",
-    title: "Колискова для зірок",
-    icon: "🌙",
-    shots: [
-      {
-        img: night,
-        who: "solomiya",
-        text: "Коли настає ніч, Соломія співає зіркам колискову.",
-        fx: "🌙",
-      },
-      { img: night, who: "olenka", text: "Зірки мерехтять повільніше й повільніше.", fx: "⭐" },
-      { img: safe, who: "olenka", text: "На добраніч, Тихе Місце. На добраніч, друже.", fx: "💤" },
-    ],
-  },
-];
-
 const SHOT_MS = 7000;
 
 function Watch() {
   const t = useT();
-  const [clip, setClip] = useState<Clip | null>(null);
+  const [clip, setClip] = useState<WatchClip | null>(null);
   const positions = useStore((s) => s.watch);
   return (
     <Scene title="Мультики" back="/world">
       {clip ? (
-        <Player clip={clip} initialScene={positions[clip.id] ?? 0} onClose={() => setClip(null)} />
+        <Player
+          key={clip.id}
+          clip={clip}
+          initialScene={positions[clip.id] ?? 0}
+          onClose={() => setClip(null)}
+        />
       ) : (
         <div className="space-y-4">
           <p className="text-muted-foreground">
             {t("Короткі мультики з нашими друзями. Обери, що подивитися!")}
           </p>
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {CLIPS.map((c) => (
+            {WATCH_CLIPS.map((c) => (
               <li key={c.id}>
                 <button
                   onClick={() => setClip(c)}
+                  aria-label={t("Грати: {title}", { title: t(c.title) })}
                   className="paper-card group flex h-full w-full flex-col overflow-hidden rounded-lg p-0 text-left transition active:scale-95"
                 >
                   <div className="relative aspect-video w-full shrink-0 overflow-hidden">
@@ -215,7 +91,7 @@ export function Player({
   onClose,
   initialScene = 0,
 }: {
-  clip: Clip;
+  clip: WatchClip;
   onClose: () => void;
   initialScene?: number;
 }) {
@@ -227,6 +103,7 @@ export function Player({
   );
   const [playing, setPlaying] = useState(true);
   const [failedShot, setFailedShot] = useState<number | null>(null);
+  const [filmFailed, setFilmFailed] = useState(false);
   const audioReady = useAudioUnlocked();
   const speech = useSpeechState();
   const speaking = speech === "loading" || speech === "playing";
@@ -268,26 +145,27 @@ export function Player({
         role="region"
         aria-label={t(clip.title)}
       >
-        {film && shot && (
+        {film && shot && !filmFailed && (
           <StoryFilm
             src={film}
             poster={clip.shots[0]?.img ?? shot.img}
             playing={playing && !done}
             onPause={() => setPlaying(false)}
+            onError={() => setFilmFailed(true)}
             startAt={i / Math.max(1, clip.shots.length)}
           />
         )}
         {shot ? (
           <div
             key={i}
-            className={`absolute inset-0 animate-fade-up ${film ? "pointer-events-none" : ""}`}
+            className={`absolute inset-0 animate-fade-up ${film && !filmFailed ? "pointer-events-none" : ""}`}
           >
             <CartoonStage
               clipId={clip.id}
               index={i}
               shot={shot}
               playing={playing && !done}
-              film={Boolean(film)}
+              film={Boolean(film) && !filmFailed}
               onImageError={() => setFailedShot(i)}
             />
             {mediaFailed && (
@@ -305,6 +183,22 @@ export function Player({
           </div>
         )}
       </div>
+      {filmFailed && (
+        <div className="paper-card flex flex-col items-center gap-3 p-4 text-center sm:flex-row sm:text-left">
+          <p role="alert" className="flex-1 text-sm font-bold">
+            {t("Відео не вдалося відтворити. Казка з картинками готова — натисни «Грати».")}
+          </p>
+          <Btn
+            variant="soft"
+            onClick={() => {
+              setFilmFailed(false);
+              setPlaying(true);
+            }}
+          >
+            {t("Спробувати відео ще")}
+          </Btn>
+        </div>
+      )}
       {shot && (
         <p className="paper-card p-4 font-bold text-card-foreground" aria-live="polite">
           {t(shot.text)}

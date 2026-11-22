@@ -113,6 +113,7 @@ function World() {
           </button>
           <Link
             to="/watch"
+            search={{ film: undefined }}
             className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Мультики")}
           >

@@ -12,6 +12,15 @@ export const EXTRAS: Record<string, string> = {
   "Немає інтернету. Турботу збережено на пристрої; поширення недоступне. Після повернення зв’язку натисніть потрібну дію ще раз.":
     "You're offline. Care is saved on this device; sharing is unavailable. When connected again, choose your action again.",
   "Поточний стан поширення не підтверджено.": "The current sharing status is not confirmed.",
+  "Ви офлайн": "You're offline",
+  "Догляд збережено на пристрої. Спільні квітки можуть бути неактуальними; зміни поширення не надсилаються автоматично.":
+    "Care is saved on this device. Shared flowers may be out of date; sharing changes are not sent automatically.",
+  "Ваш сад і поливання залишаються на цьому пристрої. Для оновлення спільних квіток потрібен інтернет.":
+    "Your garden and watering stay on this device. Internet is needed to refresh shared flowers.",
+  "Обери квітку для росту або відкрий спільну казку.":
+    "Choose a flower to watch it grow, or open the shared story.",
+  "Відкрити казку про соняшник: {name}": "Open the sunflower story: {name}",
+  "Дії поширення соняшника": "Sunflower sharing actions",
   "Твій сад збережено на цьому пристрої. Інтернет для нього не потрібен.":
     "Your garden is saved on this device. It doesn't need the internet.",
   "Кольорові сни": "Colourful Dreams",

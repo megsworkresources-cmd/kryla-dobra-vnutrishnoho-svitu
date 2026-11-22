@@ -10,7 +10,7 @@ on:
     branches: ["main"]
 
 permissions:
-  contents: write
+  contents: read
   checks: read
   pull-requests: read
   statuses: read
@@ -60,19 +60,6 @@ jobs:
         run: bun run lint
       - name: Test
         run: bun run test
-      - name: Commit formatting
-        # Save the formatter's changes back to main so the repository itself
-        # stays formatted. Pull requests are skipped: they must not push to the
-        # base branch.
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          if git diff --quiet; then
-            echo "Nothing to commit; code is already formatted."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "style: auto-format AI Studio sync"
-          git pull --rebase origin main
-          git push origin HEAD:main
+      # Formatting is applied in the runner before lint/tests. Do not push
+      # formatter commits from Actions: protected main branches reject them,
+      # and a matrix job must never try to write to the same branch.

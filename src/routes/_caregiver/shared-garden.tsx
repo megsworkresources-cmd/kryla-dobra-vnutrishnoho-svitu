@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Pause, Play, RefreshCw, ShieldCheck, Sprout } from "lucide-react";
 import { GrownUpLink } from "@/components/GrownUpLink";
+import { GardenOfflineNotice } from "@/components/GardenOfflineNotice";
+import { SunflowerStoryLink } from "@/components/SunflowerStoryLink";
 import { Btn, Scene } from "@/components/Scene";
 import { StoryFilm } from "@/components/StoryFilm";
 import { pageHead } from "@/content/journeys";
@@ -72,16 +74,7 @@ function SharedGarden() {
             "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.",
           )}
         </p>
-        {!online && (
-          <p
-            role="status"
-            className="rounded-lg bg-secondary p-4 font-semibold text-secondary-foreground"
-          >
-            {t(
-              "Немає інтернету. Турботу збережено на пристрої; поширення недоступне. Після повернення зв’язку натисніть потрібну дію ще раз.",
-            )}
-          </p>
-        )}
+        {!online && <GardenOfflineNotice caregiver />}
 
         <section aria-labelledby="own-sunflower" className="paper-card p-4 sm:p-5">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
@@ -132,11 +125,11 @@ function SharedGarden() {
               </span>
             </label>
           )}
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:max-w-2xl sm:grid-cols-2">
             {own?.sharing ? (
               <>
                 <Btn
-                  className="w-full sm:w-auto"
+                  className="w-full"
                   disabled={!online || mutation.isPending}
                   onClick={() => mutation.mutate(true)}
                 >
@@ -144,7 +137,7 @@ function SharedGarden() {
                   {t("Оновити соняшник")}
                 </Btn>
                 <Btn
-                  className="w-full sm:w-auto"
+                  className="w-full"
                   variant="soft"
                   disabled={!online || mutation.isPending}
                   onClick={() => mutation.mutate(false)}
@@ -154,7 +147,7 @@ function SharedGarden() {
               </>
             ) : (
               <Btn
-                className="w-full sm:w-auto"
+                className="w-full sm:col-span-2"
                 disabled={!online || !consent || !own || mutation.isPending}
                 onClick={() => mutation.mutate(true)}
               >
@@ -190,6 +183,7 @@ function SharedGarden() {
           </p>
           <ul className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 pb-2">
             <li className="shrink-0 snap-start">
+              <div className="flex w-24 flex-col gap-2">
               <Btn
                 variant="soft"
                 aria-pressed={selected === null}
@@ -197,7 +191,7 @@ function SharedGarden() {
                   setSelected(null);
                   setPlaying(true);
                 }}
-                className="h-full w-24 flex-col rounded-lg px-2 py-3"
+                className="h-full w-full flex-col rounded-lg px-2 py-3"
               >
                 <span aria-hidden className="block text-4xl leading-none">
                   {growthGlyph(ownStage)}
@@ -207,11 +201,14 @@ function SharedGarden() {
                   {t("Стадія {n} з 5", { n: ownStage })}
                 </span>
               </Btn>
+              <SunflowerStoryLink name={t("Твій соняшник")} />
+              </div>
             </li>
             {flowers.map((flower, i) => {
               const stage = coarseGrowthStage(flower.stage);
               return (
                 <li key={flower.flower_id} className="shrink-0 snap-start">
+                  <div className="flex w-24 flex-col gap-2">
                   <Btn
                     variant="soft"
                     aria-pressed={selected === flower.flower_id}
@@ -219,7 +216,7 @@ function SharedGarden() {
                       setSelected(flower.flower_id);
                       setPlaying(true);
                     }}
-                    className="h-full w-24 flex-col rounded-lg px-2 py-3"
+                    className="h-full w-full flex-col rounded-lg px-2 py-3"
                   >
                     <span
                       aria-hidden
@@ -235,6 +232,8 @@ function SharedGarden() {
                       {t("Стадія {n} з 5", { n: stage })}
                     </span>
                   </Btn>
+                  <SunflowerStoryLink name={t("Квітка {n}", { n: i + 1 })} />
+                  </div>
                 </li>
               );
             })}

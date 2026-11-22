@@ -18,11 +18,13 @@ export function StoryFilm({
   part,
   label,
   quiet,
+  onError,
 }: {
   src: string;
   poster: string;
   playing: boolean;
   onPause: () => void;
+  onError?: (() => void) | undefined;
   startAt?: number | undefined;
   /** Show only this slice of the recording, on repeat (0..1), e.g. growth up to a stage. */
   part?: { from: number; to: number } | undefined;
@@ -196,6 +198,7 @@ export function StoryFilm({
         onError={() => {
           setStatus("error");
           pauseOwner.current();
+          onError?.();
         }}
       />
       {!motion && (

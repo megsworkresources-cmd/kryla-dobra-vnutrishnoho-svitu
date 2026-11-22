@@ -32,6 +32,8 @@ jobs:
         env:
           # Public project URL; override with a repository variable if it changes.
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ftqdpebplmucvnzyltry.supabase.co' }}
+          # Lovable Cloud owns the backend; keep its published auth fallback valid too.
+          LOVABLE_PUBLISHED_URL: https://kryla-dobra-vnutrishnoho-svitu.lovable.app
         run: node scripts/verify-deploy.mjs
       - name: Report failure
         # Runs even when checkout or setup failed, using GH_REPO instead of a worktree.

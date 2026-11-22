@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Droplets, Pause, Play, RefreshCw } from "lucide-react";
 import { GrownUpLink } from "@/components/GrownUpLink";
+import { GardenOfflineNotice } from "@/components/GardenOfflineNotice";
+import { SunflowerStoryLink } from "@/components/SunflowerStoryLink";
 import { Btn, Scene } from "@/components/Scene";
 import { StoryFilm } from "@/components/StoryFilm";
 import { coarseGrowthStage, growthGlyph, growthPart, isFinalGrowthStage } from "@/content/growth";
@@ -16,6 +18,7 @@ import { canWater, localDay } from "@/content/watering";
 import { sfx } from "@/lib/audio";
 import { careCount, growthStage, useStore, waterFlower } from "@/lib/store";
 import { pluralUk, useT } from "@/lib/i18n";
+import { useOnline } from "@/hooks/use-online";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
 
@@ -28,6 +31,7 @@ export const Route = createFileRoute("/community-garden")({
 /** Every child can open this page: it carries only coarse stages, never identity. */
 function CommunityGarden() {
   const t = useT();
+  const online = useOnline();
   const read = useServerFn(readCommunityGarden);
   const garden = useQuery({
     queryKey: ["community-garden"],
@@ -61,6 +65,7 @@ function CommunityGarden() {
   return (
     <Scene image={placeImage("garden")} title="Спільний сад" back="/garden" compact>
       <div className="space-y-4 pt-[6vh]">
+        {!online && <GardenOfflineNotice />}
         <p className="text-sm text-muted-foreground">
           {t(
             "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.",
@@ -116,6 +121,7 @@ function CommunityGarden() {
           </p>
           <ul className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 pb-2">
             <li className="shrink-0 snap-start">
+              <div className="flex w-24 flex-col gap-2">
               <Btn
                 variant="soft"
                 aria-pressed={picked === null}
@@ -123,7 +129,7 @@ function CommunityGarden() {
                   setPicked(null);
                   setPlaying(true);
                 }}
-                className="w-24 flex-col rounded-lg px-2 py-3"
+                className="w-full flex-col rounded-lg px-2 py-3"
               >
                 <span aria-hidden className="block text-4xl leading-none">
                   {growthGlyph(ownStage)}
@@ -133,9 +139,12 @@ function CommunityGarden() {
                   {t("Стадія {n} з 5", { n: ownStage })}
                 </span>
               </Btn>
+              <SunflowerStoryLink name={t("Твій соняшник")} />
+              </div>
             </li>
             {shared.map((stage, i) => (
               <li key={`${i}-${stage}`} className="shrink-0 snap-start">
+                <div className="flex w-24 flex-col gap-2">
                 <Btn
                   variant="soft"
                   aria-pressed={picked === i}
@@ -143,7 +152,7 @@ function CommunityGarden() {
                     setPicked(i);
                     setPlaying(true);
                   }}
-                  className="w-24 flex-col rounded-lg px-2 py-3"
+                  className="w-full flex-col rounded-lg px-2 py-3"
                 >
                   <span
                     aria-hidden
@@ -159,10 +168,12 @@ function CommunityGarden() {
                     {t("Стадія {n} з 5", { n: stage })}
                   </span>
                 </Btn>
+                <SunflowerStoryLink name={t("Квітка {n}", { n: i + 1 })} />
+                </div>
               </li>
             ))}
           </ul>
-          {garden.isPending && (
+          {garden.isPending && online && (
             <p role="status" className="mt-3 text-sm">
               {t("Сад завантажується…")}
             </p>
@@ -172,7 +183,7 @@ function CommunityGarden() {
               {t(savedNote.key, savedNote.vars)}
             </p>
           )}
-          {failed && !usingSaved && (
+          {failed && !usingSaved && online && (
             <div className="mt-3 space-y-1 text-sm" role="status">
               <p className="font-bold">{t("Не вдалося завантажити спільний сад.")}</p>
               <p className="text-muted-foreground">

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { STORY_MEDIA } from "@/content/story-media";
-import { WATCH_CLIPS } from "@/content/watch-clips";
+import { WATCH_CLIPS, watchFilmId } from "@/content/watch-clips";
 
 describe("Watch film wiring", () => {
   it("gives each of the six story cards its own existing MP4 and poster", () => {

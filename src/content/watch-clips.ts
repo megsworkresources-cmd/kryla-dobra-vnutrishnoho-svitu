@@ -15,6 +15,12 @@ export interface WatchClip {
   shots: CartoonShot[];
 }
 
+export function watchFilmId(value: unknown): string | undefined {
+  return typeof value === "string" && WATCH_CLIPS.some((clip) => clip.id === value)
+    ? value
+    : undefined;
+}
+
 /** Original animated clips made from the app's own artwork — free of any third-party licence. */
 export const WATCH_CLIPS: WatchClip[] = [
   {

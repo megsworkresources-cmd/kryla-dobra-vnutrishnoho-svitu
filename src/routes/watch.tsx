@@ -13,7 +13,7 @@ import { speak, stopSpeaking, useSpeechState } from "@/lib/speak";
 import { useT, useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/watch")({
-  validateSearch: (search: Record<string, unknown>) => ({ film: watchFilmId(search.film) }),
+  validateSearch: (search: Record<string, unknown>) => ({ film: watchFilmId(search["film"]) }),
   head: () => pageHead("Мультики", "Короткі анімовані українські мультики з героями Тихого Місця."),
   component: Watch,
 });

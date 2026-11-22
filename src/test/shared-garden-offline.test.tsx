@@ -156,7 +156,9 @@ it("provides a story link for the caregiver's sunflower and every shared flower"
   });
   mount();
 
-  const links = await screen.findAllByRole("link", { name: /Open sunflower story for/ });
-  expect(links).toHaveLength(3);
+  await waitFor(() => {
+    expect(screen.getAllByRole("link", { name: /Open sunflower story for/ })).toHaveLength(3);
+  });
+  const links = screen.getAllByRole("link", { name: /Open sunflower story for/ });
   expect(links.every((link) => link.getAttribute("href") === "/watch?film=sunflower")).toBe(true);
 });

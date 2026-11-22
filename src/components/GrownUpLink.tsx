@@ -57,11 +57,6 @@ export function GrownUpLink({
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setAsk(true)}
-        className="inline-flex min-h-11 items-center text-left underline"
-      >
       <button type="button" onClick={() => setAsk(true)} className={className}>
         {children}
       </button>

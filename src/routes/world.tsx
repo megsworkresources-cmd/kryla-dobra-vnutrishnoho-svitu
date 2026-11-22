@@ -152,7 +152,7 @@ function World() {
               }}
             >
               <span className="flex flex-col items-center">
-                <span className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-24 sm:w-24">
+                <span className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-paper shadow-lift transition-transform duration-(--dur-base) ease-(--ease-enter) group-hover:scale-110 group-active:scale-95 sm:h-24 sm:w-24">
                   <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />
                 </span>
                 <span className="paper-card mt-1 whitespace-nowrap px-3 py-1 text-xs font-extrabold">
@@ -172,14 +172,7 @@ function World() {
               top: `${itemAtOr(SPOTS, e.pos, [28, 2])[1]}%`,
             }}
           >
-            <span className="flex flex-col items-center">
-              <span className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-paper shadow-lift transition-transform duration-(--dur-base) ease-(--ease-enter) group-hover:scale-110 group-active:scale-95 sm:h-24 sm:w-24">
-                <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />
-              </span>
-              <span className="paper-card mt-1 whitespace-nowrap px-3 py-1 text-xs font-extrabold">
-                {t(p.name)}
-              </span>
-            <span className="relative h-14 w-14 overflow-hidden rounded-full border-4 border-honey shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-16 sm:w-16">
+            <span className="relative h-14 w-14 overflow-hidden rounded-full border-4 border-honey shadow-lift transition-transform duration-(--dur-base) ease-(--ease-enter) group-hover:scale-110 group-active:scale-95 sm:h-16 sm:w-16">
               <img
                 src={placeImage(e.img)}
                 alt=""

@@ -184,24 +184,24 @@ function SharedGarden() {
           <ul className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 pb-2">
             <li className="shrink-0 snap-start">
               <div className="flex w-24 flex-col gap-2">
-              <Btn
-                variant="soft"
-                aria-pressed={selected === null}
-                onClick={() => {
-                  setSelected(null);
-                  setPlaying(true);
-                }}
-                className="h-full w-full flex-col rounded-lg px-2 py-3"
-              >
-                <span aria-hidden className="block text-4xl leading-none">
-                  {growthGlyph(ownStage)}
-                </span>
-                <span className="mt-2 block text-xs font-bold">{t("Твій соняшник")}</span>
-                <span className="block text-[11px] text-muted-foreground">
-                  {t("Стадія {n} з 5", { n: ownStage })}
-                </span>
-              </Btn>
-              <SunflowerStoryLink name={t("Твій соняшник")} />
+                <Btn
+                  variant="soft"
+                  aria-pressed={selected === null}
+                  onClick={() => {
+                    setSelected(null);
+                    setPlaying(true);
+                  }}
+                  className="h-full w-full flex-col rounded-lg px-2 py-3"
+                >
+                  <span aria-hidden className="block text-4xl leading-none">
+                    {growthGlyph(ownStage)}
+                  </span>
+                  <span className="mt-2 block text-xs font-bold">{t("Твій соняшник")}</span>
+                  <span className="block text-[11px] text-muted-foreground">
+                    {t("Стадія {n} з 5", { n: ownStage })}
+                  </span>
+                </Btn>
+                <SunflowerStoryLink name={t("Твій соняшник")} />
               </div>
             </li>
             {flowers.map((flower, i) => {
@@ -209,30 +209,30 @@ function SharedGarden() {
               return (
                 <li key={flower.flower_id} className="shrink-0 snap-start">
                   <div className="flex w-24 flex-col gap-2">
-                  <Btn
-                    variant="soft"
-                    aria-pressed={selected === flower.flower_id}
-                    onClick={() => {
-                      setSelected(flower.flower_id);
-                      setPlaying(true);
-                    }}
-                    className="h-full w-full flex-col rounded-lg px-2 py-3"
-                  >
-                    <span
-                      aria-hidden
-                      className={`block leading-none ${isFinalGrowthStage(stage) ? "animate-sway" : ""}`}
-                      style={{ fontSize: `${1.9 + stage * 0.16}rem` }}
+                    <Btn
+                      variant="soft"
+                      aria-pressed={selected === flower.flower_id}
+                      onClick={() => {
+                        setSelected(flower.flower_id);
+                        setPlaying(true);
+                      }}
+                      className="h-full w-full flex-col rounded-lg px-2 py-3"
                     >
-                      {growthGlyph(stage)}
-                    </span>
-                    <span className="mt-2 block text-xs font-bold">
-                      {t("Квітка {n}", { n: i + 1 })}
-                    </span>
-                    <span className="block text-[11px] text-muted-foreground">
-                      {t("Стадія {n} з 5", { n: stage })}
-                    </span>
-                  </Btn>
-                  <SunflowerStoryLink name={t("Квітка {n}", { n: i + 1 })} />
+                      <span
+                        aria-hidden
+                        className={`block leading-none ${isFinalGrowthStage(stage) ? "animate-sway" : ""}`}
+                        style={{ fontSize: `${1.9 + stage * 0.16}rem` }}
+                      >
+                        {growthGlyph(stage)}
+                      </span>
+                      <span className="mt-2 block text-xs font-bold">
+                        {t("Квітка {n}", { n: i + 1 })}
+                      </span>
+                      <span className="block text-[11px] text-muted-foreground">
+                        {t("Стадія {n} з 5", { n: stage })}
+                      </span>
+                    </Btn>
+                    <SunflowerStoryLink name={t("Квітка {n}", { n: i + 1 })} />
                   </div>
                 </li>
               );

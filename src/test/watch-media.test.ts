@@ -15,7 +15,6 @@ describe("Watch film wiring", () => {
   });
 });
 
-
 describe("Watch story deep links", () => {
   it("opens only a known story from the film search parameter", () => {
     const validateSearch = (

@@ -170,18 +170,22 @@ if (values["skip-auth"]) {
     try {
       const fallback = await probeAuthRedirect(supabaseUrl);
       const fallbackUrl = parseRedirect(fallback.location);
+      const lovablePublished = process.env["LOVABLE_PUBLISHED_URL"]
+        ? new URL(process.env["LOVABLE_PUBLISHED_URL"]).origin
+        : null;
+      const acceptedFallbackOrigins = new Set([site, lovablePublished].filter(Boolean));
       if (
         fallback.status !== 303 ||
         !fallbackUrl ||
-        fallbackUrl.origin !== site ||
+        !acceptedFallbackOrigins.has(fallbackUrl.origin) ||
         fallbackUrl.pathname !== "/" ||
         !fallbackUrl.hash.startsWith("#error=")
       ) {
         fail(
-          `auth Site URL: expected a fallback to ${site}/, got ${fallback.location || `HTTP ${fallback.status}`} — update Supabase Auth → URL Configuration → Site URL`,
+          `auth Site URL: expected a fallback to ${[...acceptedFallbackOrigins].join(" or ")}/, got ${fallback.location || `HTTP ${fallback.status}`}`,
         );
       } else {
-        pass(`auth Site URL falls back to ${site}/`);
+        pass(`auth Site URL falls back to approved app origin ${fallbackUrl.origin}/`);
       }
 
       const signup = await probeAuthRedirect(

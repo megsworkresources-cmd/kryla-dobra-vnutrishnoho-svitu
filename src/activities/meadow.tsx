@@ -329,16 +329,20 @@ function BreathVisual({
         {Array.from({ length: 32 }, (_, i) => {
           const angle = i * 2.39996;
           const radius = 3.6 * Math.sqrt(i);
+          // Rounded so server and browser math produce identical attribute text during hydration.
+          const x = Math.round(Math.cos(angle) * radius * 100) / 100;
+          const y = Math.round(Math.sin(angle) * radius * 100) / 100;
+          const turn = Math.round(((angle * 180) / Math.PI) * 100) / 100;
           return (
             <ellipse
               key={i}
-              cx={Math.cos(angle) * radius}
-              cy={Math.sin(angle) * radius}
+              cx={x}
+              cy={y}
               rx="1.8"
               ry="2.4"
               fill="var(--honey)"
               opacity=".7"
-              transform={`rotate(${(angle * 180) / Math.PI} ${Math.cos(angle) * radius} ${Math.sin(angle) * radius})`}
+              transform={`rotate(${turn} ${x} ${y})`}
             />
           );
         })}

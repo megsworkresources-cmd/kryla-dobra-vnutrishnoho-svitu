@@ -180,7 +180,7 @@ function World() {
                 loading="lazy"
               />
             </span>
-            <span className="paper-card mt-1 whitespace-nowrap px-2 py-0.5 text-[11px] font-extrabold">
+            <span className="paper-card mt-1 whitespace-nowrap px-2 py-0.5 text-xs font-extrabold">
               {t(e.label)}
             </span>
           </Link>

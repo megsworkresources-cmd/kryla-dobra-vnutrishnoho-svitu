@@ -197,7 +197,7 @@ function SharedGarden() {
                     {growthGlyph(ownStage)}
                   </span>
                   <span className="mt-2 block text-xs font-bold">{t("Твій соняшник")}</span>
-                  <span className="block text-[11px] text-muted-foreground">
+                  <span className="block text-xs text-muted-foreground">
                     {t("Стадія {n} з 5", { n: ownStage })}
                   </span>
                 </Btn>
@@ -228,7 +228,7 @@ function SharedGarden() {
                       <span className="mt-2 block text-xs font-bold">
                         {t("Квітка {n}", { n: i + 1 })}
                       </span>
-                      <span className="block text-[11px] text-muted-foreground">
+                      <span className="block text-xs text-muted-foreground">
                         {t("Стадія {n} з 5", { n: stage })}
                       </span>
                     </Btn>

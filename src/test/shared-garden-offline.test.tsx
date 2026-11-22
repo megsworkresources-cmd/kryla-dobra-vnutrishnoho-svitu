@@ -21,6 +21,13 @@ vi.mock("@/components/StoryFilm", () => ({ StoryFilm: () => null }));
 vi.mock("@/components/GrownUpLink", () => ({
   GrownUpLink: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
 }));
+vi.mock("@/components/SunflowerStoryLink", () => ({
+  SunflowerStoryLink: ({ name }: { name: string }) => (
+    <a href="/watch?film=sunflower" aria-label={`Open sunflower story for ${name}`}>
+      Казка
+    </a>
+  ),
+}));
 
 let client: QueryClient;
 function connect(online: boolean) {
@@ -137,4 +144,19 @@ it("a lost withdrawal response cannot present cached sharing as confirmed", asyn
   fireEvent.click(screen.getByRole("button", { name: "Оновити сад" }));
   await screen.findByText("Соняшник поширено");
   expect(mocks.share).toHaveBeenCalledTimes(1);
+});
+
+it("provides a story link for the caregiver's sunflower and every shared flower", async () => {
+  mocks.read.mockResolvedValue({
+    own: { stage: 1, sharing: false },
+    flowers: [
+      { flower_id: "flower-one", stage: 2 },
+      { flower_id: "flower-two", stage: 5 },
+    ],
+  });
+  mount();
+
+  const links = await screen.findAllByRole("link", { name: /Open sunflower story for/ });
+  expect(links).toHaveLength(3);
+  expect(links.every((link) => link.getAttribute("href") === "/watch?film=sunflower")).toBe(true);
 });

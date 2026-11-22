@@ -137,7 +137,7 @@ function SharedGarden() {
                   {t("Оновити соняшник")}
                 </Btn>
                 <Btn
-                  className="w-full sm:w-auto"
+                  className="w-full"
                   variant="soft"
                   disabled={!online || mutation.isPending}
                   onClick={() => mutation.mutate(false)}
@@ -147,7 +147,7 @@ function SharedGarden() {
               </>
             ) : (
               <Btn
-                className="w-full sm:w-auto"
+                className="w-full sm:col-span-2"
                 disabled={!online || !consent || !own || mutation.isPending}
                 onClick={() => mutation.mutate(true)}
               >

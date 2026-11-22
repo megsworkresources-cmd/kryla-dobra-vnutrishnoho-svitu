@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { EXTRAS } from "./i18n.extras";
 import { getState, useStore, type Lang } from "./store";
 
 /**
@@ -7,6 +8,47 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Казка на ніч": "Bedtime story",
+  "Затишна історія про спокійну ніч, вечірній ритуал і сміливість.":
+    "A cosy story about a calm night, evening rituals and courage.",
+  "Поговорімо разом": "Let’s talk together",
+  "Повільна прогулянка": "The slow walk",
+  "Знаходь маленькі дива на лузі й помічай звуки, запахи й дотики.":
+    "Find small wonders in the meadow and notice sounds, smells and textures.",
+  "Маленьке диво {n}": "Small wonder {n}",
+  "Знайдено див: {n} із {m}": "Wonders found: {n} of {m}",
+  Калюжки: "Puddles",
+  "Зберегти в галерею": "Save to gallery",
+  "Стежка Ліхтарика": "Lantern’s Path",
+  "Проведи Їжачка Ліхтарика лабіринтом до теплої хатинки.":
+    "Guide Lantern the Hedgehog through the maze to the warm cottage.",
+  Лабіринт: "Maze",
+  "Ліхтарик тут": "Lantern is here",
+  Хатинка: "Cottage",
+  Кущик: "Bush",
+  Стежка: "Path",
+  "Уважний луг": "The Noticing Meadow",
+  "Розглянь луг і порахуй метеликів, сонечок і соняшники.":
+    "Look at the meadow and count butterflies, ladybirds and sunflowers.",
+  "Раунд {n} із {m}": "Round {n} of {m}",
+  "Намалюй, що допомагає тобі почуватися безпечно й затишно.":
+    "Draw what helps you feel safe and cosy.",
+  "Полотно для малювання": "Drawing canvas",
+  "Колір {n}": "Colour {n}",
+  Разом: "Together",
+  "Гра для дитини й дорослого: картки на увагу, слухання й тепло.":
+    "A child-and-grown-up game: cards for attention, listening and warmth.",
+  "Наступна картка": "Next card",
+  "Витягнути картку": "Draw a card",
+  "Карток зіграно: {n}": "Cards played: {n}",
+  "Торкайся калюжок і складай тиху дощову пісню. Є варіанти без екрана.":
+    "Tap the puddles to make a quiet rain song. Off-screen options included.",
+  "Калюжка: торкнися, щоб упала крапля": "Puddle: tap to drop a raindrop",
+  "Крапель: {n} із {m}": "Drops: {n} of {m}",
+  "Без екрана": "Off-screen",
+  "Ресурси для батьків": "Parent Resources",
+  "Перевірений довідник організацій, гарячих ліній і порад для українських родин.":
+    "A checked directory of organisations, helplines and advice for Ukrainian families.",
   "Соняшник росте поступово — одна стадія на день. Завтра він підросте ще.":
     "The sunflower grows gradually — one stage a day. It will grow more tomorrow.",
   "Попроси дорослого увійти, щоб персонажі могли підказати.":
@@ -17,9 +59,15 @@ const EN: Record<string, string> = {
   "Не зараз": "Not now",
   "Анонімні соняшники з добровільною згодою дорослих. Малюнки й почуття залишаються приватними.":
     "Anonymous sunflowers shared with caregiver consent. Drawings and feelings stay private.",
-  "Сад ще прокидається.": "The garden is still waking up.",
-  "Твій соняшник уже тут. Інші квітки з’являться, коли дорослі в родинах поділяться ними.":
-    "Your sunflower is already here. Other flowers appear when grown-ups in their families share them.",
+  "Не вдалося завантажити спільний сад.": "Couldn't load the shared garden.",
+  "Твій соняшник залишається тут. Спробуй оновити сад трохи пізніше.":
+    "Your sunflower is still here. Try refreshing the garden a little later.",
+  "Показано сад, збережений сьогодні. Онови, щоб побачити нові квітки.":
+    "Showing the garden saved today. Refresh to see new flowers.",
+  "Показано сад, збережений учора. Онови, щоб побачити нові квітки.":
+    "Showing the garden saved yesterday. Refresh to see new flowers.",
+  "Показано сад, збережений {n} дн. тому. Онови, щоб побачити нові квітки.":
+    "Showing the garden saved {n} days ago. Refresh to see new flowers.",
   "Можна було просто дихати й нічого не вирішувати.":
     "It was enough to breathe and decide nothing at all.",
   "Сум був поруч. {who} не проганяв його — просто сидів разом із ним.":
@@ -165,7 +213,36 @@ const EN: Record<string, string> = {
   "Місцеві записи залишаються приватними. Лише у спільному саду дорослий може окремо поширити анонімну стадію соняшника.":
     "Local records stay private. Only in the shared garden can a caregiver separately share an anonymous sunflower stage.",
   "Готова казка": "Ready-made story",
+  "Готові казки": "Ready-made stories",
+  "Відкрити казку: {n}": "Open the story: {n}",
   "Пригода насінини": "The seed's adventure",
+  "Про сміливість відпустити й рости.": "About the courage to let go and grow.",
+  Рукавичка: "The Mitten",
+  "Народна казка про тепло, у якому всім вистачає місця.":
+    "A folk tale about warmth with room for everyone.",
+  "Одного зимового дня дід ішов лісом і загубив рукавичку. Вона впала на сніг і лежала ще тепла від дідової руки, наче маленька хатинка.":
+    "One winter day a grandfather was walking through the forest and lost his mitten. It fell on the snow and lay there still warm from his hand, like a little house.",
+  "Першою прибігла мишка. «Ой, яке затишне місце!» — сказала вона й залізла всередину. Слідом прискакала жабка й теж попросилася погрітися.":
+    "The first to arrive was a little mouse. “Oh, what a cozy place!” she said, and moved in. A frog came hopping after her and asked to warm up too.",
+  "Потім прийшли зайчик, лисичка й вовчик. Кожен тулився до сусіда, рукавичка ставала все тіснішою, та ніхто не хотів іти геть.":
+    "Then came a hare, a fox and a little wolf. Each one nestled closer to the others, and the mitten grew tighter and tighter, but nobody wanted to leave.",
+  "Нарешті прийшов ведмідь. Рукавичка тріснула, і звірі покотилися у сніг, сміючись. Дід знайшов їх усіх разом і пошив їм велику теплу рукавичку.":
+    "At last a bear arrived. The mitten burst, and the animals tumbled into the snow, laughing. The grandfather found them all together and sewed them a big warm mitten.",
+  "Іноді тепло народжується там, де тісно, але ніхто нікого не жене геть.":
+    "Sometimes warmth is born in a crowded place where nobody is turned away.",
+  Колобок: "The Bun",
+  "Народна казка про мандрівку й повернення додому.":
+    "A folk tale about wandering and coming home.",
+  "Бабуся спекла колобка — рум’яного й круглого, наче маленьке сонечко. Дідусь поставив його на віконце охолонути. Там колобок дивився на сад і мріяв побачити, що там, за тином.":
+    "A grandmother baked a bun — golden and round as a little sun. Grandfather set it on the windowsill to cool. There the bun looked out at the garden and dreamed of seeing what lay beyond the fence.",
+  "Колобок покотився стежкою. Назустріч йому — заєць: «Який же ти круглий!» — «Я колобок, я від бабусі втік», — заспівав колобок і покотився далі.":
+    "The bun rolled down the path. A hare came toward him. “How round you are!” — “I am the bun, I ran away from my grandmother,” the bun sang and rolled on.",
+  "Він зустрів вовка й лисичку, і всі радо слухали його пісеньку. Та надвечір стежка потемніла, і колобок відчув, що сумує за теплим віконцем.":
+    "He met a wolf and a fox, and everyone loved his little song. But as evening came, the path grew dark, and the bun began to miss the warm windowsill.",
+  "Лисичка помітила це й показала йому коротшу дорогу додому. Бабуся й дідусь обійняли колобка, а він розповів їм про всіх, кого зустрів.":
+    "The fox saw that he was homesick and showed him a shorter way home. His grandmother and grandfather hugged him, and he told them about everyone he had met.",
+  "Можна мандрувати світом і повертатися додому — там на тебе чекають.":
+    "You can wander the world and still come home — someone is waiting for you there.",
   "Знайдено пар: {n} із {total}": "Pairs found: {n} of {total}",
   "Картка {n}: {name}": "Card {n}: {name}",
   "Прибрати останню зірку": "Undo the last star",
@@ -292,6 +369,8 @@ const EN: Record<string, string> = {
   "Твій соняшник": "Your sunflower",
   "Твій соняшник сьогодні": "Your sunflower today",
   "Дивитися ріст": "Watch it grow",
+  "У саду {n} квітка": "Flowers in the garden: {n}",
+  "У саду {n} квітки": "Flowers in the garden: {n}",
   "У саду {n} квіток": "Flowers in the garden: {n}",
   "Обери квітку, щоб побачити, як вона росла.": "Choose a flower to see how it grew.",
   "Як росте обрана квітка": "How the chosen flower grows",
@@ -1350,8 +1429,8 @@ const EN: Record<string, string> = {
   Малюнки: "Drawings",
   "Усі малюнки": "All drawings",
   "Малюнків поки немає.": "No drawings yet.",
-  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться.":
-    "Erase the records of places and exercises? Drawings and settings will stay.",
+  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться, а збережений спільний сад очиститься.":
+    "Erase the records of places and exercises? Drawings and settings will stay, and the saved shared garden will be cleared.",
   Скасувати: "Cancel",
   Стерти: "Erase",
   "Очистити прогрес": "Clear progress",
@@ -1370,6 +1449,34 @@ const EN: Record<string, string> = {
     "If that account exists, we've sent a password reset email.",
   "Не вдалося увійти. Перевірте пошту й пароль.":
     "Couldn't sign in. Check your email and password.",
+  "Підтвердьте електронну пошту за посиланням із листа, потім увійдіть.":
+    "Confirm your email using the link in the message, then sign in.",
+  "Акаунт з цією поштою вже існує. Увійдіть або відновіть пароль.":
+    "An account with this email already exists. Sign in or reset your password.",
+  "Пароль має містити щонайменше 8 символів.": "The password must contain at least 8 characters.",
+  "Новий пароль має відрізнятися від старого.":
+    "The new password must be different from the old one.",
+  "Перевірте адресу електронної пошти.": "Check the email address.",
+  "Створення акаунтів зараз вимкнено.": "Account creation is currently disabled.",
+  "Вхід через електронну пошту тимчасово недоступний.": "Email sign-in is temporarily unavailable.",
+  "Забагато листів або спроб. Спробуйте пізніше.": "Too many emails or attempts. Try again later.",
+  "Посилання для входу налаштоване неправильно. Спробуйте пізніше.":
+    "The sign-in link is misconfigured. Try again later.",
+  "Посилання прострочене або вже використане. Запросіть нове.":
+    "The link has expired or was already used. Request a new one.",
+  "Перевірка безпеки не пройдена. Оновіть сторінку й спробуйте ще раз.":
+    "The security check failed. Refresh the page and try again.",
+  "Сесія завершилася. Увійдіть ще раз.": "Your session has ended. Sign in again.",
+  "Не вдалося з'єднатися. Перевірте інтернет і спробуйте ще раз.":
+    "Couldn't connect. Check your internet and try again.",
+  "Надіслати лист ще раз": "Resend confirmation email",
+  "Надіслати лист ще раз ({s} с)": "Resend confirmation email ({s} s)",
+  "Лист надіслано ще раз. Перевірте пошту й підтвердьте адресу, потім увійдіть.":
+    "Email sent again. Check your inbox, confirm your address, then sign in.",
+  "Не вдалося надіслати лист. Спробуйте пізніше.": "Couldn't send the email. Try again later.",
+  "Ця електронна пошта вже підтверджена. Увійдіть.": "This email is already confirmed. Sign in.",
+  "Акаунт не знайдено. Перевірте адресу або створіть новий.":
+    "Account not found. Check the address or create a new one.",
   "Вхід для дорослих": "Adult sign-in",
   "Створити акаунт дорослого": "Create an adult account",
   "Відновити пароль": "Reset password",
@@ -1390,6 +1497,16 @@ const EN: Record<string, string> = {
   "Зберегти пароль": "Save password",
   "Відкрийте це посилання з листа для зміни пароля.":
     "Open this page from the link in your password reset email.",
+  "Підтвердження адреси": "Email confirmation",
+  "Підтвердження адреси — Тихе Місце": "Email confirmation — Quiet Place",
+  "Підтвердіть електронну пошту дорослого, щоб увійти до панелі прогресу.":
+    "Confirm the adult's email to open the progress dashboard.",
+  "Підтвердження електронної пошти дорослого.": "Confirming the adult's email address.",
+  "Посилання не спрацювало. Увійдіть або надішліть лист ще раз.":
+    "That link didn't work. Sign in or send the email again.",
+  "Перейти до входу": "Go to sign-in",
+  "Адресу підтверджено. Переходимо далі…": "Email confirmed. Taking you onward…",
+  "Підтверджуємо адресу…": "Confirming your email…",
   "Уся мапа — Тихе Місце": "Full map — Quiet Place",
   "Розглянь увесь чарівний світ: наближай, рухай мапу й обирай місце.":
     "Explore the whole magical world: zoom, move the map and pick a place.",
@@ -1457,6 +1574,7 @@ const EN: Record<string, string> = {
     "The storyteller is unavailable right now. Choose a ready-made story in the Night Sky.",
   "Нова казка з Claude": "A new story with Claude",
   "Сцена {n}": "Scene {n}",
+  Сцени: "Scenes",
   "Слухати голосом пристрою": "Listen with the device voice",
   "Зупинити читання": "Stop reading",
   "Читання відбувається на цьому пристрої; текст казки нікуди не надсилається для озвучення.":
@@ -1472,15 +1590,30 @@ let APP_LINES: Set<string> | null = null;
 /** True only for app-written lines (dictionary sources or translations). */
 export function isAppLine(s: string): boolean {
   if (!APP_LINES)
-    APP_LINES = new Set([...Object.keys(EN), ...Object.values(EN)].map((x) => x.trim()));
+    APP_LINES = new Set(
+      [
+        ...Object.keys(EN),
+        ...Object.values(EN),
+        ...Object.keys(EXTRAS),
+        ...Object.values(EXTRAS),
+      ].map((x) => x.trim()),
+    );
   return APP_LINES.has(s.trim());
 }
 
 /** Translate one string for an explicit language (usable on the server). */
 export function tr(s: string, lang: Lang, vars?: Record<string, string | number>): string {
-  let out = lang === "en" ? (EN[s] ?? s) : s;
+  let out = lang === "en" ? (EN[s] ?? EXTRAS[s] ?? s) : s;
   if (vars) out = out.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
   return out;
+}
+
+const UK_PLURALS = new Intl.PluralRules("uk");
+
+/** Ukrainian count agreement: 1 квітка, 2–4 квітки, 0/5+ квіток. */
+export function pluralUk(n: number, one: string, few: string, many: string): string {
+  const rule = UK_PLURALS.select(n);
+  return rule === "one" ? one : rule === "few" ? few : many;
 }
 
 /** Non-reactive translate (route head(), loaders, server code paths). */

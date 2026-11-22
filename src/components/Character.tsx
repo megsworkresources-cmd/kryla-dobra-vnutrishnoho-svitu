@@ -6,6 +6,8 @@ import { getSpeechState, speak, useSpeechState } from "@/lib/speak";
 import { useAudioUnlocked } from "@/lib/audio";
 import { useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
+import { useMediaMotion } from "@/hooks/use-media-motion";
+import { claimVideo, releaseVideo } from "@/lib/video-focus";
 
 export type Mood = "talk" | "listen" | "think" | "cheer" | "calm";
 /** Body action the character acts out so the child can copy it. */
@@ -34,7 +36,7 @@ function CharacterLoop({
 }) {
   const t = useT();
   const c = CHARACTERS[who];
-  const reduceMotion = useStore((s) => s.reduceMotion);
+  const motion = useMediaMotion();
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -46,13 +48,19 @@ function CharacterLoop({
 
   useEffect(() => {
     const media = video.current;
-    if (!media || reduceMotion || failed) return;
+    if (!media || !motion || failed) return;
     let active = true;
-    if (playing) {
+    if (playing && !document.hidden) {
+      claimVideo(media);
       try {
-        void media.play().catch(() => {
-          if (active) setPlaying(false);
-        });
+        void media
+          .play()
+          .then(() => {
+            if (!active || document.hidden) media.pause();
+          })
+          .catch(() => {
+            if (active) setPlaying(false);
+          });
       } catch {
         if (active) setPlaying(false);
       }
@@ -60,11 +68,15 @@ function CharacterLoop({
     return () => {
       active = false;
       media.pause();
+      releaseVideo(media);
     };
-  }, [playing, who, reduceMotion, failed]);
+  }, [playing, who, motion, failed]);
 
   useEffect(() => {
-    const pause = () => setPlaying(false);
+    const pause = () => {
+      video.current?.pause();
+      setPlaying(false);
+    };
     const visibility = () => {
       if (document.hidden) pause();
     };
@@ -76,7 +88,7 @@ function CharacterLoop({
     };
   }, []);
 
-  if (reduceMotion || failed) {
+  if (!motion || failed) {
     return (
       <img
         key={pulse}
@@ -100,6 +112,12 @@ function CharacterLoop({
         aria-hidden="true"
         tabIndex={-1}
         className="h-full w-full object-cover"
+        onPlaying={() => {
+          const media = video.current;
+          if (!media) return;
+          if (!playing || document.hidden) media.pause();
+          else claimVideo(media);
+        }}
         onPause={() => {
           if (playing) setPlaying(false);
         }}

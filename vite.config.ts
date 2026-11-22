@@ -8,6 +8,9 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import { assertNoServiceRoleClientImports } from "./scripts/no-service-role-client-guard.mjs";
+import { clientOutputDirectory, finalizePwa } from "./scripts/pwa-build";
+import { pwaWorkboxOptions } from "./scripts/pwa-workbox";
 
 // The framework's dev asset proxy serves recorded films and images from Lovable,
 // but it reads LOVABLE_PREVIEW_HOST from process.env. Vite only exposes VITE_*
@@ -20,6 +23,14 @@ if (!process.env["LOVABLE_PREVIEW_HOST"] && localEnv["LOVABLE_PREVIEW_HOST"])
 export default defineConfig({
   vite: {
     plugins: [
+      {
+        // The generated service-role client bypasses RLS; no app code may import it.
+        name: "no-service-role-supabase-client",
+        apply: "build",
+        buildStart() {
+          assertNoServiceRoleClientImports();
+        },
+      },
       mcpPlugin({
         path: "/api/public/mcp",
         metadataPath: "/api/public/.well-known/oauth-protected-resource",
@@ -30,41 +41,17 @@ export default defineConfig({
         devOptions: { enabled: false },
         manifest: false,
         filename: "sw.js",
-        outDir: "dist/client",
-        workbox: {
-          globPatterns: ["**/*.{js,css,png,jpg,jpeg,webp,svg,woff2}"],
-          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
-          navigateFallback: null,
-          cleanupOutdatedCaches: true,
-          runtimeCaching: [
-            {
-              urlPattern: ({ request, url }) =>
-                request.mode === "navigate" &&
-                !url.pathname.startsWith("/~oauth") &&
-                !url.pathname.startsWith("/api/"),
-              handler: "NetworkFirst",
-              options: {
-                cacheName: "pages",
-                networkTimeoutSeconds: 4,
-                expiration: { maxEntries: 60 },
-              },
-            },
-            {
-              urlPattern: ({ url, sameOrigin }) =>
-                sameOrigin &&
-                (url.pathname.startsWith("/__l5e/assets-v1/") ||
-                  url.pathname.startsWith("/assets/")),
-              handler: "CacheFirst",
-              options: {
-                cacheName: "media",
-                expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
-                rangeRequests: true,
-                cacheableResponse: { statuses: [0, 200] },
-              },
-            },
-          ],
+        integration: {
+          configureOptions(config, options) {
+            // Generation, precache scanning and verification must share the deployed directory.
+            const clientOutput = clientOutputDirectory(config);
+            options.outDir = clientOutput;
+            options.workbox = { ...options.workbox, globDirectory: clientOutput };
+          },
         },
+        workbox: pwaWorkboxOptions(),
       }),
+      finalizePwa(),
     ],
   },
   tanstackStart: {

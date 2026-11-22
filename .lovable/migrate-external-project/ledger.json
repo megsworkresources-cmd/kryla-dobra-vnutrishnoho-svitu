@@ -1,0 +1,16 @@
+{
+  "source": "app-source-code.zip",
+  "scope": "Selective calming-component integration, not full application migration",
+  "capabilities": [
+    { "capability": "Existing application code", "source": "277-file uploaded archive", "outcome": "preserve current app", "status": "inspected", "next_action": "Archive overlaps current application; 152 inspected non-image files are identical. Do not overwrite newer repairs." },
+    { "capability": "New calming experience and First/Then routines", "source": "Uploaded integration brief", "outcome": "pending source", "status": "blocked", "next_action": "Provide the export containing these tools; supplied archive has existing safe, breathing, games and story pages but no distinct new calming experience or routines." },
+    { "capability": "Audio wrapper", "source": "src/hooks/use-audio.ts", "outcome": "not imported", "status": "inspected", "next_action": "No added playback capability: delegates to existing global engine and its cleanup effect is empty. Keep tested current lifecycle." },
+    { "capability": "Schema and records", "source": "Historical shared_sunflowers migrations; no record export", "outcome": "preserve current Cloud data", "status": "unchanged", "next_action": "No migration requested or needed for selective component integration." },
+    { "capability": "Auth identities and authorization", "source": "Older caregiver and AI handlers", "outcome": "preserve current protections", "status": "unchanged", "next_action": "Do not import older voice handler lacking current authentication middleware and quotas." },
+    { "capability": "Uploaded file bytes", "source": "Existing illustrations and project-scoped asset pointers", "outcome": "preserve current media", "status": "unchanged", "next_action": "No new source media needed; do not copy pointers across projects." },
+    { "capability": "External providers, public endpoints, callbacks and webhooks", "source": "Existing AI, OAuth and MCP modules", "outcome": "preserve current integrations", "status": "unchanged", "next_action": "No provider migration or endpoint changes in this selective integration." },
+    { "capability": "Schedules and secrets", "source": "Source inspection", "outcome": "not imported", "status": "unchanged", "next_action": "Do not import environment configuration or run source scripts." },
+    { "capability": "Cutover and deployment", "source": "User scope", "outcome": "no deployment", "status": "unchanged", "next_action": "Keep current application and deployment settings." },
+    { "capability": "Verification", "source": "Static archive inspection and current/source diffs", "outcome": "source mismatch confirmed", "status": "blocked", "next_action": "No runtime code changed; integration verification awaits the intended source." }
+  ]
+}

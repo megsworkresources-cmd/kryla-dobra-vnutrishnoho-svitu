@@ -54,6 +54,13 @@ describe("app-written story variations", () => {
     const a = composedStory({ ...base, variant: 0 });
     const b = composedStory({ ...base, variant: 1 });
     expect(b.title).not.toBe(a.title);
-    expect(b.scenes[0]!.text).not.toBe(a.scenes[0]!.text);
+    expect(b.scenes[0]?.text).not.toBe(a.scenes[0]?.text);
+  });
+  it("corrupt variant counters still produce a complete readable story", () => {
+    for (const variant of [NaN, Infinity, -Infinity, -2.5]) {
+      const story = composedStory({ ...base, variant });
+      expect(story.scenes).toHaveLength(4);
+      expect(story.scenes.every((scene) => scene.text.length > 12)).toBe(true);
+    }
   });
 });

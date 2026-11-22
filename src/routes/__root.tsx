@@ -204,6 +204,7 @@ function RootComponent() {
   const voiceVolume = useStore((s) => s.voiceVolume);
   const voice = useStore((s) => s.voice);
   const musicVolume = useStore((s) => s.musicVolume);
+  const effectsVolume = useStore((s) => s.effectsVolume);
   const musicStyle = useStore((s) => s.musicStyle);
   const lang = useStore((s) => s.lang);
   const { pathname } = useLocation();
@@ -220,7 +221,7 @@ function RootComponent() {
     document.documentElement.lang = lang;
   }, [lang]);
   useEffect(syncSpeechVolume, [sound, voice, volume, voiceVolume]);
-  useEffect(syncVolume, [sound, volume, musicVolume]);
+  useEffect(syncVolume, [sound, volume, musicVolume, effectsVolume]);
   // Stop the page we are leaving. This has to be a cleanup: a new page's characters
   // start their line while it mounts, and a plain effect would cut them off.
   useEffect(() => () => stopSpeaking(), [pathname]);
@@ -277,8 +278,11 @@ function RootComponent() {
   }, []);
   useEffect(() => {
     playAmbient(music ? ambientFor(pathname) : null);
+  }, [pathname, music, musicStyle]);
+  // A page sound belongs to navigation, not to moving a volume slider.
+  useEffect(() => {
     sfx("page");
-  }, [pathname, music, musicStyle, musicVolume, volume]);
+  }, [pathname]);
   useEffect(() => {
     const seg = pathname.split("/")[1];
     if (seg && PLACES.some((p) => p.id === seg)) markVisit(seg);

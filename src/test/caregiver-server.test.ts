@@ -1,30 +1,29 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mocks = vi.hoisted(() => ({ getUser: vi.fn(), header: vi.fn(), middleware: {} }));
+const mocks = vi.hoisted(() => ({
+  getUser: vi.fn(),
+  header: vi.fn(),
+  createClient: vi.fn(),
+  authHeader: vi.fn(),
+}));
 vi.mock("@tanstack/react-start", () => ({
-  createServerFn: () => ({
-    middleware: (items: unknown[]) => {
-      expect(items).toEqual([mocks.middleware]);
-      return { handler: (handler: (args: unknown) => unknown) => handler };
-    },
-  }),
+  createServerFn: () => ({ handler: (handler: (args: unknown) => unknown) => handler }),
 }));
 vi.mock("@tanstack/react-start/server", () => ({
   setResponseHeader: mocks.header,
-  getRequestHeader: () => "Bearer validated.token.example",
+  getRequestHeader: mocks.authHeader,
 }));
-vi.mock("@/integrations/supabase/auth-middleware", () => ({
-  requireSupabaseAuth: mocks.middleware,
-}));
+vi.mock("@supabase/supabase-js", () => ({ createClient: mocks.createClient }));
 import { verifyCaregiver } from "@/lib/caregiver.functions";
 
-const verify = () =>
-  (verifyCaregiver as unknown as (args: unknown) => Promise<unknown>)({
-    context: { supabase: { auth: { getUser: mocks.getUser } } },
-  });
+const verify = () => (verifyCaregiver as unknown as (args: unknown) => Promise<unknown>)({});
 
 describe("caregiver server identity", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.authHeader.mockReturnValue("Bearer validated.token.example");
+    mocks.createClient.mockReturnValue({ auth: { getUser: mocks.getUser } });
+  });
   it("returns only server-verified account identity and forbids shared caching", async () => {
     mocks.getUser.mockResolvedValue({
       data: {
@@ -51,5 +50,10 @@ describe("caregiver server identity", () => {
   it("rejects invalid or expired credentials reported by Auth", async () => {
     mocks.getUser.mockResolvedValue({ data: { user: null }, error: new Error("JWT expired") });
     await expect(verify()).rejects.toThrow("Unauthorized");
+  });
+  it("rejects a request without a bearer token before calling Auth", async () => {
+    mocks.authHeader.mockReturnValue(undefined);
+    await expect(verify()).rejects.toThrow("Unauthorized");
+    expect(mocks.createClient).not.toHaveBeenCalled();
   });
 });

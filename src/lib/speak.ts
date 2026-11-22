@@ -32,6 +32,7 @@ let primedPlayer: HTMLAudioElement | null = null;
 let naturalPaused = false;
 /** Reuse the element unlocked synchronously by a real gesture, including on Safari. */
 let synthPrimed = false;
+let deferredDevice: (() => void) | null = null;
 // 0.1 s of real silence: iOS refuses to "play" a one-sample clip, which left no gesture-primed player.
 const SILENT_WAV =
   "data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==";
@@ -106,6 +107,16 @@ function deviceSpeak(text: string, pitch: number) {
   if (v) u.voice = v;
   u.onstart = () => {
     if (mine === token) setSpeechState("playing");
+  };
+  u.onresume = () => {
+    if (mine !== token) return;
+    setSpeechState("playing");
+    duckMusic(true);
+  };
+  u.onpause = () => {
+    if (mine !== token) return;
+    setSpeechState("paused");
+    duckMusic(false);
   };
   u.onend = () => {
     if (mine !== token) return;
@@ -224,16 +235,20 @@ export function speak(
       } else if (my === token) {
         if (["402", "403", "401", "404", "config"].includes(r.error)) naturalPaused = true;
         if (speechState !== "paused") deviceSpeak(text, pitch);
+        else deferredDevice = () => deviceSpeak(text, pitch);
       }
     })
     .catch(() => {
-      if (my === token && speechState !== "paused") deviceSpeak(text, pitch);
+      if (my !== token) return;
+      if (speechState !== "paused") deviceSpeak(text, pitch);
+      else deferredDevice = () => deviceSpeak(text, pitch);
     });
 }
 
 export function pauseSpeaking() {
   if (speechState === "idle" || speechState === "unavailable") return;
   setSpeechState("paused");
+  duckMusic(false);
   audio?.pause();
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.pause();
 }
@@ -241,11 +256,27 @@ export function resumeSpeaking() {
   const s = getState();
   if (!s.sound || s.volume === 0 || s.voiceVolume === 0 || !isAudioUnlocked()) return;
   if (speechState !== "paused") return;
+  if (deferredDevice) {
+    const resume = deferredDevice;
+    deferredDevice = null;
+    resume();
+    return;
+  }
+  const player = audio;
+  // Device speech has no media element: Safari may never fire onresume, so a
+  // "loading" state here would leave a false Stop button forever.
+  if (!player) {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.resume();
+      setSpeechState("playing");
+      duckMusic(true);
+    } else setSpeechState("idle");
+    return;
+  }
   setSpeechState("loading");
   const mine = token;
-  const player = audio;
   void player
-    ?.play()
+    .play()
     .then(() => {
       if (mine !== token) player.pause();
       else setSpeechState("playing");
@@ -256,10 +287,10 @@ export function resumeSpeaking() {
         duckMusic(false);
       }
     });
-  if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.resume();
 }
 export function stopSpeaking() {
   token++;
+  deferredDevice = null;
   setSpeechState("idle");
   duckMusic(false);
   if (audio) {

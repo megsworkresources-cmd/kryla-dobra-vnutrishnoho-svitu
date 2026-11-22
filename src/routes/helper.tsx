@@ -5,6 +5,7 @@ import { Sparkles } from "lucide-react";
 import night from "@/assets/night.jpg";
 import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
+import { StoryPreview } from "@/components/StoryPreview";
 import { findActivity } from "@/content/catalog";
 import { EMOTIONS } from "@/content/emotions";
 import { askHelper } from "@/lib/suggest.functions";
@@ -32,6 +33,12 @@ type Reply = {
   feeling: string;
   reply: string;
   why: string;
+};
+const MOOD_ICON: Record<Reply["mood"], string> = {
+  calm: "🌿",
+  cheer: "✨",
+  listen: "🌙",
+  think: "💭",
 };
 const QUICK = [
   "я сумую",
@@ -188,9 +195,12 @@ export function Helper() {
               </p>
             )}
             {state === "error" && (
-              <p className="paper-card p-4 text-center" role="alert">
-                {t("Персонажі тимчасово недоступні. Спробуй пізніше.")}
-              </p>
+              <div className="paper-card space-y-3 p-4 text-center" role="alert">
+                <p>{t("Персонажі тимчасово недоступні. Спробуй пізніше.")}</p>
+                <Btn variant="soft" disabled={busy || !text.trim()} onClick={() => void ask(text)}>
+                  {t("Спробувати ще")}
+                </Btn>
+              </div>
             )}
           </div>
         )}
@@ -203,6 +213,15 @@ export function Helper() {
               size="lg"
               text={reply.reply}
             />
+            {act && (
+              <StoryPreview
+                who={reply.guide}
+                place={act.place}
+                icon={MOOD_ICON[reply.mood]}
+                showHero
+                compact
+              />
+            )}
             {act && (
               <div className="night-card p-5">
                 <p className="text-xs font-extrabold uppercase tracking-wide text-moon">

@@ -4,6 +4,32 @@ Implement exactly the screenshot and nothing else
 
 This project was built with [Lovable](https://lovable.dev).
 
+## Production
+
+Production is deployed on Vercel: **https://kryla-dobra-vnutrishnoho-svitu.vercel.app**
+
+Vercel builds from the repository using `vercel.json`; pushing to `main` deploys the app. The Lovable editor is optional and its sync is independent of the live Vercel site.
+
+Check the live page and all 18 recorded films after a deploy:
+
+```sh
+bun run verify:deploy
+```
+
+Vercel does not expose the `data-commit-sha` marker, so the check skips the commit comparison unless `--expect <sha>` is passed. Caregiver sign-in redirects use the current origin, so add **https://kryla-dobra-vnutrishnoho-svitu.vercel.app** to Supabase Auth → URL Configuration (Site URL and Redirect URLs).
+
+The production check also probes Supabase Auth with an expired token: it confirms the Site URL fallback, the `/caregiver-login` and `/reset-password` callbacks, and that a foreign origin is rejected. It creates no account and sends no email. Pass `--skip-auth` to bypass it; a custom `--base` skips it automatically.
+
+The same check runs daily at 06:17 UTC in GitHub Actions (`.github/workflows/deploy-health.yml`) and can be started manually from the Actions tab with **Run workflow**. If it fails, the workflow opens or updates a GitHub issue assigned to the repository owner, so GitHub’s usual issue notifications apply; close the issue once the check is green.
+
+A custom domain is not connected yet; when one is added in Vercel → Project → Settings → Domains, also add it to Supabase Auth → URL Configuration and update the canonical host.
+
+## Branch protection
+
+`main` is protected. A pull request must pass the required **Node.js CI** checks **`build (22.x)`** and **`build (24.x)`** and be up to date with `main` before it can merge. The check comes from `.github/workflows/node.js.yml`; if the Node.js matrix changes, update the required check name in **Settings → Branches**, or PRs can never merge. Each pull-request job also verifies that its own `build (<version>)` check is marked required, so a matrix change without the matching protection update fails CI with an explicit message.
+
+Administrators are deliberately **exempt** (`enforce_admins` off). Required status checks reject direct pushes, and a brand-new commit cannot have a passing check before it is pushed, so enforcing them for admins would reject every direct push to `main` with `GH006: Required status check "build (22.x)" is failing`. That includes Lovable's syncs and automation pushes. Do not enable **Include administrators** / `enforce_admins` unless every change, including Lovable's sync, moves to pull requests first.
+
 ## Build with Lovable
 
 Continue developing this project in the [Lovable editor](https://lovable.dev/projects/83788524-c3a7-44e7-8dfd-a1c09853ba2e).
@@ -27,4 +53,5 @@ bun run dev
 bun run build
 bun run lint
 bun run test
+bun run verify:deploy
 ```

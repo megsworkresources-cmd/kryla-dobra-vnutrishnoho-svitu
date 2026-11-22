@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { cn } from "@/lib/utils";
+import { itemAtOr } from "@/content/list";
 
 export interface CartoonShot {
   img: string;
@@ -65,7 +66,7 @@ function seedOf(clipId: string, index: number) {
 
 export function CartoonStage({
   clipId,
-  index,
+  index: rawIndex,
   shot,
   playing,
   film,
@@ -79,10 +80,17 @@ export function CartoonStage({
   film: boolean;
   onImageError?: (() => void) | undefined;
 }) {
+  const index = Number.isFinite(rawIndex) ? Math.trunc(rawIndex) : 0;
   const seed = seedOf(clipId, index);
-  const mood = MOODS[(seed + index) % MOODS.length]!;
-  const camera = CAMERAS[(seed + index * 2) % CAMERAS.length]!;
-  const actor = ACTORS[(seed + index * 3) % ACTORS.length]!;
+  const mood = itemAtOr(MOODS, seed + index, {
+    top: "var(--sky)",
+    mid: "var(--paper)",
+    ground: "var(--sage)",
+    glow: "var(--honey)",
+    night: false,
+  });
+  const camera = itemAtOr(CAMERAS, seed + index * 2, "animate-camera-left");
+  const actor = itemAtOr(ACTORS, seed + index * 3, "animate-talk");
   const play: CSSProperties = { animationPlayState: playing ? "running" : "paused" };
 
   if (film)

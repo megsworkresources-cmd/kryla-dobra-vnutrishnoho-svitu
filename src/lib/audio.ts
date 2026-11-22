@@ -29,6 +29,7 @@ function handleAudioStateChange(changedContext: AudioContext) {
     audioGeneration += 1;
     ambientGeneration += 1;
     stopAmbient();
+    stopSoundscape();
     try {
       master?.disconnect();
     } catch {
@@ -118,6 +119,7 @@ export function destroyAudio() {
   audioGeneration += 1;
   ambientGeneration += 1;
   stopAmbient();
+  stopSoundscape();
   if (master) {
     try {
       master.disconnect();
@@ -383,7 +385,8 @@ export function playAmbient(kind: Ambient | null) {
     style: s.musicStyle,
     bus,
     stop: () => {
-      ambientGeneration += 1;
+      // The generation is bumped by stopAmbient immediately, not here: this
+      // stop may run 320ms later and must not invalidate the next scene.
       stops.forEach((stop) => {
         try {
           stop();
@@ -509,9 +512,20 @@ export function startMusic(bus: AudioNode, style: MusicStyle, _night: boolean) {
 }
 
 export function stopAmbient() {
-  amb?.stop();
+  const current = amb;
   amb = null;
+  ambientGeneration += 1;
   setMusicStatus("idle");
+  if (!current) return;
+  const c = ctx;
+  // Cancel recordings and pending decode callbacks synchronously. A delayed stop can
+  // otherwise start a recording after its owner exited, or overlap the next page.
+  if (!c || c.state === "closed") {
+    current.stop();
+    return;
+  }
+  // No pending source may outlive its owning page.
+  current.stop();
 }
 
 /* ---------- Nature sounds chosen by the child ---------- */
@@ -543,7 +557,8 @@ export function playSoundscape(kind: Soundscape) {
   ensureRunning(c);
   stopSoundscape();
   const bus = c.createGain();
-  bus.gain.value = 0.5 * s.effectsVolume;
+  bus.gain.setValueAtTime(0, c.currentTime);
+  bus.gain.linearRampToValueAtTime(0.5 * s.effectsVolume, c.currentTime + 0.2);
   bus.connect(master);
   const stops: (() => void)[] = [];
   if (kind === "crickets") {
@@ -608,9 +623,17 @@ export function playSoundscape(kind: Soundscape) {
 }
 
 export function stopSoundscape() {
-  scape?.stop();
+  const current = scape;
   scape = null;
   setScapeKind(null);
+  if (!current) return;
+  const c = ctx;
+  if (!c || c.state === "closed") {
+    current.stop();
+    return;
+  }
+  // Selection changes and exits stop before another source can start.
+  current.stop();
 }
 
 export function ambientFor(pathname: string): Ambient | null {
@@ -631,6 +654,18 @@ export function ambientFor(pathname: string): Ambient | null {
         path: "meadow",
         watch: "cozy",
         story: "cozy",
+        bedtime: "night",
+        stroll: "meadow",
+        puddles: "clouds",
+        maze: "night",
+        count: "meadow",
+        "safe-drawing": "cozy",
+        together: "cozy",
+        dreams: "night",
+        wonders: "meadow",
+        raindrop: "clouds",
+        trails: "forest",
+        island: "cozy",
       } as Record<string, Ambient>
     )[seg] ?? null
   );

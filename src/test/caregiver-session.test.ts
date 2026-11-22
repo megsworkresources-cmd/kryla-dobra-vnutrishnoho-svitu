@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { authTransition, recoveryRequested, signOutCaregiver } from "@/lib/caregiver-session";
+import {
+  authTransition,
+  clearResendCooldown,
+  recoveryRequested,
+  resendCooldownLeft,
+  signOutCaregiver,
+  startResendCooldown,
+} from "@/lib/caregiver-session";
 
 describe("caregiver session lifecycle", () => {
   it("revalidates sign-in and user updates", () => {
@@ -21,6 +28,23 @@ describe("caregiver session lifecycle", () => {
     expect(recoveryRequested("", "1")).toBe(true);
     expect(recoveryRequested("#type=signup", null)).toBe(false);
     expect(authTransition("PASSWORD_RECOVERY").recovery).toBe(true);
+  });
+  it("keeps the resend cooldown across a reload until it expires", () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date("2026-01-01T00:00:00Z"));
+      expect(startResendCooldown()).toBe(60);
+      // A fresh mount (a reload) still sees the running cooldown.
+      expect(resendCooldownLeft()).toBe(60);
+      vi.setSystemTime(Date.now() + 25_000);
+      expect(resendCooldownLeft()).toBe(35);
+      vi.setSystemTime(Date.now() + 40_000);
+      expect(resendCooldownLeft()).toBe(0);
+      clearResendCooldown();
+      expect(resendCooldownLeft()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
   });
   it("cancels requests and drops private caches before signing out and replacing navigation", async () => {
     const order: string[] = [];

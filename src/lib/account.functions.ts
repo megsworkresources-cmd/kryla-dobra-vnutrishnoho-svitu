@@ -2,14 +2,22 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-/** Apple requires in-app account deletion: removes the grown-up's shared sunflower and account. */
+/**
+ * Apple requires in-app account deletion: removes the grown-up's shared
+ * sunflower and account. The security-definer RPC deletes only the caller's own
+ * rows, so account deletion never needs a service-role key and has exactly one
+ * path to audit; any failure is reported as a failure.
+ */
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await context.supabase.from("shared_sunflowers").delete().eq("owner_id", context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
-    if (error) return { ok: false as const };
+    const { error } = await context.supabase.rpc("delete_my_account");
+    if (error) {
+      console.error(
+        `[account] delete_my_account failed [${error.code ?? "?"}]: ${error.message || "no message"}`,
+      );
+      return { ok: false as const };
+    }
     return { ok: true as const };
   });
 

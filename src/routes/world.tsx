@@ -1,14 +1,16 @@
+import { QUESTS, QUEST_IDS } from "@/content/quests.i18n";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Btn } from "@/components/Scene";
 import { Settings2, Users } from "lucide-react";
 import map from "@/assets/world-map.jpg";
-import { PLACES } from "@/content/places";
+import { PLACES, placeImage } from "@/content/places";
 import { BottomNav } from "@/components/BottomNav";
 import { LangToggle } from "@/components/LangToggle";
 import { t, useT } from "@/lib/i18n";
 import { useWebMCP } from "use-webmcp-tool";
 import { runWebMCPTool } from "@/lib/webmcp-telemetry";
+import { itemAtOr } from "@/content/list";
 
 export const Route = createFileRoute("/world")({
   head: () => ({
@@ -30,16 +32,19 @@ export const Route = createFileRoute("/world")({
 });
 
 // Balanced zigzag so bubbles never crowd each other on narrow phones.
-const SPOTS = [
-  [28, 3],
-  [72, 14],
-  [30, 26],
-  [70, 38],
-  [28, 50],
-  [72, 62],
-  [30, 74],
-  [70, 86],
+const SPOTS = Array.from({ length: 14 }, (_, i) => [i % 2 ? 72 : 28, 2 + i * 6.7] as const);
+
+/** Small story bubbles sit in the centre gaps between the zigzag places. */
+const EXTRAS = [
+  { to: "/bedtime", label: "Казка на ніч", img: "sky", pos: 2 },
+  { to: "/stroll", label: "Повільна прогулянка", img: "meadow", pos: 4 },
+  { to: "/puddles", label: "Калюжки", img: "clouds", pos: 6 },
+  { to: "/maze", label: "Стежка Ліхтарика", img: "path", pos: 9 },
+  { to: "/count", label: "Уважний луг", img: "garden", pos: 11 },
+  { to: "/together", label: "Разом", img: "safe", pos: 13 },
 ] as const;
+
+const PLACE_SLOTS = SPOTS.map((_, i) => i).filter((i) => !EXTRAS.some((e) => e.pos === i));
 
 function World() {
   const t = useT();
@@ -130,16 +135,40 @@ function World() {
         </div>
       </header>
 
-      <nav aria-label={t("Місця світу")} className="relative z-10 min-h-[56rem] flex-1">
-        {PLACES.map((p, i) => (
+      <nav aria-label={t("Місця світу")} className="relative z-10 min-h-[92rem] flex-1">
+        {PLACES.map((p, idx) => {
+          const i = PLACE_SLOTS[idx] ?? idx;
+          const spot = itemAtOr(SPOTS, i, [28, 2]);
+          return (
+            <Link
+              key={p.id}
+              to={p.to}
+              className="group absolute flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center justify-center animate-fade-up"
+              style={{
+                left: `${spot[0]}%`,
+                top: `${spot[1]}%`,
+                animationDelay: `${i * 80}ms`,
+              }}
+            >
+              <span className="flex flex-col items-center">
+                <span className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-paper shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-24 sm:w-24">
+                  <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />
+                </span>
+                <span className="paper-card mt-1 whitespace-nowrap px-3 py-1 text-xs font-extrabold">
+                  {t(p.name)}
+                </span>
+              </span>
+            </Link>
+          );
+        })}
+        {EXTRAS.map((e) => (
           <Link
-            key={p.id}
-            to={p.to}
-            className="group absolute flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center justify-center animate-fade-up"
+            key={e.to}
+            to={e.to}
+            className="group absolute flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center animate-fade-up"
             style={{
-              left: `${SPOTS[i % SPOTS.length]![0]}%`,
-              top: `${SPOTS[i % SPOTS.length]![1]}%`,
-              animationDelay: `${i * 80}ms`,
+              left: `${itemAtOr(SPOTS, e.pos, [28, 2])[0]}%`,
+              top: `${itemAtOr(SPOTS, e.pos, [28, 2])[1]}%`,
             }}
           >
             <span className="flex flex-col items-center">
@@ -149,10 +178,55 @@ function World() {
               <span className="paper-card mt-1 whitespace-nowrap px-3 py-1 text-xs font-extrabold">
                 {t(p.name)}
               </span>
+            <span className="relative h-14 w-14 overflow-hidden rounded-full border-4 border-honey shadow-lift transition group-hover:scale-110 group-active:scale-95 sm:h-16 sm:w-16">
+              <img
+                src={placeImage(e.img)}
+                alt=""
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            </span>
+            <span className="paper-card mt-1 whitespace-nowrap px-2 py-0.5 text-[11px] font-extrabold">
+              {t(e.label)}
             </span>
           </Link>
         ))}
       </nav>
+      <section
+        aria-labelledby="quests-title"
+        className="relative z-10 mx-auto w-full max-w-3xl px-4 pb-8"
+      >
+        <h2
+          id="quests-title"
+          className="paper-card mx-auto mb-3 w-fit px-4 py-1 font-display text-xl font-bold"
+        >
+          {t("Нові пригоди")}
+        </h2>
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {QUEST_IDS.map((id) => {
+            const q = QUESTS[id];
+            return (
+              <li key={id}>
+                <Link
+                  to={`/${id}`}
+                  className="paper-card group flex h-full flex-col overflow-hidden transition hover:-translate-y-0.5 focus-visible:ring-4 focus-visible:ring-ring"
+                >
+                  <img
+                    src={placeImage(q.img)}
+                    alt=""
+                    loading="lazy"
+                    className="aspect-[4/3] w-full object-cover"
+                  />
+                  <span className="p-3">
+                    <span className="block font-extrabold leading-tight">{t(q.title)}</span>
+                    <span className="mt-1 block text-sm text-muted-foreground">{t(q.blurb)}</span>
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
       {askGames && (
         <div
           role="dialog"

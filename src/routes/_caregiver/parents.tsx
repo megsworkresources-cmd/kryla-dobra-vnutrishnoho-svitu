@@ -112,6 +112,10 @@ function Parents() {
             )}{" "}
             <Link to="/privacy" className="inline-flex min-h-11 items-center underline">
               {t("Політика конфіденційності")}
+            </Link>{" "}
+            ·{" "}
+            <Link to="/resources" className="underline">
+              {t("Ресурси для батьків")}
             </Link>
           </p>
           {deleteStep === "idle" || deleteStep === "error" ? (
@@ -223,7 +227,7 @@ function Parents() {
             const n = items.filter((a) => completed[a.key]).length;
             return (
               <details key={p.id} className="mt-2 rounded-2xl bg-secondary p-3">
-                <summary className="flex min-h-10 cursor-pointer items-center justify-between gap-2 font-bold">
+                <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 font-bold">
                   <span>{t(p.name)}</span>
                   <span className="text-sm tabular-nums text-muted-foreground">
                     {n}/{items.length}
@@ -308,7 +312,9 @@ function Parents() {
           {confirm ? (
             <div className="paper-card space-y-3 p-4">
               <p className="text-sm">
-                {t("Стерти записи про місця й вправи? Малюнки та налаштування залишаться.")}
+                {t(
+                  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться, а збережений спільний сад очиститься.",
+                )}
               </p>
               <div className="flex justify-center gap-2">
                 <Btn variant="soft" onClick={() => setConfirm(false)}>

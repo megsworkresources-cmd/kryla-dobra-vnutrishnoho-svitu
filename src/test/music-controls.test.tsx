@@ -99,10 +99,10 @@ it("stops the previous soundscape on replacement and route cleanup", async () =>
   playAmbient("garden");
   expect(sources).toHaveLength(1);
   playAmbient("forest");
-  expect(sources[0]!.stop).toHaveBeenCalledTimes(1);
+  await vi.waitFor(() => expect(sources[0]!.stop).toHaveBeenCalledTimes(1));
   expect(sources).toHaveLength(2);
   stopAmbient();
-  expect(sources[1]!.stop).toHaveBeenCalledTimes(1);
+  await vi.waitFor(() => expect(sources[1]!.stop).toHaveBeenCalledTimes(1));
 });
 
 it("keeps music stopped when its saved volume is zero", async () => {

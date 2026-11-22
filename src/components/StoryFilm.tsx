@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useT } from "@/lib/i18n";
 import { Btn } from "./Scene";
+import { useMediaMotion } from "@/hooks/use-media-motion";
+import { claimVideo, releaseVideo } from "@/lib/video-focus";
 
 /**
  * Silent recorded footage; character narration is managed by the story owner.
@@ -30,6 +32,7 @@ export function StoryFilm({
   quiet?: boolean | undefined;
 }) {
   const t = useT();
+  const motion = useMediaMotion();
   const video = useRef<HTMLVideoElement>(null);
   const pauseOwner = useRef(onPause);
   pauseOwner.current = onPause;
@@ -38,7 +41,10 @@ export function StoryFilm({
   const playbackGeneration = useRef(0);
   const [status, setStatus] = useState<"loading" | "ready" | "blocked" | "error">("loading");
   const [duration, setDuration] = useState(0);
-  useEffect(() => setStatus("loading"), [src]);
+  useEffect(() => {
+    setStatus("loading");
+    setDuration(0);
+  }, [src]);
 
   const ready = Number.isFinite(duration) && duration > 0;
   const partFrom = part && ready ? Math.min(Math.max(part.from, 0), 0.96) * duration : null;
@@ -51,26 +57,38 @@ export function StoryFilm({
     const media = video.current;
     if (!media) return;
     playbackGeneration.current += 1;
+    const generation = playbackGeneration.current;
     let active = true;
-    if (playing) {
+    if (playing && motion && !document.hidden) {
+      claimVideo(media);
       void media
         .play()
         .then(() => {
-          if (!active) media.pause();
+          if (
+            !active ||
+            generation !== playbackGeneration.current ||
+            !playingNow.current ||
+            document.hidden
+          )
+            media.pause();
         })
         .catch(() => {
-          if (active) {
+          if (active && generation === playbackGeneration.current) {
             setStatus("blocked");
             pauseOwner.current();
           }
         });
-    } else media.pause();
+    } else {
+      media.pause();
+      if (playing && !motion) pauseOwner.current();
+    }
     return () => {
       active = false;
       playbackGeneration.current += 1;
       media.pause();
+      releaseVideo(media);
     };
-  }, [playing, src]);
+  }, [playing, src, motion]);
 
   // A new beat starts its own part of the recording.
   useEffect(() => {
@@ -109,7 +127,8 @@ export function StoryFilm({
         // ignore a seek the browser refuses mid-teardown
       }
     }
-    if (playingNow.current) {
+    if (playingNow.current && motion && !document.hidden) {
+      claimVideo(media);
       const generation = playbackGeneration.current;
       void media
         .play()
@@ -127,6 +146,8 @@ export function StoryFilm({
   useEffect(() => {
     const media = video.current;
     const pause = () => {
+      playbackGeneration.current += 1;
+      playingNow.current = false;
       media?.pause();
       pauseOwner.current();
     };
@@ -156,6 +177,7 @@ export function StoryFilm({
         loop={offset === null}
         preload="metadata"
         className="h-full w-full object-cover"
+        hidden={!motion}
         aria-label={t(label ?? "Анімована казка")}
         onTimeUpdate={keepInsidePart}
         onLoadedMetadata={() => {
@@ -164,13 +186,26 @@ export function StoryFilm({
         }}
         onEnded={replay}
         onCanPlay={() => setStatus("ready")}
-        onPlaying={() => setStatus("ready")}
+        onPlaying={() => {
+          const media = video.current;
+          if (!media) return;
+          if (!playingNow.current || document.hidden || !motion) media.pause();
+          else claimVideo(media);
+          setStatus("ready");
+        }}
         onError={() => {
           setStatus("error");
           pauseOwner.current();
         }}
       />
-      {status !== "ready" && !(quiet && status === "blocked") && (
+      {!motion && (
+        <img
+          src={poster}
+          alt={t(label ?? "Анімована казка")}
+          className="h-full w-full object-cover"
+        />
+      )}
+      {motion && status !== "ready" && !(quiet && status === "blocked") && (
         <div className="absolute inset-x-0 top-0 z-20 bg-card/95 p-3 text-center text-sm text-card-foreground">
           <p role={status === "error" ? "alert" : "status"}>
             {t(

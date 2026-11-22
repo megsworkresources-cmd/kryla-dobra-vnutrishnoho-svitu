@@ -6,7 +6,7 @@ import { CartoonStage, type CartoonShot } from "@/components/CartoonStage";
 import { StoryFilm } from "@/components/StoryFilm";
 import { STORY_MEDIA } from "@/content/story-media";
 import { pageHead } from "@/content/journeys";
-import { useStore } from "@/lib/store";
+import { setWatchPosition, useStore } from "@/lib/store";
 import { useAudioUnlocked } from "@/lib/audio";
 import { speak, stopSpeaking, useSpeechState } from "@/lib/speak";
 import { useT, useLang } from "@/lib/i18n";
@@ -152,10 +152,11 @@ const SHOT_MS = 7000;
 function Watch() {
   const t = useT();
   const [clip, setClip] = useState<Clip | null>(null);
+  const positions = useStore((s) => s.watch);
   return (
     <Scene title="Мультики" back="/world">
       {clip ? (
-        <Player clip={clip} onClose={() => setClip(null)} />
+        <Player clip={clip} initialScene={positions[clip.id] ?? 0} onClose={() => setClip(null)} />
       ) : (
         <div className="space-y-4">
           <p className="text-muted-foreground">
@@ -166,9 +167,9 @@ function Watch() {
               <li key={c.id}>
                 <button
                   onClick={() => setClip(c)}
-                  className="paper-card group w-full overflow-hidden p-0 text-left transition active:scale-95"
+                  className="paper-card group flex h-full w-full flex-col overflow-hidden rounded-lg p-0 text-left transition active:scale-95"
                 >
-                  <div className="relative aspect-video overflow-hidden">
+                  <div className="relative aspect-video w-full shrink-0 overflow-hidden">
                     <img
                       src={c.shots[0]?.img}
                       alt=""
@@ -177,7 +178,7 @@ function Watch() {
                     />
                     <span className="absolute inset-0 flex items-center justify-center">
                       <span className="flex h-12 w-12 items-center justify-center rounded-full bg-card/90 shadow-soft">
-                        <Play className="h-6 w-6" />
+                        <Play className="h-6 w-6" aria-hidden />
                       </span>
                     </span>
                     <span className="absolute left-2 top-2 text-2xl" aria-hidden>
@@ -209,11 +210,21 @@ function Watch() {
   );
 }
 
-export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
+export function Player({
+  clip,
+  onClose,
+  initialScene = 0,
+}: {
+  clip: Clip;
+  onClose: () => void;
+  initialScene?: number;
+}) {
   const t = useT();
   const voice = useStore((s) => s.voice && s.sound);
   const lang = useLang();
-  const [i, setI] = useState(0);
+  const [i, setI] = useState(() =>
+    Math.max(0, Math.min(Math.trunc(initialScene), Math.max(0, clip.shots.length - 1))),
+  );
   const [playing, setPlaying] = useState(true);
   const [failedShot, setFailedShot] = useState<number | null>(null);
   const audioReady = useAudioUnlocked();
@@ -223,6 +234,10 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
   const film = STORY_MEDIA[clip.id];
   const mediaFailed = failedShot === i;
   const done = i >= clip.shots.length;
+  // Remember the scene so leaving and coming back continues where the child stopped.
+  useEffect(() => {
+    if (i < clip.shots.length) setWatchPosition(clip.id, i);
+  }, [clip.id, clip.shots.length, i]);
   useEffect(() => {
     const pauseWhenHidden = () => {
       if (document.hidden) setPlaying(false);
@@ -295,12 +310,24 @@ export function Player({ clip, onClose }: { clip: Clip; onClose: () => void }) {
           {t(shot.text)}
         </p>
       )}
-      <div className="flex gap-1" aria-hidden>
+      <p className="text-center text-sm font-bold text-muted-foreground" aria-live="polite">
+        {t("Сцена {n}", { n: Math.min(i + 1, clip.shots.length) })} · {clip.shots.length}
+      </p>
+      <div className="flex gap-1" role="group" aria-label={t("Сцени")}>
         {clip.shots.map((_, k) => (
-          <span
+          <button
             key={k}
-            className={`h-2 flex-1 rounded-full ${k <= i ? "bg-honey" : "bg-secondary"}`}
-          />
+            type="button"
+            onClick={() => {
+              setI(k);
+              setPlaying(true);
+            }}
+            aria-label={t("Сцена {n}", { n: k + 1 })}
+            aria-current={k === i ? "step" : undefined}
+            className="flex min-h-11 flex-1 items-center rounded-full px-0.5"
+          >
+            <span className={`h-2 w-full rounded-full ${k <= i ? "bg-honey" : "bg-secondary"}`} />
+          </button>
         ))}
       </div>
       <div className="flex flex-wrap justify-center gap-2">

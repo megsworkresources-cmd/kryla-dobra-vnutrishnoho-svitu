@@ -9,6 +9,7 @@ function stubAudio() {
     currentTime: 0,
     sampleRate: 100,
     destination: {},
+    close: vi.fn(async () => {}),
     createGain: () => {
       const created = {
         ...node(),
@@ -91,7 +92,7 @@ it("plays and stops nature sounds through the shared audio context", async () =>
   expect(playing?.start).toHaveBeenCalledTimes(1);
   audio.stopSoundscape();
   expect(audio.getSoundscape()).toBeNull();
-  expect(playing?.stop).toHaveBeenCalledTimes(1);
+  await vi.waitFor(() => expect(playing?.stop).toHaveBeenCalledTimes(1));
 });
 
 it("keeps nature sounds silent while the master switch is off", async () => {
@@ -145,4 +146,47 @@ it("reports a rejected interruption resume instead of silently ignoring it", asy
   await vi.waitFor(() => expect(audio.getMusicStatus()).toBe("error"));
   expect(resume).toHaveBeenCalledTimes(1);
   audio.stopAmbient();
+});
+
+it("stops the old nature source before the next selection and clears it on teardown", async () => {
+  const { sources, context } = stubAudio();
+  const { update } = await import("@/lib/store");
+  update((s) => ({ ...s, sound: true, volume: 1, effectsVolume: 1 }));
+  const audio = await import("@/lib/audio");
+  audio.unlockAudio();
+  audio.playSoundscape("rain");
+  audio.playSoundscape("wind");
+  expect(sources[0]?.stop).toHaveBeenCalledOnce();
+  expect(sources[1]?.start).toHaveBeenCalledOnce();
+  audio.destroyAudio();
+  expect(sources[1]?.stop).toHaveBeenCalledOnce();
+  expect(audio.getSoundscape()).toBeNull();
+  expect(context.close).toHaveBeenCalledOnce();
+});
+
+it("cancels a pending recording synchronously when its ambient page exits", async () => {
+  const { sources, context } = stubAudio();
+  let deliver: ((response: Response) => void) | undefined;
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      () =>
+        new Promise<Response>((resolve) => {
+          deliver = resolve;
+        }),
+    ),
+  );
+  context.decodeAudioData.mockResolvedValue({ duration: 30 });
+  const { update } = await import("@/lib/store");
+  update((s) => ({ ...s, sound: true, music: true, volume: 1, musicVolume: 1 }));
+  const audio = await import("@/lib/audio");
+  audio.unlockAudio();
+  audio.playAmbient("garden");
+  audio.stopAmbient();
+  if (!deliver) throw new Error("No recording was requested");
+  deliver(new Response(new ArrayBuffer(8)));
+  await vi.waitFor(() => expect(context.decodeAudioData).toHaveBeenCalled());
+  expect(sources).toHaveLength(1); // Only the already-stopped nature bed, never a late recording.
+  expect(sources[0]?.stop).toHaveBeenCalledOnce();
+  expect(audio.getMusicStatus()).toBe("idle");
 });

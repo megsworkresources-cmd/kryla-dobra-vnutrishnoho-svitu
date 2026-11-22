@@ -10,9 +10,10 @@ import { pageHead } from "@/content/journeys";
 import { coarseGrowthStage, growthGlyph, growthPart, isFinalGrowthStage } from "@/content/growth";
 import { readGarden, shareSunflower } from "@/lib/shared-garden.functions";
 import { careCount, growthStage, useStore } from "@/lib/store";
-import { useT } from "@/lib/i18n";
+import { pluralUk, useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
+import { useOnline } from "@/hooks/use-online";
 
 export const Route = createFileRoute("/_caregiver/shared-garden")({
   head: () =>
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/_caregiver/shared-garden")({
 
 function SharedGarden() {
   const t = useT();
+  const online = useOnline();
   const { caregiver } = Route.useRouteContext();
   const client = useQueryClient();
   const read = useServerFn(readGarden);
@@ -42,7 +44,12 @@ function SharedGarden() {
   const [selected, setSelected] = useState<string | null>(null);
   const [capped, setCapped] = useState(false);
   const mutation = useMutation({
-    mutationFn: (sharing: boolean) => share({ data: { stage: sharing ? localStage : 0, sharing } }),
+    // Never let Query pause and replay a sharing action after reconnection.
+    networkMode: "always",
+    mutationFn: (sharing: boolean) => {
+      if (!navigator.onLine) throw new Error("Garden offline");
+      return share({ data: { stage: sharing ? localStage : 0, sharing } });
+    },
     onSuccess: async (res) => {
       setCapped(Boolean(res.capped));
       setConsent(false);
@@ -65,6 +72,16 @@ function SharedGarden() {
             "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.",
           )}
         </p>
+        {!online && (
+          <p
+            role="status"
+            className="rounded-lg bg-secondary p-4 font-semibold text-secondary-foreground"
+          >
+            {t(
+              "Немає інтернету. Турботу збережено на пристрої; поширення недоступне. Після повернення зв’язку натисніть потрібну дію ще раз.",
+            )}
+          </p>
+        )}
 
         <section aria-labelledby="own-sunflower" className="paper-card p-4 sm:p-5">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
@@ -86,7 +103,11 @@ function SharedGarden() {
           <p role="status" className="mt-3 font-bold text-primary" aria-live="polite">
             {mutation.isPending
               ? t("Зачекайте…")
-              : t(own?.sharing ? "Соняшник поширено" : "Поширення вимкнено")}
+              : !online || garden.isError || garden.isFetching || mutation.isError
+                ? t("Поточний стан поширення не підтверджено.")
+                : !own
+                  ? t("Сад завантажується…")
+                  : t(own.sharing ? "Соняшник поширено" : "Поширення вимкнено")}
           </p>
           {capped && (
             <p
@@ -116,7 +137,7 @@ function SharedGarden() {
               <>
                 <Btn
                   className="w-full sm:w-auto"
-                  disabled={mutation.isPending}
+                  disabled={!online || mutation.isPending}
                   onClick={() => mutation.mutate(true)}
                 >
                   <Sprout size={18} />
@@ -125,7 +146,7 @@ function SharedGarden() {
                 <Btn
                   className="w-full sm:w-auto"
                   variant="soft"
-                  disabled={mutation.isPending}
+                  disabled={!online || mutation.isPending}
                   onClick={() => mutation.mutate(false)}
                 >
                   {t("Припинити поширення")}
@@ -134,7 +155,7 @@ function SharedGarden() {
             ) : (
               <Btn
                 className="w-full sm:w-auto"
-                disabled={!consent || !own || mutation.isPending}
+                disabled={!online || !consent || !own || mutation.isPending}
                 onClick={() => mutation.mutate(true)}
               >
                 <Sprout size={18} />
@@ -150,10 +171,18 @@ function SharedGarden() {
         </section>
 
         <section aria-label={t("Спільний сад")} className="paper-card p-4">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
             <h2 className="min-w-0 font-display text-2xl font-bold">{t("Спільний сад")}</h2>
             <p className="shrink-0 text-sm text-muted-foreground">
-              {t("У саду {n} квіток", { n: flowers.length + 1 })}
+              {t(
+                pluralUk(
+                  flowers.length + 1,
+                  "У саду {n} квітка",
+                  "У саду {n} квітки",
+                  "У саду {n} квіток",
+                ),
+                { n: flowers.length + 1 },
+              )}
             </p>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -226,8 +255,11 @@ function SharedGarden() {
           <Btn
             className="mt-3 w-full sm:w-auto"
             variant="soft"
-            disabled={garden.isFetching}
-            onClick={() => void garden.refetch()}
+            disabled={!online || garden.isFetching || mutation.isPending}
+            onClick={() => {
+              mutation.reset();
+              void garden.refetch();
+            }}
           >
             <RefreshCw size={18} />
             {t("Оновити сад")}

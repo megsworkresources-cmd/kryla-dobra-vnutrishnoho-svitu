@@ -41,3 +41,12 @@
 - Outside links on child pages go through GrownUpLink (adult check) and AI output offers ReportAi, storing only AI output, never child text, to meet kids-app store rules.
 - Motion tokens (`--dur-fast/base/slow`, `--ease-enter/exit`) and the `press` utility live in `src/styles.css`; animate transform and opacity only, never the generic `transition`, and keep class-name template literals space-separated (guarded by `src/test/lang-toggle.test.tsx`).
 - Text must keep 4.5:1 (3:1 large) against its rendered background and every control at least 44×44px; secondary text uses `text-muted-foreground` rather than opacity, and text placed directly over artwork gets a `bg-paper/85` backing.
+- Render the GrownUpLink dialog into document.body with createPortal so card backdrop filters and scene animations cannot clip or reposition the viewport adult check.
+- Family resource directory data is bilingual in `src/content/resources.i18n.ts` (each entry holds uk+en); unknown facts stay undefined and render as "not confirmed" so contacts are never invented.
+- Fixed-list access uses browser-safe content helpers with explicit fallbacks; routes export only their route so activity rules remain independently testable.
+- PWA generation, precache scanning and verification share the resolved deployed client directory; never assume .output/public. Account/OAuth pages are never runtime-cached.
+- Share Workbox options with the standalone browser acceptance fixture, so caching tests exercise the production policy without registering workers in preview.
+- Drive all breathing-scene motion from one pauseable clock and suppress visual frames for saved or system reduced motion; independent decorative loops must not outlive Pause.
+- Story adventures share one QuestView module with bilingual content in src/content/quests.i18n.ts; each adventure is a thin route.
+- Recorded videos share browser-only focus ownership and honor saved/system reduced motion; late playback and background events cannot restart exited footage.
+- Shared-garden mutations use networkMode always with an offline guard and no retry, never Query's deferred mutation queue; offline status cannot imply confirmed sharing.

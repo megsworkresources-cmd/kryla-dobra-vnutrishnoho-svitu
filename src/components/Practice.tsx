@@ -426,11 +426,11 @@ export function Practice({
       )}
       {selected && step.vision && (
         <Vision
-          items={steps.flatMap((st, k) =>
-            st.vision && answers[k] && st.icons?.[answers[k]!]
-              ? [{ icon: st.icons[answers[k]!]!, label: answers[k]! }]
-              : [],
-          )}
+          items={steps.flatMap((st, k) => {
+            const label = answers[k];
+            const icon = label ? st.icons?.[label] : undefined;
+            return st.vision && label && icon ? [{ icon, label }] : [];
+          })}
           night={night}
         />
       )}

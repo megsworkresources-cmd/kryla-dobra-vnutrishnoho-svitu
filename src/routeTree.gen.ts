@@ -11,22 +11,36 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CaregiverRouteRouteImport } from './routes/_caregiver/route'
+import { Route as BedtimeRouteImport } from './routes/bedtime'
 import { Route as CaregiverLoginRouteImport } from './routes/caregiver-login'
 import { Route as CommunityGardenRouteImport } from './routes/community-garden'
+import { Route as CountRouteImport } from './routes/count'
+import { Route as DreamsRouteImport } from './routes/dreams'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as GardenRouteImport } from './routes/garden'
 import { Route as HelperRouteImport } from './routes/helper'
+import { Route as IslandRouteImport } from './routes/island'
+import { Route as MazeRouteImport } from './routes/maze'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PuddlesRouteImport } from './routes/puddles'
+import { Route as RaindropRouteImport } from './routes/raindrop'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SafeRouteImport } from './routes/safe'
+import { Route as SafeDrawingRouteImport } from './routes/safe-drawing'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StoryRouteImport } from './routes/story'
+import { Route as StrollRouteImport } from './routes/stroll'
+import { Route as TogetherRouteImport } from './routes/together'
+import { Route as TrailsRouteImport } from './routes/trails'
 import { Route as WatchRouteImport } from './routes/watch'
+import { Route as WondersRouteImport } from './routes/wonders'
 import { Route as WorldRouteImport } from './routes/world'
 import { Route as CaregiverParentsRouteImport } from './routes/_caregiver/parents'
 import { Route as CaregiverSharedGardenRouteImport } from './routes/_caregiver/shared-garden'
+import { Route as AuthConfirmRouteImport } from './routes/auth.confirm'
 import { Route as CloudsIndexRouteImport } from './routes/clouds.index'
 import { Route as CloudsIdRouteImport } from './routes/clouds.$id'
 import { Route as ForestIndexRouteImport } from './routes/forest.index'
@@ -52,6 +66,11 @@ const CaregiverRouteRoute = CaregiverRouteRouteImport.update({
   id: '/_caregiver',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BedtimeRoute = BedtimeRouteImport.update({
+  id: '/bedtime',
+  path: '/bedtime',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CaregiverLoginRoute = CaregiverLoginRouteImport.update({
   id: '/caregiver-login',
   path: '/caregiver-login',
@@ -60,6 +79,16 @@ const CaregiverLoginRoute = CaregiverLoginRouteImport.update({
 const CommunityGardenRoute = CommunityGardenRouteImport.update({
   id: '/community-garden',
   path: '/community-garden',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountRoute = CountRouteImport.update({
+  id: '/count',
+  path: '/count',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DreamsRoute = DreamsRouteImport.update({
+  id: '/dreams',
+  path: '/dreams',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -87,9 +116,29 @@ const HelperRoute = HelperRouteImport.update({
   path: '/helper',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IslandRoute = IslandRouteImport.update({
+  id: '/island',
+  path: '/island',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MazeRoute = MazeRouteImport.update({
+  id: '/maze',
+  path: '/maze',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PuddlesRoute = PuddlesRouteImport.update({
+  id: '/puddles',
+  path: '/puddles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RaindropRoute = RaindropRouteImport.update({
+  id: '/raindrop',
+  path: '/raindrop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -97,9 +146,19 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResourcesRoute = ResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SafeRoute = SafeRouteImport.update({
   id: '/safe',
   path: '/safe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafeDrawingRoute = SafeDrawingRouteImport.update({
+  id: '/safe-drawing',
+  path: '/safe-drawing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -112,9 +171,29 @@ const StoryRoute = StoryRouteImport.update({
   path: '/story',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StrollRoute = StrollRouteImport.update({
+  id: '/stroll',
+  path: '/stroll',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TogetherRoute = TogetherRouteImport.update({
+  id: '/together',
+  path: '/together',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrailsRoute = TrailsRouteImport.update({
+  id: '/trails',
+  path: '/trails',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WatchRoute = WatchRouteImport.update({
   id: '/watch',
   path: '/watch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WondersRoute = WondersRouteImport.update({
+  id: '/wonders',
+  path: '/wonders',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorldRoute = WorldRouteImport.update({
@@ -131,6 +210,11 @@ const CaregiverSharedGardenRoute = CaregiverSharedGardenRouteImport.update({
   id: '/shared-garden',
   path: '/shared-garden',
   getParentRoute: () => CaregiverRouteRoute,
+} as any)
+const AuthConfirmRoute = AuthConfirmRouteImport.update({
+  id: '/auth/confirm',
+  path: '/auth/confirm',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CloudsIndexRoute = CloudsIndexRouteImport.update({
   id: '/clouds/',
@@ -211,22 +295,36 @@ const ApiPublicChar91DotwellKnownChar93OauthProtectedResourceRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bedtime': typeof BedtimeRoute
   '/caregiver-login': typeof CaregiverLoginRoute
   '/community-garden': typeof CommunityGardenRoute
+  '/count': typeof CountRoute
+  '/dreams': typeof DreamsRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
+  '/island': typeof IslandRoute
+  '/maze': typeof MazeRoute
   '/privacy': typeof PrivacyRoute
+  '/puddles': typeof PuddlesRoute
+  '/raindrop': typeof RaindropRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
   '/safe': typeof SafeRoute
+  '/safe-drawing': typeof SafeDrawingRoute
   '/settings': typeof SettingsRoute
   '/story': typeof StoryRoute
+  '/stroll': typeof StrollRoute
+  '/together': typeof TogetherRoute
+  '/trails': typeof TrailsRoute
   '/watch': typeof WatchRoute
+  '/wonders': typeof WondersRoute
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
   '/shared-garden': typeof CaregiverSharedGardenRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -245,22 +343,36 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bedtime': typeof BedtimeRoute
   '/caregiver-login': typeof CaregiverLoginRoute
   '/community-garden': typeof CommunityGardenRoute
+  '/count': typeof CountRoute
+  '/dreams': typeof DreamsRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
+  '/island': typeof IslandRoute
+  '/maze': typeof MazeRoute
   '/privacy': typeof PrivacyRoute
+  '/puddles': typeof PuddlesRoute
+  '/raindrop': typeof RaindropRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
   '/safe': typeof SafeRoute
+  '/safe-drawing': typeof SafeDrawingRoute
   '/settings': typeof SettingsRoute
   '/story': typeof StoryRoute
+  '/stroll': typeof StrollRoute
+  '/together': typeof TogetherRoute
+  '/trails': typeof TrailsRoute
   '/watch': typeof WatchRoute
+  '/wonders': typeof WondersRoute
   '/world': typeof WorldRoute
   '/parents': typeof CaregiverParentsRoute
   '/shared-garden': typeof CaregiverSharedGardenRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -281,22 +393,36 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_caregiver': typeof CaregiverRouteRouteWithChildren
+  '/bedtime': typeof BedtimeRoute
   '/caregiver-login': typeof CaregiverLoginRoute
   '/community-garden': typeof CommunityGardenRoute
+  '/count': typeof CountRoute
+  '/dreams': typeof DreamsRoute
   '/explore': typeof ExploreRoute
   '/friends': typeof FriendsRoute
   '/games': typeof GamesRoute
   '/garden': typeof GardenRoute
   '/helper': typeof HelperRoute
+  '/island': typeof IslandRoute
+  '/maze': typeof MazeRoute
   '/privacy': typeof PrivacyRoute
+  '/puddles': typeof PuddlesRoute
+  '/raindrop': typeof RaindropRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
   '/safe': typeof SafeRoute
+  '/safe-drawing': typeof SafeDrawingRoute
   '/settings': typeof SettingsRoute
   '/story': typeof StoryRoute
+  '/stroll': typeof StrollRoute
+  '/together': typeof TogetherRoute
+  '/trails': typeof TrailsRoute
   '/watch': typeof WatchRoute
+  '/wonders': typeof WondersRoute
   '/world': typeof WorldRoute
   '/_caregiver/parents': typeof CaregiverParentsRoute
   '/_caregiver/shared-garden': typeof CaregiverSharedGardenRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/clouds/$id': typeof CloudsIdRoute
   '/forest/$id': typeof ForestIdRoute
   '/meadow/$id': typeof MeadowIdRoute
@@ -317,22 +443,36 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/bedtime'
     | '/caregiver-login'
     | '/community-garden'
+    | '/count'
+    | '/dreams'
     | '/explore'
     | '/friends'
     | '/games'
     | '/garden'
     | '/helper'
+    | '/island'
+    | '/maze'
     | '/privacy'
+    | '/puddles'
+    | '/raindrop'
     | '/reset-password'
+    | '/resources'
     | '/safe'
+    | '/safe-drawing'
     | '/settings'
     | '/story'
+    | '/stroll'
+    | '/together'
+    | '/trails'
     | '/watch'
+    | '/wonders'
     | '/world'
     | '/parents'
     | '/shared-garden'
+    | '/auth/confirm'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -351,22 +491,36 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/bedtime'
     | '/caregiver-login'
     | '/community-garden'
+    | '/count'
+    | '/dreams'
     | '/explore'
     | '/friends'
     | '/games'
     | '/garden'
     | '/helper'
+    | '/island'
+    | '/maze'
     | '/privacy'
+    | '/puddles'
+    | '/raindrop'
     | '/reset-password'
+    | '/resources'
     | '/safe'
+    | '/safe-drawing'
     | '/settings'
     | '/story'
+    | '/stroll'
+    | '/together'
+    | '/trails'
     | '/watch'
+    | '/wonders'
     | '/world'
     | '/parents'
     | '/shared-garden'
+    | '/auth/confirm'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -386,22 +540,36 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_caregiver'
+    | '/bedtime'
     | '/caregiver-login'
     | '/community-garden'
+    | '/count'
+    | '/dreams'
     | '/explore'
     | '/friends'
     | '/games'
     | '/garden'
     | '/helper'
+    | '/island'
+    | '/maze'
     | '/privacy'
+    | '/puddles'
+    | '/raindrop'
     | '/reset-password'
+    | '/resources'
     | '/safe'
+    | '/safe-drawing'
     | '/settings'
     | '/story'
+    | '/stroll'
+    | '/together'
+    | '/trails'
     | '/watch'
+    | '/wonders'
     | '/world'
     | '/_caregiver/parents'
     | '/_caregiver/shared-garden'
+    | '/auth/confirm'
     | '/clouds/$id'
     | '/forest/$id'
     | '/meadow/$id'
@@ -422,20 +590,34 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CaregiverRouteRoute: typeof CaregiverRouteRouteWithChildren
+  BedtimeRoute: typeof BedtimeRoute
   CaregiverLoginRoute: typeof CaregiverLoginRoute
   CommunityGardenRoute: typeof CommunityGardenRoute
+  CountRoute: typeof CountRoute
+  DreamsRoute: typeof DreamsRoute
   ExploreRoute: typeof ExploreRoute
   FriendsRoute: typeof FriendsRoute
   GamesRoute: typeof GamesRoute
   GardenRoute: typeof GardenRoute
   HelperRoute: typeof HelperRoute
+  IslandRoute: typeof IslandRoute
+  MazeRoute: typeof MazeRoute
   PrivacyRoute: typeof PrivacyRoute
+  PuddlesRoute: typeof PuddlesRoute
+  RaindropRoute: typeof RaindropRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ResourcesRoute: typeof ResourcesRoute
   SafeRoute: typeof SafeRoute
+  SafeDrawingRoute: typeof SafeDrawingRoute
   SettingsRoute: typeof SettingsRoute
   StoryRoute: typeof StoryRoute
+  StrollRoute: typeof StrollRoute
+  TogetherRoute: typeof TogetherRoute
+  TrailsRoute: typeof TrailsRoute
   WatchRoute: typeof WatchRoute
+  WondersRoute: typeof WondersRoute
   WorldRoute: typeof WorldRoute
+  AuthConfirmRoute: typeof AuthConfirmRoute
   CloudsIdRoute: typeof CloudsIdRoute
   ForestIdRoute: typeof ForestIdRoute
   MeadowIdRoute: typeof MeadowIdRoute
@@ -469,6 +651,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CaregiverRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bedtime': {
+      id: '/bedtime'
+      path: '/bedtime'
+      fullPath: '/bedtime'
+      preLoaderRoute: typeof BedtimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/caregiver-login': {
       id: '/caregiver-login'
       path: '/caregiver-login'
@@ -481,6 +670,20 @@ declare module '@tanstack/react-router' {
       path: '/community-garden'
       fullPath: '/community-garden'
       preLoaderRoute: typeof CommunityGardenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/count': {
+      id: '/count'
+      path: '/count'
+      fullPath: '/count'
+      preLoaderRoute: typeof CountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dreams': {
+      id: '/dreams'
+      path: '/dreams'
+      fullPath: '/dreams'
+      preLoaderRoute: typeof DreamsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -518,11 +721,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelperRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/island': {
+      id: '/island'
+      path: '/island'
+      fullPath: '/island'
+      preLoaderRoute: typeof IslandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maze': {
+      id: '/maze'
+      path: '/maze'
+      fullPath: '/maze'
+      preLoaderRoute: typeof MazeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/puddles': {
+      id: '/puddles'
+      path: '/puddles'
+      fullPath: '/puddles'
+      preLoaderRoute: typeof PuddlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/raindrop': {
+      id: '/raindrop'
+      path: '/raindrop'
+      fullPath: '/raindrop'
+      preLoaderRoute: typeof RaindropRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -532,11 +763,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/safe': {
       id: '/safe'
       path: '/safe'
       fullPath: '/safe'
       preLoaderRoute: typeof SafeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safe-drawing': {
+      id: '/safe-drawing'
+      path: '/safe-drawing'
+      fullPath: '/safe-drawing'
+      preLoaderRoute: typeof SafeDrawingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -553,11 +798,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stroll': {
+      id: '/stroll'
+      path: '/stroll'
+      fullPath: '/stroll'
+      preLoaderRoute: typeof StrollRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/together': {
+      id: '/together'
+      path: '/together'
+      fullPath: '/together'
+      preLoaderRoute: typeof TogetherRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trails': {
+      id: '/trails'
+      path: '/trails'
+      fullPath: '/trails'
+      preLoaderRoute: typeof TrailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/watch': {
       id: '/watch'
       path: '/watch'
       fullPath: '/watch'
       preLoaderRoute: typeof WatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wonders': {
+      id: '/wonders'
+      path: '/wonders'
+      fullPath: '/wonders'
+      preLoaderRoute: typeof WondersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/world': {
@@ -580,6 +853,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/shared-garden'
       preLoaderRoute: typeof CaregiverSharedGardenRouteImport
       parentRoute: typeof CaregiverRouteRoute
+    }
+    '/auth/confirm': {
+      id: '/auth/confirm'
+      path: '/auth/confirm'
+      fullPath: '/auth/confirm'
+      preLoaderRoute: typeof AuthConfirmRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/clouds/': {
       id: '/clouds/'
@@ -706,20 +986,34 @@ const CaregiverRouteRouteWithChildren = CaregiverRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CaregiverRouteRoute: CaregiverRouteRouteWithChildren,
+  BedtimeRoute: BedtimeRoute,
   CaregiverLoginRoute: CaregiverLoginRoute,
   CommunityGardenRoute: CommunityGardenRoute,
+  CountRoute: CountRoute,
+  DreamsRoute: DreamsRoute,
   ExploreRoute: ExploreRoute,
   FriendsRoute: FriendsRoute,
   GamesRoute: GamesRoute,
   GardenRoute: GardenRoute,
   HelperRoute: HelperRoute,
+  IslandRoute: IslandRoute,
+  MazeRoute: MazeRoute,
   PrivacyRoute: PrivacyRoute,
+  PuddlesRoute: PuddlesRoute,
+  RaindropRoute: RaindropRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ResourcesRoute: ResourcesRoute,
   SafeRoute: SafeRoute,
+  SafeDrawingRoute: SafeDrawingRoute,
   SettingsRoute: SettingsRoute,
   StoryRoute: StoryRoute,
+  StrollRoute: StrollRoute,
+  TogetherRoute: TogetherRoute,
+  TrailsRoute: TrailsRoute,
   WatchRoute: WatchRoute,
+  WondersRoute: WondersRoute,
   WorldRoute: WorldRoute,
+  AuthConfirmRoute: AuthConfirmRoute,
   CloudsIdRoute: CloudsIdRoute,
   ForestIdRoute: ForestIdRoute,
   MeadowIdRoute: MeadowIdRoute,

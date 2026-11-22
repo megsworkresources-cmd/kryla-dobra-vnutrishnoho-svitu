@@ -4,6 +4,7 @@ import { Btn, Scene } from "@/components/Scene";
 import { supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
 import { RECOVERY_KEY, recoveryRequested } from "@/lib/caregiver-session";
+import { caregiverAuthError } from "@/lib/caregiver-auth-error";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
@@ -83,8 +84,8 @@ function ResetPassword() {
         /* optional storage */
       }
       await navigate({ to: "/parents", replace: true });
-    } catch {
-      setErr(t("Не вдалося зберегти пароль. Відкрийте новий лист відновлення й спробуйте ще раз."));
+    } catch (error) {
+      setErr(t(caregiverAuthError(error, "update")));
     } finally {
       setBusy(false);
     }

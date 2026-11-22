@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
 function Welcome() {
   const t = useT();
   return (
-    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-paper">
+    <div className="relative flex min-h-[max(100svh,54rem)] flex-col overflow-hidden bg-paper">
       <img
         src={welcome}
         alt={t("Соняшникове поле, біла хатка й річка на світанку")}
@@ -53,8 +53,10 @@ function Welcome() {
         <LangToggle />
       </div>
       <div className="relative z-10 px-6 pt-20 text-center animate-fade-up">
-        <h1 className="font-display text-6xl font-bold text-ink sm:text-7xl">{t("Тихе Місце")}</h1>
-        <p className="mt-3 font-display text-2xl font-semibold text-ink">
+        <h1 className="font-display text-4xl font-bold text-ink min-[380px]:text-6xl sm:text-7xl">
+          {t("Тихе Місце")}
+        </h1>
+        <p className="mt-3 font-display text-xl font-semibold text-ink sm:text-2xl">
           {t("Тут ти можеш бути собою")}
         </p>
       </div>

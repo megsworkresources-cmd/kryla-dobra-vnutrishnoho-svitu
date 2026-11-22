@@ -11,6 +11,7 @@ import { careCount, growthStage, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
+import { useOnline } from "@/hooks/use-online";
 
 export const Route = createFileRoute("/garden")({
   head: () =>
@@ -29,6 +30,7 @@ const WORDS = [
 
 function Garden() {
   const t = useT();
+  const online = useOnline();
   const count = useStore((s) => careCount(s));
   const stage = growthStage(count);
   const h = ([6, 40, 70, 100, 125, 135] as const)[stage] ?? 6;
@@ -51,9 +53,15 @@ function Garden() {
       <div
         className={`space-y-4 pt-3 transition-opacity duration-500 sm:pt-[10vh] ${ready ? "opacity-100" : "opacity-0"}`}
       >
+        {!online && (
+          <p role="status" className="paper-card p-3 text-sm font-semibold">
+            {t("Твій сад збережено на цьому пристрої. Інтернет для нього не потрібен.")}
+          </p>
+        )}
         <section className="paper-card overflow-hidden">
+          <p className="px-4 pb-3 pt-4 text-center font-display text-lg font-bold">{t(words)}</p>
           <div
-            className="relative mx-auto aspect-[440/768] w-full max-w-80 bg-secondary"
+            className="relative mx-auto aspect-[440/768] w-[min(100%,22svh)] max-w-64 bg-secondary"
             role="group"
             aria-label={t("Запис росту соняшника")}
           >
@@ -66,9 +74,6 @@ function Garden() {
               label="Запис росту соняшника"
               quiet
             />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-night/85 via-night/40 to-transparent px-3 pb-3 pt-10">
-              <p className="font-display text-lg font-bold text-moon">{t(words)}</p>
-            </div>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 p-4">
             <p className="text-sm font-bold">{t("Твоя стадія: {n} з 5", { n: stage })}</p>

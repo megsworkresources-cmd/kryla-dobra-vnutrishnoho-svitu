@@ -30,8 +30,8 @@ function Maze() {
   const grid = pick(age, MAZES);
   const [pos, setPos] = useState<P>(() => find(grid, "S"));
   const [bump, setBump] = useState(false);
-  // Once the child moves, the introduction folds into one line so the maze and its
-  // arrows fit on the phone screen without scrolling.
+  // The play surface comes first so the maze and its arrows are on screen from the
+  // start; the spoken introduction folds away on the child's first move.
   const [moved, setMoved] = useState(false);
   const goal = find(grid, "E");
   const done = pos[0] === goal[0] && pos[1] === goal[1];
@@ -77,8 +77,8 @@ function Maze() {
   const n = grid[0]?.length ?? 5;
   return (
     <Scene title="Стежка Ліхтарика" back="/world" compact>
-      <div className="space-y-4">
-        {moved ? (
+      <div className="space-y-3">
+        {moved && (
           <p
             role="status"
             aria-live="polite"
@@ -86,13 +86,11 @@ function Maze() {
           >
             {done ? L(MAZE.done) : bump ? L(MAZE.bump) : ""}
           </p>
-        ) : (
-          <CharacterSay who="lihtaryk" text={L(MAZE.intro)} mood="talk" />
         )}
         <div
           role="grid"
           aria-label={t("Лабіринт")}
-          className="paper-card mx-auto grid w-full max-w-md gap-px p-0"
+          className="paper-card mx-auto grid w-full max-w-md gap-px p-0 [@media(max-height:700px)]:max-w-[19rem]"
           style={{ gridTemplateColumns: `repeat(${n}, 1fr)` }}
         >
           {grid.map((row, r) => (
@@ -137,30 +135,51 @@ function Maze() {
             </Btn>
           </div>
         ) : (
-          // A maze plus arrows and a fixed nav do not all fit on very short phones;
-          // there the maze cells themselves are the control.
-          <div className="mx-auto grid max-w-[14rem] grid-cols-3 gap-2 [@media(max-height:700px)]:hidden">
-            <span />
-            <Btn variant="soft" aria-label={L(MAZE.up)} onClick={() => move(-1, 0)}>
+          // One row of four arrows stays reachable on every phone; the maze narrows
+          // below 700px of height so both still fit above the fixed nav.
+          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-4 gap-2">
+            <Btn
+              variant="soft"
+              className="w-full px-0"
+              aria-label={L(MAZE.up)}
+              onClick={() => move(-1, 0)}
+            >
               ↑
             </Btn>
-            <span />
-            <Btn variant="soft" aria-label={L(MAZE.left)} onClick={() => move(0, -1)}>
+            <Btn
+              variant="soft"
+              className="w-full px-0"
+              aria-label={L(MAZE.left)}
+              onClick={() => move(0, -1)}
+            >
               ←
             </Btn>
-            <Btn variant="soft" aria-label={L(MAZE.down)} onClick={() => move(1, 0)}>
+            <Btn
+              variant="soft"
+              className="w-full px-0"
+              aria-label={L(MAZE.down)}
+              onClick={() => move(1, 0)}
+            >
               ↓
             </Btn>
-            <Btn variant="soft" aria-label={L(MAZE.right)} onClick={() => move(0, 1)}>
+            <Btn
+              variant="soft"
+              className="w-full px-0"
+              aria-label={L(MAZE.right)}
+              onClick={() => move(0, 1)}
+            >
               →
             </Btn>
           </div>
         )}
         {!moved && (
-          <section className="paper-card p-4">
-            <h2 className="font-display text-lg font-bold">{t("Без екрана")}</h2>
-            <p>{L(MAZE.away)}</p>
-          </section>
+          <div className="space-y-4 pt-1">
+            <CharacterSay who="lihtaryk" text={L(MAZE.intro)} mood="talk" />
+            <section className="paper-card p-4">
+              <h2 className="font-display text-lg font-bold">{t("Без екрана")}</h2>
+              <p>{L(MAZE.away)}</p>
+            </section>
+          </div>
         )}
       </div>
     </Scene>

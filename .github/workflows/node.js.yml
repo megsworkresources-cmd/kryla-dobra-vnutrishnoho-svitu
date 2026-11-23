@@ -5,33 +5,61 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
+  checks: read
+  pull-requests: read
+  statuses: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [22.x]
+        node-version: [22.x, 24.x]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: latest
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: bun install --frozen-lockfile
-    - run: bun run build
-    - run: bun run lint
-    - run: bun run test
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+          # The project installs with Bun; avoid setup-node's npm cache autodetection.
+          package-manager-cache: false
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Reject service-role Supabase client imports
+        run: node scripts/no-service-role-client-guard.mjs
+      - name: Verify this CI check is required on the base branch
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHECK_NAME: ${{ github.job }} (${{ matrix.node-version }})
+        run: node scripts/verify-required-check.mjs
+      - name: Typecheck
+        run: bunx tsc --noEmit
+      - name: Build
+        run: bun run build
+      - name: Apply formatting
+        # AI Studio syncs sometimes land code that is not Prettier-formatted.
+        # Apply the project's own formatting rules before linting so formatting
+        # alone can never fail CI; real lint problems still fail the next step.
+        run: bunx eslint . --fix
+      - name: Lint
+        run: bun run lint
+      - name: Test
+        run: bun run test
+      # Formatting is applied in the runner before lint/tests. Do not push
+      # formatter commits from Actions: protected main branches reject them,
+      # and a matrix job must never try to write to the same branch.

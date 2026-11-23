@@ -9,6 +9,26 @@ import { chime, sfx } from "@/lib/audio";
 import { clearDraft, getDraft, saveDraft } from "@/lib/drafts";
 
 const STAMPS = ["🌻", "⭐", "🦋", "❤️", "🌈", "🐞", "☁️", "🌙"];
+const STAMP_NAMES = [
+  "Соняшник",
+  "Зірочка",
+  "Метелик",
+  "Серце",
+  "Веселка",
+  "Божа корівка",
+  "Хмарка",
+  "Місяць",
+] as const;
+const COLOR_NAMES = [
+  "Чорний",
+  "Жовтий",
+  "Рожевий",
+  "Блакитний",
+  "Зелений",
+  "Лавандовий",
+  "Синій",
+  "Білий",
+] as const;
 const NOTES = [523, 587, 659, 784, 880, 1047] as const;
 const noteAt = (i: number): number =>
   NOTES[((i % NOTES.length) + NOTES.length) % NOTES.length] ?? NOTES[0];
@@ -83,7 +103,9 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
     fill();
   };
   const spark = (e: React.PointerEvent, g: string) => {
-    const r = ref.current!.getBoundingClientRect();
+    const canvas = ref.current;
+    if (!canvas) return;
+    const r = canvas.getBoundingClientRect();
     const id = tid.current++;
     setTrail((a) => [...a.slice(-14), { id, x: e.clientX - r.left, y: e.clientY - r.top, g }]);
     timers.current.push(setTimeout(() => setTrail((a) => a.filter((q) => q.id !== id)), 700));
@@ -99,19 +121,23 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   };
   useEffect(fill, []);
   const pos = (e: React.PointerEvent) => {
-    const c = ref.current!;
+    const c = ref.current;
+    if (!c) return null;
     const r = c.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) return null;
     return [
       (e.clientX - r.left) * (c.width / r.width),
       (e.clientY - r.top) * (c.height / r.height),
     ] as const;
   };
   const down = (e: React.PointerEvent) => {
-    const g = ref.current?.getContext("2d");
-    if (!g) return;
+    const canvas = ref.current;
+    const g = canvas?.getContext("2d");
+    const point = pos(e);
+    if (!canvas || !g || !point) return;
+    const [x, y] = point;
     dirty.current = true;
     if (stamp) {
-      const [x, y] = pos(e);
       g.font = `${size * 9}px serif`;
       g.textAlign = "center";
       g.textBaseline = "middle";
@@ -121,9 +147,8 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
       setSaved(false);
       return;
     }
-    ref.current!.setPointerCapture(e.pointerId);
+    canvas.setPointerCapture(e.pointerId);
     drawing.current = true;
-    const [x, y] = pos(e);
     g.beginPath();
     g.moveTo(x, y);
     g.lineTo(x + 0.1, y);
@@ -140,8 +165,10 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   };
   const move = (e: React.PointerEvent) => {
     if (!drawing.current) return;
-    const g = ref.current!.getContext("2d")!;
-    const [x, y] = pos(e);
+    const g = ref.current?.getContext("2d");
+    const point = pos(e);
+    if (!g || !point) return;
+    const [x, y] = point;
     if (rainbow && !eraser) {
       hue.current = (hue.current + 6) % 360;
       g.strokeStyle = `hsl(${hue.current} 80% 60%)`;
@@ -217,7 +244,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t("Наліпки")}>
-        {STAMPS.map((g) => (
+        {STAMPS.map((g, i) => (
           <button
             key={g}
             type="button"
@@ -226,7 +253,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
               setStamp(stamp === g ? null : g);
             }}
             aria-pressed={stamp === g}
-            aria-label={t("Наліпка")}
+            aria-label={t("Наліпка: {n}", { n: t(STAMP_NAMES[i] ?? g) })}
             className={`h-11 w-11 rounded-2xl text-2xl transition-transform ${stamp === g ? "scale-125 bg-honey/40 ring-4 ring-ring animate-wiggle" : "bg-secondary active:scale-90"}`}
           >
             {g}
@@ -250,7 +277,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
         </p>
       )}
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t("Кольори")}>
-        {COLORS.map((c) => (
+        {COLORS.map((c, i) => (
           <button
             key={c}
             onClick={() => {
@@ -259,7 +286,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
               setStamp(null);
               setRainbow(false);
             }}
-            aria-label={t("Колір")}
+            aria-label={t("Колір: {n}", { n: t(COLOR_NAMES[i] ?? c) })}
             aria-pressed={color === c && !eraser}
             className={`h-11 w-11 rounded-full border-4 ${color === c && !eraser ? "border-primary" : "border-paper"} shadow-soft`}
             style={{ background: c }}
@@ -449,11 +476,11 @@ export function ColorFlower() {
             })}
       </p>
       <div className="flex flex-wrap justify-center gap-2">
-        {COLORS.map((c) => (
+        {COLORS.map((c, i) => (
           <button
             key={c}
             onClick={() => setColor(c)}
-            aria-label={t("Колір")}
+            aria-label={t("Колір: {n}", { n: t(COLOR_NAMES[i] ?? c) })}
             aria-pressed={color === c}
             className={`h-11 w-11 rounded-full border-4 ${color === c ? "border-primary" : "border-paper"} shadow-soft`}
             style={{ background: c }}

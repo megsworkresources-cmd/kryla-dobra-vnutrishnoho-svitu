@@ -1,30 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestIP } from "@tanstack/react-start/server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_PER_WINDOW = 8;
-const MAX_GLOBAL_PER_MIN = 60;
-const hits = new Map<string, number[]>();
-let globalHits: number[] = [];
-
-function allow(ip: string): boolean {
-  const now = Date.now();
-  globalHits = globalHits.filter((t) => now - t < 60_000);
-  if (globalHits.length >= MAX_GLOBAL_PER_MIN) return false;
-  const list = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  if (list.length >= MAX_PER_WINDOW) {
-    hits.set(ip, list);
-    return false;
-  }
-  list.push(now);
-  globalHits.push(now);
-  hits.set(ip, list);
-  if (hits.size > 5000) hits.clear();
-  return true;
-}
-
 export const askHelper = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator(
     z.object({
       text: z.string().trim().min(2).max(500),
@@ -32,9 +11,10 @@ export const askHelper = createServerFn({ method: "POST" })
       lang: z.enum(["uk", "en"]).default("uk"),
     }),
   )
-  .handler(async ({ data }) => {
-    const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
-    if (!allow(ip)) return { ok: false as const, error: "busy" };
+  .handler(async ({ data, context }) => {
+    const { allowAi } = await import("./ai-quota.server");
+    if (!allowAi("helper", context.userId, 10, 60 * 60 * 1000))
+      return { ok: false as const, error: "busy" };
     const { suggestActivity, SuggestError } = await import("./suggest.server");
     try {
       return {

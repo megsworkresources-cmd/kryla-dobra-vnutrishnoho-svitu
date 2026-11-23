@@ -14,24 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_reports: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       shared_sunflowers: {
         Row: {
           flower_id: string
           owner_id: string
           sharing: boolean
           stage: number
+          stage_updated_at: string
         }
         Insert: {
           flower_id?: string
           owner_id: string
           sharing?: boolean
           stage?: number
+          stage_updated_at?: string
         }
         Update: {
           flower_id?: string
           owner_id?: string
           sharing?: boolean
           stage?: number
+          stage_updated_at?: string
         }
         Relationships: []
       }
@@ -40,9 +67,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_my_account: { Args: never; Returns: undefined }
+      grow_sunflower: {
+        Args: { new_stage: number; opt_in: boolean }
+        Returns: {
+          capped: boolean
+          stage: number
+        }[]
+      }
       publish_sunflower: {
         Args: { new_stage: number; opt_in: boolean }
         Returns: undefined
+      }
+      read_public_sunflower_stages: {
+        Args: never
+        Returns: {
+          stage: number
+        }[]
       }
       read_shared_sunflowers: {
         Args: never

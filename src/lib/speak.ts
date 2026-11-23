@@ -1,6 +1,6 @@
 import { getState } from "./store";
 import type { CharId } from "@/content/characters";
-import { isAudioUnlocked } from "./audio";
+import { duckMusic, isAudioUnlocked } from "./audio";
 import { useSyncExternalStore } from "react";
 
 /**
@@ -31,11 +31,27 @@ let audio: HTMLAudioElement | null = null;
 let primedPlayer: HTMLAudioElement | null = null;
 let naturalPaused = false;
 /** Reuse the element unlocked synchronously by a real gesture, including on Safari. */
+let synthPrimed = false;
+let deferredDevice: (() => void) | null = null;
+// 0.1 s of real silence: iOS refuses to "play" a one-sample clip, which left no gesture-primed player.
+const SILENT_WAV =
+  "data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==";
+
 export function unlockSpeech() {
-  if (typeof window === "undefined" || primedPlayer || !getState().sound) return;
-  const player = new Audio(
-    "data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQIAAAAAAA==",
-  );
+  if (typeof window === "undefined" || !getState().sound) return;
+  // iOS keeps device speech silent until speak() is first called inside a real gesture.
+  if (!synthPrimed && "speechSynthesis" in window && "SpeechSynthesisUtterance" in window) {
+    try {
+      const u = new SpeechSynthesisUtterance(" ");
+      u.volume = 0;
+      window.speechSynthesis.speak(u);
+      synthPrimed = true;
+    } catch {
+      // device speech unavailable
+    }
+  }
+  if (primedPlayer) return;
+  const player = new Audio(SILENT_WAV);
   primedPlayer = player;
   player.volume = 0;
   void player
@@ -92,18 +108,34 @@ function deviceSpeak(text: string, pitch: number) {
   u.onstart = () => {
     if (mine === token) setSpeechState("playing");
   };
+  u.onresume = () => {
+    if (mine !== token) return;
+    setSpeechState("playing");
+    duckMusic(true);
+  };
+  u.onpause = () => {
+    if (mine !== token) return;
+    setSpeechState("paused");
+    duckMusic(false);
+  };
   u.onend = () => {
-    if (mine === token) setSpeechState("idle");
+    if (mine !== token) return;
+    setSpeechState("idle");
+    duckMusic(false);
   };
   u.onerror = () => {
-    if (mine === token) setSpeechState("unavailable");
+    if (mine !== token) return;
+    setSpeechState("unavailable");
+    duckMusic(false);
   };
   setSpeechState("loading");
+  duckMusic(true);
   try {
     window.speechSynthesis.resume();
     window.speechSynthesis.speak(u);
   } catch {
     setSpeechState("unavailable");
+    duckMusic(false);
   }
 }
 
@@ -149,10 +181,14 @@ export function speak(
     }
     player.volume = current.volume * current.voiceVolume;
     player.onplaying = () => {
-      if (my === token) setSpeechState("playing");
+      if (my !== token) return;
+      setSpeechState("playing");
+      duckMusic(true);
     };
     player.onended = () => {
-      if (my === token) setSpeechState("idle");
+      if (my !== token) return;
+      setSpeechState("idle");
+      duckMusic(false);
     };
     let fellBack = false;
     const fallback = () => {
@@ -163,10 +199,12 @@ export function speak(
       player.onerror = null;
       player.pause();
       audio = null;
+      duckMusic(false);
       deviceSpeak(text, pitch);
     };
     player.onerror = fallback;
     if (speechState === "paused") return;
+    duckMusic(true);
     void player
       .play()
       .then(() => {
@@ -178,10 +216,14 @@ export function speak(
   };
   const hit = cache.get(key);
   if (hit) return play(hit);
-  void import("./voice.functions")
-    .then(({ speakNatural }) =>
-      speakNatural({ data: { text, voice: voice as never, lang: s.lang, style } }),
-    )
+  // Natural voices need a signed-in grown-up on this device; otherwise use device speech.
+  void import("@/integrations/supabase/client")
+    .then(({ supabase }) => supabase.auth.getSession())
+    .then(async ({ data }) => {
+      if (!data.session) return { ok: false as const, error: "signed_out" };
+      const { speakNatural } = await import("./voice.functions");
+      return speakNatural({ data: { text, voice: voice as never, lang: s.lang, style } });
+    })
     .then((r) => {
       if (r.ok) {
         cache.set(key, r.audio);
@@ -193,16 +235,20 @@ export function speak(
       } else if (my === token) {
         if (["402", "403", "401", "404", "config"].includes(r.error)) naturalPaused = true;
         if (speechState !== "paused") deviceSpeak(text, pitch);
+        else deferredDevice = () => deviceSpeak(text, pitch);
       }
     })
     .catch(() => {
-      if (my === token && speechState !== "paused") deviceSpeak(text, pitch);
+      if (my !== token) return;
+      if (speechState !== "paused") deviceSpeak(text, pitch);
+      else deferredDevice = () => deviceSpeak(text, pitch);
     });
 }
 
 export function pauseSpeaking() {
   if (speechState === "idle" || speechState === "unavailable") return;
   setSpeechState("paused");
+  duckMusic(false);
   audio?.pause();
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.pause();
 }
@@ -210,23 +256,43 @@ export function resumeSpeaking() {
   const s = getState();
   if (!s.sound || s.volume === 0 || s.voiceVolume === 0 || !isAudioUnlocked()) return;
   if (speechState !== "paused") return;
+  if (deferredDevice) {
+    const resume = deferredDevice;
+    deferredDevice = null;
+    resume();
+    return;
+  }
+  const player = audio;
+  // Device speech has no media element: Safari may never fire onresume, so a
+  // "loading" state here would leave a false Stop button forever.
+  if (!player) {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.resume();
+      setSpeechState("playing");
+      duckMusic(true);
+    } else setSpeechState("idle");
+    return;
+  }
   setSpeechState("loading");
   const mine = token;
-  const player = audio;
   void player
-    ?.play()
+    .play()
     .then(() => {
       if (mine !== token) player.pause();
       else setSpeechState("playing");
     })
     .catch(() => {
-      if (mine === token) setSpeechState("unavailable");
+      if (mine === token) {
+        setSpeechState("unavailable");
+        duckMusic(false);
+      }
     });
-  if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.resume();
 }
 export function stopSpeaking() {
   token++;
+  deferredDevice = null;
   setSpeechState("idle");
+  duckMusic(false);
   if (audio) {
     audio.onplaying = null;
     audio.onended = null;

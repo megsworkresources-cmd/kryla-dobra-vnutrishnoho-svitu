@@ -7,6 +7,7 @@ import { EMOTIONS, emotionAt, SCENARIOS, SORT_ITEMS } from "@/content/emotions";
 import { markDone, pick, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import { CHARACTERS, castFor } from "@/content/characters";
+import { Narration } from "@/components/Activity";
 
 /* 1. Meet the emotions */
 export function EmotionGallery() {
@@ -235,11 +236,13 @@ export function BodyMap() {
     );
   return (
     <div className="space-y-4">
-      <p className="paper-card p-4 text-base">
-        {t(
+      <CharacterSay
+        who="solomiya"
+        size="sm"
+        text={t(
           "Обери почуття. Потім торкнися місць, де ти його відчуваєш. Правильних відповідей немає — у кожного по-своєму.",
         )}
-      </p>
+      />
       <div className="flex gap-2 overflow-x-auto pb-1">
         {EMOTIONS.slice(0, 6).map((e) => (
           <button
@@ -292,6 +295,14 @@ export function BodyMap() {
               <li key={b}>• {t(b)}</li>
             ))}
           </ul>
+          <div className="mt-3">
+            <Narration
+              autoSpeak={false}
+              text={[t(emo.name), t("Часто відчувається як:"), ...emo.body.map((b) => t(b))].join(
+                ". ",
+              )}
+            />
+          </div>
           {mine.length > 0 && (
             <p className="mt-3 font-semibold">
               {t("Ти позначив: {z}", {
@@ -378,7 +389,7 @@ export function SortGame() {
   const target = picked ? BASKETS.findIndex((b) => b.kind === picked) : -1;
   return (
     <div className="space-y-5" key={round}>
-      <div className="flex items-center justify-between text-sm">
+      <div className="flex items-center justify-between rounded-2xl bg-paper/85 px-3 py-2 text-sm backdrop-blur-sm">
         <span className="text-muted-foreground">
           {t("Картка {i} з {n}", { i: i + 1, n: SORT_ITEMS.length })}
         </span>

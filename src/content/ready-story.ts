@@ -1,19 +1,67 @@
 import { tr } from "@/lib/i18n";
 import type { Lang } from "@/lib/store";
 
-/** App-written, device-only fallback. No generated or child-authored content is stored. */
-export function readyStory(lang: Lang) {
-  return {
-    title: tr("Пригода насінини", lang),
+export type ReadyStoryId = "seed" | "mitten" | "bun";
+
+interface ReadyStoryText {
+  title: string;
+  desc: string;
+  scenes: [string, string, string, string];
+  closing: string;
+}
+
+/** App-written, device-only stories. No generated or child-authored content is stored. */
+const READY_STORIES: Record<ReadyStoryId, ReadyStoryText> = {
+  seed: {
+    title: "Пригода насінини",
+    desc: "Про сміливість відпустити й рости.",
     scenes: [
       "Маленька насінина соняшника сиділа в теплій квітці й боялася вітру.",
       "«Куди він мене понесе?» — думала вона. Але одного ранку вітер таки підхопив її.",
       "Було страшно й весело водночас. Насінина летіла над полем, над хатками й лелеками.",
       "Нарешті вона опустилася в м’яку землю. Там було темно й тихо, і вона трохи поплакала.",
-    ].map((text) => ({ text: tr(text, lang) })),
-    closing: tr(
+    ],
+    closing:
       "А навесні з неї виріс новий соняшник. Сміливість — це не відсутність страху, а крок уперед разом із ним.",
-      lang,
-    ),
+  },
+  mitten: {
+    title: "Рукавичка",
+    desc: "Народна казка про тепло, у якому всім вистачає місця.",
+    scenes: [
+      "Одного зимового дня дід ішов лісом і загубив рукавичку. Вона впала на сніг і лежала ще тепла від дідової руки, наче маленька хатинка.",
+      "Першою прибігла мишка. «Ой, яке затишне місце!» — сказала вона й залізла всередину. Слідом прискакала жабка й теж попросилася погрітися.",
+      "Потім прийшли зайчик, лисичка й вовчик. Кожен тулився до сусіда, рукавичка ставала все тіснішою, та ніхто не хотів іти геть.",
+      "Нарешті прийшов ведмідь. Рукавичка тріснула, і звірі покотилися у сніг, сміючись. Дід знайшов їх усіх разом і пошив їм велику теплу рукавичку.",
+    ],
+    closing: "Іноді тепло народжується там, де тісно, але ніхто нікого не жене геть.",
+  },
+  bun: {
+    title: "Колобок",
+    desc: "Народна казка про мандрівку й повернення додому.",
+    scenes: [
+      "Бабуся спекла колобка — рум’яного й круглого, наче маленьке сонечко. Дідусь поставив його на віконце охолонути. Там колобок дивився на сад і мріяв побачити, що там, за тином.",
+      "Колобок покотився стежкою. Назустріч йому — заєць: «Який же ти круглий!» — «Я колобок, я від бабусі втік», — заспівав колобок і покотився далі.",
+      "Він зустрів вовка й лисичку, і всі радо слухали його пісеньку. Та надвечір стежка потемніла, і колобок відчув, що сумує за теплим віконцем.",
+      "Лисичка помітила це й показала йому коротшу дорогу додому. Бабуся й дідусь обійняли колобка, а він розповів їм про всіх, кого зустрів.",
+    ],
+    closing: "Можна мандрувати світом і повертатися додому — там на тебе чекають.",
+  },
+};
+
+export function readyStory(lang: Lang, id: ReadyStoryId = "seed") {
+  const source = READY_STORIES[id] ?? READY_STORIES.seed;
+  return {
+    title: tr(source.title, lang),
+    scenes: source.scenes.map((text) => ({ text: tr(text, lang) })),
+    closing: tr(source.closing, lang),
   };
+}
+
+/** Picker entries in a stable order; every story is fully written in both languages. */
+export function readyStories(lang: Lang) {
+  return (Object.keys(READY_STORIES) as ReadyStoryId[]).map((id) => ({
+    id,
+    title: tr(READY_STORIES[id].title, lang),
+    desc: tr(READY_STORIES[id].desc, lang),
+  }));
 }

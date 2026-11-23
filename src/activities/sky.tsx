@@ -9,7 +9,14 @@ import { SKY_MEDIA } from "@/content/story-media";
 import { markDone, useStore } from "@/lib/store";
 import { speak, stopSpeaking } from "@/lib/speak";
 import { useT } from "@/lib/i18n";
-import { chime, sfx } from "@/lib/audio";
+import {
+  chime,
+  playSoundscape,
+  sfx,
+  stopSoundscape,
+  useAudioUnlocked,
+  useSoundscape,
+} from "@/lib/audio";
 import { CHARACTERS, castFor } from "@/content/characters";
 
 const FIREFLIES = [
@@ -105,6 +112,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   const t = useT();
   const scenes = STORIES[id] ?? EMPTY_SCENES;
   const voice = useStore((s) => s.voice && s.sound);
+  const audioReady = useAudioUnlocked();
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [t2, setT] = useState(0);
@@ -146,9 +154,9 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
     }
   }, [t2, len, i, scenes.length]);
   useEffect(() => {
-    if (playing && voice && scenes[i]) speak(t(scenes[i]));
+    if (playing && voice && audioReady && scenes[i]) speak(t(scenes[i]));
     return stopSpeaking;
-  }, [i, playing, voice, scenes, t]);
+  }, [i, playing, voice, audioReady, scenes, t]);
   if (done)
     return (
       <DoneCard
@@ -181,6 +189,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
               poster={night}
               playing={playing}
               onPause={() => setPlaying(false)}
+              startAt={i / Math.max(1, scenes.length)}
             />
           ) : (
             <img
@@ -364,93 +373,7 @@ export function Sounds() {
   const t = useT();
   const sound = useStore((s) => s.sound);
   const volume = useStore((s) => s.volume);
-  const ctx = useRef<AudioContext | null>(null);
-  const nodes = useRef<{ stop: () => void } | null>(null);
-  const [on, setOn] = useState<Sound | null>(null);
-  const stop = () => {
-    nodes.current?.stop();
-    nodes.current = null;
-    setOn(null);
-  };
-  useEffect(
-    () => () => {
-      nodes.current?.stop();
-      void ctx.current?.close();
-    },
-    [],
-  );
-  const gainRef = useRef<GainNode | null>(null);
-  useEffect(() => {
-    if (!sound || volume === 0) {
-      nodes.current?.stop();
-      nodes.current = null;
-      setOn(null);
-    }
-    if (gainRef.current && ctx.current?.state !== "closed")
-      gainRef.current.gain.value = volume * 0.25;
-  }, [sound, volume]);
-  const play = (kind: Sound) => {
-    stop();
-    if (!sound || volume === 0 || !("AudioContext" in window)) return;
-    const ac = ctx.current ?? new AudioContext();
-    ctx.current = ac;
-    void ac.resume().catch(() => stop());
-    const gain = ac.createGain();
-    gainRef.current = gain;
-    gain.gain.value = volume * 0.25;
-    gain.connect(ac.destination);
-    if (kind === "crickets") {
-      const osc = ac.createOscillator();
-      osc.frequency.value = 4200;
-      const amp = ac.createGain();
-      amp.gain.value = 0;
-      const lfo = ac.createOscillator();
-      lfo.frequency.value = 18;
-      const lg = ac.createGain();
-      lg.gain.value = 0.08;
-      lfo.connect(lg).connect(amp.gain);
-      osc.connect(amp).connect(gain);
-      osc.start();
-      lfo.start();
-      nodes.current = {
-        stop: () => {
-          osc.stop();
-          lfo.stop();
-          gain.disconnect();
-        },
-      };
-    } else {
-      const buf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
-      const d = buf.getChannelData(0);
-      for (let k = 0; k < d.length; k++) d[k] = Math.random() * 2 - 1;
-      const src = ac.createBufferSource();
-      src.buffer = buf;
-      src.loop = true;
-      const f = ac.createBiquadFilter();
-      f.type = kind === "rain" ? "highpass" : "lowpass";
-      f.frequency.value = kind === "rain" ? 1200 : 400;
-      src.connect(f).connect(gain);
-      src.start();
-      let lfo: OscillatorNode | null = null;
-      if (kind === "wind") {
-        lfo = ac.createOscillator();
-        lfo.frequency.value = 0.15;
-        const lg = ac.createGain();
-        lg.gain.value = 250;
-        lfo.connect(lg).connect(f.frequency);
-        lfo.start();
-      }
-      nodes.current = {
-        stop: () => {
-          src.stop();
-          lfo?.stop();
-          gain.disconnect();
-        },
-      };
-    }
-    setOn(kind);
-    markDone("sky-sounds");
-  };
+  const on = useSoundscape();
   const items: [Sound, string, string][] = [
     ["rain", "Дощ", "☂"],
     ["wind", "Вітер", "≋"],
@@ -473,7 +396,13 @@ export function Sounds() {
             disabled={!sound || volume === 0}
             variant={on === k ? "honey" : "soft"}
             aria-pressed={on === k}
-            onClick={() => (on === k ? stop() : play(k))}
+            onClick={() => {
+              if (on === k) stopSoundscape();
+              else {
+                playSoundscape(k);
+                markDone("sky-sounds");
+              }
+            }}
             className="flex h-28 min-w-0 flex-col items-center justify-center gap-1 rounded-3xl px-2"
           >
             <span className="text-3xl" aria-hidden>
@@ -484,7 +413,7 @@ export function Sounds() {
         ))}
       </div>
       {on && (
-        <Btn variant="ghost" onClick={stop}>
+        <Btn variant="ghost" onClick={() => stopSoundscape()}>
           {t("Тиша")}
         </Btn>
       )}

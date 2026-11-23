@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { EXTRAS } from "./i18n.extras";
 import { getState, useStore, type Lang } from "./store";
 
 /**
@@ -7,8 +8,166 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  Казка: "Story",
+  "Казка на ніч": "Bedtime story",
+  "Затишна історія про спокійну ніч, вечірній ритуал і сміливість.":
+    "A cosy story about a calm night, evening rituals and courage.",
+  "Поговорімо разом": "Let’s talk together",
+  "Повільна прогулянка": "The slow walk",
+  "Знаходь маленькі дива на лузі й помічай звуки, запахи й дотики.":
+    "Find small wonders in the meadow and notice sounds, smells and textures.",
+  "Маленьке диво {n}": "Small wonder {n}",
+  "Знайдено див: {n} із {m}": "Wonders found: {n} of {m}",
+  Калюжки: "Puddles",
+  "Зберегти в галерею": "Save to gallery",
+  "Стежка Ліхтарика": "Lantern’s Path",
+  "Проведи Їжачка Ліхтарика лабіринтом до теплої хатинки.":
+    "Guide Lantern the Hedgehog through the maze to the warm cottage.",
+  Лабіринт: "Maze",
+  "Ліхтарик тут": "Lantern is here",
+  Хатинка: "Cottage",
+  Кущик: "Bush",
+  Стежка: "Path",
+  "Уважний луг": "The Noticing Meadow",
+  "Розглянь луг і порахуй метеликів, сонечок і соняшники.":
+    "Look at the meadow and count butterflies, ladybirds and sunflowers.",
+  "Раунд {n} із {m}": "Round {n} of {m}",
+  "Намалюй, що допомагає тобі почуватися безпечно й затишно.":
+    "Draw what helps you feel safe and cosy.",
+  "Полотно для малювання": "Drawing canvas",
+  "Колір {n}": "Colour {n}",
+  Разом: "Together",
+  "Гра для дитини й дорослого: картки на увагу, слухання й тепло.":
+    "A child-and-grown-up game: cards for attention, listening and warmth.",
+  "Наступна картка": "Next card",
+  "Витягнути картку": "Draw a card",
+  "Карток зіграно: {n}": "Cards played: {n}",
+  "Торкайся калюжок і складай тиху дощову пісню. Є варіанти без екрана.":
+    "Tap the puddles to make a quiet rain song. Off-screen options included.",
+  "Калюжка: торкнися, щоб упала крапля": "Puddle: tap to drop a raindrop",
+  "Крапель: {n} із {m}": "Drops: {n} of {m}",
+  "Без екрана": "Off-screen",
+  "Ресурси для батьків": "Parent Resources",
+  "Перевірений довідник організацій, гарячих ліній і порад для українських родин.":
+    "A checked directory of organisations, helplines and advice for Ukrainian families.",
+  "Соняшник росте поступово — одна стадія на день. Завтра він підросте ще.":
+    "The sunflower grows gradually — one stage a day. It will grow more tomorrow.",
+  "Попроси дорослого увійти, щоб персонажі могли підказати.":
+    "Ask a grown-up to sign in so the characters can help.",
+  "Спершу спитай дорослого": "Ask a grown-up first",
+  "Дорослий, чи можна дитині зараз пограти в ігри?": "Grown-up, may the child play games now?",
+  "Так, можна грати": "Yes, they can play",
+  "Не зараз": "Not now",
   "Анонімні соняшники з добровільною згодою дорослих. Малюнки й почуття залишаються приватними.":
     "Anonymous sunflowers shared with caregiver consent. Drawings and feelings stay private.",
+  "Не вдалося завантажити спільний сад.": "Couldn't load the shared garden.",
+  "Твій соняшник залишається тут. Спробуй оновити сад трохи пізніше.":
+    "Your sunflower is still here. Try refreshing the garden a little later.",
+  "Показано сад, збережений сьогодні. Онови, щоб побачити нові квітки.":
+    "Showing the garden saved today. Refresh to see new flowers.",
+  "Показано сад, збережений учора. Онови, щоб побачити нові квітки.":
+    "Showing the garden saved yesterday. Refresh to see new flowers.",
+  "Показано сад, збережений {n} дн. тому. Онови, щоб побачити нові квітки.":
+    "Showing the garden saved {n} days ago. Refresh to see new flowers.",
+  "Можна було просто дихати й нічого не вирішувати.":
+    "It was enough to breathe and decide nothing at all.",
+  "Сум був поруч. {who} не проганяв його — просто сидів разом із ним.":
+    "Sadness was nearby. {who} did not chase it away — just sat with it.",
+  "Хвилювання скидалося на маленьку хмарку: вона є, і з нею можна йти далі.":
+    "The worry was like a small cloud: it is there, and you can keep walking with it.",
+  "Злість була гарячою, як чай. {who} дав їй трохи місця й вибрав, що робити далі.":
+    "The anger was hot as tea. {who} gave it some room and chose what to do next.",
+  "Було чим пишатися: маленький крок виявився справжнім.":
+    "There was something to be proud of: a small step turned out to be real.",
+  "Цікавість тягнула вперед, і {who} обережно ступив далі.":
+    "Curiosity pulled forward, and {who} took a careful step on.",
+  "У саду пахло землею й соняшниками, а листя шепотіло.":
+    "The garden smelled of earth and sunflowers, and the leaves were whispering.",
+  "Ліс шумів тихо, і стежка сама вела вперед.":
+    "The forest hummed quietly, and the path led on by itself.",
+  "На лузі гойдалися квіти, а вітер був м’який, як ковдра.":
+    "Flowers swayed in the meadow, and the wind was soft as a blanket.",
+  "Хмари пливли повільно, і можна було спертися на них поглядом.":
+    "Clouds drifted slowly, and you could rest your eyes on them.",
+  "Над головою горіли зорі, і кожна була чиєюсь маленькою історією.":
+    "Stars burned overhead, and each one was someone's small story.",
+  "На столі лежали фарби, і білий аркуш чекав.":
+    "Paints lay on the table, and a white sheet was waiting.",
+  "Стежка була звичайна, але кроки на ній були свої.":
+    "The path was ordinary, but the steps on it were your own.",
+  "У безпечному місці було тепло, і ніхто не квапив.":
+    "The safe place was warm, and nobody hurried you.",
+  "{who} прийшов у {place}. Там було тихо, і можна було не поспішати.":
+    "{who} came to {place}. It was quiet there, and there was no need to hurry.",
+  "Спочатку {who} просто стояв. Потім зробив один маленький крок — невеликий, але свій.":
+    "At first {who} just stood. Then came one small step — not big, but their own.",
+  "Казка про {place}, де було тепло": "A story about {place}, where it was warm",
+  "Політика конфіденційності": "Privacy policy",
+  "Статистика відвідувань": "Visit statistics",
+  "Lovable, сервіс, на якому працює застосунок, рахує відвідування без файлів cookie: нічого не зберігає на пристрої, не зберігає IP-адреси й не впізнає відвідувачів. Записуються відвідані сторінки, звідки прийшли, країна, браузер, система й тип пристрою, час на сторінці, швидкість, помилки, натискання кнопок і посилань та кілька подій застосунку (коли помічник зі штучним інтелектом у браузері читає карту застосунку). Докладні дані зберігаються 90 днів, щоденні підсумки — рік. Lovable збирає ці дані для нас; як він із ними поводиться, пояснює політика конфіденційності Lovable: lovable.dev/privacy.":
+    "Lovable, the service the app runs on, counts visits without cookies: it stores nothing on the device, keeps no IP addresses and doesn't identify visitors. It records the pages visited, where visitors came from, country, browser, operating system and device type, time on page, page speed, errors, clicks on buttons and links, and a few app events (when an AI assistant in the browser reads the app's map). Detailed data is kept for 90 days and daily summaries for a year. Lovable collects this data for us; Lovable's privacy policy at lovable.dev/privacy explains how it handles it.",
+  "Інші сервіси": "Other services",
+  "Шрифти завантажуються з Google Fonts, а музика — з нашого сховища файлів, тому ці сервіси бачать IP-адресу пристрою, як і будь-який сайт. Вхід дорослих і спільний сад працюють на нашому сервері в Lovable Cloud.":
+    "Fonts load from Google Fonts and music from our file storage, so those services see the device's IP address, as any website does. Grown-up sign-in and the shared garden run on our server in Lovable Cloud.",
+  "Що Тихе Місце зберігає, що ніколи не надсилає і як видалити акаунт дорослого.":
+    "What Quiet Place stores, what it never sends, and how to delete a grown-up account.",
+  "Дані дитини залишаються на пристрої": "A child's data stays on the device",
+  "Малюнки, вибір емоцій, прогрес і налаштування зберігаються лише на цьому пристрої. Дитині не потрібен акаунт, і ми не збираємо її ім’я, фото чи місцезнаходження.":
+    "Drawings, feeling choices, progress and settings are stored only on this device. Children need no account, and we never collect their name, photo or location.",
+  "Без реклами й відстеження": "No ads or tracking",
+  "У застосунку немає реклами, покупок чи відстеження між застосунками.":
+    "The app has no ads, purchases or cross-app tracking.",
+  "Акаунт дорослого": "Grown-up account",
+  "Дорослий може створити акаунт з електронною поштою. Ми зберігаємо лише пошту й дані входу, а також стадію соняшника, якщо дорослий сам погодився поділитися нею в спільному саду.":
+    "A grown-up can create an account with an email address. We store only the email and sign-in details, plus the sunflower stage if the grown-up chose to share it in the shared garden.",
+  "Функції зі штучним інтелектом": "AI features",
+  "Казки, голоси та помічник почуттів працюють лише після входу дорослого й обробляються моделями штучного інтелекту через Lovable AI. Для казки надсилаються лише три вибори дитини (персонаж, місце, настрій) — без імені чи власного тексту. Текст, який пише дитина в помічнику, надсилається один раз для підбору вправи й не зберігається. Голоси озвучують лише фрази, написані в застосунку. Без входу казки складаються на самому пристрої, а читає їх голос пристрою.":
+    "Stories, voices and the feelings helper work only after a grown-up signs in and are processed by AI models through Lovable AI. A story sends only the child's three choices (character, place, mood) — no name or own text. What a child types in the helper is sent once to pick an activity and is never stored. Voices read only lines written by the app. Without sign-in, stories are put together on the device and read by the device's own voice.",
+  "Скарги на відповіді": "Reporting answers",
+  "Якщо дорослий повідомляє про погану відповідь, ми зберігаємо лише цю відповідь штучного інтелекту, щоб перевірити її, без слів дитини.":
+    "If a grown-up reports a bad answer, we keep only that AI answer to review it, never the child's words.",
+  Видалення: "Deletion",
+  "Дорослий може будь-коли видалити акаунт на сторінці «Для дорослих». Дані на пристрої можна стерти там само кнопкою скидання прогресу.":
+    "A grown-up can delete the account at any time on the For grown-ups page. Device data can be erased there too with the reset progress button.",
+  "Це посилання відкриє інший сайт. Дорослий, чи можна?":
+    "This link opens another website. Grown-up, is that OK?",
+  "Так, відкрити": "Yes, open it",
+  "Дякуємо, відповідь надіслано на перевірку.": "Thank you, the answer was sent for review.",
+  "Дорослим: повідомити про погану відповідь ШІ": "Grown-ups: report a bad AI answer",
+  "Не вдалося надіслати. Спробуйте ще раз.": "Couldn't send. Please try again.",
+  "Видалення акаунта прибирає ваш вхід і спільний соняшник. Малюнки та прогрес дитини залишаться на цьому пристрої.":
+    "Deleting the account removes your sign-in and shared sunflower. The child's drawings and progress stay on this device.",
+  "Видалити акаунт": "Delete account",
+  "Так, видалити назавжди": "Yes, delete forever",
+  "Не вдалося видалити акаунт. Спробуйте ще раз.": "Couldn't delete the account. Please try again.",
+  "Одного ранку {who} вирушив у {place}, тримаючи в кишені маленький камінчик на щастя.":
+    "One morning {who} set off to {place}, holding a little lucky pebble in a pocket.",
+  "Увечері {who} тихенько зазирнув у {place} — там світився теплий вогник.":
+    "In the evening {who} quietly peeked into {place}, where a warm little light was glowing.",
+  "{who} посміхнувся сам до себе й помахав місцю на прощання, знаючи, що можна повернутися.":
+    "{who} smiled and waved goodbye to the place, knowing it was always possible to come back.",
+  "Їжачок Ліхтарик присвітив стежку, і {who} спокійно рушив додому.":
+    "Lantern the Hedgehog lit up the path, and {who} calmly headed home.",
+  "Маленька пригода в місці: {place}": "A little adventure in {place}",
+  "Тихий вечір: {place}": "A quiet evening: {place}",
+  "Ця казка не мусить закінчуватися правильно. Достатньо, що {who} був тут.":
+    "This story does not have to end the right way. It is enough that {who} was here.",
+  "Чарівне місце": "A magical place",
+  "Було тихо, і можна було не поспішати.": "It was quiet, and there was no need to hurry.",
+  "Складено в застосунку": "Written in the app",
+  "Полити соняшник": "Water the sunflower",
+  "Одне поливання на день. Кожне поливання додає соняшнику одну сходинку росту — і нічого не в’яне, якщо ти пропустиш день.":
+    "One watering a day. Every watering gives the sunflower one more step of growth — and nothing wilts if you miss a day.",
+  "Сьогодні вже полито. Соняшник підріс 🌱": "Watered today. Your sunflower has grown a little 🌱",
+  "Поливань: {n}": "Waterings: {n}",
+  "Соняшники інших родин на стадії росту — без імен і малюнків.":
+    "Sunflowers from other families at their growth stage — no names or drawings.",
+  "Подивися, як ростуть соняшники інших родин.": "See how sunflowers from other families grow.",
+  "Сад зараз відпочиває. Спробуй пізніше.": "The garden is resting. Try again later.",
+  "Дитячі сторінки не потребують акаунта, реклами чи повідомлень. Малюнки, вправи й налаштування залишаються на пристрої. Дорослий акаунт потрібен лише для добровільного поширення стадії соняшника; текст помічника почуттів надсилається для обробки, але застосунок його не зберігає.":
+    "Child pages need no account, adverts or messages. Drawings, activities and settings stay on the device. A caregiver account is only for voluntarily sharing a sunflower stage; Feelings Helper text is sent for processing, but the app does not save it.",
+  "Твій соняшник уже тут. Інші родини приєднаються, коли дорослі погодяться.":
+    "Your sunflower is already here. Other families join when grown-ups agree.",
   "Підглянути картки": "Peek at cards",
   "Спільний сад": "Shared garden",
   "Мій соняшник": "My sunflower",
@@ -19,6 +178,28 @@ const EN: Record<string, string> = {
   "Оновити сад": "Refresh garden",
   "Поширення вимкнено": "Sharing is off",
   "Соняшник поширено": "Sunflower is shared",
+  "Соняшник повністю розквітнув — це остання стадія росту.":
+    "The sunflower has fully bloomed — this is its final growth stage.",
+  "Слухати ще раз": "Listen again",
+  "Чудова мелодія!": "A wonderful melody!",
+  "Це єдине місце, де твої слова надсилаються для обробки, щоб підібрати вправу. Застосунок не зберігає твій текст.":
+    "This is the only place where your words are sent for processing to choose an activity. The app does not save your text.",
+  "Додай ще хоча б одну літеру, щоб персонажі зрозуміли.":
+    "Add at least one more letter so the characters can understand.",
+  "Наліпка: {n}": "Sticker: {n}",
+  "Колір: {n}": "Colour: {n}",
+  Метелик: "Butterfly",
+  Серце: "Heart",
+  Веселка: "Rainbow",
+  "Божа корівка": "Ladybird",
+  Чорний: "Black",
+  Жовтий: "Yellow",
+  Рожевий: "Pink",
+  Блакитний: "Blue",
+  Зелений: "Green",
+  Лавандовий: "Lavender",
+  Синій: "Dark blue",
+  Білий: "White",
   "Поки що немає спільних соняшників.": "No sunflowers are shared yet.",
   "Сад недоступний. Спробуйте ще раз.": "Garden unavailable. Please try again.",
   "Сад завантажується…": "Garden is loading…",
@@ -33,7 +214,36 @@ const EN: Record<string, string> = {
   "Місцеві записи залишаються приватними. Лише у спільному саду дорослий може окремо поширити анонімну стадію соняшника.":
     "Local records stay private. Only in the shared garden can a caregiver separately share an anonymous sunflower stage.",
   "Готова казка": "Ready-made story",
+  "Готові казки": "Ready-made stories",
+  "Відкрити казку: {n}": "Open the story: {n}",
   "Пригода насінини": "The seed's adventure",
+  "Про сміливість відпустити й рости.": "About the courage to let go and grow.",
+  Рукавичка: "The Mitten",
+  "Народна казка про тепло, у якому всім вистачає місця.":
+    "A folk tale about warmth with room for everyone.",
+  "Одного зимового дня дід ішов лісом і загубив рукавичку. Вона впала на сніг і лежала ще тепла від дідової руки, наче маленька хатинка.":
+    "One winter day a grandfather was walking through the forest and lost his mitten. It fell on the snow and lay there still warm from his hand, like a little house.",
+  "Першою прибігла мишка. «Ой, яке затишне місце!» — сказала вона й залізла всередину. Слідом прискакала жабка й теж попросилася погрітися.":
+    "The first to arrive was a little mouse. “Oh, what a cozy place!” she said, and moved in. A frog came hopping after her and asked to warm up too.",
+  "Потім прийшли зайчик, лисичка й вовчик. Кожен тулився до сусіда, рукавичка ставала все тіснішою, та ніхто не хотів іти геть.":
+    "Then came a hare, a fox and a little wolf. Each one nestled closer to the others, and the mitten grew tighter and tighter, but nobody wanted to leave.",
+  "Нарешті прийшов ведмідь. Рукавичка тріснула, і звірі покотилися у сніг, сміючись. Дід знайшов їх усіх разом і пошив їм велику теплу рукавичку.":
+    "At last a bear arrived. The mitten burst, and the animals tumbled into the snow, laughing. The grandfather found them all together and sewed them a big warm mitten.",
+  "Іноді тепло народжується там, де тісно, але ніхто нікого не жене геть.":
+    "Sometimes warmth is born in a crowded place where nobody is turned away.",
+  Колобок: "The Bun",
+  "Народна казка про мандрівку й повернення додому.":
+    "A folk tale about wandering and coming home.",
+  "Бабуся спекла колобка — рум’яного й круглого, наче маленьке сонечко. Дідусь поставив його на віконце охолонути. Там колобок дивився на сад і мріяв побачити, що там, за тином.":
+    "A grandmother baked a bun — golden and round as a little sun. Grandfather set it on the windowsill to cool. There the bun looked out at the garden and dreamed of seeing what lay beyond the fence.",
+  "Колобок покотився стежкою. Назустріч йому — заєць: «Який же ти круглий!» — «Я колобок, я від бабусі втік», — заспівав колобок і покотився далі.":
+    "The bun rolled down the path. A hare came toward him. “How round you are!” — “I am the bun, I ran away from my grandmother,” the bun sang and rolled on.",
+  "Він зустрів вовка й лисичку, і всі радо слухали його пісеньку. Та надвечір стежка потемніла, і колобок відчув, що сумує за теплим віконцем.":
+    "He met a wolf and a fox, and everyone loved his little song. But as evening came, the path grew dark, and the bun began to miss the warm windowsill.",
+  "Лисичка помітила це й показала йому коротшу дорогу додому. Бабуся й дідусь обійняли колобка, а він розповів їм про всіх, кого зустрів.":
+    "The fox saw that he was homesick and showed him a shorter way home. His grandmother and grandfather hugged him, and he told them about everyone he had met.",
+  "Можна мандрувати світом і повертатися додому — там на тебе чекають.":
+    "You can wander the world and still come home — someone is waiting for you there.",
   "Знайдено пар: {n} із {total}": "Pairs found: {n} of {total}",
   "Картка {n}: {name}": "Card {n}: {name}",
   "Прибрати останню зірку": "Undo the last star",
@@ -121,6 +331,54 @@ const EN: Record<string, string> = {
   "Зоряна музика": "Star music",
   "Тут немає переможців і переможених — просто грайся, скільки хочеш.":
     "No winners or losers here — just play as long as you like.",
+  "Шість спокійних ігор для сенсорного екрана: музика, пам'ять, візерунки й лічба.":
+    "Six calm touchscreen games: music, memory, patterns and counting.",
+  "Повтори мелодію": "Repeat the melody",
+  "Тихі візерунки": "Quiet patterns",
+  "Порахуй зірочки": "Count the stars",
+  "Послухай мелодію й повтори її, торкаючись квіток. Поспішати не треба.":
+    "Listen to the melody and repeat it by touching the flowers. There is no hurry.",
+  "Нот у мелодії: {n} з {m}": "Notes in the melody: {n} of {m}",
+  "Квітка {n}": "Flower {n}",
+  Соняшник: "Sunflower",
+  Ромашка: "Daisy",
+  Тюльпан: "Tulip",
+  Сакура: "Cherry blossom",
+  Місяць: "Moon",
+  Зірочка: "Little star",
+  Хмарка: "Little cloud",
+  Листочок: "Little leaf",
+  Краплинка: "Little drop",
+  Сонечко: "Little sun",
+  "Майже! Послухай мелодію ще раз.": "Almost! Listen to the melody again.",
+  "Чудова мелодія! Ти повторив шість нот.": "Wonderful melody! You repeated all six notes.",
+  "Подивись на візерунок і обери, яка фігура буде далі.":
+    "Look at the pattern and choose the shape that comes next.",
+  "Яка фігура буде далі?": "Which shape comes next?",
+  "Візерунок {n} з {m}": "Pattern {n} of {m}",
+  "Так! Візерунок продовжується.": "Yes! The pattern continues.",
+  "Спробуй іншу фігуру — візерунок підкаже.": "Try another shape — the pattern will show you.",
+  "Усі візерунки склалися! 🧩": "All the patterns came together! 🧩",
+  "Порахуй зірочки й обери число.": "Count the stars and choose the number.",
+  "Пораховано: {n} з {m}": "Counted: {n} of {m}",
+  "Зірочка {n}": "Star {n}",
+  "Правильно!": "Correct!",
+  "Порахуй ще раз, торкаючись зірочок.": "Count again, touching the stars.",
+  "Усі зірочки пораховано! 🌠": "All the stars are counted! 🌠",
+  "Запис росту соняшника": "Sunflower growth recording",
+  "Твоя стадія: {n} з 5": "Your stage: {n} of 5",
+  "Твій соняшник": "Your sunflower",
+  "Твій соняшник сьогодні": "Your sunflower today",
+  "Дивитися ріст": "Watch it grow",
+  "У саду {n} квітка": "Flowers in the garden: {n}",
+  "У саду {n} квітки": "Flowers in the garden: {n}",
+  "У саду {n} квіток": "Flowers in the garden: {n}",
+  "Обери квітку, щоб побачити, як вона росла.": "Choose a flower to see how it grew.",
+  "Як росте обрана квітка": "How the chosen flower grows",
+  "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.":
+    "Sunflowers from other families grow here. Each flower appeared because a grown-up in that family agreed to share only its growth stage — no names, drawings or feelings.",
+  "Відкрий спільний сад разом із дорослим — там ростуть соняшники інших родин.":
+    "Open the shared garden together with a grown-up — sunflowers from other families grow there.",
   "Лови бульбашки пальчиком! Кожна співає свою ноту.":
     "Catch the bubbles with your finger! Each one sings its own note.",
   Бульбашка: "Bubble",
@@ -173,6 +431,10 @@ const EN: Record<string, string> = {
   "На добраніч, Тихе Місце. На добраніч, друже.": "Good night, Quiet Place. Good night, friend.",
   "Короткі мультики з нашими друзями. Обери, що подивитися!":
     "Short cartoons with our friends. Pick one to watch!",
+  "Грати: {title}": "Play: {title}",
+  "Відео не вдалося відтворити. Казка з картинками готова — натисни «Грати».":
+    "The video couldn't play. The illustrated story is ready — press Play.",
+  "Спробувати відео ще": "Try the video again",
   Кінець: "The end",
   "← Усі мультики": "← All cartoons",
   Грати: "Play",
@@ -200,6 +462,7 @@ const EN: Record<string, string> = {
   "Мої друзі": "My friends",
   "Розкажи, як ти": "Tell me how you feel",
   "Назад і далі": "Back and next",
+  "Вправи цього місця": "Activities in this place",
   "Назад: {l}": "Back: {l}",
   "Далі: {l}": "Next: {l}",
   "Мої друзі-персонажі": "My character friends",
@@ -1171,8 +1434,8 @@ const EN: Record<string, string> = {
   Малюнки: "Drawings",
   "Усі малюнки": "All drawings",
   "Малюнків поки немає.": "No drawings yet.",
-  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться.":
-    "Erase the records of places and exercises? Drawings and settings will stay.",
+  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться, а збережений спільний сад очиститься.":
+    "Erase the records of places and exercises? Drawings and settings will stay, and the saved shared garden will be cleared.",
   Скасувати: "Cancel",
   Стерти: "Erase",
   "Очистити прогрес": "Clear progress",
@@ -1191,6 +1454,34 @@ const EN: Record<string, string> = {
     "If that account exists, we've sent a password reset email.",
   "Не вдалося увійти. Перевірте пошту й пароль.":
     "Couldn't sign in. Check your email and password.",
+  "Підтвердьте електронну пошту за посиланням із листа, потім увійдіть.":
+    "Confirm your email using the link in the message, then sign in.",
+  "Акаунт з цією поштою вже існує. Увійдіть або відновіть пароль.":
+    "An account with this email already exists. Sign in or reset your password.",
+  "Пароль має містити щонайменше 8 символів.": "The password must contain at least 8 characters.",
+  "Новий пароль має відрізнятися від старого.":
+    "The new password must be different from the old one.",
+  "Перевірте адресу електронної пошти.": "Check the email address.",
+  "Створення акаунтів зараз вимкнено.": "Account creation is currently disabled.",
+  "Вхід через електронну пошту тимчасово недоступний.": "Email sign-in is temporarily unavailable.",
+  "Забагато листів або спроб. Спробуйте пізніше.": "Too many emails or attempts. Try again later.",
+  "Посилання для входу налаштоване неправильно. Спробуйте пізніше.":
+    "The sign-in link is misconfigured. Try again later.",
+  "Посилання прострочене або вже використане. Запросіть нове.":
+    "The link has expired or was already used. Request a new one.",
+  "Перевірка безпеки не пройдена. Оновіть сторінку й спробуйте ще раз.":
+    "The security check failed. Refresh the page and try again.",
+  "Сесія завершилася. Увійдіть ще раз.": "Your session has ended. Sign in again.",
+  "Не вдалося з'єднатися. Перевірте інтернет і спробуйте ще раз.":
+    "Couldn't connect. Check your internet and try again.",
+  "Надіслати лист ще раз": "Resend confirmation email",
+  "Надіслати лист ще раз ({s} с)": "Resend confirmation email ({s} s)",
+  "Лист надіслано ще раз. Перевірте пошту й підтвердьте адресу, потім увійдіть.":
+    "Email sent again. Check your inbox, confirm your address, then sign in.",
+  "Не вдалося надіслати лист. Спробуйте пізніше.": "Couldn't send the email. Try again later.",
+  "Ця електронна пошта вже підтверджена. Увійдіть.": "This email is already confirmed. Sign in.",
+  "Акаунт не знайдено. Перевірте адресу або створіть новий.":
+    "Account not found. Check the address or create a new one.",
   "Вхід для дорослих": "Adult sign-in",
   "Створити акаунт дорослого": "Create an adult account",
   "Відновити пароль": "Reset password",
@@ -1211,6 +1502,16 @@ const EN: Record<string, string> = {
   "Зберегти пароль": "Save password",
   "Відкрийте це посилання з листа для зміни пароля.":
     "Open this page from the link in your password reset email.",
+  "Підтвердження адреси": "Email confirmation",
+  "Підтвердження адреси — Тихе Місце": "Email confirmation — Quiet Place",
+  "Підтвердіть електронну пошту дорослого, щоб увійти до панелі прогресу.":
+    "Confirm the adult's email to open the progress dashboard.",
+  "Підтвердження електронної пошти дорослого.": "Confirming the adult's email address.",
+  "Посилання не спрацювало. Увійдіть або надішліть лист ще раз.":
+    "That link didn't work. Sign in or send the email again.",
+  "Перейти до входу": "Go to sign-in",
+  "Адресу підтверджено. Переходимо далі…": "Email confirmed. Taking you onward…",
+  "Підтверджуємо адресу…": "Confirming your email…",
   "Уся мапа — Тихе Місце": "Full map — Quiet Place",
   "Розглянь увесь чарівний світ: наближай, рухай мапу й обирай місце.":
     "Explore the whole magical world: zoom, move the map and pick a place.",
@@ -1278,6 +1579,7 @@ const EN: Record<string, string> = {
     "The storyteller is unavailable right now. Choose a ready-made story in the Night Sky.",
   "Нова казка з Claude": "A new story with Claude",
   "Сцена {n}": "Scene {n}",
+  Сцени: "Scenes",
   "Слухати голосом пристрою": "Listen with the device voice",
   "Зупинити читання": "Stop reading",
   "Читання відбувається на цьому пристрої; текст казки нікуди не надсилається для озвучення.":
@@ -1293,15 +1595,30 @@ let APP_LINES: Set<string> | null = null;
 /** True only for app-written lines (dictionary sources or translations). */
 export function isAppLine(s: string): boolean {
   if (!APP_LINES)
-    APP_LINES = new Set([...Object.keys(EN), ...Object.values(EN)].map((x) => x.trim()));
+    APP_LINES = new Set(
+      [
+        ...Object.keys(EN),
+        ...Object.values(EN),
+        ...Object.keys(EXTRAS),
+        ...Object.values(EXTRAS),
+      ].map((x) => x.trim()),
+    );
   return APP_LINES.has(s.trim());
 }
 
 /** Translate one string for an explicit language (usable on the server). */
 export function tr(s: string, lang: Lang, vars?: Record<string, string | number>): string {
-  let out = lang === "en" ? (EN[s] ?? s) : s;
+  let out = lang === "en" ? (EN[s] ?? EXTRAS[s] ?? s) : s;
   if (vars) out = out.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
   return out;
+}
+
+const UK_PLURALS = new Intl.PluralRules("uk");
+
+/** Ukrainian count agreement: 1 квітка, 2–4 квітки, 0/5+ квіток. */
+export function pluralUk(n: number, one: string, few: string, many: string): string {
+  const rule = UK_PLURALS.select(n);
+  return rule === "one" ? one : rule === "few" ? few : many;
 }
 
 /** Non-reactive translate (route head(), loaders, server code paths). */

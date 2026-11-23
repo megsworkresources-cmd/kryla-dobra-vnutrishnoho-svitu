@@ -1,7 +1,14 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { update } from "@/lib/store";
 import { unlockAudio } from "@/lib/audio";
-import { speak, stopSpeaking, getSpeechState, syncSpeechVolume } from "@/lib/speak";
+import {
+  speak,
+  stopSpeaking,
+  pauseSpeaking,
+  resumeSpeaking,
+  getSpeechState,
+  syncSpeechVolume,
+} from "@/lib/speak";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -73,4 +80,80 @@ it("reports unavailable device speech instead of leaving a playing state", () =>
   }));
   speak("Привіт", { localOnly: true });
   expect(getSpeechState()).toBe("unavailable");
+});
+
+it("device speech updates real pause/resume state and ignores events after exit", () => {
+  let utterance: SpeechSynthesisUtterance | undefined;
+  vi.stubGlobal("speechSynthesis", {
+    cancel: vi.fn(),
+    pause: vi.fn(),
+    resume: vi.fn(),
+    getVoices: () => [],
+    speak: (u: SpeechSynthesisUtterance) => {
+      utterance = u;
+    },
+  });
+  vi.stubGlobal(
+    "SpeechSynthesisUtterance",
+    class {
+      constructor(public text: string) {}
+    },
+  );
+  update((s) => ({
+    ...s,
+    sound: true,
+    voice: true,
+    volume: 1,
+    voiceVolume: 1,
+    voiceEngine: "device",
+  }));
+  unlockAudio();
+  speak("Привіт", { localOnly: true });
+  if (!utterance) throw new Error("No device utterance");
+  utterance.onstart?.({} as SpeechSynthesisEvent);
+  pauseSpeaking();
+  expect(getSpeechState()).toBe("paused");
+  resumeSpeaking();
+  utterance.onresume?.({} as SpeechSynthesisEvent);
+  expect(getSpeechState()).toBe("playing");
+  stopSpeaking();
+  utterance.onresume?.({} as SpeechSynthesisEvent);
+  expect(getSpeechState()).toBe("idle");
+});
+
+it("resuming paused device speech never leaves a stuck loading state", () => {
+  let utterance: SpeechSynthesisUtterance | undefined;
+  const resume = vi.fn();
+  vi.stubGlobal("speechSynthesis", {
+    cancel: vi.fn(),
+    resume,
+    pause: vi.fn(),
+    getVoices: () => [],
+    speak: (u: SpeechSynthesisUtterance) => {
+      utterance = u;
+    },
+  });
+  vi.stubGlobal(
+    "SpeechSynthesisUtterance",
+    class {
+      constructor(public text: string) {}
+    },
+  );
+  update((s) => ({
+    ...s,
+    sound: true,
+    voice: true,
+    volume: 1,
+    voiceVolume: 1,
+    voiceEngine: "device",
+  }));
+  unlockAudio();
+  speak("Привіт", { localOnly: true });
+  utterance?.onstart?.({} as SpeechSynthesisEvent);
+  pauseSpeaking();
+  expect(getSpeechState()).toBe("paused");
+  resumeSpeaking();
+  expect(resume).toHaveBeenCalled();
+  expect(getSpeechState()).toBe("playing");
+  stopSpeaking();
 });

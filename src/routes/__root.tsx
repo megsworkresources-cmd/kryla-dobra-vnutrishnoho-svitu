@@ -1,3 +1,4 @@
+import { registerOfflineApp } from "@/lib/pwa-register";
 import { TouchSparkles } from "@/components/TouchSparkles";
 import { PLACES } from "@/content/places";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -15,7 +16,15 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { ambientFor, playAmbient, sfx, unlockAudio, stopAmbient, syncVolume } from "@/lib/audio";
+import {
+  ambientFor,
+  playAmbient,
+  sfx,
+  unlockAudio,
+  stopAmbient,
+  stopSoundscape,
+  syncVolume,
+} from "@/lib/audio";
 import { markVisit, useStore } from "../lib/store";
 import { t, useT } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
@@ -85,12 +94,19 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   );
 }
 
+// Reload once when Safari can't load app files replaced by a newer publish.
+const STALE_CHUNK_RELOAD = `(function(){var k='tm-chunk-reload';function r(){try{var t=+sessionStorage.getItem(k)||0;if(Date.now()-t<10000)return;sessionStorage.setItem(k,String(Date.now()))}catch(e){}location.reload()}window.addEventListener('vite:preloadError',function(e){e.preventDefault();r()});window.addEventListener('unhandledrejection',function(e){var m=String(e.reason&&e.reason.message||e.reason||'');if(/Importing a module script failed|Failed to fetch dynamically imported module|error loading dynamically imported module/i.test(m))r()});window.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.type==='module')r()},true)})();`;
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#f7f1e3" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "Тихе Місце" },
       { title: "Тихе Місце" },
       {
         name: "description",
@@ -102,6 +118,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -109,6 +127,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Philosopher:wght@400;700&display=swap",
       },
     ],
+    scripts: [{ children: STALE_CHUNK_RELOAD }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -185,9 +204,13 @@ function RootComponent() {
   const voiceVolume = useStore((s) => s.voiceVolume);
   const voice = useStore((s) => s.voice);
   const musicVolume = useStore((s) => s.musicVolume);
+  const effectsVolume = useStore((s) => s.effectsVolume);
   const musicStyle = useStore((s) => s.musicStyle);
   const lang = useStore((s) => s.lang);
   const { pathname } = useLocation();
+  useEffect(() => {
+    registerOfflineApp();
+  }, []);
   useEffect(() => {
     document.documentElement.classList.toggle("reduce-motion", reduce);
   }, [reduce]);
@@ -198,10 +221,12 @@ function RootComponent() {
     document.documentElement.lang = lang;
   }, [lang]);
   useEffect(syncSpeechVolume, [sound, voice, volume, voiceVolume]);
-  useEffect(syncVolume, [sound, volume, musicVolume]);
-  useEffect(() => {
-    stopSpeaking();
-  }, [pathname]);
+  useEffect(syncVolume, [sound, volume, musicVolume, effectsVolume]);
+  // Stop the page we are leaving. This has to be a cleanup: a new page's characters
+  // start their line while it mounts, and a plain effect would cut them off.
+  useEffect(() => () => stopSpeaking(), [pathname]);
+  // A chosen nature sound belongs to its activity, not to the next page.
+  useEffect(() => () => stopSoundscape(), [pathname]);
   // Audio only starts after the first touch (browser autoplay rules), then follows the page.
   useEffect(() => {
     const onDown = (e: PointerEvent) => {
@@ -220,29 +245,44 @@ function RootComponent() {
       }
     };
     window.addEventListener("keydown", onKey, true);
+    // iOS Safari only grants audio permission on touchend/click, not pointerdown.
+    const onActivate = () => {
+      unlockAudio();
+      unlockSpeech();
+      playAmbient(ambientFor(window.location.pathname));
+    };
+    window.addEventListener("touchend", onActivate, true);
+    window.addEventListener("click", onActivate, true);
     const onVisibility = () => {
       if (document.hidden) {
         stopSpeaking();
         stopAmbient();
+        stopSoundscape();
       } else playAmbient(ambientFor(window.location.pathname));
     };
     document.addEventListener("visibilitychange", onVisibility);
     const onExit = () => {
       stopSpeaking();
       stopAmbient();
+      stopSoundscape();
     };
     window.addEventListener("pagehide", onExit);
     return () => {
       window.removeEventListener("pointerdown", onDown, true);
       window.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("touchend", onActivate, true);
+      window.removeEventListener("click", onActivate, true);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pagehide", onExit);
     };
   }, []);
   useEffect(() => {
     playAmbient(music ? ambientFor(pathname) : null);
+  }, [pathname, music, musicStyle]);
+  // A page sound belongs to navigation, not to moving a volume slider.
+  useEffect(() => {
     sfx("page");
-  }, [pathname, music, musicStyle, musicVolume, volume]);
+  }, [pathname]);
   useEffect(() => {
     const seg = pathname.split("/")[1];
     if (seg && PLACES.some((p) => p.id === seg)) markVisit(seg);

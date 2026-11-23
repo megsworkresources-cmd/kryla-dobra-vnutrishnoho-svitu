@@ -1,4 +1,5 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { clearSavedGarden } from "@/lib/community-cache";
 
 /**
  * All child data stays on this device (localStorage). Only the optional "Розкажи, як ти" text is sent once to Lovable AI and never stored.
@@ -15,6 +16,7 @@ export interface AppState {
   drawings: { id: string; data: string; at: number }[];
   visits: Record<string, { n: number; last: number }>; // placeId -> visits
   lastDone: Record<string, number>; // activityId -> last completion time
+  watch: Record<string, number>; // cartoonId -> last scene shown
   voice: boolean;
   reduceMotion: boolean;
   sound: boolean; // master switch
@@ -29,6 +31,8 @@ export interface AppState {
   voiceEngine: "natural" | "device";
   narrator: string; // natural narrator voice
   textSize: "normal" | "large" | "xl";
+  careSteps: number; // daily waterings that grew the sunflower
+  wateredOn: string | null; // local day (YYYY-MM-DD) of the last watering
 }
 
 const KEY = "tyhe-mistse-v1";
@@ -41,10 +45,11 @@ const DEFAULTS: AppState = {
   drawings: [],
   visits: {},
   lastDone: {},
-  voice: false,
+  watch: {},
+  voice: true,
   reduceMotion: false,
   sound: true,
-  music: false,
+  music: true,
   musicStyle: "bandura",
   sfx: true,
   volume: 0.5,
@@ -55,6 +60,8 @@ const DEFAULTS: AppState = {
   voiceEngine: "natural",
   narrator: "Leda",
   textSize: "normal",
+  careSteps: 0,
+  wateredOn: null,
 };
 
 /** Read current state outside React (audio engine). */
@@ -65,6 +72,8 @@ export function getState() {
 
 let state: AppState = DEFAULTS;
 let loaded = false;
+/** True once this session has written the store; in-memory writes then win over storage. */
+let touched = false;
 const listeners = new Set<() => void>();
 
 function load() {
@@ -106,6 +115,15 @@ function load() {
           ),
         );
       }
+      if (!state.watch || typeof state.watch !== "object" || Array.isArray(state.watch)) {
+        state.watch = {};
+      } else {
+        state.watch = Object.fromEntries(
+          Object.entries(state.watch).filter(
+            ([, value]) => Number.isSafeInteger(value) && value >= 0,
+          ),
+        );
+      }
       state.visits = Object.fromEntries(
         Object.entries(state.visits).filter(
           ([, value]) =>
@@ -141,6 +159,16 @@ function load() {
         : DEFAULTS.textSize;
       state.voiceURI = typeof saved.voiceURI === "string" ? saved.voiceURI : DEFAULTS.voiceURI;
       state.narrator = typeof saved.narrator === "string" ? saved.narrator : DEFAULTS.narrator;
+      state.careSteps =
+        typeof saved.careSteps === "number" &&
+        Number.isSafeInteger(saved.careSteps) &&
+        saved.careSteps >= 0
+          ? saved.careSteps
+          : DEFAULTS.careSteps;
+      state.wateredOn =
+        typeof saved.wateredOn === "string" && /^\d{4}-\d{2}-\d{2}$/.test(saved.wateredOn)
+          ? saved.wateredOn
+          : DEFAULTS.wateredOn;
     }
   } catch {
     state = DEFAULTS;
@@ -159,6 +187,7 @@ function persist() {
 
 export function update(fn: (s: AppState) => AppState) {
   load();
+  touched = true;
   state = fn(state);
   const saved = persist();
   listeners.forEach((l) => l());
@@ -170,8 +199,15 @@ function subscribe(l: () => void) {
   return () => listeners.delete(l);
 }
 
+/** Re-read the device store unless this session has already written it. */
+function refreshFromStorage() {
+  if (touched) return;
+  loaded = false;
+  load();
+}
+
 export function useStore<T>(select: (s: AppState) => T): T {
-  return useSyncExternalStore(
+  const value = useSyncExternalStore(
     subscribe,
     () => {
       load();
@@ -179,6 +215,15 @@ export function useStore<T>(select: (s: AppState) => T): T {
     },
     () => select(DEFAULTS),
   );
+  // Server markup is rendered before the device store can be read, so the first client
+  // paint shows the resting state. Re-read once after mount so saved progress appears
+  // immediately instead of a beat later.
+  const [, afterMount] = useState(false);
+  useEffect(() => {
+    refreshFromStorage();
+    afterMount(true);
+  }, []);
+  return value;
 }
 
 export const markDone = (id: string) =>
@@ -188,6 +233,12 @@ export const markDone = (id: string) =>
     lastDone: { ...s.lastDone, [id]: Date.now() },
   }));
 
+export const setWatchPosition = (id: string, scene: number) => {
+  const next = Math.max(0, Math.trunc(scene));
+  if (getState().watch[id] === next) return;
+  update((s) => ({ ...s, watch: { ...s.watch, [id]: next } }));
+};
+
 export const markVisit = (place: string) =>
   update((s) => ({
     ...s,
@@ -195,8 +246,24 @@ export const markVisit = (place: string) =>
   }));
 
 /** Wipes only progress records (not settings or drawings). */
-export const resetProgress = () =>
-  update((s) => ({ ...s, completed: {}, lastDone: {}, visits: {} }));
+export const resetProgress = () => {
+  // Other families' cached flowers are progress-shaped too: a reset device
+  // should not keep falling back to them.
+  clearSavedGarden();
+  update((s) => ({
+    ...s,
+    completed: {},
+    lastDone: {},
+    visits: {},
+    watch: {},
+    careSteps: 0,
+    wateredOn: null,
+  }));
+};
+
+/** One watering per local day; growth never decreases and nothing leaves the device. */
+export const waterFlower = (day: string) =>
+  update((s) => (s.wateredOn === day ? s : { ...s, wateredOn: day, careSteps: s.careSteps + 1 }));
 
 export const toggleFavorite = (href: string) =>
   update((s) => ({
@@ -210,6 +277,12 @@ export const setAge = (age: AgeBand) => update((s) => ({ ...s, age }));
 
 export function totalDone(c: Record<string, number>) {
   return Object.values(c).reduce((a, b) => a + b, 0);
+}
+
+/** Growth comes from real activities plus gentle daily waterings. */
+export function careCount(s: Pick<AppState, "completed" | "careSteps">) {
+  const waterings = Number.isSafeInteger(s.careSteps) && s.careSteps > 0 ? s.careSteps : 0;
+  return totalDone(s.completed) + waterings;
 }
 
 /** Sunflower growth stage 0..5 from completed activity count. Never decreases. */
@@ -226,11 +299,15 @@ export function pick<T>(age: AgeBand, v: { young: T; mid: T; older: T }) {
   return v[age];
 }
 
-export const addDrawing = (data: string) =>
-  update((s) => ({
+export const addDrawing = (data: string) => {
+  const at = Date.now();
+  // A random suffix keeps two drawings saved in the same millisecond distinct.
+  const id = `${at}-${Math.random().toString(36).slice(2, 8)}`;
+  return update((s) => ({
     ...s,
-    drawings: [...s.drawings, { id: `${Date.now()}`, data, at: Date.now() }].slice(-30),
+    drawings: [...s.drawings, { id, data, at }].slice(-30),
   }));
+};
 export const removeDrawing = (id: string) =>
   update((s) => ({ ...s, drawings: s.drawings.filter((d) => d.id !== id) }));
 export const addComfort = (text: string) =>

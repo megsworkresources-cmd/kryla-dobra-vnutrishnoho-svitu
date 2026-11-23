@@ -48,6 +48,12 @@
 
 :root {
   --radius: 1.25rem;
+  /* Motion system: 100ms micro feedback, 250ms standard, 450ms large; one easing to enter, one to leave. */
+  --dur-fast: 100ms;
+  --dur-base: 250ms;
+  --dur-slow: 450ms;
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.64, 0, 0.78, 0);
   --paper: oklch(0.975 0.018 85);
   --ink: oklch(0.28 0.035 60);
   --background: var(--paper);
@@ -61,7 +67,7 @@
   --secondary: oklch(0.93 0.04 85);
   --secondary-foreground: var(--ink);
   --muted: oklch(0.94 0.02 85);
-  --muted-foreground: oklch(0.48 0.03 60);
+  --muted-foreground: oklch(0.42 0.03 60);
   --accent: oklch(0.82 0.13 80);
   --accent-foreground: oklch(0.3 0.05 60);
   --destructive: oklch(0.58 0.17 30);
@@ -135,6 +141,16 @@
   }
 }
 
+/* Press feedback on every tappable control: transform only, micro duration. */
+@utility press {
+  transition-property: transform;
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-enter);
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
 @utility paper-card {
   background: var(--card);
   color: var(--card-foreground);
@@ -153,8 +169,25 @@
 @utility veil-bottom {
   background: var(--veil-bottom);
 }
+@utility veil-home {
+  background: linear-gradient(
+    to top,
+    oklch(0.975 0.018 85 / 0.9) 0%,
+    oklch(0.975 0.018 85 / 0.6) 18%,
+    transparent 40%
+  );
+}
 @utility veil-night {
   background: var(--veil-night);
+}
+/* Lightens the top of a photo so dark title text stays readable over any part of it. */
+@utility veil-top {
+  background: linear-gradient(
+    to bottom,
+    oklch(0.975 0.018 85 / 0.88) 0%,
+    oklch(0.975 0.018 85 / 0.7) 22%,
+    transparent 48%
+  );
 }
 @utility shadow-soft {
   box-shadow: var(--shadow-soft);
@@ -477,6 +510,15 @@ html[data-text="xl"] {
   font-size: 125%;
 }
 
+/* Reduced motion keeps arrivals gentle: movement is replaced by a short fade, never a snap. */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -485,12 +527,25 @@ html[data-text="xl"] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+  .animate-fade-up,
+  .animate-pop,
+  .animate-flip,
+  .animate-glow-on {
+    animation-name: fade-in !important;
+    animation-duration: 200ms !important;
+  }
 }
 .reduce-motion *,
 .reduce-motion *::before,
 .reduce-motion *::after {
   animation: none !important;
   transition-duration: 0.001ms !important;
+}
+.reduce-motion .animate-fade-up,
+.reduce-motion .animate-pop,
+.reduce-motion .animate-flip,
+.reduce-motion .animate-glow-on {
+  animation: fade-in 200ms ease-out both !important;
 }
 
 @utility bg-night-bar {
@@ -605,4 +660,111 @@ html[data-text="xl"] {
 }
 .reduce-motion .animate-wiggle {
   animation: none;
+}
+
+/* Cartoon camera moves: every shot travels over its picture in its own direction. */
+@keyframes camera-left {
+  from {
+    transform: scale(1.08) translateX(2.4%);
+  }
+  to {
+    transform: scale(1.14) translateX(-2.4%);
+  }
+}
+@keyframes camera-right {
+  from {
+    transform: scale(1.08) translateX(-2.4%);
+  }
+  to {
+    transform: scale(1.14) translateX(2.4%);
+  }
+}
+@keyframes camera-in {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.18);
+  }
+}
+@keyframes camera-out {
+  from {
+    transform: scale(1.18);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes camera-up {
+  from {
+    transform: scale(1.1) translateY(2.5%);
+  }
+  to {
+    transform: scale(1.14) translateY(-2.5%);
+  }
+}
+@utility animate-camera-left {
+  animation: camera-left 16s ease-in-out infinite alternate;
+}
+@utility animate-camera-right {
+  animation: camera-right 18s ease-in-out infinite alternate;
+}
+@utility animate-camera-in {
+  animation: camera-in 20s ease-in-out infinite alternate;
+}
+@utility animate-camera-out {
+  animation: camera-out 22s ease-in-out infinite alternate;
+}
+@utility animate-camera-up {
+  animation: camera-up 24s ease-in-out infinite alternate;
+}
+@keyframes cloud-sweep {
+  from {
+    transform: translateX(-40%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+@utility animate-cloud-sweep {
+  animation: cloud-sweep 26s linear infinite;
+}
+
+/* Every control answers the first tap, and keyboard focus is always visible. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+
+/* Activity strip in the bottom bar: scrollable, without a visible scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+@keyframes quest-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@utility animate-fade-in {
+  animation: quest-fade-in 0.6s ease-out both;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 }

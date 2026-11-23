@@ -7,7 +7,7 @@ import { speak, stopSpeaking, useSpeechState } from "@/lib/speak";
 import { sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 
-export function Narration({ text }: { text: string }) {
+export function Narration({ text, autoSpeak = true }: { text: string; autoSpeak?: boolean }) {
   const t = useT();
   const enabled = useStore((s) => s.voice && s.sound);
   const speechState = useSpeechState();
@@ -17,11 +17,11 @@ export function Narration({ text }: { text: string }) {
     setSupported("speechSynthesis" in window);
   }, []);
   useEffect(() => {
-    if (enabled && supported) {
+    if (autoSpeak && enabled && supported) {
       speak(text);
     }
     return stopSpeaking;
-  }, [text, enabled, supported]);
+  }, [text, autoSpeak, enabled, supported]);
   return (
     <Btn
       variant="soft"

@@ -62,6 +62,23 @@ function Parents() {
       setSigningOut(false);
     }
   };
+  const [deleteStep, setDeleteStep] = useState<"idle" | "ask" | "busy" | "error">("idle");
+  const removeAccount = async () => {
+    setDeleteStep("busy");
+    try {
+      const { deleteMyAccount } = await import("@/lib/account.functions");
+      const res = await deleteMyAccount();
+      if (!res.ok) return setDeleteStep("error");
+      await signOutCaregiver({
+        cancel: () => queryClient.cancelQueries(),
+        clear: () => queryClient.clear(),
+        signOut: () => supabase.auth.signOut({ scope: "local" }),
+        navigate: () => navigate({ to: "/", replace: true }),
+      });
+    } catch {
+      setDeleteStep("error");
+    }
+  };
   const date = (ms?: number) =>
     ms ? new Date(ms).toLocaleDateString(localeOf(lang), { day: "numeric", month: "short" }) : "—";
 
@@ -87,6 +104,43 @@ function Parents() {
           <Btn variant="soft" disabled={signingOut} onClick={signOut}>
             {t("Вийти")}
           </Btn>
+        </div>
+        <div className="paper-card space-y-2 p-4 text-sm">
+          <p>
+            {t(
+              "Видалення акаунта прибирає ваш вхід і спільний соняшник. Малюнки та прогрес дитини залишаться на цьому пристрої.",
+            )}{" "}
+            <Link to="/privacy" className="inline-flex min-h-11 items-center underline">
+              {t("Політика конфіденційності")}
+            </Link>{" "}
+            ·{" "}
+            <Link to="/resources" className="underline">
+              {t("Ресурси для батьків")}
+            </Link>
+          </p>
+          {deleteStep === "idle" || deleteStep === "error" ? (
+            <Btn variant="soft" onClick={() => setDeleteStep("ask")}>
+              {t("Видалити акаунт")}
+            </Btn>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              <Btn disabled={deleteStep === "busy"} onClick={removeAccount}>
+                {t("Так, видалити назавжди")}
+              </Btn>
+              <Btn
+                variant="soft"
+                disabled={deleteStep === "busy"}
+                onClick={() => setDeleteStep("idle")}
+              >
+                {t("Скасувати")}
+              </Btn>
+            </div>
+          )}
+          {deleteStep === "error" && (
+            <p role="alert" className="text-destructive">
+              {t("Не вдалося видалити акаунт. Спробуйте ще раз.")}
+            </p>
+          )}
         </div>
         {signOutError && (
           <p role="alert" className="text-destructive">
@@ -148,6 +202,8 @@ function Parents() {
                   className={`flex items-center gap-2 rounded-2xl p-2 ${v ? "bg-secondary" : "opacity-60"}`}
                 >
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src={p.image}
                     alt=""
                     className="h-10 w-10 shrink-0 rounded-xl object-cover"
@@ -171,7 +227,7 @@ function Parents() {
             const n = items.filter((a) => completed[a.key]).length;
             return (
               <details key={p.id} className="mt-2 rounded-2xl bg-secondary p-3">
-                <summary className="flex min-h-10 cursor-pointer items-center justify-between gap-2 font-bold">
+                <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 font-bold">
                   <span>{t(p.name)}</span>
                   <span className="text-sm tabular-nums text-muted-foreground">
                     {n}/{items.length}
@@ -221,6 +277,8 @@ function Parents() {
                 .map((d) => (
                   <li key={d.id}>
                     <img
+                      loading="lazy"
+                      decoding="async"
                       src={d.data}
                       alt={t("Малюнок від {d}", { d: date(d.at) })}
                       className="aspect-[9/7] w-full rounded-xl object-cover"
@@ -240,7 +298,7 @@ function Parents() {
           </p>
           <p>
             {t(
-              "Без акаунтів, реклами й повідомлень. Усе, що робить дитина, зберігається лише на цьому пристрої.",
+              "Дитячі сторінки не потребують акаунта, реклами чи повідомлень. Малюнки, вправи й налаштування залишаються на пристрої. Дорослий акаунт потрібен лише для добровільного поширення стадії соняшника; текст помічника почуттів надсилається для обробки, але застосунок його не зберігає.",
             )}
           </p>
           <p>
@@ -254,7 +312,9 @@ function Parents() {
           {confirm ? (
             <div className="paper-card space-y-3 p-4">
               <p className="text-sm">
-                {t("Стерти записи про місця й вправи? Малюнки та налаштування залишаться.")}
+                {t(
+                  "Стерти записи про місця й вправи? Малюнки та налаштування залишаться, а збережений спільний сад очиститься.",
+                )}
               </p>
               <div className="flex justify-center gap-2">
                 <Btn variant="soft" onClick={() => setConfirm(false)}>

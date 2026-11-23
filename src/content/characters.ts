@@ -4,6 +4,7 @@ import olenka from "@/assets/chars/olenka.webp";
 import marko from "@/assets/chars/marko.webp";
 import daryna from "@/assets/chars/daryna.webp";
 import lihtaryk from "@/assets/chars/lihtaryk.webp";
+import { itemAtOr } from "./list";
 
 export type CharId = "solomiya" | "taras" | "olenka" | "marko" | "daryna" | "lihtaryk";
 export interface Character {
@@ -100,5 +101,5 @@ export const castFor = (activityId: string): [CharId, CharId] =>
   CAST[activityId.split("-")[0] ?? ""] ?? ["solomiya", "taras"];
 export const cheerOf = (id: CharId, seed = Date.now()) => {
   const c = CHARACTERS[id].cheer;
-  return c[seed % c.length]!;
+  return itemAtOr(c, seed, CHARACTERS[id].comfort);
 };

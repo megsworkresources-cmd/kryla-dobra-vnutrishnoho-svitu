@@ -93,4 +93,4 @@ export const PLACES: Place[] = [
   },
 ];
 
-export const placeImage = (id: string) => PLACES.find((p) => p.id === id)!.image;
+export const placeImage = (id: string) => PLACES.find((p) => p.id === id)?.image ?? welcome;

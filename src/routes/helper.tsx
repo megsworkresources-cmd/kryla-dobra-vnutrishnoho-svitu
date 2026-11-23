@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { ReportAi } from "@/components/GrownUpLink";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import night from "@/assets/night.jpg";
 import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
+import { StoryPreview } from "@/components/StoryPreview";
 import { findActivity } from "@/content/catalog";
 import { EMOTIONS } from "@/content/emotions";
 import { askHelper } from "@/lib/suggest.functions";
@@ -32,6 +34,12 @@ type Reply = {
   reply: string;
   why: string;
 };
+const MOOD_ICON: Record<Reply["mood"], string> = {
+  calm: "🌿",
+  cheer: "✨",
+  listen: "🌙",
+  think: "💭",
+};
 const QUICK = [
   "я сумую",
   "мені страшно",
@@ -43,24 +51,55 @@ const QUICK = [
   "я не можу заснути",
 ];
 
-/** The Feelings Helper — the only place a child's words leave the device, sent once and never stored. */
-function Helper() {
+/** The only child-text feature: one request, with no app-side text persistence. */
+export function Helper() {
   const t = useT();
   const navigate = useNavigate();
   const age = useStore((s) => s.age);
   const lang = useLang();
   const [text, setText] = useState("");
-  const [state, setState] = useState<"idle" | "loading" | "error">("idle");
+  const [state, setState] = useState<"idle" | "loading" | "error" | "short" | "signin">("idle");
   const [reply, setReply] = useState<Reply | null>(null);
+  const request = useRef(0);
+  const inFlight = useRef(false);
+  const busy = state === "loading";
+
+  useEffect(
+    () => () => {
+      request.current += 1;
+    },
+    [],
+  );
+
   const ask = async (input: string) => {
-    if (!input.trim()) return;
+    const clean = input.trim();
+    if (inFlight.current || !clean) return;
+    if (clean.length < 2) {
+      setState("short");
+      return;
+    }
+    inFlight.current = true;
+    const mine = ++request.current;
     sfx("select");
     setState("loading");
-    const res = await askHelper({ data: { text: input, age: AGE_ASK[age], lang } });
-    if (res.ok) {
-      setReply(res.suggestion);
-      setState("idle");
-    } else setState("error");
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: auth } = await supabase.auth.getSession();
+      if (!auth.session) {
+        setState("signin");
+        return;
+      }
+      const res = await askHelper({ data: { text: clean, age: AGE_ASK[age], lang } });
+      if (mine !== request.current) return;
+      if (res.ok) {
+        setReply(res.suggestion);
+        setState("idle");
+      } else setState("error");
+    } catch {
+      if (mine === request.current) setState("error");
+    } finally {
+      if (mine === request.current) inFlight.current = false;
+    }
   };
   const act = reply && findActivity(reply.activity);
   return (
@@ -76,7 +115,7 @@ function Helper() {
           <h2 className="mt-2 font-display text-2xl font-bold">{t("Розкажи, як ти")}</h2>
           <p className="mt-1 text-sm opacity-80">
             {t(
-              "Персонажі підкажуть вправу саме для тебе. Це єдине місце, де твої слова вирушають у подорож — один раз, і ніхто їх не зберігає.",
+              "Це єдине місце, де твої слова надсилаються для обробки, щоб підібрати вправу. Застосунок не зберігає твій текст.",
             )}
           </p>
         </div>
@@ -88,6 +127,7 @@ function Helper() {
                 <Btn
                   key={q}
                   variant="soft"
+                  disabled={busy}
                   onClick={() => {
                     setText(q);
                     void ask(q);
@@ -103,6 +143,7 @@ function Helper() {
                 <Btn
                   key={e.id}
                   variant="soft"
+                  disabled={busy}
                   onClick={() => {
                     const q = t(e.name).toLowerCase();
                     setText(q);
@@ -122,24 +163,44 @@ function Helper() {
               <textarea
                 id="feeling"
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={(e) => {
+                  setText(e.target.value);
+                  if (state === "error" || state === "short" || state === "signin")
+                    setState("idle");
+                }}
                 rows={3}
                 maxLength={300}
                 placeholder={t("Наприклад: мені сумно, бо…")}
                 className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base text-secondary-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring"
               />
-              <Btn
-                onClick={() => void ask(text)}
-                className="mt-3 w-full"
-                disabled={state === "loading"}
-              >
-                {state === "loading" ? t("Персонажі думають…") : t("Підказати вправу")}
+              <Btn onClick={() => void ask(text)} className="mt-3 w-full" disabled={busy}>
+                {busy ? t("Персонажі думають…") : t("Підказати вправу")}
               </Btn>
             </div>
-            {state === "error" && (
+            {state === "short" && (
               <p className="paper-card p-4 text-center" role="alert">
-                {t("Персонажі тимчасово недоступні. Спробуй пізніше.")}
+                {t("Додай ще хоча б одну літеру, щоб персонажі зрозуміли.")}
               </p>
+            )}
+            {state === "signin" && (
+              <p className="paper-card p-4 text-center" role="alert">
+                {t("Попроси дорослого увійти, щоб персонажі могли підказати.")}{" "}
+                <Link
+                  to="/caregiver-login"
+                  search={{ redirect: "/helper" }}
+                  className="font-bold underline"
+                >
+                  {t("Для дорослих")}
+                </Link>
+              </p>
+            )}
+            {state === "error" && (
+              <div className="paper-card space-y-3 p-4 text-center" role="alert">
+                <p>{t("Персонажі тимчасово недоступні. Спробуй пізніше.")}</p>
+                <Btn variant="soft" disabled={busy || !text.trim()} onClick={() => void ask(text)}>
+                  {t("Спробувати ще")}
+                </Btn>
+              </div>
             )}
           </div>
         )}
@@ -152,6 +213,15 @@ function Helper() {
               size="lg"
               text={reply.reply}
             />
+            {act && (
+              <StoryPreview
+                who={reply.guide}
+                place={act.place}
+                icon={MOOD_ICON[reply.mood]}
+                showHero
+                compact
+              />
+            )}
             {act && (
               <div className="night-card p-5">
                 <p className="text-xs font-extrabold uppercase tracking-wide text-moon">
@@ -177,9 +247,13 @@ function Helper() {
                 </p>
               </div>
             )}
+            {/* Only the suggested activity is reported, never the child's words or a reply that may echo them. */}
+            <ReportAi kind="helper" content={`activity:${reply.activity} guide:${reply.guide}`} />
             <Btn
               variant="soft"
               onClick={() => {
+                request.current += 1;
+                inFlight.current = false;
                 setReply(null);
                 setText("");
                 setState("idle");

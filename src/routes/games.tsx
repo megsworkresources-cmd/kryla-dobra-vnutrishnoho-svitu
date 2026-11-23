@@ -10,12 +10,13 @@ import { chime, sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Counting, Melody, Patterns } from "@/activities/games";
 
 export const Route = createFileRoute("/games")({
   head: () =>
     pageHead(
       "Ігри",
-      "Спокійні ігри для сенсорного екрана: бульбашки, пари друзів і зоряна музика.",
+      "Шість спокійних ігор для сенсорного екрана: музика, пам'ять, візерунки й лічба.",
     ),
   component: Games,
 });
@@ -24,6 +25,9 @@ const GAMES = [
   { id: "bubbles", icon: "🫧", name: "Мильні бульбашки" },
   { id: "pairs", icon: "🃏", name: "Пари друзів" },
   { id: "stars", icon: "🌟", name: "Зоряна музика" },
+  { id: "melody", icon: "🎶", name: "Повтори мелодію" },
+  { id: "patterns", icon: "🧩", name: "Тихі візерунки" },
+  { id: "counting", icon: "🌠", name: "Порахуй зірочки" },
 ] as const;
 type GameId = (typeof GAMES)[number]["id"];
 
@@ -43,16 +47,16 @@ function Games() {
           }}
         >
           <TabsList
-            className="grid h-auto grid-cols-3 gap-2 bg-transparent p-0"
+            className="grid h-auto grid-cols-3 items-stretch gap-2 bg-transparent p-0 sm:grid-cols-6"
             aria-label={t("Ігри")}
           >
             {GAMES.map((g) => (
               <TabsTrigger
                 key={g.id}
                 value={g.id}
-                className={`paper-card flex min-w-0 flex-col items-center gap-1 whitespace-normal p-3 font-bold transition active:scale-95 ${game === g.id ? "ring-4 ring-ring" : ""}`}
+                className={`paper-card flex h-full min-w-0 flex-col items-center justify-center gap-1 whitespace-normal p-2 text-sm leading-tight font-bold sm:p-3 sm:text-base transition active:scale-95 ${game === g.id ? "ring-4 ring-ring" : ""}`}
               >
-                <span className="text-3xl" aria-hidden>
+                <span className="text-2xl sm:text-3xl" aria-hidden>
                   {g.icon}
                 </span>
                 <span className="text-sm">{t(g.name)}</span>
@@ -67,6 +71,15 @@ function Games() {
           </TabsContent>
           <TabsContent value="stars">
             <Stars />
+          </TabsContent>
+          <TabsContent value="melody">
+            <Melody />
+          </TabsContent>
+          <TabsContent value="patterns">
+            <Patterns />
+          </TabsContent>
+          <TabsContent value="counting">
+            <Counting />
           </TabsContent>
         </Tabs>
         <p className="text-center text-sm text-muted-foreground">
@@ -142,7 +155,7 @@ export function Bubbles() {
         text={t("Лови бульбашки пальчиком! Кожна співає свою ноту.")}
       />
       <div
-        className={`paper-card relative h-[55vh] min-h-80 overflow-hidden bg-gradient-to-b from-sky/30 to-sage/30 ${calm ? "grid grid-cols-3 place-items-center gap-3 p-6 pt-14" : "p-0"}`}
+        className={`paper-card relative h-[min(60svh,34rem)] min-h-80 overflow-hidden bg-gradient-to-b from-sky/30 to-sage/30 ${calm ? "grid grid-cols-3 place-items-center gap-3 p-6 pt-14" : "p-0"}`}
         data-no-tap
       >
         {list.map((b) => (
@@ -274,6 +287,8 @@ export function Pairs() {
             >
               {shown ? (
                 <img
+                  loading="lazy"
+                  decoding="async"
                   src={CHARACTERS[c.who].image}
                   alt=""
                   className="mx-auto h-full w-auto object-contain p-1"

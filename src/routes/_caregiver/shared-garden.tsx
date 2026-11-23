@@ -2,15 +2,20 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Play, Pause, RefreshCw, Sprout } from "lucide-react";
+import { Pause, Play, RefreshCw, ShieldCheck, Sprout } from "lucide-react";
+import { GrownUpLink } from "@/components/GrownUpLink";
+import { GardenOfflineNotice } from "@/components/GardenOfflineNotice";
+import { SunflowerStoryLink } from "@/components/SunflowerStoryLink";
 import { Btn, Scene } from "@/components/Scene";
 import { StoryFilm } from "@/components/StoryFilm";
 import { pageHead } from "@/content/journeys";
+import { coarseGrowthStage, growthGlyph, growthPart, isFinalGrowthStage } from "@/content/growth";
 import { readGarden, shareSunflower } from "@/lib/shared-garden.functions";
-import { growthStage, totalDone, useStore } from "@/lib/store";
-import { useT } from "@/lib/i18n";
+import { careCount, growthStage, useStore } from "@/lib/store";
+import { pluralUk, useT } from "@/lib/i18n";
 import recorded from "@/assets/video/recorded-sunflower-growth.mp4.asset.json";
 import meadow from "@/assets/meadow.jpg";
+import { useOnline } from "@/hooks/use-online";
 
 export const Route = createFileRoute("/_caregiver/shared-garden")({
   head: () =>
@@ -23,12 +28,12 @@ export const Route = createFileRoute("/_caregiver/shared-garden")({
 
 function SharedGarden() {
   const t = useT();
+  const online = useOnline();
   const { caregiver } = Route.useRouteContext();
   const client = useQueryClient();
   const read = useServerFn(readGarden);
   const share = useServerFn(shareSunflower);
-  const completed = useStore((s) => s.completed);
-  const localStage = growthStage(totalDone(completed));
+  const localStage = growthStage(useStore((s) => careCount(s)));
   const key = ["shared-garden", caregiver.userId];
   const garden = useQuery({
     queryKey: key,
@@ -37,44 +42,81 @@ function SharedGarden() {
     retry: false,
   });
   const [consent, setConsent] = useState(false);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
+  const [capped, setCapped] = useState(false);
   const mutation = useMutation({
-    mutationFn: (sharing: boolean) => share({ data: { stage: sharing ? localStage : 0, sharing } }),
-    onSuccess: async () => {
+    // Never let Query pause and replay a sharing action after reconnection.
+    networkMode: "always",
+    mutationFn: (sharing: boolean) => {
+      if (!navigator.onLine) throw new Error("Garden offline");
+      return share({ data: { stage: sharing ? localStage : 0, sharing } });
+    },
+    onSuccess: async (res) => {
+      setCapped(Boolean(res.capped));
       setConsent(false);
       await client.invalidateQueries({ queryKey: key });
     },
     retry: false,
   });
   const own = garden.data?.own;
+  const flowers = garden.data?.flowers ?? [];
+  const ownStage = coarseGrowthStage(Math.max(localStage, own?.stage ?? 0));
+  const shown = selected ? flowers.find((f) => f.flower_id === selected) : undefined;
+  const shownStage = coarseGrowthStage(shown?.stage ?? ownStage);
+  const shownName = shown ? flowers.indexOf(shown) + 1 : null;
+
   return (
     <Scene title="Спільний сад" back="/parents">
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-5">
         <p className="text-sm text-muted-foreground">
           {t(
-            "Один соняшник на акаунт дорослого. Оновлення надсилаються лише за вашим натисканням; вимкнення приховує квітку, не змінюючи даних дитини.",
+            "Тут ростуть соняшники інших родин. Кожна квітка з’явилася, коли дорослий у родині погодився поділитися лише стадією росту — без імен, малюнків і почуттів.",
           )}
         </p>
-        <section className="space-y-3">
-          <h2 className="font-display text-2xl font-bold">{t("Мій соняшник")}</h2>
-          <p>{t("Стадія {n} з 5", { n: Math.max(localStage, own?.stage ?? 0) })}</p>
-          <p role="status" className="font-bold text-primary">
-            {t(own?.sharing ? "Соняшник поширено" : "Поширення вимкнено")}
+        {!online && <GardenOfflineNotice caregiver />}
+
+        <section aria-labelledby="own-sunflower" className="paper-card p-4 sm:p-5">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+            <div className="min-w-0">
+              <h2 id="own-sunflower" className="font-display text-2xl font-bold">
+                {t("Мій соняшник")}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t("Стадія {n} з 5", { n: ownStage })}
+              </p>
+            </div>
+            <ShieldCheck className="h-7 w-7 shrink-0 text-primary" aria-hidden />
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            {t(
+              "Один соняшник на акаунт дорослого. Оновлення надсилаються лише за вашим натисканням; вимкнення приховує квітку, не змінюючи даних дитини.",
+            )}
           </p>
-          {garden.isPending && <p role="status">{t("Сад завантажується…")}</p>}
-          {(garden.isError || mutation.isError) && (
-            <p role="alert" className="text-destructive">
-              {t("Сад недоступний. Спробуйте ще раз.")}
+          <p role="status" className="mt-3 font-bold text-primary" aria-live="polite">
+            {mutation.isPending
+              ? t("Зачекайте…")
+              : !online || garden.isError || garden.isFetching || mutation.isError
+                ? t("Поточний стан поширення не підтверджено.")
+                : !own
+                  ? t("Сад завантажується…")
+                  : t(own.sharing ? "Соняшник поширено" : "Поширення вимкнено")}
+          </p>
+          {capped && (
+            <p
+              role="status"
+              className="mt-2 rounded-2xl bg-secondary p-3 text-sm text-secondary-foreground"
+            >
+              {t("Соняшник росте поступово — одна стадія на день. Завтра він підросте ще.")}
             </p>
           )}
           {own && !own.sharing && (
-            <label className="flex items-start gap-3 text-sm leading-relaxed">
+            <label className="mt-4 flex min-h-14 cursor-pointer items-start gap-3 rounded-2xl bg-secondary p-4 text-sm leading-relaxed text-secondary-foreground">
               <input
                 type="checkbox"
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
-                className="mt-1 h-5 w-5 shrink-0 accent-primary"
+                className="mt-0.5 h-5 w-5 shrink-0 accent-primary"
               />
               <span>
                 {t(
@@ -83,16 +125,21 @@ function SharedGarden() {
               </span>
             </label>
           )}
-          <div className="flex flex-wrap gap-2">
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:max-w-2xl sm:grid-cols-2">
             {own?.sharing ? (
               <>
-                <Btn disabled={mutation.isPending} onClick={() => mutation.mutate(true)}>
+                <Btn
+                  className="w-full"
+                  disabled={!online || mutation.isPending}
+                  onClick={() => mutation.mutate(true)}
+                >
                   <Sprout size={18} />
                   {t("Оновити соняшник")}
                 </Btn>
                 <Btn
+                  className="w-full"
                   variant="soft"
-                  disabled={mutation.isPending}
+                  disabled={!online || mutation.isPending}
                   onClick={() => mutation.mutate(false)}
                 >
                   {t("Припинити поширення")}
@@ -100,82 +147,167 @@ function SharedGarden() {
               </>
             ) : (
               <Btn
-                disabled={!consent || !own || mutation.isPending}
+                className="w-full sm:col-span-2"
+                disabled={!online || !consent || !own || mutation.isPending}
                 onClick={() => mutation.mutate(true)}
               >
+                <Sprout size={18} />
                 {t("Поділитися соняшником")}
               </Btn>
             )}
-            <Btn variant="soft" disabled={garden.isFetching} onClick={() => void garden.refetch()}>
-              <RefreshCw size={18} />
-              {t("Оновити сад")}
-            </Btn>
           </div>
-        </section>
-        <section className="space-y-3">
-          <h2 className="font-display text-2xl font-bold">{t("Соняшники інших родин")}</h2>
-          {garden.data && !garden.data.flowers.length && (
-            <p>{t("Поки що немає спільних соняшників.")}</p>
+          {mutation.isError && (
+            <p role="alert" className="mt-3 text-sm text-destructive">
+              {t("Сад недоступний. Спробуйте ще раз.")}
+            </p>
           )}
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {garden.data?.flowers.map((flower) => (
-              <li key={flower.flower_id}>
+        </section>
+
+        <section aria-label={t("Спільний сад")} className="paper-card p-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+            <h2 className="min-w-0 font-display text-2xl font-bold">{t("Спільний сад")}</h2>
+            <p className="shrink-0 text-sm text-muted-foreground">
+              {t(
+                pluralUk(
+                  flowers.length + 1,
+                  "У саду {n} квітка",
+                  "У саду {n} квітки",
+                  "У саду {n} квіток",
+                ),
+                { n: flowers.length + 1 },
+              )}
+            </p>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("Обери квітку, щоб побачити, як вона росла.")}
+          </p>
+          <ul className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 pb-2">
+            <li className="shrink-0 snap-start">
+              <div className="flex w-24 flex-col gap-2">
                 <Btn
                   variant="soft"
-                  aria-pressed={selected === flower.flower_id}
+                  aria-pressed={selected === null}
                   onClick={() => {
-                    setSelected(flower.flower_id);
+                    setSelected(null);
                     setPlaying(true);
                   }}
-                  className="w-full flex-col rounded-lg p-4"
+                  className="h-full w-full flex-col rounded-lg px-2 py-3"
                 >
-                  <span aria-hidden className="block text-5xl">
-                    {["🌰", "🌱", "🌿", "🌿", "🌼", "🌻"][flower.stage]}
+                  <span aria-hidden className="block text-4xl leading-none">
+                    {growthGlyph(ownStage)}
                   </span>
-                  <span className="mt-3 text-sm font-bold">
-                    {t("Стадія {n} з 5", { n: flower.stage })}
+                  <span className="mt-2 block text-xs font-bold">{t("Твій соняшник")}</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {t("Стадія {n} з 5", { n: ownStage })}
                   </span>
                 </Btn>
-              </li>
-            ))}
+                <SunflowerStoryLink name={t("Твій соняшник")} />
+              </div>
+            </li>
+            {flowers.map((flower, i) => {
+              const stage = coarseGrowthStage(flower.stage);
+              return (
+                <li key={flower.flower_id} className="shrink-0 snap-start">
+                  <div className="flex w-24 flex-col gap-2">
+                    <Btn
+                      variant="soft"
+                      aria-pressed={selected === flower.flower_id}
+                      onClick={() => {
+                        setSelected(flower.flower_id);
+                        setPlaying(true);
+                      }}
+                      className="h-full w-full flex-col rounded-lg px-2 py-3"
+                    >
+                      <span
+                        aria-hidden
+                        className={`block leading-none ${isFinalGrowthStage(stage) ? "animate-sway" : ""}`}
+                        style={{ fontSize: `${1.9 + stage * 0.16}rem` }}
+                      >
+                        {growthGlyph(stage)}
+                      </span>
+                      <span className="mt-2 block text-xs font-bold">
+                        {t("Квітка {n}", { n: i + 1 })}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        {t("Стадія {n} з 5", { n: stage })}
+                      </span>
+                    </Btn>
+                    <SunflowerStoryLink name={t("Квітка {n}", { n: i + 1 })} />
+                  </div>
+                </li>
+              );
+            })}
           </ul>
+          {garden.isPending && (
+            <p role="status" className="mt-3 text-sm">
+              {t("Сад завантажується…")}
+            </p>
+          )}
+          {garden.isError && (
+            <p role="alert" className="mt-3 text-sm text-destructive">
+              {t("Сад недоступний. Спробуйте ще раз.")}
+            </p>
+          )}
+          {garden.data && !flowers.length && (
+            <p className="mt-3 text-sm">{t("Поки що немає спільних соняшників.")}</p>
+          )}
+          <Btn
+            className="mt-3 w-full sm:w-auto"
+            variant="soft"
+            disabled={!online || garden.isFetching || mutation.isPending}
+            onClick={() => {
+              mutation.reset();
+              void garden.refetch();
+            }}
+          >
+            <RefreshCw size={18} />
+            {t("Оновити сад")}
+          </Btn>
         </section>
-        <section className="space-y-3">
-          <h2 className="font-display text-2xl font-bold">
-            {t("Справжній запис росту соняшника")}
-          </h2>
-          <div className="relative mx-auto aspect-[440/768] w-full max-w-64 overflow-hidden rounded-lg bg-secondary">
+
+        <section className="paper-card overflow-hidden">
+          <div className="px-4 pt-4">
+            <h2 className="font-display text-2xl font-bold">{t("Як росте обрана квітка")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {shownName ? t("Квітка {n}", { n: shownName }) : t("Твій соняшник")} ·{" "}
+              {t("Стадія {n} з 5", { n: shownStage })}
+            </p>
+          </div>
+          <div className="relative mx-auto mt-3 aspect-[440/768] w-full max-w-64 overflow-hidden rounded-lg bg-secondary sm:max-w-72">
             <StoryFilm
-              key={selected}
+              key={`${shown?.flower_id ?? "own"}-${shownStage}`}
               src={recorded.url}
               poster={meadow}
               playing={playing}
               onPause={() => setPlaying(false)}
+              part={growthPart(shownStage)}
+              label="Запис росту соняшника"
             />
           </div>
-          <div className="text-center">
+          {isFinalGrowthStage(shownStage) && (
+            <p
+              role="status"
+              className="mx-4 mt-4 rounded-2xl bg-secondary p-4 text-center font-bold text-secondary-foreground"
+            >
+              <span className="mr-2 inline-block text-2xl animate-sway" aria-hidden>
+                🌻
+              </span>
+              {t("Соняшник повністю розквітнув — це остання стадія росту.")}
+            </p>
+          )}
+          <div className="flex flex-wrap justify-center gap-2 p-4">
             <Btn onClick={() => setPlaying(!playing)}>
               {playing ? <Pause size={18} /> : <Play size={18} />}
-              {t(playing ? "Пауза" : "Дивитися")}
+              {t(playing ? "Пауза" : "Дивитися ріст")}
             </Btn>
           </div>
-          <p className="text-sm text-muted-foreground">
-            <a
-              href="https://commons.wikimedia.org/wiki/File:Sunflower_growing_time_lapse.gif"
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
+          <p className="px-4 pb-4 text-xs text-muted-foreground">
+            <GrownUpLink href="https://commons.wikimedia.org/wiki/File:Sunflower_growing_time_lapse.gif">
               {t("Відео: Naturenow, CC BY-SA 4.0; перетворено з GIF у MP4.")}
-            </a>{" "}
-            <a
-              href="https://creativecommons.org/licenses/by-sa/4.0/"
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
+            </GrownUpLink>{" "}
+            <GrownUpLink href="https://creativecommons.org/licenses/by-sa/4.0/">
               CC BY-SA 4.0
-            </a>
+            </GrownUpLink>
           </p>
         </section>
       </div>

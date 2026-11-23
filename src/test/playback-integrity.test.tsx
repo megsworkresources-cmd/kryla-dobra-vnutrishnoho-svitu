@@ -6,7 +6,11 @@ import { getState, update } from "@/lib/store";
 import { stopSpeaking } from "@/lib/speak";
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
-vi.mock("@/lib/speak", () => ({ speak: vi.fn(), stopSpeaking: vi.fn() }));
+vi.mock("@/lib/speak", () => ({
+  speak: vi.fn(),
+  stopSpeaking: vi.fn(),
+  useSpeechState: () => "idle",
+}));
 vi.mock("@/components/Scene", () => ({
   Btn: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
     <button {...props}>{children}</button>
@@ -82,6 +86,25 @@ it("shows an accessible error when a cartoon illustration cannot load", () => {
   expect(screen.getByRole("alert")).toHaveTextContent(
     "Не вдалося завантажити ілюстрацію. Спробуй інший мультик.",
   );
+});
+
+it("uses the illustrated story and offers retry when a Watch film fails", () => {
+  vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+  const { container } = render(<Player clip={{ ...clip, id: "sunflower" }} onClose={vi.fn()} />);
+  const video = container.querySelector("video");
+  if (!video) throw new Error("Missing video");
+
+  fireEvent.error(video);
+
+  expect(screen.getByRole("alert")).toHaveTextContent("Казка з картинками готова");
+  expect(container.querySelector("video")).toBeNull();
+  expect(container.querySelector(".animate-kenburns")).not.toBeNull();
+  expect(screen.getByRole("button", { name: "Грати" })).toBeEnabled();
+
+  fireEvent.click(screen.getByRole("button", { name: "Спробувати відео ще" }));
+  expect(container.querySelector("video")).not.toBeNull();
+  expect(screen.queryByRole("alert")).toBeNull();
 });
 
 it("retains the same video element across caption changes", async () => {

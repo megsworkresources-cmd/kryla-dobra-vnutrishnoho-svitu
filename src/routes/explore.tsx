@@ -46,6 +46,7 @@ function Explore() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-ink">
       <header className="z-20 flex items-center justify-between gap-2 p-3">
+        <h1 className="sr-only">{t("Уся мапа")}</h1>
         <Link
           to="/world"
           className="paper-card flex h-12 items-center gap-1 px-4 text-sm font-bold"
@@ -73,6 +74,8 @@ function Explore() {
               >
                 <div className="relative h-full" style={{ aspectRatio: "1088 / 1920" }}>
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src={map}
                     alt={t("Чарівна долина з лісом, лугом, хмарним замком і нічним небом")}
                     className="h-full w-full select-none rounded-2xl"
@@ -93,7 +96,7 @@ function Explore() {
                         style={{ left: `${s.x}%`, top: `${s.y}%` }}
                       >
                         <span
-                          className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-paper text-lg shadow-lift transition ${active ? "scale-125 bg-primary" : "bg-paper/90"}`}
+                          className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-paper text-lg shadow-lift transition-transform duration-(--dur-base) ease-(--ease-enter) ${active ? "scale-125 bg-primary" : "bg-paper/90"}`}
                           aria-hidden
                         >
                           {s.icon}
@@ -147,6 +150,8 @@ function Explore() {
           <div className="absolute inset-x-3 bottom-3 z-20 mx-auto max-w-md animate-fade-up">
             <div className="paper-card flex items-center gap-3 p-3">
               <img
+                loading="lazy"
+                decoding="async"
                 src={place.image}
                 alt=""
                 className="h-16 w-16 shrink-0 rounded-2xl object-cover"

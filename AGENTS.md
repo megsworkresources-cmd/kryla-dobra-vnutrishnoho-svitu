@@ -33,5 +33,20 @@
 - Keep ready-made story fallback browser-safe and app-written, and display it as prepared rather than AI-generated; network/configuration failures must not remove offline stories.
 - Measure the fixed navigation bar for its content spacer, so translated labels, large text and safe areas cannot obscure the last controls.
 - Derive narration controls from shared speech lifecycle state, not optimistic button toggles, so failed or completed playback cannot leave a false Stop state.
-- Shared garden mutations accept only strict stage/consent input, use owner RLS and a locked-down anonymous projection RPC; explicit adult updates prevent child routes from sending data.
+- Shared garden mutations go only through the definer grow_sunflower RPC (one stage per ~day, no direct table writes) with owner RLS for read/delete; explicit adult updates prevent child routes from sending data.
 - Keep human-cast cartoon and animal-cast bridge footage separate; video remains silent inline and captions/narration stay app-owned.
+- Public community garden reads use only the publishable stage projection and fail closed if unavailable; never bypass table RLS with an admin fallback.
+- AI server functions (voice, story, helper) require a signed-in account via requireSupabaseAuth plus a per-account in-memory cap and output caps, so anonymous callers cannot spend AI credits; signed-out children fall back to device speech, prepared stories and a sign-in prompt.
+- Offline/home-screen support: vite-plugin-pwa generateSW (manifest in public/), registered only from `src/lib/pwa-register.ts`, which refuses dev/iframe/preview hosts; navigations NetworkFirst so deploys stay fresh.
+- Outside links on child pages go through GrownUpLink (adult check) and AI output offers ReportAi, storing only AI output, never child text, to meet kids-app store rules.
+- Motion tokens (`--dur-fast/base/slow`, `--ease-enter/exit`) and the `press` utility live in `src/styles.css`; animate transform and opacity only, never the generic `transition`, and keep class-name template literals space-separated (guarded by `src/test/lang-toggle.test.tsx`).
+- Text must keep 4.5:1 (3:1 large) against its rendered background and every control at least 44×44px; secondary text uses `text-muted-foreground` rather than opacity, and text placed directly over artwork gets a `bg-paper/85` backing.
+- Render the GrownUpLink dialog into document.body with createPortal so card backdrop filters and scene animations cannot clip or reposition the viewport adult check.
+- Family resource directory data is bilingual in `src/content/resources.i18n.ts` (each entry holds uk+en); unknown facts stay undefined and render as "not confirmed" so contacts are never invented.
+- Fixed-list access uses browser-safe content helpers with explicit fallbacks; routes export only their route so activity rules remain independently testable.
+- PWA generation, precache scanning and verification share the resolved deployed client directory; never assume .output/public. Account/OAuth pages are never runtime-cached.
+- Share Workbox options with the standalone browser acceptance fixture, so caching tests exercise the production policy without registering workers in preview.
+- Drive all breathing-scene motion from one pauseable clock and suppress visual frames for saved or system reduced motion; independent decorative loops must not outlive Pause.
+- Story adventures share one QuestView module with bilingual content in src/content/quests.i18n.ts; each adventure is a thin route.
+- Recorded videos share browser-only focus ownership and honor saved/system reduced motion; late playback and background events cannot restart exited footage.
+- Shared-garden mutations use networkMode always with an offline guard and no retry, never Query's deferred mutation queue; offline status cannot imply confirmed sharing.

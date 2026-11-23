@@ -2,6 +2,9 @@
 const MODEL = "google/gemini-3.1-flash-tts-preview";
 const URL = "https://ai.gateway.lovable.dev/v1/audio/speech";
 const DEFAULT_TTS_MIME = "audio/wav";
+const CACHE_LIMIT = 40;
+const audioCache = new Map<string, string>();
+const pending = new Map<string, Promise<string>>();
 
 const STYLES: Record<string, [string, string]> = {
   narrator: ["як тепла казкарка", "like a warm storyteller"],
@@ -25,7 +28,12 @@ function toDataUri(raw: ArrayBuffer, contentType: string | null): string {
 
 export class VoiceError extends Error {}
 
-export async function synthesize(text: string, voice: string, lang: "uk" | "en", who: string) {
+async function requestSynthesis(
+  text: string,
+  voice: string,
+  lang: "uk" | "en",
+  who: string,
+): Promise<string> {
   const [ukStyle, enStyle] = STYLES[who] ?? ["як тепла казкарка", "like a warm storyteller"];
   const style = lang === "uk" ? ukStyle : enStyle;
   const key = process.env["LOVABLE_API_KEY"];
@@ -54,4 +62,34 @@ export async function synthesize(text: string, voice: string, lang: "uk" | "en",
   }
   const type = res.headers.get("content-type");
   return toDataUri(await res.arrayBuffer(), type);
+}
+
+/**
+ * Replays and simultaneous requests for the same app line share one result. The
+ * bounded process cache avoids repeatedly spending synthesis credits; failures
+ * are never cached, and an explicit device-speech fallback remains available.
+ */
+export async function synthesize(text: string, voice: string, lang: "uk" | "en", who: string) {
+  const cacheKey = JSON.stringify([text, voice, lang, who]);
+  const cached = audioCache.get(cacheKey);
+  if (cached) {
+    audioCache.delete(cacheKey);
+    audioCache.set(cacheKey, cached);
+    return cached;
+  }
+  const existing = pending.get(cacheKey);
+  if (existing) return existing;
+  const request = requestSynthesis(text, voice, lang, who);
+  pending.set(cacheKey, request);
+  try {
+    const audio = await request;
+    if (audioCache.size >= CACHE_LIMIT) {
+      const oldest = audioCache.keys().next().value;
+      if (typeof oldest === "string") audioCache.delete(oldest);
+    }
+    audioCache.set(cacheKey, audio);
+    return audio;
+  } finally {
+    pending.delete(cacheKey);
+  }
 }

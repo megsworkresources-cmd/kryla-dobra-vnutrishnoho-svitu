@@ -1,16 +1,18 @@
 import { CharacterSay } from "@/components/Character";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Guided, Narration } from "@/components/Activity";
 import { markDone, pick, useStore } from "@/lib/store";
 import { speak, stopSpeaking } from "@/lib/speak";
+import { useAudioUnlocked } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 
 export function Breathing({ kind }: { kind: "flower" | "wave" }) {
   const t = useT();
   const age = useStore((s) => s.age);
   const voice = useStore((s) => s.voice);
+  const audioReady = useAudioUnlocked();
   const [duration, setDuration] = useState(60);
   const [elapsed, setElapsed] = useState(0);
   const [started, setStarted] = useState(false);
@@ -23,7 +25,7 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
     document.addEventListener("visibilitychange", pauseWhenHidden);
     return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
   }, []);
-  const inhale = age === "young" ? 3 : 4;
+  const inhale = age === "young" ? 4 : 5;
   const exhale = kind === "flower" ? inhale + 2 : inhale;
   const period = inhale + exhale;
   const isInhale = elapsed % period < inhale;
@@ -43,9 +45,9 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
     }
   }, [elapsed, duration, started, done, kind]);
   useEffect(() => {
-    if (running && voice) speak(isInhale ? t("М’який вдих") : t("Повільний видих"));
+    if (running && voice && audioReady) speak(isInhale ? t("М’який вдих") : t("Повільний видих"));
     return stopSpeaking;
-  }, [phase, running, voice, isInhale, t]);
+  }, [phase, running, voice, audioReady, isInhale, t]);
   const reset = () => {
     setElapsed(0);
     setRunning(false);
@@ -58,22 +60,7 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
       <DoneCard text={t("Дякую, що побув на лузі. Далі можна дихати звичайно.")} again={reset} />
     );
   return (
-    <div className="space-y-5 text-center">
-      <CharacterSay
-        who="olenka"
-        size="sm"
-        mood="calm"
-        autoSpeak={!running}
-        action={running ? "breathe" : undefined}
-        text={t(
-          pick(age, {
-            young: "Нюхай квітку. Потім легко подуй на пелюстки. Дихай так, як зручно тобі.",
-            mid: "Дихай м’яко, без затримок. Якщо цей ритм незручний — зроби паузу й дихай звичайно.",
-            older:
-              "Не намагайся вдихати надто глибоко. Орієнтир — комфорт, а не точне потрапляння в ритм.",
-          }),
-        )}
-      />
+    <div className="space-y-4 text-center">
       {!started && (
         <div className="flex justify-center gap-2" aria-label={t("Тривалість")}>
           {[60, 120, 180].map((seconds) => (
@@ -88,7 +75,13 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
           ))}
         </div>
       )}
-      <BreathVisual kind={kind} grow={running && isInhale} seconds={isInhale ? inhale : exhale} />
+      <BreathVisual
+        key={`${kind}-${started}-${duration}`}
+        kind={kind}
+        running={running}
+        inhale={inhale}
+        exhale={exhale}
+      />
       <div aria-live="polite">
         <p className="font-display text-3xl font-bold">
           {started ? (running ? phase : t("Пауза")) : t("У своєму темпі")}
@@ -128,6 +121,21 @@ export function Breathing({ kind }: { kind: "flower" | "wave" }) {
           </Btn>
         )}
       </div>
+      <CharacterSay
+        who="olenka"
+        size="sm"
+        mood="calm"
+        autoSpeak={!running}
+        action={running ? "breathe" : undefined}
+        text={t(
+          pick(age, {
+            young: "Нюхай квітку. Потім легко подуй на пелюстки. Дихай так, як зручно тобі.",
+            mid: "Дихай м’яко, без затримок. Якщо цей ритм незручний — зроби паузу й дихай звичайно.",
+            older:
+              "Не намагайся вдихати надто глибоко. Орієнтир — комфорт, а не точне потрапляння в ритм.",
+          }),
+        )}
+      />
     </div>
   );
 }
@@ -171,81 +179,174 @@ export function RelaxBody() {
   );
 }
 
-/** Flower opens on the in-breath; the wave rises on the in-breath and settles on the out-breath. */
+/** All visual motion shares one pauseable clock; reduced motion leaves a quiet still scene. */
 function BreathVisual({
   kind,
-  grow,
-  seconds,
+  running,
+  inhale,
+  exhale,
 }: {
   kind: "flower" | "wave";
-  grow: boolean;
-  seconds: number;
+  running: boolean;
+  inhale: number;
+  exhale: number;
 }) {
   const t = useT();
-  const ease = { transition: `transform ${seconds}s ease-in-out` };
-  if (kind === "wave")
-    return (
-      <svg
-        viewBox="0 0 240 150"
-        className="mx-auto h-48 w-full max-w-sm overflow-hidden rounded-3xl"
-        role="img"
-        aria-label={t("Хвиля дихання")}
-      >
-        <rect width="240" height="150" fill="var(--secondary)" />
-        <circle cx="190" cy="34" r="16" fill="var(--honey)" opacity=".8" />
-        <g style={{ ...ease, transform: `translateY(${grow ? -42 : 0}px)` }}>
-          <path
-            className="animate-wave-x"
-            d="M-240 100 q30 -18 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 V200 H-240z"
-            fill="var(--sky)"
-            opacity=".55"
-          />
-          <path
-            className="animate-wave-x-slow"
-            d="M-240 110 q30 -14 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 V200 H-240z"
-            fill="var(--primary)"
-            opacity=".45"
-          />
-          <g transform="translate(110 92)" className="animate-sway">
-            <path d="M0 0 h22 l-5 7 h-12z" fill="var(--ink)" />
-            <path d="M11 0 v-16 l9 12z" fill="var(--paper)" />
-          </g>
-        </g>
-      </svg>
-    );
-  return (
+  const reduced = useStore((s) => s.reduceMotion);
+  const [systemReduced, setSystemReduced] = useState(false);
+  const [time, setTime] = useState(0);
+  const clock = useRef(0);
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setSystemReduced(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+  const still = reduced || systemReduced;
+  useEffect(() => {
+    if (!running || still) return;
+    let raf = 0;
+    let last = performance.now();
+    const tick = (now: number) => {
+      clock.current += Math.min(now - last, 100) / 1000;
+      last = now;
+      setTime(clock.current);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [running, still]);
+  const cycle = time % (inhale + exhale);
+  const progress = cycle < inhale ? cycle / inhale : 1 - (cycle - inhale) / exhale;
+  const open = still ? 0.45 : (1 - Math.cos(Math.PI * progress)) / 2;
+  const drift = still ? 0 : Math.sin(time * 0.35);
+  return kind === "wave" ? (
     <svg
-      viewBox="0 0 200 200"
-      className="mx-auto h-56 w-56"
+      viewBox="0 0 320 210"
+      className="mx-auto h-56 w-full max-w-sm overflow-hidden rounded-3xl"
+      role="img"
+      aria-label={t("Хвиля дихання")}
+    >
+      <rect width="320" height="210" fill="var(--sky)" opacity=".25" />
+      <circle cx="256" cy="44" r="22" fill="var(--honey)" />
+      <path
+        d="M25 58 q12 -9 24 0 M53 42 q10 -8 20 0"
+        fill="none"
+        stroke="var(--paper)"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <path d="M0 124 Q65 89 132 121 T320 118 V210 H0Z" fill="var(--sage)" opacity=".25" />
+      <g transform={`translate(0 ${-38 * open})`}>
+        <path
+          d={`M-100 146 Q-60 124 -20 146 T60 146 T140 146 T220 146 T300 146 T380 146 T460 146 V260 H-100Z`}
+          transform={`translate(${18 * drift} 0)`}
+          fill="var(--sky)"
+        />
+        <g transform={`translate(${145 + 7 * drift} ${137 - 2 * open}) rotate(${3 * drift})`}>
+          <path
+            d="M-20 0 H20 L12 11 H-12Z"
+            fill="var(--accent)"
+            stroke="var(--ink)"
+            strokeWidth="1.5"
+          />
+          <path d="M0 -3 V-35" stroke="var(--ink)" strokeWidth="2" />
+          <path d="M-3 -33 L-3 -7 H-18Z" fill="var(--paper)" />
+          <path d="M3 -30 L19 -7 H3Z" fill="var(--honey)" />
+        </g>
+        <path
+          d="M-100 168 Q-60 150 -20 168 T60 168 T140 168 T220 168 T300 168 T380 168 T460 168 V260 H-100Z"
+          transform={`translate(${-14 * drift} 0)`}
+          fill="var(--primary)"
+          opacity=".65"
+        />
+        <path
+          d="M-100 168 Q-60 150 -20 168 T60 168 T140 168 T220 168 T300 168 T380 168 T460 168"
+          transform={`translate(${-14 * drift} 0)`}
+          fill="none"
+          stroke="var(--paper)"
+          strokeWidth="2"
+          opacity=".65"
+        />
+        <path
+          d="M-100 195 Q-60 180 -20 195 T60 195 T140 195 T220 195 T300 195 T380 195 T460 195 V270 H-100Z"
+          transform={`translate(${10 * drift} 0)`}
+          fill="var(--sky)"
+          opacity=".7"
+        />
+      </g>
+    </svg>
+  ) : (
+    <svg
+      viewBox="0 0 260 260"
+      className="mx-auto h-64 w-64 max-w-full"
       role="img"
       aria-label={t("Квітка дихання")}
     >
-      <path d="M100 200 V130" stroke="var(--sage)" strokeWidth="6" strokeLinecap="round" />
-      <ellipse cx="80" cy="170" rx="16" ry="7" fill="var(--sage)" transform="rotate(-25 80 170)" />
-      <g
-        style={{
-          ...ease,
-          transform: `scale(${grow ? 1 : 0.55}) rotate(${grow ? 20 : 0}deg)`,
-          transformOrigin: "100px 95px",
-        }}
-      >
-        {Array.from({ length: 10 }, (_, i) => (
-          <ellipse
-            key={i}
-            cx="100"
-            cy="50"
-            rx="15"
-            ry="38"
-            fill="var(--honey)"
-            stroke="var(--accent)"
-            strokeWidth="1"
-            transform={`rotate(${i * 36} 100 95)`}
-            opacity=".95"
-          />
+      <path
+        d="M130 253 Q124 219 130 153"
+        fill="none"
+        stroke="var(--sage)"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
+      <path
+        d="M128 216 Q89 217 83 184 Q118 181 128 216Z M129 232 Q168 231 179 203 Q145 199 129 232Z"
+        fill="var(--sage)"
+      />
+      <path
+        d="M89 190 L125 213 M170 210 L133 230"
+        stroke="var(--primary)"
+        strokeWidth="1.5"
+        fill="none"
+      />
+      <g transform={`translate(130 113) scale(${0.72 + 0.28 * open})`}>
+        {[0, 1].map((layer) => (
+          <g key={layer} transform={`rotate(${layer * 12 + 2 * drift})`}>
+            {Array.from({ length: 14 }, (_, i) => (
+              <g key={i} transform={`rotate(${(i * 360) / 14})`}>
+                <path
+                  d="M-9 -21 C-28 -47 -20 -77 0 -91 C20 -77 28 -47 9 -21Z"
+                  transform={`scale(${layer ? 0.86 : 1} ${0.72 + 0.28 * open})`}
+                  fill={layer ? "var(--honey)" : "var(--accent)"}
+                  stroke="var(--honey)"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M0 -30 Q-3 -49 0 -73"
+                  fill="none"
+                  stroke="var(--accent-foreground)"
+                  strokeWidth="1"
+                  opacity=".22"
+                />
+              </g>
+            ))}
+          </g>
         ))}
+        <circle r="30" fill="var(--accent-foreground)" />
+        <circle r="25" fill="var(--ink)" />
+        {Array.from({ length: 32 }, (_, i) => {
+          const angle = i * 2.39996;
+          const radius = 3.6 * Math.sqrt(i);
+          // Rounded so server and browser math produce identical attribute text during hydration.
+          const x = Math.round(Math.cos(angle) * radius * 100) / 100;
+          const y = Math.round(Math.sin(angle) * radius * 100) / 100;
+          const turn = Math.round(((angle * 180) / Math.PI) * 100) / 100;
+          return (
+            <ellipse
+              key={i}
+              cx={x}
+              cy={y}
+              rx="1.8"
+              ry="2.4"
+              fill="var(--honey)"
+              opacity=".7"
+              transform={`rotate(${turn} ${x} ${y})`}
+            />
+          );
+        })}
       </g>
-      <circle cx="100" cy="95" r="22" fill="var(--ink)" opacity=".85" />
-      <circle cx="93" cy="89" r="4" fill="var(--paper)" opacity=".4" />
     </svg>
   );
 }

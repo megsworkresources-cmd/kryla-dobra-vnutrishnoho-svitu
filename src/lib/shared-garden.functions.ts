@@ -23,7 +23,7 @@ export const readGarden = createServerFn({ method: "POST" })
 
 export const shareSunflower = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => sunflowerInput.parse(input))
+  .validator((input) => sunflowerInput.parse(input))
   .handler(async ({ data, context }) => {
     setResponseHeader("Cache-Control", "no-store");
     const token = getRequestHeader("authorization")?.replace(/^Bearer /, "");
@@ -31,10 +31,12 @@ export const shareSunflower = createServerFn({ method: "POST" })
     const verified = await context.supabase.auth.getUser(token);
     if (verified.error || !verified.data.user || verified.data.user.is_anonymous)
       throw new Error("Unauthorized");
-    const result = await context.supabase.rpc("publish_sunflower", {
+    // The database grows a sunflower at most one stage per day, whatever is requested.
+    const result = await context.supabase.rpc("grow_sunflower", {
       new_stage: data.stage,
       opt_in: data.sharing,
     });
     if (result.error) throw new Error("Garden unavailable");
-    return { ok: true };
+    const row = Array.isArray(result.data) ? result.data[0] : undefined;
+    return { ok: true, capped: Boolean(row?.capped) };
   });

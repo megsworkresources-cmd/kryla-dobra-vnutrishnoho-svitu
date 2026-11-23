@@ -10,7 +10,11 @@ vi.mock("@tanstack/react-start", () => ({
   createServerFn: () => ({
     middleware: (items: unknown[]) => {
       expect(items).toEqual([mocks.middleware]);
-      return { handler: (h: unknown) => h, inputValidator: () => ({ handler: (h: unknown) => h }) };
+      return {
+        handler: (h: unknown) => h,
+        validator: () => ({ handler: (h: unknown) => h }),
+        inputValidator: () => ({ handler: (h: unknown) => h }),
+      };
     },
   }),
 }));
@@ -52,7 +56,11 @@ it("starts sharing off and returns only anonymous garden data with no shared cac
 });
 it("sends only the stage and opt-in to the owner-scoped RPC", async () => {
   await share();
-  expect(mocks.rpc).toHaveBeenCalledWith("publish_sunflower", { new_stage: 3, opt_in: true });
+  expect(mocks.rpc).toHaveBeenCalledWith("grow_sunflower", { new_stage: 3, opt_in: true });
+});
+it("reports the daily growth cap from the database", async () => {
+  mocks.rpc.mockResolvedValue({ data: [{ stage: 1, capped: true }], error: null });
+  expect(await share()).toEqual({ ok: true, capped: true });
 });
 it.each([null, { id: "anonymous", is_anonymous: true }])(
   "denies missing/anonymous caregiver before any garden operation",

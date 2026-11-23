@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Без мережі — Тихе Місце</title>
+    <meta
+      name="description"
+      content="Можна повернутися до сторінок, які вже відкривали на цьому пристрої."
+    />
+    <style>
+      :root {
+        --paper: #faf5eb;
+        --ink: #3b2b1c;
+        --leaf: #477c4f;
+        --sun: #f4b743;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          1.1rem/1.6 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 38rem;
+        margin: auto;
+        padding: max(2rem, env(safe-area-inset-top)) 1.5rem max(2rem, env(safe-area-inset-bottom));
+      }
+      h1,
+      h2 {
+        line-height: 1.25;
+      }
+      nav {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      a {
+        display: inline-flex;
+        min-height: 48px;
+        align-items: center;
+        padding: 0.6rem 1rem;
+        background: var(--sun);
+        color: var(--ink);
+        border-radius: 8px;
+      }
+      a:focus-visible {
+        outline: 3px solid var(--leaf);
+        outline-offset: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Тихе Місце</h1>
+      <h2>Зараз немає мережі</h2>
+      <p>
+        Можна повернутися до сторінок, які вже відкривали на цьому пристрої. Нові відео й природні
+        голоси можуть потребувати мережі.
+      </p>
+      <nav aria-label="Повернутися"><a href="/">На початок</a><a href="/world">Мапа світу</a></nav>
+      <section lang="en">
+        <h2>You're offline</h2>
+        <p>
+          You can return to pages already opened on this device. New videos and natural voices may
+          need an internet connection.
+        </p>
+        <nav aria-label="Return"><a href="/">Home</a><a href="/world">World map</a></nav>
+      </section>
+    </main>
+  </body>
+</html>

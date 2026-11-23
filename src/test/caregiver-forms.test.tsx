@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Route as LoginRoute } from "@/routes/caregiver-login";
 import { Route as ResetRoute } from "@/routes/reset-password";
 import { supabase } from "@/integrations/supabase/client";
+import { startResendCooldown } from "@/lib/caregiver-session";
 
 const mocks = vi.hoisted(() => ({ navigate: vi.fn() }));
 
@@ -24,6 +25,7 @@ vi.mock("@/integrations/supabase/client", () => ({
       signInWithPassword: vi.fn(),
       signUp: vi.fn(),
       resetPasswordForEmail: vi.fn(),
+      resend: vi.fn(),
       updateUser: vi.fn(),
     },
   },
@@ -88,6 +90,65 @@ describe("caregiver form states", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("Не вдалося увійти");
     expect(screen.getByLabelText("Електронна пошта дорослого")).toHaveValue("adult@example.com");
     expect(mocks.navigate).not.toHaveBeenCalled();
+  });
+
+  it("offers a resend when sign-in says the email is not confirmed", async () => {
+    vi.mocked(auth.signInWithPassword).mockResolvedValue({
+      error: { code: "email_not_confirmed", status: 400 },
+    } as never);
+    vi.mocked(auth.resend).mockResolvedValue({ error: null } as never);
+    render(<Login />);
+    fireEvent.change(screen.getByLabelText("Електронна пошта дорослого"), {
+      target: { value: "adult@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "password1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Увійти" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Підтвердьте");
+    fireEvent.click(screen.getByRole("button", { name: "Надіслати лист ще раз" }));
+    expect(await screen.findByRole("status")).toHaveTextContent("Лист надіслано ще раз");
+    expect(auth.resend).toHaveBeenCalledWith({
+      type: "signup",
+      email: "adult@example.com",
+      options: {
+        emailRedirectTo: `${window.location.origin}/caregiver-login?redirect=%2Fparents`,
+      },
+    });
+    const resendButton = screen.getByRole("button", { name: /Надіслати лист ще раз/ });
+    expect(resendButton).toBeDisabled();
+    fireEvent.click(resendButton);
+    expect(auth.resend).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the resend cooldown after the page reloads", async () => {
+    vi.mocked(auth.signInWithPassword).mockResolvedValue({
+      error: { code: "email_not_confirmed", status: 400 },
+    } as never);
+    vi.mocked(auth.resend).mockResolvedValue({ error: null } as never);
+    startResendCooldown();
+    render(<Login />);
+    fireEvent.change(screen.getByLabelText("Електронна пошта дорослого"), {
+      target: { value: "adult@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "password1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Увійти" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Підтвердьте");
+    const resendButton = screen.getByRole("button", { name: /Надіслати лист ще раз/ });
+    expect(resendButton).toBeDisabled();
+    fireEvent.click(resendButton);
+    expect(auth.resend).not.toHaveBeenCalled();
+  });
+
+  it("offers a resend after sign-up while confirmation is pending", async () => {
+    vi.mocked(auth.signUp).mockResolvedValue({ error: null } as never);
+    render(<Login />);
+    fireEvent.click(screen.getByRole("button", { name: "Створити акаунт" }));
+    fireEvent.change(screen.getByLabelText("Електронна пошта дорослого"), {
+      target: { value: "adult@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "password1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Створити акаунт" }));
+    expect(await screen.findByRole("status")).toHaveTextContent("Перевірте пошту");
+    expect(screen.getByRole("button", { name: /Надіслати лист ще раз/ })).toBeDisabled();
   });
 
   it("requests recovery with the local reset address and shows the safe success message", async () => {

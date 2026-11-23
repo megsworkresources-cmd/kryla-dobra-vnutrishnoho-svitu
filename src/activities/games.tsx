@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { RotateCcw, Volume2 } from "lucide-react";
 import { Btn } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
-import { chime, sfx } from "@/lib/audio";
+import { chime, sfx, useAudioUnlocked } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 import { markDone } from "@/lib/store";
 import { COUNT_ROUNDS, PATTERN_ROUNDS } from "@/content/game-rounds";
@@ -19,6 +19,7 @@ const MELODY_MAX = 6;
 
 export function Melody() {
   const t = useT();
+  const audioReady = useAudioUnlocked();
   const [sequence, setSequence] = useState<number[]>(FIRST_MELODY);
   const [input, setInput] = useState<number[]>([]);
   const [phase, setPhase] = useState<"listen" | "repeat" | "done">("listen");
@@ -32,6 +33,7 @@ export function Melody() {
 
   const playSequence = useCallback(
     (next: number[]) => {
+      if (!audioReady) return;
       stop();
       setInput([]);
       setMessage("");
@@ -43,13 +45,16 @@ export function Melody() {
       });
       timers.current.push(window.setTimeout(() => setPhase("repeat"), 520 + next.length * 640));
     },
-    [stop],
+    [audioReady, stop],
   );
 
+  // Safari blocks audio until a real tap. Start the opening melody only after
+  // the shared audio controller confirms that the gesture unlocked playback.
   useEffect(() => {
+    if (!audioReady) return;
     playSequence(FIRST_MELODY);
     return stop;
-  }, [playSequence, stop]);
+  }, [audioReady, playSequence, stop]);
 
   // A hidden tab must not keep playing or leave the pads half-way through a melody.
   useEffect(() => {
@@ -143,12 +148,13 @@ export function Melody() {
         <Btn
           variant="soft"
           onClick={() => playSequence(sequence)}
+          disabled={!audioReady}
           className="inline-flex items-center gap-2"
         >
           <Volume2 size={18} />
           {t("Послухати")}
         </Btn>
-        <Btn variant="soft" aria-label={t("Почати спочатку")} onClick={reset}>
+        <Btn variant="soft" aria-label={t("Почати спочатку")} onClick={reset} disabled={!audioReady}>
           <RotateCcw size={18} />
         </Btn>
       </div>

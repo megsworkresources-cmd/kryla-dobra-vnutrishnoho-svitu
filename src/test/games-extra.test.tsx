@@ -5,7 +5,7 @@ import { sfx } from "@/lib/audio";
 import { getState, update } from "@/lib/store";
 
 vi.mock("@/components/Character", () => ({ CharacterSay: () => null }));
-vi.mock("@/lib/audio", () => ({ chime: vi.fn(), sfx: vi.fn() }));
+vi.mock("@/lib/audio", () => ({ chime: vi.fn(), sfx: vi.fn(), useAudioUnlocked: () => true }));
 
 beforeEach(() => {
   vi.useFakeTimers();

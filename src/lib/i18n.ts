@@ -8,6 +8,11 @@ import { getState, useStore, type Lang } from "./store";
  * Vars: t("Крок {i} з {n}", { i: 1, n: 3 }).
  */
 const EN: Record<string, string> = {
+  "Друзі й теплий дощик": "Friends and a gentle rain",
+  "Одного дня над галявиною зібралися сірі хмаринки.": "One day, grey clouds gathered over the meadow.",
+  "Краплинки тихенько застукали по листочках, і друзі сховалися під великим деревом.": "Raindrops softly tapped the leaves, and the friends sheltered beneath a big tree.",
+  "Вони слухали дощик, дихали спокійно й помітили, як свіже повітря пахне травою.": "They listened to the rain, breathed calmly and noticed the fresh, grassy scent in the air.",
+  "Коли хмаринки попливли далі, друзі разом вийшли на сонячну галявину.": "When the clouds drifted away, the friends stepped together into the sunny meadow.",
   Казка: "Story",
   "Казка на ніч": "Bedtime story",
   "Затишна історія про спокійну ніч, вечірній ритуал і сміливість.":

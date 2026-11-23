@@ -6,6 +6,7 @@ import { pageHead } from "@/content/journeys";
 import { MAZE, MAZES } from "@/content/play.i18n";
 import type { Bi } from "@/content/adventures.i18n";
 import { chime } from "@/lib/audio";
+import { speak } from "@/lib/speak";
 import { markDone, pick, useStore } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
 import { mazeStep as step, type MazePosition as P } from "@/content/play";
@@ -29,9 +30,16 @@ function Maze() {
   const grid = pick(age, MAZES);
   const [pos, setPos] = useState<P>(() => find(grid, "S"));
   const [bump, setBump] = useState(false);
+  // Once the child moves, the introduction folds into one line so the maze and its
+  // arrows fit on the phone screen without scrolling.
+  const [moved, setMoved] = useState(false);
   const goal = find(grid, "E");
   const done = pos[0] === goal[0] && pos[1] === goal[1];
-  useEffect(() => setPos(find(grid, "S")), [grid]);
+  useEffect(() => {
+    setPos(find(grid, "S"));
+    setBump(false);
+    setMoved(false);
+  }, [grid]);
 
   const move = (dr: number, dc: number) => {
     if (done) return;
@@ -41,10 +49,12 @@ function Maze() {
       return;
     }
     setBump(false);
+    setMoved(true);
     setPos(n);
     if (n[0] === goal[0] && n[1] === goal[1]) {
       chime(660);
       markDone("maze");
+      speak(L(MAZE.done), { who: "lihtaryk" });
     } else chime(392);
   };
   useEffect(() => {
@@ -68,11 +78,17 @@ function Maze() {
   return (
     <Scene title="Стежка Ліхтарика" back="/world" compact>
       <div className="space-y-4">
-        <CharacterSay
-          who="lihtaryk"
-          text={L(done ? MAZE.done : bump ? MAZE.bump : MAZE.intro)}
-          mood={done ? "cheer" : "talk"}
-        />
+        {moved ? (
+          <p
+            role="status"
+            aria-live="polite"
+            className={`flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug ${done ? "text-ink" : "text-muted-foreground"}`}
+          >
+            {done ? L(MAZE.done) : bump ? L(MAZE.bump) : ""}
+          </p>
+        ) : (
+          <CharacterSay who="lihtaryk" text={L(MAZE.intro)} mood="talk" />
+        )}
         <div
           role="grid"
           aria-label={t("Лабіринт")}
@@ -108,31 +124,42 @@ function Maze() {
             </div>
           ))}
         </div>
-        <div className="mx-auto grid max-w-[14rem] grid-cols-3 gap-2">
-          <span />
-          <Btn variant="soft" aria-label={L(MAZE.up)} onClick={() => move(-1, 0)}>
-            ↑
-          </Btn>
-          <span />
-          <Btn variant="soft" aria-label={L(MAZE.left)} onClick={() => move(0, -1)}>
-            ←
-          </Btn>
-          <Btn variant="soft" aria-label={L(MAZE.down)} onClick={() => move(1, 0)}>
-            ↓
-          </Btn>
-          <Btn variant="soft" aria-label={L(MAZE.right)} onClick={() => move(0, 1)}>
-            →
-          </Btn>
-        </div>
-        {done && (
+        {done ? (
           <div className="flex justify-center">
-            <Btn onClick={() => setPos(find(grid, "S"))}>{t("Ще раз")}</Btn>
+            <Btn
+              onClick={() => {
+                setPos(find(grid, "S"));
+                setBump(false);
+                setMoved(false);
+              }}
+            >
+              {t("Ще раз")}
+            </Btn>
+          </div>
+        ) : (
+          <div className="mx-auto grid max-w-[14rem] grid-cols-3 gap-2">
+            <span />
+            <Btn variant="soft" aria-label={L(MAZE.up)} onClick={() => move(-1, 0)}>
+              ↑
+            </Btn>
+            <span />
+            <Btn variant="soft" aria-label={L(MAZE.left)} onClick={() => move(0, -1)}>
+              ←
+            </Btn>
+            <Btn variant="soft" aria-label={L(MAZE.down)} onClick={() => move(1, 0)}>
+              ↓
+            </Btn>
+            <Btn variant="soft" aria-label={L(MAZE.right)} onClick={() => move(0, 1)}>
+              →
+            </Btn>
           </div>
         )}
-        <section className="paper-card p-4">
-          <h2 className="font-display text-lg font-bold">{t("Без екрана")}</h2>
-          <p>{L(MAZE.away)}</p>
-        </section>
+        {!moved && (
+          <section className="paper-card p-4">
+            <h2 className="font-display text-lg font-bold">{t("Без екрана")}</h2>
+            <p>{L(MAZE.away)}</p>
+          </section>
+        )}
       </div>
     </Scene>
   );

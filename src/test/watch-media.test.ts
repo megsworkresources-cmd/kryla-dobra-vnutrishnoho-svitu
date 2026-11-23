@@ -4,8 +4,9 @@ import { WATCH_CLIPS, watchFilmId } from "@/content/watch-clips";
 import { Route } from "@/routes/watch";
 
 describe("Watch film wiring", () => {
-  it("gives each of the six story cards its own existing MP4 and poster", () => {
-    expect(WATCH_CLIPS).toHaveLength(6);
+  it("gives each Watch story card its own existing MP4 and poster, including the rain film", () => {
+    expect(WATCH_CLIPS).toHaveLength(7);
+    expect(WATCH_CLIPS.some((clip) => clip.id === "rain")).toBe(true);
     expect(new Set(WATCH_CLIPS.map((clip) => clip.id)).size).toBe(6);
 
     for (const clip of WATCH_CLIPS) {

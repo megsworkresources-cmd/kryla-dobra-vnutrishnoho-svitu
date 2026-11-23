@@ -7,7 +7,7 @@ describe("Watch film wiring", () => {
   it("gives each Watch story card its own existing MP4 and poster, including the rain film", () => {
     expect(WATCH_CLIPS).toHaveLength(7);
     expect(WATCH_CLIPS.some((clip) => clip.id === "rain")).toBe(true);
-    expect(new Set(WATCH_CLIPS.map((clip) => clip.id)).size).toBe(6);
+    expect(new Set(WATCH_CLIPS.map((clip) => clip.id)).size).toBe(7);
 
     for (const clip of WATCH_CLIPS) {
       expect(STORY_MEDIA[clip.id], clip.id).toMatch(/\.mp4$/);

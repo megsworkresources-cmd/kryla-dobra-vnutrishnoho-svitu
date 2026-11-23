@@ -137,7 +137,9 @@ function Maze() {
             </Btn>
           </div>
         ) : (
-          <div className="mx-auto grid max-w-[14rem] grid-cols-3 gap-2">
+          // A maze plus arrows and a fixed nav do not all fit on very short phones;
+          // there the maze cells themselves are the control.
+          <div className="mx-auto grid max-w-[14rem] grid-cols-3 gap-2 [@media(max-height:700px)]:hidden">
             <span />
             <Btn variant="soft" aria-label={L(MAZE.up)} onClick={() => move(-1, 0)}>
               ↑

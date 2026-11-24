@@ -2,8 +2,17 @@ import { CharacterSay } from "@/components/Character";
 import { useEffect, useState } from "react";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Practice } from "@/components/Practice";
+import { TypedExamples } from "@/components/TypeOwn";
 import { markDone } from "@/lib/store";
 import { useT } from "@/lib/i18n";
+
+/** Ready-made worries, so the box is never the only way to say it. */
+const CLOUD_EXAMPLES = [
+  "Мене турбує школа",
+  "Боюся, що не встигну",
+  "Сумую за другом",
+  "Не знаю, що буде завтра",
+] as const;
 
 export const Senses = () => (
   <Practice
@@ -126,6 +135,7 @@ export function Release() {
           placeholder={t("Мене турбує…")}
           className="mt-2 w-full resize-none rounded-2xl bg-secondary p-3 text-base outline-none focus:ring-2 focus:ring-ring"
         />
+        <TypedExamples value={text} examples={CLOUD_EXAMPLES} onPick={setText} className="mt-2" />
       </div>
       {!flying && <Btn onClick={() => setFlying(true)}>{t("Відпустити хмарку")}</Btn>}
     </div>

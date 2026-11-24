@@ -26,7 +26,12 @@ describe("experience repair regressions", () => {
     render(<MagicStage theme="meadow" />);
     for (let n = 1; n <= 6; n++)
       fireEvent.click(screen.getByRole("button", { name: `Крок стежки ${n}` }));
-    expect(screen.getByRole("button", { name: "Крок стежки 6" })).toHaveTextContent("🌼");
+    // A finished step is marked with the drawn flower, not an emoji.
+    expect(
+      screen
+        .getByRole("button", { name: "Крок стежки 6" })
+        .querySelector('svg[data-glyph="flower"]'),
+    ).not.toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Почати спочатку" }));
     expect(screen.getByRole("button", { name: "Крок стежки 2" })).toBeDisabled();
     expect(getState().completed).toEqual(saved);
@@ -53,7 +58,11 @@ describe("experience repair regressions", () => {
     render(<MagicStage theme="garden" />);
     fireEvent.click(screen.getByRole("button", { name: "Обрати квітку 3" }));
     fireEvent.click(screen.getByRole("button", { name: "Посадити квітку 1" }));
-    expect(screen.getByRole("button", { name: "Посадити квітку 1" })).toHaveTextContent("🌷");
+    expect(
+      screen
+        .getByRole("button", { name: "Посадити квітку 1" })
+        .querySelector('svg[data-glyph="tulip"]'),
+    ).not.toBeNull();
     expect(getState().completed).toEqual(saved);
   });
 

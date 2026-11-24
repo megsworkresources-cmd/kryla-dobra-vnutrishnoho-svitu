@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { Glyph, type GlyphName } from "./Glyph";
 
-const GLYPHS = ["✨", "⭐", "🌼", "💛", "💙"];
+const GLYPHS: GlyphName[] = ["sparkle", "star", "flower", "heart", "moon"];
 interface Burst {
   id: number;
   x: number;
@@ -35,18 +36,17 @@ export function TouchSparkles() {
         [0, 1, 2, 3, 4].map((k) => {
           const a = (k / 5) * Math.PI * 2 + b.id;
           return (
-            <span
+            <Glyph
               key={`${b.id}-${k}`}
-              className="absolute text-sm animate-sparkle"
+              name={GLYPHS[(b.id + k) % GLYPHS.length]}
+              className="absolute h-5 w-5 animate-sparkle"
               style={{
                 left: b.x,
                 top: b.y,
                 ["--dx" as string]: `${Math.cos(a) * 34}px`,
                 ["--dy" as string]: `${Math.sin(a) * 34}px`,
               }}
-            >
-              {GLYPHS[(b.id + k) % GLYPHS.length]}
-            </span>
+            />
           );
         }),
       )}

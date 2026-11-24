@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { CharacterSay } from "@/components/Character";
 import { Btn } from "@/components/Scene";
+import { TypedExamples } from "@/components/TypeOwn";
 import { careCount, growthStage, moveStar, setStarName, setStarWish, useStore } from "@/lib/store";
 import { FINAL_GROWTH_STAGE } from "@/content/growth";
 import { JOURNEYS } from "@/content/journeys";
@@ -46,6 +47,15 @@ const FIELD = [
   { x: 70, y: 78 },
   { x: 92, y: 72 },
 ];
+
+/** Ready-made answers, so a name is never a blank box for a child who cannot spell yet. */
+const NAME_EXAMPLES = ["Мрія", "Світлячок", "Зіронька", "Промінчик"] as const;
+const WISH_EXAMPLES = [
+  "Хочу побачити море",
+  "Мрію про кошеня",
+  "Щоб усі були здорові",
+  "Хочу навчитися плавати",
+] as const;
 
 /** Story stars sit on these five places; "refresh" rotates them. */
 const SLOTS = [
@@ -314,6 +324,12 @@ export function MyStar() {
             className="min-h-12 w-full rounded-full bg-night/60 px-4 text-base text-moon outline-none placeholder:text-moon/50 focus:ring-2 focus:ring-ring"
           />
         </label>
+        <TypedExamples
+          night
+          value={name}
+          examples={NAME_EXAMPLES}
+          onPick={(example) => setStarName(example)}
+        />
         <label className="block space-y-1">
           <span className="block text-sm font-bold text-moon">{t("Моє бажання")}</span>
           <input
@@ -324,6 +340,12 @@ export function MyStar() {
             className="min-h-12 w-full rounded-full bg-night/60 px-4 text-base text-moon outline-none placeholder:text-moon/50 focus:ring-2 focus:ring-ring"
           />
         </label>
+        <TypedExamples
+          night
+          value={wish}
+          examples={WISH_EXAMPLES}
+          onPick={(example) => setStarWish(example)}
+        />
         <p className="text-sm text-moon/70">
           {t("Небо живе лише на цьому пристрої. Тут тільки твої зорі.")}
         </p>

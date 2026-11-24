@@ -7,6 +7,7 @@ import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
 import { MagicStage } from "@/components/MagicStage";
 import { StoryPreview } from "@/components/StoryPreview";
+import { Glyph } from "@/components/Glyph";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { PLACES } from "@/content/places";
 import { pageHead } from "@/content/journeys";
@@ -222,9 +223,7 @@ function StoryCompanion() {
                       onClick={() => setFeeling(id)}
                       label={t("Обрати настрій: {n}", { n: t(label) })}
                     >
-                      <span className="mr-1" aria-hidden>
-                        {icon}
-                      </span>
+                      <Glyph emoji={icon} className="mr-1 h-5 w-5 shrink-0" />
                       {t(label)}
                     </Choice>
                   ))}
@@ -291,13 +290,11 @@ function StoryCompanion() {
                     className="animate-step relative overflow-hidden rounded-2xl border border-border/60 bg-secondary/25 p-4"
                     style={{ animationDelay: `${i * 120}ms` }}
                   >
-                    <span
-                      aria-hidden
-                      className="absolute right-3 top-3 text-lg animate-float"
+                    <Glyph
+                      emoji={feelingIcon}
+                      className="absolute right-3 top-3 h-6 w-6 animate-float"
                       style={{ animationDelay: `${i * 0.35}s` }}
-                    >
-                      {feelingIcon}
-                    </span>
+                    />
                     <h3 className="text-sm font-extrabold uppercase tracking-wide text-primary">
                       {t("Сцена {n}", { n: i + 1 })}
                     </h3>

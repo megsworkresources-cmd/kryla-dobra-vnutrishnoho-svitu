@@ -2,11 +2,12 @@ import { QUESTS, QUEST_IDS } from "@/content/quests.i18n";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Btn } from "@/components/Scene";
-import { Settings2, Users } from "lucide-react";
+import { ChevronRight, Settings2, Users } from "lucide-react";
 import map from "@/assets/world-map.jpg";
 import { PLACES, placeImage } from "@/content/places";
 import { BottomNav } from "@/components/BottomNav";
 import { LangToggle } from "@/components/LangToggle";
+import { Glyph } from "@/components/Glyph";
 import { t, useT } from "@/lib/i18n";
 import { useWebMCP } from "use-webmcp-tool";
 import { runWebMCPTool } from "@/lib/webmcp-telemetry";
@@ -72,10 +73,10 @@ function World() {
       />
       {/* butterflies */}
       <div
-        className="pointer-events-none absolute left-[40%] top-[55%] text-xl animate-flutter"
+        className="pointer-events-none absolute left-[40%] top-[55%] animate-flutter"
         aria-hidden
       >
-        🦋
+        <Glyph name="butterfly" className="h-6 w-6" />
       </div>
 
       <header className="sticky top-0 z-20 flex flex-wrap items-center gap-2 p-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
@@ -93,7 +94,8 @@ function World() {
             className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Уся мапа")}
           >
-            🔍<span className="hidden sm:inline">{t("Уся мапа")}</span>
+            <Glyph name="search" className="h-5 w-5" />
+            <span className="hidden sm:inline">{t("Уся мапа")}</span>
           </Link>
           <Link
             to="/friends"
@@ -109,7 +111,8 @@ function World() {
             className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Ігри")}
           >
-            🎮<span className="hidden sm:inline">{t("Ігри")}</span>
+            <Glyph name="gamepad" className="h-5 w-5" />
+            <span className="hidden sm:inline">{t("Ігри")}</span>
           </button>
           <Link
             to="/watch"
@@ -117,14 +120,16 @@ function World() {
             className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Мультики")}
           >
-            📺<span className="hidden sm:inline">{t("Мультики")}</span>
+            <Glyph name="screen" className="h-5 w-5" />
+            <span className="hidden sm:inline">{t("Мультики")}</span>
           </Link>
           <Link
             to="/helper"
             className="paper-card flex h-12 min-w-11 items-center justify-center gap-1 px-2 text-sm font-bold sm:px-3"
             aria-label={t("Розкажи, як ти почуваєшся")}
           >
-            💬<span className="hidden sm:inline">{t("Розкажи")}</span>
+            <Glyph name="chat" className="h-5 w-5" />
+            <span className="hidden sm:inline">{t("Розкажи")}</span>
           </Link>
           <Link
             to="/settings"
@@ -220,6 +225,27 @@ function World() {
             );
           })}
         </ul>
+      </section>
+      <section
+        aria-labelledby="grown-ups-title"
+        className="relative z-10 mx-auto w-full max-w-3xl px-4 pb-8"
+      >
+        {/* The resource directory is for adults, so its door is labelled in their words. */}
+        <Link
+          to="/resources"
+          className="paper-card flex min-h-16 items-center gap-3 p-4 transition active:scale-[0.98]"
+        >
+          <Glyph name="book" className="h-9 w-9 shrink-0" />
+          <span className="min-w-0 flex-1">
+            <span id="grown-ups-title" className="block font-display text-lg font-bold">
+              {t("Ресурси для батьків")}
+            </span>
+            <span className="block text-sm text-muted-foreground">
+              {t("Поради, гарячі лінії та книжки для батьків і опікунів.")}
+            </span>
+          </span>
+          <ChevronRight className="h-5 w-5 shrink-0 opacity-50" aria-hidden />
+        </Link>
       </section>
       {askGames && (
         <div

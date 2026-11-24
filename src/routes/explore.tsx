@@ -6,6 +6,7 @@ import map from "@/assets/world-map.jpg";
 import { PLACES } from "@/content/places";
 import { BottomNav } from "@/components/BottomNav";
 import { LangToggle } from "@/components/LangToggle";
+import { Glyph } from "@/components/Glyph";
 import { t, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/explore")({
@@ -99,7 +100,7 @@ function Explore() {
                           className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-paper text-lg shadow-lift transition-transform duration-(--dur-base) ease-(--ease-enter) ${active ? "scale-125 bg-primary" : "bg-paper/90"}`}
                           aria-hidden
                         >
-                          {s.icon}
+                          <Glyph emoji={s.icon} className="h-7 w-7" />
                         </span>
                         <span className="paper-card mt-0.5 whitespace-nowrap px-2 py-0.5 text-xs font-extrabold leading-tight">
                           {t(p.name)}

@@ -3,8 +3,9 @@ import { RotateCcw } from "lucide-react";
 import { sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 import { Btn } from "./Scene";
+import { Glyph } from "./Glyph";
 
-const FLOWERS = ["🌻", "🌼", "🌷", "🌸"];
+const FLOWERS = ["sunflower", "flower", "tulip", "blossom"] as const;
 const PATH = [
   [12, 72],
   [27, 50],
@@ -13,7 +14,7 @@ const PATH = [
   [72, 52],
   [87, 24],
 ];
-const PAIRS = ["🌻", "🦋", "🍃", "🌻", "🍃", "🦋"];
+const PAIRS = ["sunflower", "butterfly", "leaf", "sunflower", "leaf", "butterfly"] as const;
 
 /** Optional purposeful play: no scores, deadlines or exercise-completion gate. */
 export function MagicStage({
@@ -175,7 +176,7 @@ export function MagicStage({
                 onClick={() => trace(n)}
                 className={`h-11 min-h-11 w-11 touch-none p-0 ${n === progress ? "ring-2 ring-ring" : ""}`}
               >
-                {n < progress ? "🌼" : n + 1}
+                {n < progress ? <Glyph name="flower" className="h-5 w-5" /> : n + 1}
               </Btn>
             </div>
           ))}
@@ -189,9 +190,12 @@ export function MagicStage({
               aria-label={t("Картка {n}", { n: n + 1 })}
               aria-pressed={open.includes(n) || matched.includes(n)}
               onClick={() => reveal(n)}
-              className="h-20 text-3xl"
+              className="h-20"
             >
-              {open.includes(n) || matched.includes(n) ? icon : "🍀"}
+              <Glyph
+                name={open.includes(n) || matched.includes(n) ? icon : "clover"}
+                className="mx-auto h-9 w-9"
+              />
             </Btn>
           ))}
         </div>
@@ -205,9 +209,9 @@ export function MagicStage({
                 aria-label={t("Обрати квітку {n}", { n: n + 1 })}
                 aria-pressed={chosen === n}
                 onClick={() => setChosen(n)}
-                className="px-3 text-2xl"
+                className="px-3"
               >
-                {flower}
+                <Glyph name={flower} className="h-7 w-7" />
               </Btn>
             ))}
           </div>
@@ -221,9 +225,12 @@ export function MagicStage({
                   setPlanted({ ...planted, [n]: chosen });
                   sfx("soft");
                 }}
-                className="h-16 border-sage/40 p-0 text-3xl"
+                className="h-16 border-sage/40 p-0"
               >
-                {planted[n] === undefined ? "🌱" : FLOWERS[planted[n] ?? 0]}
+                <Glyph
+                  name={planted[n] === undefined ? "sprout" : FLOWERS[planted[n] ?? 0]}
+                  className="mx-auto h-8 w-8"
+                />
               </Btn>
             ))}
           </div>

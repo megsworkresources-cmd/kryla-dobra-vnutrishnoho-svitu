@@ -1,6 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Map } from "lucide-react";
 import { ORDER, neighbours } from "@/content/sequence";
+import { Glyph } from "./Glyph";
 import { useT } from "@/lib/i18n";
 import { contentSpacer, useKeyboardInset } from "@/lib/keyboard";
 import { useEffect, useRef, useState } from "react";
@@ -80,7 +81,7 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
             paddingRight: "max(0.75rem, env(safe-area-inset-right, 0px))",
           }}
         >
-          {sectionStops.length > 2 && (
+          {sectionStops.length > 1 && (
             <nav
               ref={chips}
               aria-label={t("Вправи цього місця")}
@@ -106,8 +107,40 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
             </nav>
           )}
 
-          <div className="bar-section-label mb-1.5 truncate text-center text-xs font-extrabold uppercase tracking-wide">
-            {t(current?.label ?? "Тихе Місце")}
+          <div className="mb-1.5 flex items-stretch gap-2">
+            <div className="bar-section-label flex min-w-0 flex-1 items-center">
+              {sectionStop && sectionStop.to !== path ? (
+                <Link
+                  to={sectionStop.to as never}
+                  aria-label={t("Відкрити всі вправи цього місця")}
+                  className="press flex min-h-11 min-w-0 items-center gap-1 text-xs font-extrabold uppercase tracking-wide"
+                >
+                  <Glyph name="map" className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">{t(sectionStop.label)}</span>
+                </Link>
+              ) : (
+                <p className="flex min-h-11 min-w-0 items-center text-xs font-extrabold uppercase tracking-wide">
+                  <span className="truncate">{t(current?.label ?? "Тихе Місце")}</span>
+                </p>
+              )}
+            </div>
+            {position >= 0 && (
+              <p className="bar-section-label flex shrink-0 items-center text-xs font-bold tabular-nums">
+                {t("Місце {i} з {n}", { i: position + 1, n: ORDER.length })}
+              </p>
+            )}
+            {/* Adults look for the resource directory by name: keep it in the bar itself. */}
+            <Link
+              to="/resources"
+              aria-label={t("Ресурси для батьків")}
+              aria-current={path === "/resources" ? "page" : undefined}
+              className={`${card} press flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3 text-[0.7rem] font-extrabold uppercase tracking-wide ${
+                path === "/resources" ? "ring-2 ring-ring" : ""
+              }`}
+            >
+              <Glyph name="book" className="h-4 w-4 shrink-0" />
+              {t("Дорослим")}
+            </Link>
           </div>
 
           <nav

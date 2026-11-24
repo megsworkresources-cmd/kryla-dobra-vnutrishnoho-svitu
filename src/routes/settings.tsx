@@ -94,7 +94,7 @@ function Settings() {
   return (
     <Scene title="Налаштування" back="/world">
       <div className="space-y-5">
-        <Section title={t("🔊 Звук")}>
+        <Section title={t("Звук")}>
           <Toggle
             label={t("Увесь звук")}
             hint={t("Головний вимикач")}
@@ -227,7 +227,7 @@ function Settings() {
             {t("Перевірити звук")}
           </Btn>
         </Section>
-        <Section title={t("🗣 Голоси персонажів")}>
+        <Section title={t("Голоси персонажів")}>
           <Toggle
             label={t("Читати вголос автоматично")}
             hint={t("Персонажі самі промовляють інструкції. Текст завжди видно на екрані.")}
@@ -331,7 +331,7 @@ function Settings() {
           </Btn>
           {speechState === "unavailable" && <p role="alert">{t("Голос недоступний")}</p>}
         </Section>
-        <Section title={t("👀 Екран")}>
+        <Section title={t("Екран")}>
           <p className="font-bold">{t("Розмір тексту")}</p>
           <div className="flex gap-2">
             {(
@@ -358,7 +358,7 @@ function Settings() {
             onChange={(v) => set("reduceMotion", v)}
           />
         </Section>
-        <Section title={t("🎂 Мій вік")}>
+        <Section title={t("Мій вік")}>
           <p className="text-sm text-muted-foreground">
             {t("Від віку залежать слова в деяких вправах.")}
           </p>
@@ -382,7 +382,7 @@ function Settings() {
             ))}
           </div>
         </Section>
-        <Section title={t("📍 Мій шлях")}>
+        <Section title={t("Мій шлях")}>
           <p>
             {t("Вже зроблено маленьких справ:")}{" "}
             <b>{Object.values(s.completed).reduce((a, b) => a + b, 0)}</b>

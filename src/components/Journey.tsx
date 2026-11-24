@@ -30,13 +30,14 @@ export function JourneyActivity({
   title: string;
 }) {
   const C = ACTIVITIES[place][id];
-  // The breathing exercises draw their own large flower and sea, so no second motif.
   // These exercises draw their own large picture, so a second motif above it would be noise.
+  // Sky stories open with their recorded film: a banner above the player is a picture
+  // that can only be cut off by it, so footage pages get no motif at all.
   const ownVisual =
     (place === "meadow" && (id === "flower" || id === "wave" || id === "square")) ||
     (place === "clouds" && id === "jar") ||
     (place === "studio" && id === "heart") ||
-    (place === "sky" && id === "star");
+    (place === "sky" && ["star", "lantern", "bridge", "seed", "rain", "sleep"].includes(id));
   return (
     <Scene
       title={title}

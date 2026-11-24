@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { CharacterSay } from "@/components/Character";
 import { Btn, DoneCard } from "@/components/Scene";
+import { TypedExamples } from "@/components/TypeOwn";
 import { EMOTIONS, type Emotion } from "@/content/emotions";
 import { markDone, pick, useStore } from "@/lib/store";
 import { speak, stopSpeaking } from "@/lib/speak";
-import { sfx, useAudioUnlocked } from "@/lib/audio";
+import { chime, sfx, useAudioUnlocked } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 
 /**
@@ -31,6 +32,14 @@ function useStillFrames() {
   return reduced || systemReduced;
 }
 
+/** The four sides of the square, so the side being breathed is lit up. */
+const SIDES = [
+  [30, 30, 210, 30],
+  [210, 30, 210, 210],
+  [210, 210, 30, 210],
+  [30, 210, 30, 30],
+] as const;
+
 function squarePoint(index: number, part: number) {
   const u = Math.min(1, Math.max(0, part));
   switch (index) {
@@ -49,6 +58,7 @@ export function SquareBreath() {
   const t = useT();
   const age = useStore((s) => s.age);
   const voice = useStore((s) => s.voice);
+  const soundOn = useStore((s) => s.sound);
   const audioReady = useAudioUnlocked();
   const still = useStillFrames();
   // A longer side for older children; every side is one full inhale or exhale.
@@ -115,6 +125,12 @@ export function SquareBreath() {
     return stopSpeaking;
   }, [inhale, voice, audioReady, t]);
 
+  // A soft note at each corner lets the square be followed with closed eyes.
+  useEffect(() => {
+    if (!started || !running || !soundOn) return;
+    chime(inhale ? 523 : 392);
+  }, [index, started, running, soundOn, inhale]);
+
   const reset = () => {
     clock.current = 0;
     setTime(0);
@@ -134,6 +150,7 @@ export function SquareBreath() {
     );
 
   const [x, y] = squarePoint(index, still ? 0.5 : part);
+  const edge = SIDES[index] ?? SIDES[0];
 
   return (
     <div className="space-y-4 text-center">
@@ -163,6 +180,18 @@ export function SquareBreath() {
         ].map(([cx, cy]) => (
           <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="9" fill="var(--honey)" opacity=".85" />
         ))}
+        {started && (
+          <line
+            x1={edge[0]}
+            y1={edge[1]}
+            x2={edge[2]}
+            y2={edge[3]}
+            stroke="var(--primary)"
+            strokeWidth="7"
+            strokeLinecap="round"
+            opacity=".45"
+          />
+        )}
         <circle cx={x} cy={y} r="21" fill="var(--honey)" opacity=".28" />
         <circle cx={x} cy={y} r="12" fill="var(--honey)" stroke="var(--ink)" strokeWidth="1.5" />
         {started ? (
@@ -357,12 +386,23 @@ export function MagicJar() {
               placeholder={t("Наприклад: не хочу відповідати біля дошки")}
               className="min-h-12 w-full rounded-full bg-secondary px-4 text-base outline-none focus:ring-2 focus:ring-ring"
             />
+            <TypedExamples
+              value={words}
+              examples={JAR_EXAMPLES}
+              onPick={(example) => {
+                setChosen(null);
+                setWords(example);
+              }}
+            />
           </div>
         </div>
       ) : (
         <div className="space-y-4">
           <div className="paper-card mx-auto max-w-sm space-y-2 p-4">
             <p className="font-display text-2xl font-bold">{t("Банка тримає це для тебе.")}</p>
+            <p className="rounded-2xl bg-secondary px-3 py-2 text-base font-bold">
+              {t("У банці: {w}", { w: chosen ?? words.trim() })}
+            </p>
             <p className="text-base">
               {t(
                 "Вона не забирає почуття назавжди — тільки дає перерву. Турбота почекає в банці, поки в тебе є сили на щось інше.",
@@ -393,6 +433,14 @@ export function MagicJar() {
     </div>
   );
 }
+
+/** Bold enough to be worth keeping, gentle enough to be said out loud. */
+const JAR_EXAMPLES = [
+  "Не хочу відповідати біля дошки",
+  "Посварився з другом",
+  "Боюся темряви",
+  "Багато домашніх завдань",
+] as const;
 
 const HEART_CHOICES: { word: string; emotion?: string; token: string }[] = [
   { word: "Радісно", emotion: "joy", token: "var(--honey)" },

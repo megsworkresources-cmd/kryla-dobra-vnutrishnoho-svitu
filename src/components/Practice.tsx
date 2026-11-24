@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Btn, DoneCard } from "./Scene";
 import { CharacterSay, type Action } from "./Character";
 import { MagicStage } from "./MagicStage";
+import { Glyph } from "./Glyph";
 import { clearSession, getSession, saveSession, type Session } from "@/lib/sessions";
 import { markDone } from "@/lib/store";
 import { sfx } from "@/lib/audio";
@@ -346,9 +347,7 @@ export function Practice({
                   }}
                   className={`flex h-auto items-center gap-3 py-3 text-left ${on ? "ring-2 ring-ring" : ""}`}
                 >
-                  <span className="text-xl" aria-hidden>
-                    {on ? "✅" : "⭕"}
-                  </span>
+                  <Glyph name={on ? "check" : "ring"} className="h-6 w-6 shrink-0" />
                   {t(item)}
                 </Btn>
               );

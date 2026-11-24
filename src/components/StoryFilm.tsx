@@ -21,6 +21,7 @@ export function StoryFilm({
   label,
   quiet,
   onError,
+  onProgress,
 }: {
   src: string;
   poster: string;
@@ -34,6 +35,8 @@ export function StoryFilm({
   label?: string | undefined;
   /** Decorative footage: a blocked autoplay stays silent instead of asking for a tap. */
   quiet?: boolean | undefined;
+  /** How far the recording has played (0..1), so captions can follow the footage. */
+  onProgress?: ((fraction: number) => void) | undefined;
 }) {
   const t = useT();
   const motion = useMediaMotion();
@@ -264,7 +267,12 @@ export function StoryFilm({
         className="h-full w-full object-cover"
         hidden={!wantsVideo}
         aria-label={t(label ?? "Анімована казка")}
-        onTimeUpdate={keepInsidePart}
+        onTimeUpdate={(event) => {
+          keepInsidePart();
+          const media = event.currentTarget;
+          if (!onProgress || !Number.isFinite(media.duration) || media.duration <= 0) return;
+          onProgress(Math.min(1, Math.max(0, media.currentTime / media.duration)));
+        }}
         onLoadedMetadata={() => {
           const value = video.current?.duration ?? 0;
           setDuration(Number.isFinite(value) ? value : 0);

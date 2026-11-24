@@ -3,6 +3,7 @@ import { Check, ChevronRight } from "lucide-react";
 import { Scene } from "./Scene";
 import { useStore } from "@/lib/store";
 import { CharacterSay } from "./Character";
+import { Glyph } from "./Glyph";
 import { useT } from "@/lib/i18n";
 import { castFor, CHARACTERS } from "@/content/characters";
 
@@ -68,10 +69,10 @@ export function Hub({
                 className={`${night ? "night-card" : "paper-card"} flex min-h-20 items-center gap-4 p-4 transition active:scale-[.98]`}
               >
                 <span
-                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl ${night ? "bg-dusk" : "bg-secondary"}`}
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${night ? "bg-dusk" : "bg-secondary"}`}
                   aria-hidden
                 >
-                  {it.mark}
+                  <Glyph emoji={it.mark} className="h-7 w-7" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2 font-bold">

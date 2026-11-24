@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { RotateCcw, Volume2 } from "lucide-react";
 import { Btn } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
+import { Glyph } from "@/components/Glyph";
 import { chime, sfx, useAudioUnlocked } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 import { markDone } from "@/lib/store";
@@ -137,9 +138,7 @@ export function Melody() {
             onClick={() => tap(i)}
             className="flex h-28 min-w-0 flex-col items-center justify-center gap-1 rounded-3xl"
           >
-            <span className="text-4xl" aria-hidden>
-              {pad.icon}
-            </span>
+            <Glyph emoji={pad.icon} className="h-10 w-10" />
             <span className="text-sm">{t(pad.name)}</span>
           </Btn>
         ))}
@@ -154,7 +153,12 @@ export function Melody() {
           <Volume2 size={18} />
           {t("Послухати")}
         </Btn>
-        <Btn variant="soft" aria-label={t("Почати спочатку")} onClick={reset} disabled={!audioReady}>
+        <Btn
+          variant="soft"
+          aria-label={t("Почати спочатку")}
+          onClick={reset}
+          disabled={!audioReady}
+        >
           <RotateCcw size={18} />
         </Btn>
       </div>
@@ -227,11 +231,11 @@ export function Patterns() {
             style={{ animationDelay: `${k * 60}ms` }}
             aria-hidden
           >
-            {shape.icon}
+            <Glyph emoji={shape.icon} className="h-9 w-9" />
           </span>
         ))}
-        <span className="text-3xl opacity-60" aria-hidden>
-          ❓
+        <span className="opacity-60" aria-hidden>
+          <Glyph name="chat" className="h-9 w-9" />
         </span>
       </div>
       <p className="text-center font-bold">{t("Яка фігура буде далі?")}</p>
@@ -244,9 +248,7 @@ export function Patterns() {
             onClick={() => choose(shape.name)}
             className="flex h-24 min-w-0 flex-col items-center justify-center gap-1 rounded-3xl"
           >
-            <span className="text-3xl" aria-hidden>
-              {shape.icon}
-            </span>
+            <Glyph emoji={shape.icon} className="h-9 w-9" />
             <span className="text-sm">{t(shape.name)}</span>
           </Btn>
         ))}

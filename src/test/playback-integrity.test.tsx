@@ -107,14 +107,19 @@ it("uses the illustrated story and offers retry when a Watch film fails", () => 
   expect(screen.queryByRole("alert")).toBeNull();
 });
 
-it("retains the same video element across caption changes", async () => {
+it("retains the same video element while the recording drives the captions", async () => {
   vi.useFakeTimers();
   vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
   vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
   const { container } = render(<Player clip={{ ...clip, id: "sunflower" }} onClose={vi.fn()} />);
   const video = container.querySelector("video");
   expect(video).not.toBeNull();
-  act(() => vi.advanceTimersByTime(7100));
+  // Footage owns the pace: a quarter of the recording in, the second part begins.
+  Object.defineProperty(video!, "duration", { configurable: true, value: 20 });
+  Object.defineProperty(video!, "currentTime", { configurable: true, value: 15 });
+  act(() => {
+    fireEvent.timeUpdate(video!);
+  });
   expect(container.querySelector("video")).toBe(video);
   expect(screen.getByText("Щоранку він повертав голівку до сонця.")).toBeInTheDocument();
   cleanup();

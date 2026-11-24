@@ -5,6 +5,7 @@ import night from "@/assets/night.jpg";
 import { Btn, DoneCard } from "@/components/Scene";
 import { Guided } from "@/components/Activity";
 import { StoryFilm } from "@/components/StoryFilm";
+import { Glyph, type GlyphName } from "@/components/Glyph";
 import { SKY_MEDIA } from "@/content/story-media";
 import { markDone, useStore } from "@/lib/store";
 import { speak, stopSpeaking } from "@/lib/speak";
@@ -141,18 +142,28 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   const fin = useRef(finish);
   fin.current = finish;
   useEffect(() => {
-    if (!playing) return;
+    if (!playing || film) return;
     const timer = window.setInterval(() => setT((x) => x + 0.25), 250);
     return () => window.clearInterval(timer);
-  }, [playing]);
+  }, [playing, film]);
   useEffect(() => {
-    if (t2 < len) return;
+    if (film || t2 < len) return;
     if (i >= scenes.length - 1) fin.current();
     else {
       setI(i + 1);
       setT(0);
     }
-  }, [t2, len, i, scenes.length]);
+  }, [film, t2, len, i, scenes.length]);
+
+  /** With footage, each caption holds exactly as long as its part of the recording. */
+  const followFilm = (fraction: number) => {
+    if (!film || done) return;
+    const next = Math.min(scenes.length - 1, Math.floor(fraction * scenes.length));
+    if (next !== i) {
+      setI(next);
+      setT(0);
+    } else if (fraction > 0.995) fin.current();
+  };
   useEffect(() => {
     if (playing && voice && audioReady && scenes[i]) speak(t(scenes[i]));
     return stopSpeaking;
@@ -190,6 +201,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
               playing={playing}
               onPause={() => setPlaying(false)}
               startAt={i / Math.max(1, scenes.length)}
+              onProgress={followFilm}
             />
           ) : (
             <img
@@ -257,7 +269,10 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
                     animationDelay: `${k * 0.7}s`,
                   }}
                 >
-                  <span className={hop === key ? "animate-wiggle" : ""}>{g}</span>
+                  <Glyph
+                    emoji={g}
+                    className={`h-10 w-10 drop-shadow-lg ${hop === key ? "animate-wiggle" : ""}`}
+                  />
                 </button>
               );
             })}
@@ -374,10 +389,10 @@ export function Sounds() {
   const sound = useStore((s) => s.sound);
   const volume = useStore((s) => s.volume);
   const on = useSoundscape();
-  const items: [Sound, string, string][] = [
-    ["rain", "Дощ", "☂"],
-    ["wind", "Вітер", "≋"],
-    ["crickets", "Цвіркуни", "♪"],
+  const items: [Sound, string, GlyphName][] = [
+    ["rain", "Дощ", "rain"],
+    ["wind", "Вітер", "wind"],
+    ["crickets", "Цвіркуни", "music"],
   ];
   return (
     <div className="space-y-4 text-center">
@@ -405,9 +420,7 @@ export function Sounds() {
             }}
             className="flex h-28 min-w-0 flex-col items-center justify-center gap-1 rounded-3xl px-2"
           >
-            <span className="text-3xl" aria-hidden>
-              {m}
-            </span>
+            <Glyph name={m} className="h-9 w-9" />
             {t(label)}
           </Btn>
         ))}

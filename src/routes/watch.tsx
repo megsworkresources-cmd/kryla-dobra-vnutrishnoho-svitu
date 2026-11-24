@@ -4,6 +4,7 @@ import { Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
 import { CartoonStage } from "@/components/CartoonStage";
 import { StoryFilm } from "@/components/StoryFilm";
+import { Glyph } from "@/components/Glyph";
 import { STORY_MEDIA } from "@/content/story-media";
 import { WATCH_CLIPS, watchFilmId, type WatchClip } from "@/content/watch-clips";
 import { pageHead } from "@/content/journeys";
@@ -64,9 +65,7 @@ function Watch() {
                         <Play className="h-6 w-6" aria-hidden />
                       </span>
                     </span>
-                    <span className="absolute left-2 top-2 text-2xl" aria-hidden>
-                      {c.icon}
-                    </span>
+                    <Glyph emoji={c.icon} className="absolute left-2 top-2 h-7 w-7" />
                   </div>
                   <p className="p-3 text-sm font-bold">{t(c.title)}</p>
                 </button>
@@ -83,9 +82,7 @@ function Watch() {
                 {t("Обери героя, місце й настрій — Claude створить нову історію.")}
               </span>
             </span>
-            <span className="text-3xl" aria-hidden>
-              ✨
-            </span>
+            <Glyph name="sparkle" className="h-9 w-9" />
           </Link>
         </div>
       )}
@@ -129,12 +126,19 @@ export function Player({
     document.addEventListener("visibilitychange", pauseWhenHidden);
     return () => document.removeEventListener("visibilitychange", pauseWhenHidden);
   }, []);
-  // Captions keep their own gentle pace; the saved voice setting decides who speaks.
+  // Without footage the captions keep their own gentle pace. With footage the recording
+  // decides when the next part starts, so the words always match the picture.
   useEffect(() => {
-    if (!playing || done) return;
+    if (film || !playing || done) return;
     const id = window.setTimeout(() => setI((x) => x + 1), SHOT_MS);
     return () => window.clearTimeout(id);
-  }, [i, playing, done]);
+  }, [film, i, playing, done]);
+
+  const followFilm = (fraction: number) => {
+    if (!film || done) return;
+    const next = Math.min(clip.shots.length - 1, Math.floor(fraction * clip.shots.length));
+    if (next !== i) setI(next);
+  };
   useEffect(() => {
     if (done || !playing || !voice || !shot || !audioReady) {
       stopSpeaking();
@@ -160,6 +164,7 @@ export function Player({
             onPause={() => setPlaying(false)}
             onError={() => setFilmFailed(true)}
             startAt={i / Math.max(1, clip.shots.length)}
+            onProgress={followFilm}
           />
         )}
         {shot ? (
@@ -167,14 +172,18 @@ export function Player({
             key={i}
             className={`absolute inset-0 animate-fade-up ${film && !filmFailed ? "pointer-events-none" : ""}`}
           >
-            <CartoonStage
-              clipId={clip.id}
-              index={i}
-              shot={shot}
-              playing={playing && !done}
-              film={Boolean(film) && !filmFailed}
-              onImageError={() => setFailedShot(i)}
-            />
+            {/* The recording is the picture: no illustration is stacked above it, where
+                only its cropped edge would show. The still scene stands in on its own. */}
+            {!(film && !filmFailed) && (
+              <CartoonStage
+                clipId={clip.id}
+                index={i}
+                shot={shot}
+                playing={playing && !done}
+                film={false}
+                onImageError={() => setFailedShot(i)}
+              />
+            )}
             {mediaFailed && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-night p-6 text-center text-moon">
                 <p role="alert">{t("Не вдалося завантажити ілюстрацію. Спробуй інший мультик.")}</p>
@@ -183,9 +192,7 @@ export function Player({
           </div>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-moon">
-            <span className="text-5xl animate-pop" aria-hidden>
-              🌟
-            </span>
+            <Glyph name="star" className="h-12 w-12 animate-pop" />
             <p className="font-display text-2xl">{t("Кінець")}</p>
           </div>
         )}

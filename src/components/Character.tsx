@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pause, Play, Volume2 } from "lucide-react";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { CHARACTER_MEDIA } from "@/content/character-media";
+import { Glyph, type GlyphName } from "./Glyph";
 import { getSpeechState, speak, useSpeechState } from "@/lib/speak";
 import { useAudioUnlocked } from "@/lib/audio";
 import { useStore } from "@/lib/store";
@@ -13,13 +14,13 @@ import { primeSilentVideo, whenTouched } from "@/lib/media-unlock";
 export type Mood = "talk" | "listen" | "think" | "cheer" | "calm";
 /** Body action the character acts out so the child can copy it. */
 export type Action = "squeeze" | "shrug" | "feet" | "settle" | "look" | "breathe";
-const MOOD_MARK: Record<Mood, string> = {
+const MOOD_MARK: Record<Mood, GlyphName | ""> = {
   talk: "",
   // Listening is shown by the character's own pose, not a floating glyph by the head.
   listen: "",
-  think: "💭",
-  cheer: "✨",
-  calm: "🌿",
+  think: "cloud",
+  cheer: "sparkle",
+  calm: "leaf",
 };
 
 function CharacterLoop({
@@ -250,6 +251,7 @@ export function CharacterSay({
     speak(text, { who });
   }, [text, autoSpeak, voiceOn, who, audioReady]);
   const h = { sm: "h-24", md: "h-32 sm:h-40", lg: "h-44 sm:h-56" }[size];
+  const mark = MOOD_MARK[mood];
   const motion = action
     ? `animate-act-${action}`
     : mood === "cheer"
@@ -263,11 +265,7 @@ export function CharacterSay({
     >
       <div className="relative mx-auto shrink-0 sm:mx-0">
         <CharacterLoop who={who} poster={c.image} className={h} imageClass={motion} pulse={pulse} />
-        {MOOD_MARK[mood] && (
-          <span className="absolute -top-1 right-0 text-xl animate-float" aria-hidden>
-            {MOOD_MARK[mood]}
-          </span>
-        )}
+        {mark && <Glyph name={mark} className="absolute -top-1 right-0 h-7 w-7 animate-float" />}
       </div>
       <figcaption
         key={`b${pulse}`}

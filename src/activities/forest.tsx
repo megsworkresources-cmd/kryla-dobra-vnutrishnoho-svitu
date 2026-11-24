@@ -8,6 +8,7 @@ import { markDone, pick, useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import { CHARACTERS, castFor } from "@/content/characters";
 import { Narration } from "@/components/Activity";
+import { Glyph, type GlyphName } from "@/components/Glyph";
 
 /* 1. Meet the emotions */
 export function EmotionGallery() {
@@ -338,7 +339,7 @@ const BASKETS = [
   { kind: "feel", label: "Почуття", note: "те, що відчуваєш" },
   { kind: "do", label: "Дія", note: "те, що робиш" },
 ] as const;
-const BASKET_ICON: Record<string, string> = { think: "💭", feel: "❤️", do: "🏃" };
+const BASKET_ICON: Record<string, GlyphName> = { think: "cloud", feel: "heart", do: "footprint" };
 export function SortGame() {
   const t = useT();
   const [i, setI] = useState(0);
@@ -394,7 +395,15 @@ export function SortGame() {
           {t("Картка {i} з {n}", { i: i + 1, n: SORT_ITEMS.length })}
         </span>
         <span className="font-bold" aria-label={t("Зірочки: {n}", { n: stars })}>
-          {"⭐".repeat(Math.min(stars, 10)) || "☆"}
+          {stars > 0 ? (
+            <span className="flex items-center gap-0.5">
+              {Array.from({ length: Math.min(stars, 10) }, (_, k) => (
+                <Glyph key={k} name="star" className="h-3.5 w-3.5" />
+              ))}
+            </span>
+          ) : (
+            "☆"
+          )}
         </span>
       </div>
       <div className="relative h-44">
@@ -442,7 +451,7 @@ export function SortGame() {
               style={{ animationDelay: `${BASKETS.indexOf(b) * 0.4}s` }}
               aria-hidden
             >
-              {BASKET_ICON[b.kind]}
+              <Glyph name={BASKET_ICON[b.kind] ?? "cloud"} className="mx-auto h-6 w-6" />
             </span>
             <span className="block font-bold">{t(b.label)}</span>
             <span className="block text-xs text-muted-foreground">{t(b.note)}</span>

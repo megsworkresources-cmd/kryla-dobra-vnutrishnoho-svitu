@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { cn } from "@/lib/utils";
 import { itemAtOr } from "@/content/list";
+import { Glyph } from "./Glyph";
 
 export interface CartoonShot {
   img: string;
@@ -55,7 +56,7 @@ const CAMERAS = [
 
 const ACTORS = ["animate-talk", "animate-sway", "animate-wiggle", "animate-act-breathe"] as const;
 
-const FLOWERS = ["🌻", "🌼", "🌿", "🌸", "🍃"] as const;
+const FLOWERS = ["sunflower", "flower", "leaf", "flower", "leaf"] as const;
 
 /** Deterministic, so the same beat is drawn the same way on every visit. */
 function seedOf(clipId: string, index: number) {
@@ -98,17 +99,16 @@ export function CartoonStage({
       <div className="absolute inset-0 overflow-hidden" data-shot={index}>
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           {[0, 1, 2, 3].map((k) => (
-            <span
+            <Glyph
               key={k}
-              className="absolute bottom-0 text-2xl animate-drift"
+              emoji={shot.fx}
+              className="absolute bottom-0 h-7 w-7 animate-drift"
               style={{
                 left: `${10 + k * 24}%`,
                 animationDelay: `${k * 0.8 + index * 0.5}s`,
                 ...play,
               }}
-            >
-              {shot.fx}
-            </span>
+            />
           ))}
           <div className="absolute inset-0 bg-gradient-to-t from-night/75 via-night/10 to-transparent" />
           <img
@@ -185,14 +185,12 @@ export function CartoonStage({
         <path d="M0 42 q22 -10 44 0 t56 -4 V50 H0z" fill="var(--primary)" opacity=".3" />
       </svg>
       {[0, 1, 2, 3, 4].map((k) => (
-        <span
+        <Glyph
           key={k}
-          className="pointer-events-none absolute bottom-0 text-2xl animate-sway"
+          name={FLOWERS[(k + index) % FLOWERS.length]}
+          className="pointer-events-none absolute bottom-0 h-7 w-7 animate-sway"
           style={{ left: `${4 + k * 21}%`, animationDelay: `${k * 0.4}s`, ...play }}
-          aria-hidden
-        >
-          {FLOWERS[(k + index) % FLOWERS.length]}
-        </span>
+        />
       ))}
       <img
         src={CHARACTERS[shot.who].image}
@@ -201,18 +199,16 @@ export function CartoonStage({
         style={play}
       />
       {[0, 1, 2].map((k) => (
-        <span
+        <Glyph
           key={k}
-          className="pointer-events-none absolute bottom-2 text-2xl animate-drift"
+          emoji={shot.fx}
+          className="pointer-events-none absolute bottom-2 h-7 w-7 animate-drift"
           style={{
             left: `${24 + k * 22}%`,
             animationDelay: `${k * 1.1 + index * 0.5}s`,
             ...play,
           }}
-          aria-hidden
-        >
-          {shot.fx}
-        </span>
+        />
       ))}
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent"

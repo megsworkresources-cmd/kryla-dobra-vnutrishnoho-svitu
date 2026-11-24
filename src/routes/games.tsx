@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { RotateCcw, Undo2, Pause } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
+import { Glyph } from "@/components/Glyph";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { PAIR_IDS, initialCards, deal } from "@/content/game-cards";
 import { pageHead } from "@/content/journeys";
@@ -76,9 +77,7 @@ function Games() {
                 value={g.id}
                 className={`paper-card flex h-full w-24 shrink-0 flex-col items-center justify-center gap-1 whitespace-normal p-2 text-xs leading-tight font-bold transition active:scale-95 ${game === g.id ? "ring-4 ring-ring" : ""}`}
               >
-                <span className="text-2xl sm:text-3xl" aria-hidden>
-                  {g.icon}
-                </span>
+                <Glyph emoji={g.icon} className="h-7 w-7 sm:h-8 sm:w-8" />
                 <span className="text-sm">{t(g.name)}</span>
               </TabsTrigger>
             ))}
@@ -223,7 +222,7 @@ export function Bubbles() {
           role="status"
           className="absolute right-3 top-3 rounded-full bg-card/80 px-3 py-1 text-sm font-bold text-card-foreground"
         >
-          🫧 {popped}
+          <Glyph name="ball" className="inline h-4 w-4 align-[-2px]" /> {popped}
         </p>
       </div>
       <div className="text-center">
@@ -323,9 +322,7 @@ export function Pairs() {
                   className="mx-auto h-full w-auto object-contain p-1"
                 />
               ) : (
-                <span className="text-2xl" aria-hidden>
-                  🌻
-                </span>
+                <Glyph name="sunflower" className="mx-auto h-9 w-9" />
               )}
             </Btn>
           );

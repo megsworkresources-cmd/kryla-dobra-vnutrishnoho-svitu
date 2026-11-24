@@ -7,6 +7,7 @@ import { LangToggle } from "./LangToggle";
 import { careCount, growthStage, toggleFavorite, useStore } from "@/lib/store";
 import { sfx } from "@/lib/audio";
 import { MagicStage } from "./MagicStage";
+import { Glyph } from "./Glyph";
 import { useT } from "@/lib/i18n";
 import { castFor, cheerOf, type CharId } from "@/content/characters";
 import { FINAL_GROWTH_STAGE, growthGlyph } from "@/content/growth";
@@ -138,21 +139,18 @@ export function DoneCard({
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {[8, 22, 40, 58, 74, 90].map((l, i) => (
-          <span
+          <Glyph
             key={l}
-            className="absolute top-0 text-xl animate-petal"
+            name="flower"
+            className="absolute top-0 h-5 w-5 animate-petal"
             style={{ left: `${l}%`, animationDelay: `${i * 0.25}s` }}
-          >
-            🌼
-          </span>
+          />
         ))}
       </div>
       <p
         className={`relative z-10 mx-auto mb-3 flex w-fit items-center justify-center gap-2 rounded-full px-3 py-1 text-base backdrop-blur-sm ${night ? "bg-night/60 opacity-80" : "bg-paper/85 text-muted-foreground"}`}
       >
-        <span aria-hidden className="text-2xl">
-          {growthGlyph(stage)}
-        </span>
+        <Glyph emoji={growthGlyph(stage)} className="h-7 w-7" />
         <span>
           {stage === FINAL_GROWTH_STAGE
             ? t("Твій соняшник розквіт! 🌻")

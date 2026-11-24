@@ -34,7 +34,13 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
   useEffect(() => {
     const element = bar.current;
     if (!element) return;
-    const measure = () => setHeight(element.getBoundingClientRect().height);
+    const measure = () => {
+      const next = element.getBoundingClientRect().height;
+      setHeight(next);
+      // Shared with the page: scroll padding and "is this under the bar?" checks
+      // need the measured height, not a guess.
+      document.documentElement.style.setProperty("--bar-h", `${next}px`);
+    };
     measure();
     if (typeof ResizeObserver === "undefined") {
       window.addEventListener("resize", measure);
@@ -73,7 +79,7 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
             <nav
               ref={chips}
               aria-label={t("Вправи цього місця")}
-              className="no-scrollbar mb-2 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1"
+              className="bar-chip-strip no-scrollbar mb-2 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1"
             >
               {sectionStops.map((stop) => {
                 const here = stop.to === path;
@@ -95,7 +101,7 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
             </nav>
           )}
 
-          <div className="mb-1.5 truncate text-center text-xs font-extrabold uppercase tracking-wide">
+          <div className="bar-section-label mb-1.5 truncate text-center text-xs font-extrabold uppercase tracking-wide">
             {t(current?.label ?? "Тихе Місце")}
           </div>
 

@@ -114,7 +114,11 @@
     -webkit-tap-highlight-color: transparent;
   }
   html {
-    scroll-padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+    /* BottomNav measures the real bar into --bar-h, so a scroll that anchors a
+       heading or a reply never parks it behind the activity chips. */
+    scroll-padding-bottom: calc(
+      var(--bar-h, 7rem) + 0.75rem + env(safe-area-inset-bottom, 0px)
+    );
   }
   input,
   textarea {
@@ -773,12 +777,32 @@ textarea:focus-visible {
   }
 }
 
+/* A play surface still scrolls, but pinch-zoom stays available over it: pan-y
+   alone would block text enlargement for the adult reading along. */
+@utility touch-pan-y-zoom {
+  touch-action: pan-y pinch-zoom;
+}
+
+/* Nothing on a play surface is text to select: no iOS long-press callout or
+   image sheet instead of the game. */
+@utility touch-no-callout {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /*
  * Short landscape phones (a rotated phone, not a desktop): the play surface
  * sits beside its controls instead of above them, so the child still reaches
  * everything without scrolling past the fixed bottom bar.
  */
 @media (orientation: landscape) and (max-height: 520px) {
+  /* The bar is a third of the screen height here: keep Back / Map / Next and drop
+     the activity strip and section label, which the map still reaches. */
+  .bar-chip-strip,
+  .bar-section-label {
+    display: none;
+  }
   .play-split {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);

@@ -157,7 +157,10 @@ export function Practice({
     if (!el) return;
     const timer = window.setTimeout(() => {
       const rect = el.getBoundingClientRect();
-      const barClearance = 88;
+      const measured = Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--bar-h"),
+      );
+      const barClearance = Number.isFinite(measured) && measured > 0 ? measured : 88;
       const readable = rect.top >= 0 && rect.bottom <= window.innerHeight - barClearance;
       if (readable) return;
       el.scrollIntoView({

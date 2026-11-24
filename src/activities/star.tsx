@@ -102,7 +102,7 @@ export function MyStar() {
       <div className="play-split flex flex-col gap-3">
         <div
           ref={sky}
-          className="night-card relative h-[min(54svh,28rem)] min-h-[9rem] touch-pan-y overflow-hidden bg-night [@media(max-height:620px)]:h-[min(30svh,13rem)] [@media(orientation:landscape)_and_(max-height:520px)]:h-[calc(100dvh-12rem)] [@media(orientation:landscape)_and_(max-height:520px)]:min-h-[8.5rem]"
+          className="night-card touch-no-callout relative h-[min(54svh,28rem)] min-h-[9rem] touch-pan-y-zoom select-none overflow-hidden bg-night [@media(max-height:620px)]:h-[min(30svh,13rem)] [@media(orientation:landscape)_and_(max-height:520px)]:h-[calc(100dvh-12rem)] [@media(orientation:landscape)_and_(max-height:520px)]:min-h-[8.5rem]"
           data-no-tap
         >
           <div
@@ -170,19 +170,20 @@ export function MyStar() {
             aria-pressed={picked === "me"}
             aria-label={t("Моя зоря: тягни, щоб посунути, або пересувай стрілками")}
             onPointerDown={(event) => {
+              if (event.isPrimary === false) return;
               event.currentTarget.setPointerCapture(event.pointerId);
               start.current = { x: event.clientX, y: event.clientY };
               setDrag({ dx: 0, dy: 0 });
             }}
             onPointerMove={(event) => {
-              if (!start.current) return;
+              if (!start.current || event.isPrimary === false) return;
               setDrag({
                 dx: event.clientX - start.current.x,
                 dy: event.clientY - start.current.y,
               });
             }}
             onPointerUp={(event) => {
-              if (!start.current) return;
+              if (!start.current || event.isPrimary === false) return;
               const travelled =
                 Math.abs(event.clientX - start.current.x) +
                 Math.abs(event.clientY - start.current.y);

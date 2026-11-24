@@ -9,6 +9,7 @@ import { pageHead } from "@/content/journeys";
 import { chime, sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
+import { isTap, startPress, type Press } from "@/lib/press";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Counting, Melody, Patterns } from "@/activities/games";
 import { CloudCreatures, Fireflies, SunflowerPuzzle } from "@/activities/playful";
@@ -356,7 +357,7 @@ export function Stars() {
   const t = useT();
   const [stars, setStars] = useState<{ x: number; y: number }[]>([]);
   const box = useRef<HTMLDivElement>(null);
-  const press = useRef<{ x: number; y: number } | null>(null);
+  const press = useRef<Press>(null);
   const timers = useRef<number[]>([]);
   const [active, setActive] = useState<number | null>(null);
   const stop = () => {
@@ -410,14 +411,13 @@ export function Stars() {
       <div
         ref={box}
         onPointerDown={(e) => {
-          press.current = { x: e.clientX, y: e.clientY };
+          press.current = startPress(e);
         }}
         onPointerUp={(e) => {
           const from = press.current;
           press.current = null;
-          if (!from) return;
           // A finger that travelled was scrolling the page, not drawing a constellation.
-          if (Math.abs(e.clientX - from.x) + Math.abs(e.clientY - from.y) > 10) return;
+          if (!isTap(from, e)) return;
           add(e);
         }}
         onPointerCancel={() => {
@@ -436,7 +436,7 @@ export function Stars() {
         data-no-tap
         role="button"
         aria-label={t("Нічне небо для зірок")}
-        className="night-card relative h-[50vh] cursor-crosshair touch-pan-y overflow-hidden bg-night"
+        className="night-card touch-no-callout relative h-[50vh] cursor-crosshair touch-pan-y-zoom select-none overflow-hidden bg-night"
       >
         <svg
           className="absolute inset-0 h-full w-full"

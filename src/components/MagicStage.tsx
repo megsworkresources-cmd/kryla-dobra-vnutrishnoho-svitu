@@ -103,14 +103,20 @@ export function MagicStage({
         </Btn>
       </div>
       {mode === "trail" ? (
+        // A tracing strip, not a scrolling one: leading a finger along a path moves
+        // up and down, so the page must not take the gesture away mid-stroke. The
+        // numbered steps stay tappable, and the page still scrolls around it.
         <div
-          className="relative h-48 touch-pan-y overflow-hidden rounded-lg bg-sage/30"
-          onPointerDown={() => setDragging(true)}
+          className="relative h-48 touch-none select-none overflow-hidden rounded-lg bg-sage/30"
+          onPointerDown={(event) => {
+            if (event.isPrimary === false) return;
+            setDragging(true);
+          }}
           onPointerUp={() => setDragging(false)}
           onPointerCancel={() => setDragging(false)}
           onPointerLeave={() => setDragging(false)}
           onPointerMove={(event) => {
-            if (!dragging) return;
+            if (!dragging || event.isPrimary === false) return;
             const rect = event.currentTarget.getBoundingClientRect();
             const x = ((event.clientX - rect.left) / rect.width) * 100;
             const y = ((event.clientY - rect.top) / rect.height) * 100;

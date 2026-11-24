@@ -8,6 +8,7 @@ import { PUDDLES, type Bi } from "@/content/adventures.i18n";
 import { chime } from "@/lib/audio";
 import { markDone } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
+import { isTap, startPress, type Press } from "@/lib/press";
 
 export const Route = createFileRoute("/puddles")({
   head: () =>
@@ -28,7 +29,7 @@ function Puddles() {
   // introduction folds away after the first drop.
   const [started, setStarted] = useState(false);
   const id = useRef(0);
-  const press = useRef<{ x: number; y: number } | null>(null);
+  const press = useRef<Press>(null);
   const finished = useRef(false);
   const timers = useRef<number[]>([]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
@@ -90,14 +91,13 @@ function Puddles() {
             tabIndex={0}
             aria-label={t("Калюжка: торкнися, щоб упала крапля")}
             onPointerDown={(e) => {
-              press.current = { x: e.clientX, y: e.clientY };
+              press.current = startPress(e);
             }}
             onPointerUp={(e) => {
               const from = press.current;
               press.current = null;
-              if (!from) return;
               // A finger that travelled was scrolling the page, not asking for rain.
-              if (Math.abs(e.clientX - from.x) + Math.abs(e.clientY - from.y) > 10) return;
+              if (!isTap(from, e)) return;
               drop(e);
             }}
             onPointerCancel={() => {
@@ -110,10 +110,11 @@ function Puddles() {
                 addDrop();
               }
             }}
-            className="play-media play-media-tight relative mx-auto aspect-[4/3] w-full max-w-xl cursor-pointer touch-pan-y overflow-hidden rounded-[45%_55%_50%_50%] shadow-soft focus-visible:ring-4 focus-visible:ring-ring [@media(max-height:600px)]:max-h-[32dvh]"
+            className="play-media play-media-tight touch-no-callout relative mx-auto aspect-[4/3] w-full max-w-xl cursor-pointer touch-pan-y-zoom select-none overflow-hidden rounded-[45%_55%_50%_50%] shadow-soft focus-visible:ring-4 focus-visible:ring-ring [@media(max-height:600px)]:max-h-[32dvh]"
           >
             <img
               src={placeImage("clouds")}
+              draggable={false}
               alt=""
               className="h-full w-full object-cover opacity-80"
             />

@@ -177,7 +177,7 @@ export function CloudCreatures() {
         {t("Прокинулося {n} з {total}", { n: awake, total: CREATURES.length })}
       </p>
       <div
-        className="night-card relative h-[min(56svh,30rem)] min-h-72 touch-pan-y overflow-hidden bg-gradient-to-b from-sky/40 via-paper to-honey/30"
+        className="night-card touch-no-callout relative h-[min(56svh,30rem)] min-h-72 touch-pan-y-zoom select-none overflow-hidden bg-gradient-to-b from-sky/40 via-paper to-honey/30"
         data-no-tap
       >
         <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
@@ -203,6 +203,7 @@ export function CloudCreatures() {
                   aria-label={t("Хмарка {n}", { n: CREATURES.indexOf(creature) + 1 })}
                   aria-pressed={isMoved}
                   onPointerDown={(event) => {
+                    if (event.isPrimary === false) return;
                     event.currentTarget.setPointerCapture(event.pointerId);
                     drag.current = {
                       id: creature.id,
@@ -212,7 +213,7 @@ export function CloudCreatures() {
                   }}
                   onPointerMove={(event) => {
                     const start = drag.current;
-                    if (!start || start.id !== creature.id) return;
+                    if (!start || start.id !== creature.id || event.isPrimary === false) return;
                     const dxLive = event.clientX - start.x;
                     const dyLive = event.clientY - start.y;
                     if (Math.abs(dxLive) + Math.abs(dyLive) < 12) return;
@@ -221,7 +222,7 @@ export function CloudCreatures() {
                   onPointerUp={(event) => {
                     const start = drag.current;
                     drag.current = null;
-                    if (!start || start.id !== creature.id) return;
+                    if (!start || start.id !== creature.id || event.isPrimary === false) return;
                     const travelled =
                       Math.abs(event.clientX - start.x) + Math.abs(event.clientY - start.y);
                     if (travelled > 24) {
@@ -246,6 +247,9 @@ export function CloudCreatures() {
                     isMoved ? "pointer-events-none" : ""
                   }`}
                   style={{
+                    // The cloud is the drag handle, so it claims both axes; the card
+                    // around it still scrolls the page.
+                    touchAction: "none",
                     transform: isMoved
                       ? "translate(0, -160%) scale(.9)"
                       : `translate(${dx}px, ${dy}px)`,

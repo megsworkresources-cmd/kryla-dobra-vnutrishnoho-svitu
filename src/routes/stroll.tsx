@@ -6,6 +6,7 @@ import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { STROLL, type Bi } from "@/content/adventures.i18n";
 import { chime } from "@/lib/audio";
+import { speak } from "@/lib/speak";
 import { markDone } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
 
@@ -30,21 +31,28 @@ function Stroll() {
   const tap = (k: number) => {
     chime(NOTES[k] ?? 523);
     setOpen(k);
+    const s = STROLL.spots[k];
+    const next = found.includes(k) ? found : [...found, k];
+    const complete = next.length === STROLL.spots.length;
+    if (s) speak(L(complete ? STROLL.reflect : s.text), { who: "marko" });
     if (!found.includes(k)) {
-      const next = [...found, k];
       setFound(next);
-      if (next.length === STROLL.spots.length) markDone("stroll");
+      if (complete) markDone("stroll");
     }
   };
   const spot = open !== null ? STROLL.spots[open] : undefined;
   return (
     <Scene title="Повільна прогулянка" back="/world" compact>
-      <div className="space-y-4">
-        <CharacterSay
-          who="marko"
-          text={spot ? L(spot.text) : all ? L(STROLL.reflect) : L(STROLL.intro)}
-          action="look"
-        />
+      <div className="space-y-3">
+        {found.length > 0 && (
+          <p
+            role="status"
+            aria-live="polite"
+            className={`flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug ${all ? "text-ink" : "text-muted-foreground"}`}
+          >
+            {all ? L(STROLL.reflect) : spot ? L(spot.text) : ""}
+          </p>
+        )}
         <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft">
           <img src={placeImage("meadow")} alt="" className="h-full w-full object-cover" />
           {STROLL.spots.map((s, k) => (
@@ -66,6 +74,7 @@ function Stroll() {
         <p className="text-center text-sm" aria-live="polite">
           {t("Знайдено див: {n} із {m}", { n: found.length, m: STROLL.spots.length })}
         </p>
+        {found.length === 0 && <CharacterSay who="marko" text={L(STROLL.intro)} action="look" />}
         <div className="paper-card space-y-2 p-4">
           <p>{L(STROLL.move)}</p>
           {all && (

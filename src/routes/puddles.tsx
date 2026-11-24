@@ -6,6 +6,7 @@ import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { PUDDLES, type Bi } from "@/content/adventures.i18n";
 import { chime } from "@/lib/audio";
+import { speak } from "@/lib/speak";
 import { markDone } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
 
@@ -24,10 +25,28 @@ function Puddles() {
   const L = (x: Bi) => (lang === "en" ? x.en : x.uk);
   const [rings, setRings] = useState<{ id: number; x: number; y: number }[]>([]);
   const [drops, setDrops] = useState(0);
+  // The puddle comes first so it is on screen from the start; the spoken
+  // introduction folds away after the first drop.
+  const [started, setStarted] = useState(false);
   const id = useRef(0);
+  const finished = useRef(false);
   const timers = useRef<number[]>([]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
   const done = drops >= GOAL;
+
+  const addDrop = () => {
+    setStarted(true);
+    setDrops((d) => {
+      const next = d + 1;
+      // The ref keeps the closing line spoken once, even if React replays the update.
+      if (next === GOAL && !finished.current) {
+        finished.current = true;
+        markDone("puddles");
+        speak(L(PUDDLES.done), { who: "olenka" });
+      }
+      return next;
+    });
+  };
 
   const drop = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -40,20 +59,19 @@ function Puddles() {
     timers.current.push(
       window.setTimeout(() => setRings((rs) => rs.filter((q) => q.id !== ring.id)), 1200),
     );
-    setDrops((d) => {
-      if (d + 1 === GOAL) markDone("puddles");
-      return d + 1;
-    });
+    addDrop();
   };
 
   return (
     <Scene title="Калюжки" back="/world" compact>
-      <div className="space-y-4">
-        <CharacterSay
-          who="olenka"
-          text={done ? L(PUDDLES.done) : L(PUDDLES.intro)}
-          mood={done ? "cheer" : "talk"}
-        />
+      <div className="space-y-3">
+        <p
+          role="status"
+          aria-live="polite"
+          className={`flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug ${done ? "text-ink" : "text-muted-foreground"}`}
+        >
+          {done ? L(PUDDLES.done) : t("Крапель: {n} із {m}", { n: Math.min(drops, GOAL), m: GOAL })}
+        </p>
         <div
           role="button"
           tabIndex={0}
@@ -63,10 +81,7 @@ function Puddles() {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               chime(440);
-              setDrops((d) => {
-                if (d + 1 === GOAL) markDone("puddles");
-                return d + 1;
-              });
+              addDrop();
             }
           }}
           className="relative mx-auto aspect-[4/3] w-full max-w-xl cursor-pointer touch-none overflow-hidden rounded-[45%_55%_50%_50%] shadow-soft focus-visible:ring-4 focus-visible:ring-ring"
@@ -85,16 +100,21 @@ function Puddles() {
             />
           ))}
         </div>
-        <p className="text-center text-sm" aria-live="polite">
-          {t("Крапель: {n} із {m}", { n: Math.min(drops, GOAL), m: GOAL })}
-        </p>
         {done && (
           <div className="flex justify-center">
-            <Btn variant="soft" onClick={() => setDrops(0)}>
+            <Btn
+              variant="soft"
+              onClick={() => {
+                finished.current = false;
+                setDrops(0);
+                setStarted(false);
+              }}
+            >
               {t("Ще раз")}
             </Btn>
           </div>
         )}
+        {!started && <CharacterSay who="olenka" text={L(PUDDLES.intro)} mood="talk" />}
         <section className="paper-card space-y-2 p-4">
           <h2 className="font-display text-lg font-bold">{t("Без екрана")}</h2>
           <p>{L(PUDDLES.away)}</p>

@@ -31,7 +31,12 @@ export function JourneyActivity({
 }) {
   const C = ACTIVITIES[place][id];
   // The breathing exercises draw their own large flower and sea, so no second motif.
-  const ownVisual = place === "meadow" && (id === "flower" || id === "wave");
+  // These exercises draw their own large picture, so a second motif above it would be noise.
+  const ownVisual =
+    (place === "meadow" && (id === "flower" || id === "wave" || id === "square")) ||
+    (place === "clouds" && id === "jar") ||
+    (place === "studio" && id === "heart") ||
+    (place === "sky" && id === "star");
   return (
     <Scene
       title={title}

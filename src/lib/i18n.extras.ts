@@ -157,6 +157,135 @@ export const EXTRAS: Record<string, string> = {
     "You have found where it lives. Now let it go with the cloud.",
   "Ти помітив, що вона живе {place}. Помічене вже не керує тобою так, як непомічене.":
     "You noticed it lives {place}. Noticed, it no longer steers you the way it did unseen.",
+
+  /* Square breathing */
+  "Дихання по квадрату": "Square breathing",
+  "Чотири сторони — чотири подихи": "Four sides — four breaths",
+  "1–2 хв": "1–2 min",
+  "Квадрат дихання": "Breathing square",
+  "Коло {i} з {n}": "Lap {i} of {n}",
+  "Сторона {i} з 4 · {s} с": "Side {i} of 4 · {s} s",
+  "Кожна сторона — один спокійний вдих або видих.": "Each side is one calm breath in or out.",
+  "Не затримуй подих. Якщо темп незручний — дихай звичайно.":
+    "Never hold your breath. If the pace doesn’t suit you, just breathe as usual.",
+  "Натисни, коли будеш готовий.": "Tap when you are ready.",
+  "Кожна сторона — один спокійний вдих або видих. Подих не затримуй.":
+    "Each side is one calm breath in or out. Never hold the breath.",
+  "Чотири кола пройдено. Квадрат можна згадати навіть заплющивши очі.":
+    "Four laps done. You can bring the square back to mind even with your eyes closed.",
+  "Веди пальчиком по квадрату. Вдих — рука йде однією стороною, видих — наступною.":
+    "Trace the square with your finger. Breathe in along one side, out along the next.",
+  "Погляд іде по стороні — і подих іде разом із ним. Не поспішай, квадрат нікуди не дінеться.":
+    "Let your eyes travel along the side and your breath travel with them. There’s no rush — the square isn’t going anywhere.",
+  "Квадрат лише підказує ритм. Комфорт важливіший за точність: якщо хочеться вдихнути раніше — так і роби.":
+    "The square only suggests a rhythm. Comfort matters more than accuracy: if you want to breathe in sooner, do that.",
+
+  /* The magic jar */
+  "Чарівна банка": "The magic jar",
+  "Відклади турботу на потім": "Set a worry aside for later",
+  "Банка з турботою": "A jar holding a worry",
+  "Порожня чарівна банка": "An empty magic jar",
+  "Що сьогодні найважче?": "What feels hardest today?",
+  "Обери одне — або скажи своїми словами. Це не збережеться на пристрої.":
+    "Choose one — or put it in your own words. Nothing is saved on this device.",
+  Урок: "A lesson",
+  Сварка: "An argument",
+  "Моя турбота своїми словами": "My worry in my own words",
+  "Наприклад: не хочу відповідати біля дошки": "For example: I don’t want to answer at the board",
+  "Покласти в банку": "Put it in the jar",
+  "Банка тримає це для тебе.": "The jar is holding this for you.",
+  "Вона не забирає почуття назавжди — тільки дає перерву. Турбота почекає в банці, поки в тебе є сили на щось інше.":
+    "It doesn’t take the feeling away for good — it gives you a break. The worry can wait in the jar while you have strength for something else.",
+  "Коли відкриємо банку?": "When shall we open the jar?",
+  "Не сьогодні": "Not today",
+  "Коли захочу": "When I want to",
+  "Обидві відповіді — слушні. Банку можна відкрити й пізніше, і зовсім скоро.":
+    "Both answers are fine. You can open the jar later, or quite soon.",
+  "Банка стоїть тихо й нікуди не поспішає. Повернешся до неї, коли сам захочеш.":
+    "The jar sits quietly and is in no hurry. Come back to it whenever you choose.",
+
+  /* How is your heart today? */
+  "Як твоє серденько?": "How is your heart?",
+  "Поміть почуття й подивись, що допомагає": "Notice the feeling and see what helps",
+  "Як твоє серденько сьогодні?": "How is your heart today?",
+  "Серце, яке показує, як тобі зараз": "A heart that shows how you feel right now",
+  "Немає неправильних почуттів — кожне щось розповідає.":
+    "There are no wrong feelings — each one tells you something.",
+  "Немає неправильних почуттів. Можна обрати кілька — і нічого не пояснювати.":
+    "There are no wrong feelings. You can choose several — and nothing needs explaining.",
+  "Кілька почуттів одночасно — це нормально. Вони всі справжні й усі твої.":
+    "Several feelings at once is normal. They are all real, and all yours.",
+  Радісно: "Happy",
+  Спокійно: "Calm",
+  Тривожно: "Uneasy",
+  Злюся: "Angry",
+  "Не знати — теж відповідь. Іноді почуттю ще потрібен час, щоб отримати назву.":
+    "Not knowing is an answer too. Sometimes a feeling needs time before it has a name.",
+  "Що може допомогти": "What may help",
+  "Побути тихо одну хвилинку": "Stay quiet for a minute",
+  "Розказати дорослому": "Tell a grown-up",
+  "Подихати з квіткою": "Breathe with the flower",
+  "Серденько почуте. До нього можна повертатися стільки разів, скільки захочеш.":
+    "Your heart has been heard. You can come back to it as many times as you like.",
+
+  /* Firefly catcher */
+  Світлячки: "Firefly Catcher",
+  "Світлячок {n}": "Firefly {n}",
+  "Світиться {n} з {total}": "Lit {n} of {total}",
+  "Теплі вогники в нічному лісі. Торкайся й дивись, як вони світяться.":
+    "Warm lights in a night forest. Touch them and watch them glow.",
+  "Усе небо світиться. Ти нікуди не поспішав — і встиг скрізь.":
+    "The whole sky is glowing. You never hurried — and you still got everywhere.",
+  "Запалити спочатку": "Light them again",
+
+  /* Cloud creatures */
+  "Хмарні звірята": "Cloud Creatures",
+  "Хмарка {n}": "Cloud {n}",
+  "Прокинулося {n} з {total}": "Awake {n} of {total}",
+  "Розсувай хмарки — під ними хтось спить. Можна тягнути пальцем або торкнутися.":
+    "Slide the clouds aside — someone is sleeping under them. You can drag with a finger or just tap.",
+  "Ти розбудив(-ла) всіх, хто ховався в хмарках. Їм було приємно познайомитися.":
+    "You woke everyone who was hiding in the clouds. They were glad to meet you.",
+  "Я черепашка. Мені добре в тишині.": "I’m a turtle. I like it quiet.",
+  "Я лисичка. Люблю гратися в хованки.": "I’m a little fox. I love playing hide-and-seek.",
+  "Я бджілка. Люблю квіти й тихе гудіння.": "I’m a bee. I love flowers and a soft hum.",
+  "Я білочка. Збираю зернятка на зиму.": "I’m a squirrel. I gather seeds for winter.",
+  "Знову сховати": "Hide them again",
+
+  /* The sunflower puzzle */
+  "Соняшникова мозаїка": "The Sunflower Puzzle",
+  "Чотири частини": "Four pieces",
+  "Дев'ять частин": "Nine pieces",
+  "Частина {n}": "Piece {n}",
+  "Правильно складено: {n} з {total}": "Pieces in place: {n} of {total}",
+  "Складно! 🌻": "Done! 🌻",
+  "Торкнися двох частин — і вони поміняються місцями. Можна будь-коли почати спочатку.":
+    "Touch two pieces and they swap places. You can start over whenever you like.",
+  "Картина зійшлася! Кожна частинка знайшла своє місце.":
+    "The picture fits together! Every piece found its place.",
+  "Перемішати знову": "Shuffle again",
+  "Дев’ять спокійних ігор для сенсорного екрана: музика, пам'ять, візерунки, лічба, світлячки, хмаринки й мозаїка.":
+    "Nine calm games for a touch screen: music, memory, patterns, counting, fireflies, clouds and a puzzle.",
+
+  /* My star */
+  "Моя зоря": "My star",
+  "Дай зорі ім’я й загадай бажання": "Name your star and make a wish",
+  "Тягни зорю пальцем — вона посунеться.": "Drag your star with a finger — it will move.",
+  "Моя зоря: тягни, щоб посунути, або пересувай стрілками":
+    "My star: drag to move it, or use the arrow keys",
+  "Твоя зоря": "Your star",
+  "Ще без імені": "No name yet",
+  "Тут з’явиться твоє бажання.": "Your wish will appear here.",
+  "Світло: {n}%": "Light: {n}%",
+  "росте, коли ти поливаєш соняшник": "it grows when you water the sunflower",
+  "Ім’я зорі": "Star name",
+  "Наприклад: Мрія": "For example: Dream",
+  "Моє бажання": "My wish",
+  "Напиши кілька слів — це бачить лише ти": "Write a few words — only you can see them",
+  "Зоря живе лише на цьому пристрої. Ніхто інший її не бачить.":
+    "This star lives on this device only. Nobody else can see it.",
+  "Кожна зоря — це чиясь надія. Твоя теж тут. Бажання не обов’язково має бути великим.":
+    "Every star is someone’s hope. Yours is here too. A wish doesn’t have to be big.",
 };
 
 /**

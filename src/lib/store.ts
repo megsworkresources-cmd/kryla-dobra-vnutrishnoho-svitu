@@ -33,6 +33,10 @@ export interface AppState {
   textSize: "normal" | "large" | "xl";
   careSteps: number; // daily waterings that grew the sunflower
   wateredOn: string | null; // local day (YYYY-MM-DD) of the last watering
+  starName: string; // the child's own star, kept on this device only
+  starWish: string;
+  starX: number; // percent position inside the sky
+  starY: number;
 }
 
 const KEY = "tyhe-mistse-v1";
@@ -62,6 +66,10 @@ const DEFAULTS: AppState = {
   textSize: "normal",
   careSteps: 0,
   wateredOn: null,
+  starName: "",
+  starWish: "",
+  starX: 50,
+  starY: 46,
 };
 
 /** Read current state outside React (audio engine). */
@@ -244,6 +252,17 @@ export const markVisit = (place: string) =>
     ...s,
     visits: { ...s.visits, [place]: { n: (s.visits[place]?.n ?? 0) + 1, last: Date.now() } },
   }));
+
+const clamped = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, Number.isFinite(value) ? value : min));
+
+/** The child's star is private to this device; its position stays inside the sky. */
+export const setStarName = (name: string) => update((s) => ({ ...s, starName: name.slice(0, 24) }));
+
+export const setStarWish = (wish: string) => update((s) => ({ ...s, starWish: wish.slice(0, 90) }));
+
+export const moveStar = (x: number, y: number) =>
+  update((s) => ({ ...s, starX: clamped(x, 8, 92), starY: clamped(y, 8, 92) }));
 
 /** Wipes only progress records (not settings or drawings). */
 export const resetProgress = () => {

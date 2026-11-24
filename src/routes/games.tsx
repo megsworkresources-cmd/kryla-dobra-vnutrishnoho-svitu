@@ -11,12 +11,13 @@ import { useT } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Counting, Melody, Patterns } from "@/activities/games";
+import { CloudCreatures, Fireflies, SunflowerPuzzle } from "@/activities/playful";
 
 export const Route = createFileRoute("/games")({
   head: () =>
     pageHead(
       "Ігри",
-      "Шість спокійних ігор для сенсорного екрана: музика, пам'ять, візерунки й лічба.",
+      "Дев’ять спокійних ігор для сенсорного екрана: музика, пам'ять, візерунки, лічба, світлячки, хмаринки й мозаїка.",
     ),
   component: Games,
 });
@@ -28,6 +29,9 @@ const GAMES = [
   { id: "melody", icon: "🎶", name: "Повтори мелодію" },
   { id: "patterns", icon: "🧩", name: "Тихі візерунки" },
   { id: "counting", icon: "🌠", name: "Порахуй зірочки" },
+  { id: "fireflies", icon: "✨", name: "Світлячки" },
+  { id: "clouds", icon: "☁️", name: "Хмарні звірята" },
+  { id: "puzzle", icon: "🌻", name: "Соняшникова мозаїка" },
 ] as const;
 type GameId = (typeof GAMES)[number]["id"];
 
@@ -47,14 +51,14 @@ function Games() {
           }}
         >
           <TabsList
-            className="grid h-auto grid-cols-3 items-stretch gap-2 bg-transparent p-0 sm:grid-cols-6"
+            className="flex h-auto w-full items-stretch gap-2 overflow-x-auto bg-transparent p-0 pb-1"
             aria-label={t("Ігри")}
           >
             {GAMES.map((g) => (
               <TabsTrigger
                 key={g.id}
                 value={g.id}
-                className={`paper-card flex h-full min-w-0 flex-col items-center justify-center gap-1 whitespace-normal p-2 text-sm leading-tight font-bold sm:p-3 sm:text-base transition active:scale-95 ${game === g.id ? "ring-4 ring-ring" : ""}`}
+                className={`paper-card flex h-full w-24 shrink-0 flex-col items-center justify-center gap-1 whitespace-normal p-2 text-xs leading-tight font-bold transition active:scale-95 ${game === g.id ? "ring-4 ring-ring" : ""}`}
               >
                 <span className="text-2xl sm:text-3xl" aria-hidden>
                   {g.icon}
@@ -80,6 +84,15 @@ function Games() {
           </TabsContent>
           <TabsContent value="counting">
             <Counting />
+          </TabsContent>
+          <TabsContent value="fireflies">
+            <Fireflies />
+          </TabsContent>
+          <TabsContent value="clouds">
+            <CloudCreatures />
+          </TabsContent>
+          <TabsContent value="puzzle">
+            <SunflowerPuzzle />
           </TabsContent>
         </Tabs>
         <p className="text-center text-sm text-muted-foreground">

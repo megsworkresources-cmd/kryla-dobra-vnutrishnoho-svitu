@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Btn, Scene } from "@/components/Scene";
+import { DoneCard, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
@@ -34,13 +34,24 @@ function Stroll() {
     const s = STROLL.spots[k];
     const next = found.includes(k) ? found : [...found, k];
     const complete = next.length === STROLL.spots.length;
-    if (s) speak(L(complete ? STROLL.reflect : s.text), { who: "marko" });
+    if (s) speak(L(s.text), { who: "marko" });
     if (!found.includes(k)) {
       setFound(next);
       if (complete) markDone("stroll");
     }
   };
   const spot = open !== null ? STROLL.spots[open] : undefined;
+  const restart = () => {
+    setFound([]);
+    setOpen(null);
+  };
+  // The finish uses the shared celebration card, like every other activity.
+  if (all)
+    return (
+      <Scene title="Повільна прогулянка" back="/world" compact>
+        <DoneCard who="marko" text={L(STROLL.reflect)} again={restart} />
+      </Scene>
+    );
   return (
     <Scene title="Повільна прогулянка" back="/world" compact>
       <div className="space-y-3">
@@ -48,9 +59,9 @@ function Stroll() {
           <p
             role="status"
             aria-live="polite"
-            className={`flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug ${all ? "text-ink" : "text-muted-foreground"}`}
+            className="flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug text-muted-foreground"
           >
-            {all ? L(STROLL.reflect) : spot ? L(spot.text) : ""}
+            {spot ? L(spot.text) : ""}
           </p>
         )}
         <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft [@media(max-height:600px)]:max-h-[32dvh]">
@@ -77,17 +88,6 @@ function Stroll() {
         {found.length === 0 && <CharacterSay who="marko" text={L(STROLL.intro)} action="look" />}
         <div className="paper-card space-y-2 p-4">
           <p>{L(STROLL.move)}</p>
-          {all && (
-            <Btn
-              variant="soft"
-              onClick={() => {
-                setFound([]);
-                setOpen(null);
-              }}
-            >
-              {t("Ще раз")}
-            </Btn>
-          )}
         </div>
       </div>
     </Scene>

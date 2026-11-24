@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Btn, Scene } from "@/components/Scene";
+import { Btn, DoneCard, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
@@ -55,9 +55,8 @@ function Count() {
     if (v === round.n) {
       chime(600);
       const next = i + 1;
-      const finished = next >= totalRounds;
-      setMsg(finished ? COUNT.done : COUNT.right);
-      speak(L(finished ? COUNT.done : COUNT.right), { who: "taras" });
+      setMsg(COUNT.right);
+      speak(L(COUNT.right), { who: "taras" });
       setI(next);
     } else {
       chime(300);
@@ -66,6 +65,20 @@ function Count() {
     }
   };
 
+  const restart = () => {
+    setI(0);
+    setPlay((p) => p + 1);
+    setMsg(COUNT.intro);
+    setStarted(false);
+  };
+  // The finish uses the shared celebration card, like every other activity.
+  if (done)
+    return (
+      <Scene title="Уважний луг" back="/world" compact>
+        <DoneCard who="taras" text={L(COUNT.done)} again={restart} />
+      </Scene>
+    );
+
   return (
     <Scene title="Уважний луг" back="/world" compact>
       <div className="space-y-3">
@@ -73,55 +86,39 @@ function Count() {
           <p
             role="status"
             aria-live="polite"
-            className={`flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug ${done ? "text-ink" : "text-muted-foreground"}`}
+            className="flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug text-muted-foreground"
           >
-            {done ? L(COUNT.done) : L(msg)}
+            {L(msg)}
           </p>
         )}
-        {!done && (
-          <>
-            <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft [@media(max-height:600px)]:max-h-[32dvh]">
-              <img src={placeImage("meadow")} alt="" className="h-full w-full object-cover" />
-              {items.map((it, k) => (
-                <span
-                  key={k}
-                  aria-hidden
-                  className="absolute -translate-x-1/2 -translate-y-1/2 text-2xl drop-shadow sm:text-3xl"
-                  style={{ left: `${it.x}%`, top: `${it.y}%` }}
-                >
-                  {it.icon}
-                </span>
-              ))}
-            </div>
-            <p className="text-center font-display text-xl font-bold" aria-live="polite">
-              {L(COUNT.ask).replace("{x}", `${round.icon} ${L(round.name)}`)}
-            </p>
-            <div className="flex justify-center gap-3">
-              {countChoices(round.n).map((v) => (
-                <Btn key={v} variant="honey" className="min-w-16 text-xl" onClick={() => answer(v)}>
-                  {v}
-                </Btn>
-              ))}
-            </div>
-            <p className="text-center text-sm">
-              {t("Раунд {n} із {m}", { n: i + 1, m: totalRounds })}
-            </p>
-          </>
-        )}
-        {done && (
-          <div className="flex justify-center">
-            <Btn
-              onClick={() => {
-                setI(0);
-                setPlay((p) => p + 1);
-                setMsg(COUNT.intro);
-                setStarted(false);
-              }}
-            >
-              {t("Ще раз")}
-            </Btn>
+        <>
+          <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft [@media(max-height:600px)]:max-h-[32dvh]">
+            <img src={placeImage("meadow")} alt="" className="h-full w-full object-cover" />
+            {items.map((it, k) => (
+              <span
+                key={k}
+                aria-hidden
+                className="absolute -translate-x-1/2 -translate-y-1/2 text-2xl drop-shadow sm:text-3xl"
+                style={{ left: `${it.x}%`, top: `${it.y}%` }}
+              >
+                {it.icon}
+              </span>
+            ))}
           </div>
-        )}
+          <p className="text-center font-display text-xl font-bold" aria-live="polite">
+            {L(COUNT.ask).replace("{x}", `${round.icon} ${L(round.name)}`)}
+          </p>
+          <div className="flex justify-center gap-3">
+            {countChoices(round.n).map((v) => (
+              <Btn key={v} variant="honey" className="min-w-16 text-xl" onClick={() => answer(v)}>
+                {v}
+              </Btn>
+            ))}
+          </div>
+          <p className="text-center text-sm">
+            {t("Раунд {n} із {m}", { n: i + 1, m: totalRounds })}
+          </p>
+        </>
         {!started && <CharacterSay who="taras" text={L(COUNT.intro)} mood="talk" />}
       </div>
     </Scene>

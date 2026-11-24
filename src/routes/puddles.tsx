@@ -1,12 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Btn, Scene } from "@/components/Scene";
+import { DoneCard, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
 import { placeImage } from "@/content/places";
 import { pageHead } from "@/content/journeys";
 import { PUDDLES, type Bi } from "@/content/adventures.i18n";
 import { chime } from "@/lib/audio";
-import { speak } from "@/lib/speak";
 import { markDone } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
 
@@ -38,11 +37,10 @@ function Puddles() {
     setStarted(true);
     setDrops((d) => {
       const next = d + 1;
-      // The ref keeps the closing line spoken once, even if React replays the update.
+      // The ref keeps completion handled once, even if React replays the update.
       if (next === GOAL && !finished.current) {
         finished.current = true;
         markDone("puddles");
-        speak(L(PUDDLES.done), { who: "olenka" });
       }
       return next;
     });
@@ -62,15 +60,28 @@ function Puddles() {
     addDrop();
   };
 
+  const restart = () => {
+    finished.current = false;
+    setDrops(0);
+    setStarted(false);
+  };
+  // The finish uses the shared celebration card, like every other activity.
+  if (done)
+    return (
+      <Scene title="Калюжки" back="/world" compact>
+        <DoneCard who="olenka" text={L(PUDDLES.done)} again={restart} />
+      </Scene>
+    );
+
   return (
     <Scene title="Калюжки" back="/world" compact>
       <div className="space-y-3">
         <p
           role="status"
           aria-live="polite"
-          className={`flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug ${done ? "text-ink" : "text-muted-foreground"}`}
+          className="flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug text-muted-foreground"
         >
-          {done ? L(PUDDLES.done) : t("Крапель: {n} із {m}", { n: Math.min(drops, GOAL), m: GOAL })}
+          {t("Крапель: {n} із {m}", { n: Math.min(drops, GOAL), m: GOAL })}
         </p>
         <div
           role="button"
@@ -100,20 +111,6 @@ function Puddles() {
             />
           ))}
         </div>
-        {done && (
-          <div className="flex justify-center">
-            <Btn
-              variant="soft"
-              onClick={() => {
-                finished.current = false;
-                setDrops(0);
-                setStarted(false);
-              }}
-            >
-              {t("Ще раз")}
-            </Btn>
-          </div>
-        )}
         {!started && <CharacterSay who="olenka" text={L(PUDDLES.intro)} mood="talk" />}
         <section className="paper-card space-y-2 p-4">
           <h2 className="font-display text-lg font-bold">{t("Без екрана")}</h2>

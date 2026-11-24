@@ -1,12 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Btn, Scene } from "@/components/Scene";
+import { Btn, DoneCard, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
 import { pageHead } from "@/content/journeys";
 import { MAZE, MAZES } from "@/content/play.i18n";
 import type { Bi } from "@/content/adventures.i18n";
 import { chime } from "@/lib/audio";
-import { speak } from "@/lib/speak";
 import { markDone, pick, useStore } from "@/lib/store";
 import { useLang, useT } from "@/lib/i18n";
 import { mazeStep as step, type MazePosition as P } from "@/content/play";
@@ -54,7 +53,6 @@ function Maze() {
     if (n[0] === goal[0] && n[1] === goal[1]) {
       chime(660);
       markDone("maze");
-      speak(L(MAZE.done), { who: "lihtaryk" });
     } else chime(392);
   };
   useEffect(() => {
@@ -74,7 +72,20 @@ function Maze() {
     return () => window.removeEventListener("keydown", k);
   });
 
+  const restart = () => {
+    setPos(find(grid, "S"));
+    setBump(false);
+    setMoved(false);
+  };
   const n = grid[0]?.length ?? 5;
+  // Finishing shows the same celebration card as every other activity, so the
+  // maze ends the way the rest of the world does.
+  if (done)
+    return (
+      <Scene title="Стежка Ліхтарика" back="/world" compact>
+        <DoneCard who="lihtaryk" text={L(MAZE.done)} again={restart} />
+      </Scene>
+    );
   return (
     <Scene title="Стежка Ліхтарика" back="/world" compact>
       <div className="space-y-3">
@@ -82,9 +93,9 @@ function Maze() {
           <p
             role="status"
             aria-live="polite"
-            className={`flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug ${done ? "text-ink" : "text-muted-foreground"}`}
+            className="flex min-h-6 items-center justify-center text-center text-base font-bold leading-snug text-muted-foreground"
           >
-            {done ? L(MAZE.done) : bump ? L(MAZE.bump) : ""}
+            {bump ? L(MAZE.bump) : ""}
           </p>
         )}
         <div
@@ -122,59 +133,45 @@ function Maze() {
             </div>
           ))}
         </div>
-        {done ? (
-          <div className="flex justify-center">
+        {/* One row of four arrows stays reachable on every phone; the maze narrows
+            below 700px of height so both still fit above the fixed nav. */}
+        <>
+          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-4 gap-2">
             <Btn
-              onClick={() => {
-                setPos(find(grid, "S"));
-                setBump(false);
-                setMoved(false);
-              }}
+              variant="soft"
+              className="w-full px-0"
+              aria-label={L(MAZE.up)}
+              onClick={() => move(-1, 0)}
             >
-              {t("Ще раз")}
+              ↑
+            </Btn>
+            <Btn
+              variant="soft"
+              className="w-full px-0"
+              aria-label={L(MAZE.left)}
+              onClick={() => move(0, -1)}
+            >
+              ←
+            </Btn>
+            <Btn
+              variant="soft"
+              className="w-full px-0"
+              aria-label={L(MAZE.down)}
+              onClick={() => move(1, 0)}
+            >
+              ↓
+            </Btn>
+            <Btn
+              variant="soft"
+              className="w-full px-0"
+              aria-label={L(MAZE.right)}
+              onClick={() => move(0, 1)}
+            >
+              →
             </Btn>
           </div>
-        ) : (
-          // One row of four arrows stays reachable on every phone; the maze narrows
-          // below 700px of height so both still fit above the fixed nav.
-          <>
-            <div className="mx-auto grid w-full max-w-[17rem] grid-cols-4 gap-2">
-              <Btn
-                variant="soft"
-                className="w-full px-0"
-                aria-label={L(MAZE.up)}
-                onClick={() => move(-1, 0)}
-              >
-                ↑
-              </Btn>
-              <Btn
-                variant="soft"
-                className="w-full px-0"
-                aria-label={L(MAZE.left)}
-                onClick={() => move(0, -1)}
-              >
-                ←
-              </Btn>
-              <Btn
-                variant="soft"
-                className="w-full px-0"
-                aria-label={L(MAZE.down)}
-                onClick={() => move(1, 0)}
-              >
-                ↓
-              </Btn>
-              <Btn
-                variant="soft"
-                className="w-full px-0"
-                aria-label={L(MAZE.right)}
-                onClick={() => move(0, 1)}
-              >
-                →
-              </Btn>
-            </div>
-            {!moved && <p className="text-center text-sm text-muted-foreground">{L(MAZE.hint)}</p>}
-          </>
-        )}
+          {!moved && <p className="text-center text-sm text-muted-foreground">{L(MAZE.hint)}</p>}
+        </>
         {!moved && (
           <div className="space-y-4 pt-1">
             <CharacterSay who="lihtaryk" text={L(MAZE.intro)} mood="talk" />

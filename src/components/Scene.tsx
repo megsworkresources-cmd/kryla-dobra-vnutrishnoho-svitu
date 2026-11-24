@@ -147,9 +147,8 @@ export function DoneCard({
           </span>
         ))}
       </div>
-      <CharacterSay who={hero} night={night} mood="cheer" size="lg" text={`${t(cheer)} ${text}`} />
       <p
-        className={`mt-3 flex items-center justify-center gap-2 text-base ${night ? "opacity-80" : "text-muted-foreground"}`}
+        className={`relative z-10 mx-auto mb-3 flex w-fit items-center justify-center gap-2 rounded-full px-3 py-1 text-base backdrop-blur-sm ${night ? "bg-night/60 opacity-80" : "bg-paper/85 text-muted-foreground"}`}
       >
         <span aria-hidden className="text-2xl">
           {growthGlyph(stage)}
@@ -160,6 +159,7 @@ export function DoneCard({
             : t("Твоя стадія: {n} з 5", { n: stage })}
         </span>
       </p>
+      <CharacterSay who={hero} night={night} mood="cheer" size="lg" text={`${t(cheer)} ${text}`} />
       <div className="mt-4">
         <MagicStage
           theme={pathname.split("/")[1] ?? "meadow"}

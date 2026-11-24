@@ -8,6 +8,7 @@ import { useStore } from "@/lib/store";
 import { useT } from "@/lib/i18n";
 import { useMediaMotion } from "@/hooks/use-media-motion";
 import { claimVideo, releaseVideo } from "@/lib/video-focus";
+import { primeSilentVideo, whenTouched } from "@/lib/media-unlock";
 
 export type Mood = "talk" | "listen" | "think" | "cheer" | "calm";
 /** Body action the character acts out so the child can copy it. */
@@ -40,15 +41,31 @@ function CharacterLoop({
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(true);
   const [failed, setFailed] = useState(false);
+  // A child's own tap may start the loop that reduced motion (or the device) held back.
+  const [manual, setManual] = useState(false);
+  const manualRef = useRef(false);
+  // A blocked loop waits for a gesture even while its own playback state changes.
+  const retryOff = useRef<(() => void) | null>(null);
+  const wantsVideo = motion || manual;
 
   useEffect(() => {
     setFailed(false);
     setPlaying(true);
+    manualRef.current = false;
+    setManual(false);
   }, [who]);
+
+  useEffect(
+    () => () => {
+      retryOff.current?.();
+      retryOff.current = null;
+    },
+    [],
+  );
 
   useEffect(() => {
     const media = video.current;
-    if (!media || !motion || failed) return;
+    if (!media || !wantsVideo || failed) return;
     let active = true;
     if (playing && !document.hidden) {
       claimVideo(media);
@@ -59,7 +76,18 @@ function CharacterLoop({
             if (!active || document.hidden) media.pause();
           })
           .catch(() => {
-            if (active) setPlaying(false);
+            if (!active) return;
+            setPlaying(false);
+            // Safari only accepts the retry inside a real gesture: the child's next touch.
+            retryOff.current?.();
+            retryOff.current = whenTouched(() => {
+              retryOff.current = null;
+              const el = video.current;
+              if (!el) return;
+              setPlaying(true);
+              claimVideo(el);
+              void el.play().catch(() => {});
+            });
           });
       } catch {
         if (active) setPlaying(false);
@@ -70,7 +98,7 @@ function CharacterLoop({
       media.pause();
       releaseVideo(media);
     };
-  }, [playing, who, motion, failed]);
+  }, [playing, who, wantsVideo, failed]);
 
   useEffect(() => {
     const pause = () => {
@@ -88,21 +116,41 @@ function CharacterLoop({
     };
   }, []);
 
-  if (!motion || failed) {
+  if (!wantsVideo || failed) {
     return (
-      <img
-        key={pulse}
-        src={poster}
-        alt={c.name}
-        className={`${className} w-auto object-contain drop-shadow-md ${imageClass}`}
-      />
+      <span className="relative inline-block">
+        <img
+          key={pulse}
+          src={poster}
+          alt={c.name}
+          className={`${className} w-auto object-contain drop-shadow-md ${imageClass}`}
+        />
+        {!failed && (
+          <button
+            type="button"
+            aria-label={t("Грати відео")}
+            title={t("Грати відео")}
+            onClick={() => {
+              manualRef.current = true;
+              setManual(true);
+              setPlaying(true);
+            }}
+            className="absolute bottom-1 right-1 flex h-11 w-11 items-center justify-center rounded-full bg-card/90 text-card-foreground shadow-soft"
+          >
+            <Play size={16} aria-hidden />
+          </button>
+        )}
+      </span>
     );
   }
 
   return (
     <div className={`relative ${className} aspect-[9/16] overflow-hidden rounded-2xl bg-secondary`}>
       <video
-        ref={video}
+        ref={(el) => {
+          video.current = el;
+          primeSilentVideo(el);
+        }}
         src={CHARACTER_MEDIA[who]}
         poster={poster}
         muted

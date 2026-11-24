@@ -270,6 +270,7 @@ const EN: Record<string, string> = {
   "Обери квітку й посади її на вільному місці.": "Choose a flower and plant it in an empty spot.",
   "Анімована казка": "Animated story",
   "Відео завантажується…": "Video is loading…",
+  "Грати відео": "Play video",
   "Натисни «Грати», щоб продовжити відео.": "Press Play to continue the video.",
   "Відео недоступне. Можна читати казку або спробувати ще раз.":
     "Video is unavailable. You can read the story or try again.",

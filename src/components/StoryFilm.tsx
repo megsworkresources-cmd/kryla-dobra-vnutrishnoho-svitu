@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { Play } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { Btn } from "./Scene";
 import { useMediaMotion } from "@/hooks/use-media-motion";
 import { claimVideo, releaseVideo } from "@/lib/video-focus";
+import { primeSilentVideo, whenTouched } from "@/lib/media-unlock";
 
 /**
  * Silent recorded footage; character narration is managed by the story owner.
@@ -43,10 +45,40 @@ export function StoryFilm({
   const playbackGeneration = useRef(0);
   const [status, setStatus] = useState<"loading" | "ready" | "blocked" | "error">("loading");
   const [duration, setDuration] = useState(0);
+  // The child may start footage that reduced motion held back, or that the device refused.
+  const [manual, setManual] = useState(false);
+  const manualRef = useRef(false);
+  const ownerWanted = useRef(playing);
+  // Waiting for a gesture outlives the playback effect: a blocked film re-runs it.
+  const retryOff = useRef<(() => void) | null>(null);
+  const wantsVideo = motion || manual;
+  const shouldPlay = playing || manual;
+
   useEffect(() => {
+    retryOff.current?.();
+    retryOff.current = null;
     setStatus("loading");
     setDuration(0);
+    manualRef.current = false;
+    setManual(false);
   }, [src]);
+
+  useEffect(
+    () => () => {
+      retryOff.current?.();
+      retryOff.current = null;
+    },
+    [],
+  );
+
+  // The story owner's own pause still stops footage the child started by hand.
+  useEffect(() => {
+    if (ownerWanted.current && !playing) {
+      manualRef.current = false;
+      setManual(false);
+    }
+    ownerWanted.current = playing;
+  }, [playing]);
 
   const ready = Number.isFinite(duration) && duration > 0;
   const partFrom = part && ready ? Math.min(Math.max(part.from, 0), 0.96) * duration : null;
@@ -61,28 +93,34 @@ export function StoryFilm({
     playbackGeneration.current += 1;
     const generation = playbackGeneration.current;
     let active = true;
-    if (playing && motion && !document.hidden) {
+    const play = () => {
       claimVideo(media);
       void media
         .play()
         .then(() => {
-          if (
-            !active ||
-            generation !== playbackGeneration.current ||
-            !playingNow.current ||
-            document.hidden
-          )
-            media.pause();
+          const stillWanted =
+            (playingNow.current || manualRef.current) &&
+            (motion || manualRef.current) &&
+            !document.hidden;
+          if (!active || generation !== playbackGeneration.current || !stillWanted) media.pause();
         })
         .catch(() => {
-          if (active && generation === playbackGeneration.current) {
-            setStatus("blocked");
-            pauseOwner.current();
-          }
+          if (!active || generation !== playbackGeneration.current) return;
+          setStatus("blocked");
+          pauseOwner.current();
+          // iPhone Safari only allows the retry inside a real gesture: the child's next touch.
+          retryOff.current?.();
+          retryOff.current = whenTouched(() => {
+            retryOff.current = null;
+            if (generation !== playbackGeneration.current) return;
+            startByHandRef.current();
+          });
         });
-    } else {
+    };
+    if (shouldPlay && wantsVideo && !document.hidden) play();
+    else {
       media.pause();
-      if (playing && !motion) pauseOwner.current();
+      if (shouldPlay && !wantsVideo) pauseOwner.current();
     }
     return () => {
       active = false;
@@ -90,7 +128,27 @@ export function StoryFilm({
       media.pause();
       releaseVideo(media);
     };
+    // A hand-started film plays from the click itself, so `manual` stays out of the deps
+    // to keep this effect from starting the same recording twice.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, src, motion]);
+
+  /** A real gesture always unlocks playback, including under reduced motion. */
+  const startByHand = () => {
+    const media = video.current;
+    manualRef.current = true;
+    setManual(true);
+    if (!media) return;
+    primeSilentVideo(media);
+    claimVideo(media);
+    setStatus("loading");
+    void media.play().catch(() => {
+      setStatus("blocked");
+      pauseOwner.current();
+    });
+  };
+  const startByHandRef = useRef(startByHand);
+  startByHandRef.current = startByHand;
 
   // A new beat starts its own part of the recording.
   useEffect(() => {
@@ -129,7 +187,11 @@ export function StoryFilm({
         // ignore a seek the browser refuses mid-teardown
       }
     }
-    if (playingNow.current && motion && !document.hidden) {
+    const stillWanted =
+      (playingNow.current || manualRef.current) &&
+      (motion || manualRef.current) &&
+      !document.hidden;
+    if (stillWanted) {
       claimVideo(media);
       const generation = playbackGeneration.current;
       void media
@@ -167,19 +229,22 @@ export function StoryFilm({
   return (
     <>
       <video
-        ref={video}
+        ref={(el) => {
+          video.current = el;
+          primeSilentVideo(el);
+        }}
         src={src}
         poster={poster}
         muted
         onPause={() => {
-          if (playing) pauseOwner.current();
+          if (playingNow.current || manualRef.current) pauseOwner.current();
         }}
         onWaiting={() => setStatus("loading")}
         playsInline
         loop={offset === null}
         preload="metadata"
         className="h-full w-full object-cover"
-        hidden={!motion}
+        hidden={!wantsVideo}
         aria-label={t(label ?? "Анімована казка")}
         onTimeUpdate={keepInsidePart}
         onLoadedMetadata={() => {
@@ -191,7 +256,9 @@ export function StoryFilm({
         onPlaying={() => {
           const media = video.current;
           if (!media) return;
-          if (!playingNow.current || document.hidden || !motion) media.pause();
+          const stillWanted =
+            (playingNow.current || manualRef.current) && (motion || manualRef.current);
+          if (!stillWanted || document.hidden) media.pause();
           else claimVideo(media);
           setStatus("ready");
         }}
@@ -201,14 +268,25 @@ export function StoryFilm({
           onError?.();
         }}
       />
-      {!motion && (
+      {!wantsVideo && (
         <img
           src={poster}
           alt={t(label ?? "Анімована казка")}
           className="h-full w-full object-cover"
         />
       )}
-      {motion && status !== "ready" && !(quiet && status === "blocked") && (
+      {(!wantsVideo || status === "blocked") && (
+        <button
+          type="button"
+          onClick={startByHand}
+          aria-label={t("Грати відео")}
+          title={t("Грати відео")}
+          className="absolute bottom-3 left-1/2 z-20 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-card/90 text-card-foreground shadow-soft transition active:scale-95"
+        >
+          <Play size={20} aria-hidden />
+        </button>
+      )}
+      {wantsVideo && status !== "ready" && !(quiet && status === "blocked") && (
         <div className="absolute inset-x-0 top-0 z-20 bg-card/95 p-3 text-center text-sm text-card-foreground">
           <p role={status === "error" ? "alert" : "status"}>
             {t(

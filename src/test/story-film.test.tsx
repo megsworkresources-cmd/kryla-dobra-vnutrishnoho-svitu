@@ -147,6 +147,30 @@ it("keeps a poster instead of playing when reduced motion is saved", () => {
   expect(screen.getByRole("img")).toHaveAttribute("src", "/test.jpg");
 });
 
+it("lets the child start footage that reduced motion keeps still", () => {
+  update((s) => ({ ...s, reduceMotion: true }));
+  const { container } = render(
+    <StoryFilm src="/test.mp4" poster="/test.jpg" playing={false} onPause={vi.fn()} />,
+  );
+  expect(HTMLMediaElement.prototype.play).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Грати відео" }));
+  expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(1);
+  // The poster gives way to the recording the child asked for.
+  expect(container.querySelector("video")).not.toHaveAttribute("hidden");
+});
+
+it("retries a recording that the device refused to start on the next touch", async () => {
+  vi.mocked(HTMLMediaElement.prototype.play).mockRejectedValueOnce(
+    new DOMException("Blocked", "NotAllowedError"),
+  );
+  render(<StoryFilm src="/test.mp4" poster="/test.jpg" playing onPause={vi.fn()} />);
+  await screen.findByText("Натисни «Грати», щоб продовжити відео.");
+  expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(1);
+  window.dispatchEvent(new Event("pointerdown"));
+  await act(async () => {});
+  expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2);
+});
+
 it("does not restart a loop after pagehide even before its owner rerenders", () => {
   const { container } = render(
     <StoryFilm src="/test.mp4" poster="/test.jpg" playing startAt={0} onPause={vi.fn()} />,

@@ -177,7 +177,7 @@ export function CloudCreatures() {
         {t("Прокинулося {n} з {total}", { n: awake, total: CREATURES.length })}
       </p>
       <div
-        className="night-card relative h-[min(56svh,30rem)] min-h-72 touch-none overflow-hidden bg-gradient-to-b from-sky/40 via-paper to-honey/30"
+        className="night-card relative h-[min(56svh,30rem)] min-h-72 touch-pan-y overflow-hidden bg-gradient-to-b from-sky/40 via-paper to-honey/30"
         data-no-tap
       >
         <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">

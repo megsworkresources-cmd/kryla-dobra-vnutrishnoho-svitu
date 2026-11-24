@@ -422,7 +422,7 @@ export function Stars() {
         data-no-tap
         role="button"
         aria-label={t("Нічне небо для зірок")}
-        className="night-card relative h-[50vh] cursor-crosshair touch-none overflow-hidden bg-night"
+        className="night-card relative h-[50vh] cursor-crosshair touch-pan-y overflow-hidden bg-night"
       >
         <svg
           className="absolute inset-0 h-full w-full"

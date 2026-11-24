@@ -80,7 +80,7 @@ function Count() {
         )}
         {!done && (
           <>
-            <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft">
+            <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft [@media(max-height:600px)]:max-h-[32dvh]">
               <img src={placeImage("meadow")} alt="" className="h-full w-full object-cover" />
               {items.map((it, k) => (
                 <span

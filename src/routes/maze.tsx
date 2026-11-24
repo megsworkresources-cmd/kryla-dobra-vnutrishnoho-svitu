@@ -90,7 +90,7 @@ function Maze() {
         <div
           role="grid"
           aria-label={t("Лабіринт")}
-          className="paper-card mx-auto grid w-full max-w-md gap-px p-0 [@media(max-height:700px)]:max-w-[17rem]"
+          className="paper-card mx-auto grid w-full max-w-md gap-px p-0 [@media(max-height:700px)]:max-w-[clamp(11rem,calc(100dvh_-_23rem),17rem)]"
           style={{ gridTemplateColumns: `repeat(${n}, 1fr)` }}
         >
           {grid.map((row, r) => (
@@ -137,40 +137,43 @@ function Maze() {
         ) : (
           // One row of four arrows stays reachable on every phone; the maze narrows
           // below 700px of height so both still fit above the fixed nav.
-          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-4 gap-2">
-            <Btn
-              variant="soft"
-              className="w-full px-0"
-              aria-label={L(MAZE.up)}
-              onClick={() => move(-1, 0)}
-            >
-              ↑
-            </Btn>
-            <Btn
-              variant="soft"
-              className="w-full px-0"
-              aria-label={L(MAZE.left)}
-              onClick={() => move(0, -1)}
-            >
-              ←
-            </Btn>
-            <Btn
-              variant="soft"
-              className="w-full px-0"
-              aria-label={L(MAZE.down)}
-              onClick={() => move(1, 0)}
-            >
-              ↓
-            </Btn>
-            <Btn
-              variant="soft"
-              className="w-full px-0"
-              aria-label={L(MAZE.right)}
-              onClick={() => move(0, 1)}
-            >
-              →
-            </Btn>
-          </div>
+          <>
+            <div className="mx-auto grid w-full max-w-[17rem] grid-cols-4 gap-2">
+              <Btn
+                variant="soft"
+                className="w-full px-0"
+                aria-label={L(MAZE.up)}
+                onClick={() => move(-1, 0)}
+              >
+                ↑
+              </Btn>
+              <Btn
+                variant="soft"
+                className="w-full px-0"
+                aria-label={L(MAZE.left)}
+                onClick={() => move(0, -1)}
+              >
+                ←
+              </Btn>
+              <Btn
+                variant="soft"
+                className="w-full px-0"
+                aria-label={L(MAZE.down)}
+                onClick={() => move(1, 0)}
+              >
+                ↓
+              </Btn>
+              <Btn
+                variant="soft"
+                className="w-full px-0"
+                aria-label={L(MAZE.right)}
+                onClick={() => move(0, 1)}
+              >
+                →
+              </Btn>
+            </div>
+            {!moved && <p className="text-center text-sm text-muted-foreground">{L(MAZE.hint)}</p>}
+          </>
         )}
         {!moved && (
           <div className="space-y-4 pt-1">

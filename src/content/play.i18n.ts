@@ -28,6 +28,10 @@ export const MAZE = {
     "Lantern the Hedgehog is carrying his light home. Help him find the path to the cottage — no rush.",
   ),
   bump: b("Тут кущик. Спробуй іншу стежку.", "A little bush is here. Try another path."),
+  hint: b(
+    "Або торкнися світлої клітинки — Ліхтарик піде туди.",
+    "Or tap a glowing square — Lantern will walk there.",
+  ),
   done: b("Ліхтарик удома! Дякую, що провів його.", "Lantern is home! Thank you for guiding him."),
   away: b(
     "Без екрана: пальчиком пройди уявний лабіринт на долоні дорослого — від зап’ястя до кінчика мізинчика.",

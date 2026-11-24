@@ -70,10 +70,15 @@ export function StoryFilm({
     setManual(false);
   }, [src]);
 
+  // The recording stops when the film leaves the page, not when state changes.
   useEffect(
     () => () => {
       retryOff.current?.();
       retryOff.current = null;
+      const el = video.current;
+      if (!el) return;
+      el.pause();
+      releaseVideo(el);
     },
     [],
   );
@@ -129,10 +134,11 @@ export function StoryFilm({
       pauseMedia(media);
       if (shouldPlay && !wantsVideo) pauseOwner.current();
     }
+    // No pause on re-run: a retry that starts playback must not be stopped by the
+    // cleanup of the very state change that asked for it.
     return () => {
       active = false;
       playbackGeneration.current += 1;
-      pauseMedia(media);
       releaseVideo(media);
     };
     // A hand-started film plays from the click itself, so `manual` stays out of the deps

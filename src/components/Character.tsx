@@ -102,12 +102,23 @@ function CharacterLoop({
         if (active) setPlaying(false);
       }
     } else pauseMedia(media);
+    // No pause on re-run: a retry that starts playback must not be stopped by the
+    // cleanup of the very state change that asked for it.
     return () => {
       active = false;
-      pauseMedia(media);
-      releaseVideo(media);
     };
   }, [playing, who, wantsVideo, failed]);
+
+  // The recording stops when its character leaves the page, not when state changes.
+  useEffect(
+    () => () => {
+      const el = video.current;
+      if (!el) return;
+      el.pause();
+      releaseVideo(el);
+    },
+    [],
+  );
 
   useEffect(() => {
     const pause = () => {

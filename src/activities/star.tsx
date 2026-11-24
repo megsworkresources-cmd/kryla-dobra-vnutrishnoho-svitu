@@ -99,193 +99,205 @@ export function MyStar() {
         {t("Тягни свою зорю пальцем. Торкнись будь-якої — побачиш її світло.")}
       </p>
 
-      <div
-        ref={sky}
-        className="night-card relative h-[min(54svh,28rem)] min-h-64 touch-none overflow-hidden bg-night"
-        data-no-tap
-      >
+      <div className="play-split flex flex-col gap-3">
         <div
-          className="pointer-events-none absolute inset-0"
-          aria-hidden
-          style={{
-            background:
-              "radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--lavender) 45%, transparent), transparent 72%)",
-          }}
-        />
-        {FIELD.map((dot) => (
-          <span
-            key={`${dot.x}-${dot.y}`}
+          ref={sky}
+          className="night-card relative h-[min(54svh,28rem)] min-h-[9rem] touch-pan-y overflow-hidden bg-night [@media(max-height:620px)]:h-[min(30svh,13rem)] [@media(orientation:landscape)_and_(max-height:520px)]:h-[calc(100dvh-12rem)] [@media(orientation:landscape)_and_(max-height:520px)]:min-h-[8.5rem]"
+          data-no-tap
+        >
+          <div
+            className="pointer-events-none absolute inset-0"
             aria-hidden
-            className="absolute h-1 w-1 rounded-full bg-moon/70 animate-twinkle"
-            style={{ left: `${dot.x}%`, top: `${dot.y}%` }}
+            style={{
+              background:
+                "radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--lavender) 45%, transparent), transparent 72%)",
+            }}
           />
-        ))}
+          {FIELD.map((dot) => (
+            <span
+              key={`${dot.x}-${dot.y}`}
+              aria-hidden
+              className="absolute h-1 w-1 rounded-full bg-moon/70 animate-twinkle"
+              style={{ left: `${dot.x}%`, top: `${dot.y}%` }}
+            />
+          ))}
 
-        <div className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-full bg-night/70 px-2 py-1">
-          <span className="text-xs font-bold text-moon">
-            {t("Світиться: {n}", { n: lit.length + 1 })}
-          </span>
+          {STORIES.map((item, index) => {
+            const slot = SLOTS[(index + seed) % SLOTS.length] ?? { x: 50, y: 50 };
+            const isLit = (completed[`sky-${item.id}`] ?? 0) > 0;
+            const isPicked = picked === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={isPicked}
+                aria-label={t("{name}: торкнись, щоб побачити її світло", { name: t(item.title) })}
+                onClick={() => {
+                  setPicked(item.id);
+                  chime(isLit ? 698 : 440);
+                }}
+                className="absolute grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
+                style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
+              >
+                <span
+                  aria-hidden
+                  className={`block rounded-full transition-transform ${isPicked ? "h-5 w-5" : "h-3 w-3"} ${
+                    isLit ? "bg-moon" : "bg-moon/40"
+                  }`}
+                  style={{
+                    boxShadow: isLit
+                      ? `0 0 ${isPicked ? 26 : 18}px ${isPicked ? 8 : 5}px color-mix(in srgb, var(--moon) 50%, transparent)`
+                      : undefined,
+                  }}
+                />
+                {isPicked && (
+                  <span
+                    className={`pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-night/70 px-2 text-xs font-bold text-moon ${
+                      slot.y > 55 ? "bottom-full" : "top-full"
+                    }`}
+                  >
+                    {t(item.title)}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+
           <button
             type="button"
-            aria-label={t("Оновити небо")}
-            onClick={() => {
-              setSeed((s) => s + 1);
-              chime(587);
+            aria-pressed={picked === "me"}
+            aria-label={t("Моя зоря: тягни, щоб посунути, або пересувай стрілками")}
+            onPointerDown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId);
+              start.current = { x: event.clientX, y: event.clientY };
+              setDrag({ dx: 0, dy: 0 });
             }}
-            className="grid h-11 w-11 place-items-center rounded-full text-moon press"
+            onPointerMove={(event) => {
+              if (!start.current) return;
+              setDrag({
+                dx: event.clientX - start.current.x,
+                dy: event.clientY - start.current.y,
+              });
+            }}
+            onPointerUp={(event) => {
+              if (!start.current) return;
+              const travelled =
+                Math.abs(event.clientX - start.current.x) +
+                Math.abs(event.clientY - start.current.y);
+              if (travelled > 8) place(event.clientX, event.clientY);
+              else {
+                setDrag(null);
+                start.current = null;
+                setPicked("me");
+                chime(659);
+              }
+            }}
+            onPointerCancel={() => {
+              setDrag(null);
+              start.current = null;
+            }}
+            onKeyDown={(event) => {
+              const step = 3;
+              const moves: Record<string, [number, number]> = {
+                ArrowLeft: [-step, 0],
+                ArrowRight: [step, 0],
+                ArrowUp: [0, -step],
+                ArrowDown: [0, step],
+              };
+              const move = moves[event.key];
+              if (!move) return;
+              event.preventDefault();
+              moveStar(x + move[0], y + move[1]);
+              chime(523);
+            }}
+            className="absolute grid h-11 w-11 touch-none -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
+            style={{ left: `${x}%`, top: `${y}%` }}
           >
-            <span aria-hidden className="text-base">
-              ↻
+            <span
+              aria-hidden
+              className="block rounded-full bg-honey transition-transform"
+              style={{
+                width: 26,
+                height: 26,
+                transform: drag ? `translate(${drag.dx}px, ${drag.dy}px)` : undefined,
+                boxShadow: `0 0 34px ${Math.round(8 + myLight / 4)}px color-mix(in srgb, var(--honey) 60%, transparent)`,
+              }}
+            />
+            <span
+              className={`pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-night/70 px-2 text-xs font-bold text-moon ${
+                y > 55 ? "bottom-full" : "top-full"
+              }`}
+            >
+              {name.trim() || t("Моя зоря")}
             </span>
           </button>
         </div>
 
-        {STORIES.map((item, index) => {
-          const slot = SLOTS[(index + seed) % SLOTS.length] ?? { x: 50, y: 50 };
-          const isLit = (completed[`sky-${item.id}`] ?? 0) > 0;
-          const isPicked = picked === item.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              aria-pressed={isPicked}
-              aria-label={t("{name}: торкнись, щоб побачити її світло", { name: t(item.title) })}
-              onClick={() => {
-                setPicked(item.id);
-                chime(isLit ? 698 : 440);
-              }}
-              className="absolute grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
-              style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
-            >
-              <span
-                aria-hidden
-                className={`block rounded-full transition-transform ${isPicked ? "h-5 w-5" : "h-3 w-3"} ${
-                  isLit ? "bg-moon" : "bg-moon/40"
-                }`}
-                style={{
-                  boxShadow: isLit
-                    ? `0 0 ${isPicked ? 26 : 18}px ${isPicked ? 8 : 5}px color-mix(in srgb, var(--moon) 50%, transparent)`
-                    : undefined,
+        <div data-star-card className="night-card min-w-0 space-y-2 p-4">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-extrabold uppercase tracking-wide text-honey">
+              {story ? t("Зоря казки") : t("Твоя зоря")}
+            </p>
+            <div className="flex items-center gap-1">
+              <span className="text-xs font-bold text-moon/80">
+                {t("Світиться: {n}", { n: lit.length + 1 })}
+              </span>
+              <button
+                type="button"
+                aria-label={t("Оновити небо")}
+                onClick={() => {
+                  setSeed((s) => s + 1);
+                  chime(587);
                 }}
-              />
-              {isPicked && (
-                <span className="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 whitespace-nowrap rounded-full bg-night/70 px-2 text-xs font-bold text-moon">
-                  {t(item.title)}
+                className="grid h-11 w-11 place-items-center rounded-full bg-night/60 text-moon press"
+              >
+                <span aria-hidden className="text-base">
+                  ↻
                 </span>
-              )}
-            </button>
-          );
-        })}
-
-        <button
-          type="button"
-          aria-pressed={picked === "me"}
-          aria-label={t("Моя зоря: тягни, щоб посунути, або пересувай стрілками")}
-          onPointerDown={(event) => {
-            event.currentTarget.setPointerCapture(event.pointerId);
-            start.current = { x: event.clientX, y: event.clientY };
-            setDrag({ dx: 0, dy: 0 });
-          }}
-          onPointerMove={(event) => {
-            if (!start.current) return;
-            setDrag({
-              dx: event.clientX - start.current.x,
-              dy: event.clientY - start.current.y,
-            });
-          }}
-          onPointerUp={(event) => {
-            if (!start.current) return;
-            const travelled =
-              Math.abs(event.clientX - start.current.x) + Math.abs(event.clientY - start.current.y);
-            if (travelled > 8) place(event.clientX, event.clientY);
-            else {
-              setDrag(null);
-              start.current = null;
-              setPicked("me");
-              chime(659);
-            }
-          }}
-          onPointerCancel={() => {
-            setDrag(null);
-            start.current = null;
-          }}
-          onKeyDown={(event) => {
-            const step = 3;
-            const moves: Record<string, [number, number]> = {
-              ArrowLeft: [-step, 0],
-              ArrowRight: [step, 0],
-              ArrowUp: [0, -step],
-              ArrowDown: [0, step],
-            };
-            const move = moves[event.key];
-            if (!move) return;
-            event.preventDefault();
-            moveStar(x + move[0], y + move[1]);
-            chime(523);
-          }}
-          className="absolute grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
-          style={{ left: `${x}%`, top: `${y}%` }}
-        >
-          <span
-            aria-hidden
-            className="block rounded-full bg-honey transition-transform"
-            style={{
-              width: 26,
-              height: 26,
-              transform: drag ? `translate(${drag.dx}px, ${drag.dy}px)` : undefined,
-              boxShadow: `0 0 34px ${Math.round(8 + myLight / 4)}px color-mix(in srgb, var(--honey) 60%, transparent)`,
-            }}
-          />
-          <span className="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 whitespace-nowrap rounded-full bg-night/70 px-2 text-xs font-bold text-moon">
-            {name.trim() || t("Моя зоря")}
-          </span>
-        </button>
-      </div>
-
-      <div data-star-card className="night-card space-y-2 p-4">
-        <p className="text-xs font-extrabold uppercase tracking-wide text-honey">
-          {story ? t("Зоря казки") : t("Твоя зоря")}
-        </p>
-        <p className="font-display text-3xl font-bold text-moon">
-          {story ? t(story.title) : name.trim() || t("Ще без імені")}
-        </p>
-        <p className="border-l-4 border-honey/60 pl-3 text-lg italic text-moon/90">
-          {story
-            ? storyReads > 0
-              ? t(story.line)
-              : t("Ця казка ще чекає на тебе.")
-            : wish.trim()
-              ? `«${wish.trim()}»`
-              : t("Тут з’явиться твоє бажання.")}
-        </p>
-        <p className="text-sm font-semibold text-moon/85">
-          {story
-            ? t("Світло: {n}% · казка прочитана {k} разів", { n: light, k: storyReads })
-            : t("Світло: {n}% · росте, коли ти поливаєш соняшник", { n: light })}
-        </p>
-        {story && (
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <Btn
-              variant="primary"
-              onClick={() => {
-                if (!litSent.includes(story.id)) setLitSent((list) => [...list, story.id]);
-                chime(784);
-              }}
-            >
-              {t("Надіслати трохи світла")}
-            </Btn>
-            <Link
-              to="/sky/$id"
-              params={{ id: story.id }}
-              className="press min-h-11 rounded-full bg-night/60 px-4 py-2 text-sm font-bold text-moon"
-            >
-              {storyReads > 0 ? t("Повернутись до казки") : t("Послухати казку")}
-            </Link>
+              </button>
+            </div>
           </div>
-        )}
-        {story && litSent.includes(story.id) && (
-          <p className="text-sm text-moon/80">{t("Світло поруч. Воно нікуди не зникає.")}</p>
-        )}
+          <p className="font-display text-3xl font-bold text-moon">
+            {story ? t(story.title) : name.trim() || t("Ще без імені")}
+          </p>
+          <p className="border-l-4 border-honey/60 pl-3 text-lg italic text-moon/90">
+            {story
+              ? storyReads > 0
+                ? t(story.line)
+                : t("Ця казка ще чекає на тебе.")
+              : wish.trim()
+                ? `«${wish.trim()}»`
+                : t("Тут з’явиться твоє бажання.")}
+          </p>
+          <p className="text-sm font-semibold text-moon/85">
+            {story
+              ? t("Світло: {n}% · казка прочитана {k} разів", { n: light, k: storyReads })
+              : t("Світло: {n}% · росте, коли ти поливаєш соняшник", { n: light })}
+          </p>
+          {story && (
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <Btn
+                variant="primary"
+                onClick={() => {
+                  if (!litSent.includes(story.id)) setLitSent((list) => [...list, story.id]);
+                  chime(784);
+                }}
+              >
+                {t("Надіслати трохи світла")}
+              </Btn>
+              <Link
+                to="/sky/$id"
+                params={{ id: story.id }}
+                className="press min-h-11 rounded-full bg-night/60 px-4 py-2 text-sm font-bold text-moon"
+              >
+                {storyReads > 0 ? t("Повернутись до казки") : t("Послухати казку")}
+              </Link>
+            </div>
+          )}
+          {story && litSent.includes(story.id) && (
+            <p className="text-sm text-moon/80">{t("Світло поруч. Воно нікуди не зникає.")}</p>
+          )}
+        </div>
       </div>
 
       <div className="night-card space-y-3 p-4">

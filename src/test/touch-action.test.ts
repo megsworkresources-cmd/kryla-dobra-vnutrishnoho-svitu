@@ -40,6 +40,20 @@ describe("page-wide touch-action", () => {
     expect(touchNone.length).toBeGreaterThanOrEqual(drawing.length);
   });
 
+  it("keeps every dragged surface on the primary pointer", () => {
+    // A stroke begins on a step dot, a cloud or the sky's star; a second finger
+    // landing there must not start, take over or cancel it. Puddles and games share
+    // press.ts, whose ownership rule has its own test.
+    for (const file of [
+      "src/activities/star.tsx",
+      "src/activities/playful.tsx",
+      "src/components/MagicStage.tsx",
+    ]) {
+      const guards = readFileSync(file, "utf8").match(/isPrimary === false/g) ?? [];
+      expect(guards.length).toBeGreaterThanOrEqual(3);
+    }
+  });
+
   it("keeps both finger-dragged handles claiming the gesture", () => {
     // The cloud and the sky's star move on both axes, so neither can inherit the
     // page-wide manipulation value or the browser turns the drag into a scroll.

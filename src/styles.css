@@ -734,10 +734,14 @@ html[data-text="xl"] {
 html {
   -webkit-tap-highlight-color: transparent;
 }
-button,
-a,
-[role="button"] {
-  touch-action: manipulation;
+/* In the base layer on purpose: an unlayered rule outranks every Tailwind touch
+   utility, which silently disabled touch-none on the sky's star. */
+@layer base {
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+  }
 }
 button:focus-visible,
 a:focus-visible,

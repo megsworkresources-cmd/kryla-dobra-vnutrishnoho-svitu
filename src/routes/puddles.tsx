@@ -28,6 +28,7 @@ function Puddles() {
   // introduction folds away after the first drop.
   const [started, setStarted] = useState(false);
   const id = useRef(0);
+  const press = useRef<{ x: number; y: number } | null>(null);
   const finished = useRef(false);
   const timers = useRef<number[]>([]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
@@ -88,7 +89,20 @@ function Puddles() {
             role="button"
             tabIndex={0}
             aria-label={t("Калюжка: торкнися, щоб упала крапля")}
-            onPointerDown={drop}
+            onPointerDown={(e) => {
+              press.current = { x: e.clientX, y: e.clientY };
+            }}
+            onPointerUp={(e) => {
+              const from = press.current;
+              press.current = null;
+              if (!from) return;
+              // A finger that travelled was scrolling the page, not asking for rain.
+              if (Math.abs(e.clientX - from.x) + Math.abs(e.clientY - from.y) > 10) return;
+              drop(e);
+            }}
+            onPointerCancel={() => {
+              press.current = null;
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();

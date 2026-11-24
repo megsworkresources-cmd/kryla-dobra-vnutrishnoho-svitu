@@ -356,6 +356,7 @@ export function Stars() {
   const t = useT();
   const [stars, setStars] = useState<{ x: number; y: number }[]>([]);
   const box = useRef<HTMLDivElement>(null);
+  const press = useRef<{ x: number; y: number } | null>(null);
   const timers = useRef<number[]>([]);
   const [active, setActive] = useState<number | null>(null);
   const stop = () => {
@@ -408,7 +409,20 @@ export function Stars() {
       />
       <div
         ref={box}
-        onPointerDown={add}
+        onPointerDown={(e) => {
+          press.current = { x: e.clientX, y: e.clientY };
+        }}
+        onPointerUp={(e) => {
+          const from = press.current;
+          press.current = null;
+          if (!from) return;
+          // A finger that travelled was scrolling the page, not drawing a constellation.
+          if (Math.abs(e.clientX - from.x) + Math.abs(e.clientY - from.y) > 10) return;
+          add(e);
+        }}
+        onPointerCancel={() => {
+          press.current = null;
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();

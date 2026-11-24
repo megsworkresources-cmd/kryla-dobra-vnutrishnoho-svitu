@@ -55,12 +55,7 @@ export function StoryFilm({
   const ownPause = useRef(false);
   const pauseMedia = (el: HTMLVideoElement | null | undefined) => {
     if (!el) return;
-    if (!el.paused) {
-      ownPause.current = true;
-      window.setTimeout(() => {
-        ownPause.current = false;
-      }, 0);
-    }
+    if (!el.paused) ownPause.current = true;
     el.pause();
   };
   const wantsVideo = motion || manual;
@@ -249,7 +244,11 @@ export function StoryFilm({
         poster={poster}
         muted
         onPause={() => {
-          if (ownPause.current) return;
+          // The flag is cleared by the event it was armed for, not by a timer.
+          if (ownPause.current) {
+            ownPause.current = false;
+            return;
+          }
           if (playingNow.current || manualRef.current) pauseOwner.current();
         }}
         onWaiting={() => setStatus("loading")}
@@ -269,6 +268,7 @@ export function StoryFilm({
         onPlaying={() => {
           const media = video.current;
           if (!media) return;
+          ownPause.current = false;
           const stillWanted =
             (playingNow.current || manualRef.current) && (motion || manualRef.current);
           if (!stillWanted || document.hidden) pauseMedia(media);

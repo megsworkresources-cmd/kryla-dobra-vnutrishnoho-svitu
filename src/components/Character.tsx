@@ -51,12 +51,7 @@ function CharacterLoop({
   const wantsVideo = motion || manual;
   const pauseMedia = (el: HTMLVideoElement | null | undefined) => {
     if (!el) return;
-    if (!el.paused) {
-      ownPause.current = true;
-      window.setTimeout(() => {
-        ownPause.current = false;
-      }, 0);
-    }
+    if (!el.paused) ownPause.current = true;
     el.pause();
   };
 
@@ -177,11 +172,16 @@ function CharacterLoop({
         onPlaying={() => {
           const media = video.current;
           if (!media) return;
-          if (!playing || document.hidden) media.pause();
+          ownPause.current = false;
+          if (!playing || document.hidden) pauseMedia(media);
           else claimVideo(media);
         }}
         onPause={() => {
-          if (ownPause.current) return;
+          // The flag is cleared by the event it was armed for, not by a timer.
+          if (ownPause.current) {
+            ownPause.current = false;
+            return;
+          }
           if (playing) setPlaying(false);
         }}
         onError={() => {

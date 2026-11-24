@@ -38,6 +38,20 @@ type GameId = (typeof GAMES)[number]["id"];
 function Games() {
   const t = useT();
   const [game, setGame] = useState<GameId>("bubbles");
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // The strip is wider than the phone, so the game that is playing has to be
+  // scrolled into view or the child cannot see which one is chosen.
+  useEffect(() => {
+    const list = listRef.current;
+    const active = list?.querySelector<HTMLElement>('[data-state="active"]');
+    if (!list || !active) return;
+    const lr = list.getBoundingClientRect();
+    const ar = active.getBoundingClientRect();
+    if (ar.left >= lr.left - 1 && ar.right <= lr.right + 1) return;
+    list.scrollTo({ left: list.scrollLeft + ar.left - lr.left - 8, behavior: "smooth" });
+  }, [game]);
+
   return (
     <Scene title="Ігри" back="/world">
       <div className="space-y-4">
@@ -51,7 +65,8 @@ function Games() {
           }}
         >
           <TabsList
-            className="flex h-auto w-full items-stretch gap-2 overflow-x-auto bg-transparent p-0 pb-1"
+            ref={listRef}
+            className="no-scrollbar flex h-auto w-full items-stretch justify-start gap-2 overflow-x-auto bg-transparent p-0 pb-1"
             aria-label={t("Ігри")}
           >
             {GAMES.map((g) => (

@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from "react";
 
-export type VisualViewportLike = { height: number; offsetTop: number };
+export type VisualViewportLike = { height: number; offsetTop: number; scale?: number };
 
 /**
  * Pixels of the layout viewport below the visual viewport's bottom edge. This is
@@ -36,6 +36,18 @@ export function coveredHeight(layoutHeight: number, view?: VisualViewportLike | 
 export const KEYBOARD_MIN_INSET = 120;
 
 /**
+ * Pinch-zoom also shortens the visual viewport. Past this the page is zoomed, not
+ * covered, so the bar must stay at the layout's bottom edge: lifting it would park
+ * it in the middle of the screen. The slack absorbs sub-percent rounding.
+ */
+export const ZOOMED_IN_SCALE = 1.01;
+
+export function zoomedIn(view?: VisualViewportLike | null, maxScale = ZOOMED_IN_SCALE): boolean {
+  if (!view) return false;
+  return (view.scale ?? 1) > maxScale;
+}
+
+/**
  * How far to lift the bottom bar, in px: 0 when no keyboard is showing, otherwise
  * the distance to the visual viewport's bottom edge (which changes as iOS pans the
  * page to reach a focused field).
@@ -45,6 +57,9 @@ export function keyboardInset(
   view?: VisualViewportLike | null,
   minimum = KEYBOARD_MIN_INSET,
 ): number {
+  // While zoomed we cannot tell a keyboard from the zoom itself, and guessing wrong
+  // floats the bar across the page, so it stays where it is.
+  if (!view || zoomedIn(view)) return 0;
   if (coveredHeight(layoutHeight, view) < minimum) return 0;
   return hiddenBelow(layoutHeight, view);
 }

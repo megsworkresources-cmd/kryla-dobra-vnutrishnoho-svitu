@@ -36,6 +36,18 @@ describe("on-screen keyboard", () => {
     );
   });
 
+  it("stays put while pinch-zoomed, which shortens the viewport for another reason", () => {
+    // Zoomed to 2x the visual viewport is half as tall, but no keyboard is up.
+    const zoomed = { height: 350, offsetTop: 0, scale: 2 };
+    expect(coveredHeight(layout, zoomed)).toBe(350);
+    expect(hiddenBelow(layout, zoomed)).toBe(350);
+    expect(keyboardInset(layout, zoomed)).toBe(0);
+    expect(keyboardInset(layout, { height: 350, offsetTop: 0, scale: 2.5 })).toBe(0);
+    // Sub-percent rounding is not a pinch.
+    expect(keyboardInset(layout, { height: 400, offsetTop: 0, scale: 1.005 })).toBe(300);
+    expect(keyboardInset(layout, { height: 400, offsetTop: 0, scale: 1 })).toBe(300);
+  });
+
   it("stays at zero when there is nothing to measure", () => {
     expect(keyboardInset(layout, null)).toBe(0);
     expect(keyboardInset(layout, undefined)).toBe(0);

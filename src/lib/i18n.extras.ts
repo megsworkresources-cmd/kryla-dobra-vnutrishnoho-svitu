@@ -289,6 +289,7 @@ export const EXTRAS: Record<string, string> = {
   "Тягни свою зорю пальцем. Торкнись будь-якої — побачиш її світло.":
     "Drag your star with a finger. Touch any star to see its light.",
   "{n} зірок світиться": "{n} stars shining",
+  "Світиться: {n}": "Shining: {n}",
   "Оновити небо": "Refresh the sky",
   "Зоря казки": "A story’s star",
   "Ця казка ще чекає на тебе.": "This story is still waiting for you.",

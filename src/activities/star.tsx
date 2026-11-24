@@ -123,7 +123,7 @@ export function MyStar() {
 
         <div className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-full bg-night/70 px-2 py-1">
           <span className="text-xs font-bold text-moon">
-            {t("{n} зірок світиться", { n: lit.length + 1 })}
+            {t("Світиться: {n}", { n: lit.length + 1 })}
           </span>
           <button
             type="button"

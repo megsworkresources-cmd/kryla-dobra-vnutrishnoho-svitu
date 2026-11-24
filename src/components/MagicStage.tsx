@@ -104,7 +104,7 @@ export function MagicStage({
       </div>
       {mode === "trail" ? (
         <div
-          className="relative h-48 touch-none overflow-hidden rounded-lg bg-sage/30"
+          className="relative h-48 touch-pan-y overflow-hidden rounded-lg bg-sage/30"
           onPointerDown={() => setDragging(true)}
           onPointerUp={() => setDragging(false)}
           onPointerCancel={() => setDragging(false)}

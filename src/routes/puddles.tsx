@@ -96,7 +96,7 @@ function Puddles() {
                 addDrop();
               }
             }}
-            className="play-media play-media-tight relative mx-auto aspect-[4/3] w-full max-w-xl cursor-pointer touch-none overflow-hidden rounded-[45%_55%_50%_50%] shadow-soft focus-visible:ring-4 focus-visible:ring-ring [@media(max-height:600px)]:max-h-[32dvh]"
+            className="play-media play-media-tight relative mx-auto aspect-[4/3] w-full max-w-xl cursor-pointer touch-pan-y overflow-hidden rounded-[45%_55%_50%_50%] shadow-soft focus-visible:ring-4 focus-visible:ring-ring [@media(max-height:600px)]:max-h-[32dvh]"
           >
             <img
               src={placeImage("clouds")}

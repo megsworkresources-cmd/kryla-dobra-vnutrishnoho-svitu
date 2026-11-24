@@ -163,6 +163,8 @@ export function MyStar() {
             );
           })}
 
+          {/* The page-wide button rule hands both axes to the page scroll, so this
+              drag handle claims the gesture inline to move on both axes. */}
           <button
             type="button"
             aria-pressed={picked === "me"}
@@ -210,8 +212,8 @@ export function MyStar() {
               moveStar(x + move[0], y + move[1]);
               chime(523);
             }}
-            className="absolute grid h-11 w-11 touch-none -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
-            style={{ left: `${x}%`, top: `${y}%` }}
+            className="absolute grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
+            style={{ left: `${x}%`, top: `${y}%`, touchAction: "none" }}
           >
             <span
               aria-hidden

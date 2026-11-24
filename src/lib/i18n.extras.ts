@@ -286,6 +286,22 @@ export const EXTRAS: Record<string, string> = {
     "This star lives on this device only. Nobody else can see it.",
   "Кожна зоря — це чиясь надія. Твоя теж тут. Бажання не обов’язково має бути великим.":
     "Every star is someone’s hope. Yours is here too. A wish doesn’t have to be big.",
+  "Тягни свою зорю пальцем. Торкнись будь-якої — побачиш її світло.":
+    "Drag your star with a finger. Touch any star to see its light.",
+  "{n} зірок світиться": "{n} stars shining",
+  "Оновити небо": "Refresh the sky",
+  "Зоря казки": "A story’s star",
+  "Ця казка ще чекає на тебе.": "This story is still waiting for you.",
+  "{name}: торкнись, щоб побачити її світло": "{name}: touch to see its light",
+  "Світло: {n}% · казка прочитана {k} разів": "Light: {n}% · story read {k} times",
+  "Світло: {n}% · росте, коли ти поливаєш соняшник":
+    "Light: {n}% · it grows when you water the sunflower",
+  "Надіслати трохи світла": "Send a little light",
+  "Повернутись до казки": "Back to the story",
+  "Послухати казку": "Listen to the story",
+  "Світло поруч. Воно нікуди не зникає.": "The light is here. It never goes away.",
+  "Небо живе лише на цьому пристрої. Тут тільки твої зорі.":
+    "This sky lives on this device only. Only your stars are here.",
 };
 
 /**

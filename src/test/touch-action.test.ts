@@ -25,9 +25,9 @@ describe("page-wide touch-action", () => {
   });
 
   it("is claimed by drawing and tracing surfaces only, never by a tap target", () => {
-    // Stem: a picture is painted along a vertical stroke, and a path is traced with
-    // the finger. Every other surface scrolls the page; the Radix primitives under
-    // ui/ are unused by any route.
+    // Stem: a picture is painted along a vertical stroke. Attention trail: only the
+    // numbered step dots claim the stroke, so the strip itself still scrolls. Every
+    // other surface scrolls the page; the Radix primitives under ui/ are unused.
     const drawing = [
       "src/activities/studio.tsx",
       "src/routes/safe-drawing.tsx",

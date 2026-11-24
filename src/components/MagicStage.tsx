@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
@@ -43,7 +43,8 @@ export function MagicStage({
   const [open, setOpen] = useState<number[]>([]);
   const [matched, setMatched] = useState<number[]>([]);
   const [miss, setMiss] = useState(false);
-  const [dragging, setDragging] = useState(false);
+  // A stroke only traces when it began on a numbered step; anything else is a scroll.
+  const tracing = useRef(false);
   const reset = () => {
     setProgress(0);
     setPlanted({});
@@ -103,20 +104,19 @@ export function MagicStage({
         </Btn>
       </div>
       {mode === "trail" ? (
-        // A tracing strip, not a scrolling one: leading a finger along a path moves
-        // up and down, so the page must not take the gesture away mid-stroke. The
-        // numbered steps stay tappable, and the page still scrolls around it.
+        // Tracing a path moves up and down, so the gesture has to be claimed before
+        // the page can take it as a scroll. Only the steps do that (touch-none on the
+        // dots): a stroke that starts on a numbered dot keeps its pointer events for
+        // the whole stroke, and the strip's background scrolls like the rest of the
+        // page. A stroke that starts anywhere else never traces, so scrolling across
+        // the strip cannot advance the exercise.
         <div
-          className="relative h-48 touch-none select-none overflow-hidden rounded-lg bg-sage/30"
-          onPointerDown={(event) => {
-            if (event.isPrimary === false) return;
-            setDragging(true);
-          }}
-          onPointerUp={() => setDragging(false)}
-          onPointerCancel={() => setDragging(false)}
-          onPointerLeave={() => setDragging(false)}
+          className="relative h-48 touch-pan-y-zoom select-none overflow-hidden rounded-lg bg-sage/30"
+          onPointerUp={() => (tracing.current = false)}
+          onPointerCancel={() => (tracing.current = false)}
+          onPointerLeave={() => (tracing.current = false)}
           onPointerMove={(event) => {
-            if (!dragging || event.isPrimary === false) return;
+            if (!tracing.current || event.isPrimary === false) return;
             const rect = event.currentTarget.getBoundingClientRect();
             const x = ((event.clientX - rect.left) / rect.width) * 100;
             const y = ((event.clientY - rect.top) / rect.height) * 100;
@@ -150,15 +150,16 @@ export function MagicStage({
           {PATH.map(([x, y], n) => (
             <div
               key={n}
-              className="absolute -translate-x-1/2 -translate-y-1/2"
+              className="absolute -translate-x-1/2 -translate-y-1/2 touch-none"
               style={{ left: `${x}%`, top: `${y}%` }}
+              onPointerDown={() => (tracing.current = true)}
             >
               <Btn
                 variant={n < progress ? "honey" : "soft"}
                 aria-label={t("Крок стежки {n}", { n: n + 1 })}
                 disabled={n > progress}
                 onClick={() => trace(n)}
-                className={`h-11 min-h-11 w-11 p-0 ${n === progress ? "ring-2 ring-ring" : ""}`}
+                className={`h-11 min-h-11 w-11 touch-none p-0 ${n === progress ? "ring-2 ring-ring" : ""}`}
               >
                 {n < progress ? "🌼" : n + 1}
               </Btn>

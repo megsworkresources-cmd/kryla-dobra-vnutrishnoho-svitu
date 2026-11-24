@@ -83,40 +83,44 @@ function Puddles() {
         >
           {t("Крапель: {n} із {m}", { n: Math.min(drops, GOAL), m: GOAL })}
         </p>
-        <div
-          role="button"
-          tabIndex={0}
-          aria-label={t("Калюжка: торкнися, щоб упала крапля")}
-          onPointerDown={drop}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              chime(440);
-              addDrop();
-            }
-          }}
-          className="relative mx-auto aspect-[4/3] w-full max-w-xl cursor-pointer touch-none overflow-hidden rounded-[45%_55%_50%_50%] shadow-soft focus-visible:ring-4 focus-visible:ring-ring [@media(max-height:600px)]:max-h-[32dvh]"
-        >
-          <img
-            src={placeImage("clouds")}
-            alt=""
-            className="h-full w-full object-cover opacity-80"
-          />
-          {rings.map((r) => (
-            <span
-              key={r.id}
-              aria-hidden
-              style={{ left: `${r.x}%`, top: `${r.y}%` }}
-              className="absolute h-24 w-24 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full border-4 border-card"
+        <div className="play-split flex flex-col gap-3">
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label={t("Калюжка: торкнися, щоб упала крапля")}
+            onPointerDown={drop}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                chime(440);
+                addDrop();
+              }
+            }}
+            className="play-media play-media-tight relative mx-auto aspect-[4/3] w-full max-w-xl cursor-pointer touch-none overflow-hidden rounded-[45%_55%_50%_50%] shadow-soft focus-visible:ring-4 focus-visible:ring-ring [@media(max-height:600px)]:max-h-[32dvh]"
+          >
+            <img
+              src={placeImage("clouds")}
+              alt=""
+              className="h-full w-full object-cover opacity-80"
             />
-          ))}
+            {rings.map((r) => (
+              <span
+                key={r.id}
+                aria-hidden
+                style={{ left: `${r.x}%`, top: `${r.y}%` }}
+                className="absolute h-24 w-24 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full border-4 border-card"
+              />
+            ))}
+          </div>
+          <div className="space-y-3">
+            {!started && <CharacterSay who="olenka" text={L(PUDDLES.intro)} mood="talk" />}
+            <section className="paper-card space-y-2 p-4">
+              <h2 className="font-display text-lg font-bold">{t("Без екрана")}</h2>
+              <p>{L(PUDDLES.away)}</p>
+              <p>{L(PUDDLES.indoor)}</p>
+            </section>
+          </div>
         </div>
-        {!started && <CharacterSay who="olenka" text={L(PUDDLES.intro)} mood="talk" />}
-        <section className="paper-card space-y-2 p-4">
-          <h2 className="font-display text-lg font-bold">{t("Без екрана")}</h2>
-          <p>{L(PUDDLES.away)}</p>
-          <p>{L(PUDDLES.indoor)}</p>
-        </section>
       </div>
     </Scene>
   );

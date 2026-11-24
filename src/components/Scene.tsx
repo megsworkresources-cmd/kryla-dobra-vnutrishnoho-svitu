@@ -4,11 +4,12 @@ import { useEffect, useState, type ReactNode, type CSSProperties } from "react";
 import { BottomNav } from "./BottomNav";
 import { CharacterSay } from "./Character";
 import { LangToggle } from "./LangToggle";
-import { toggleFavorite, useStore } from "@/lib/store";
+import { careCount, growthStage, toggleFavorite, useStore } from "@/lib/store";
 import { sfx } from "@/lib/audio";
 import { MagicStage } from "./MagicStage";
 import { useT } from "@/lib/i18n";
 import { castFor, cheerOf, type CharId } from "@/content/characters";
+import { FINAL_GROWTH_STAGE, growthGlyph } from "@/content/growth";
 import { cn } from "@/lib/utils";
 
 interface SceneProps {
@@ -125,6 +126,8 @@ export function DoneCard({
   const pathname = typeof window === "undefined" ? "/" : window.location.pathname;
   const t = useT();
   const hero = who ?? castFor(pathname.split("/")[1] ?? "")[0];
+  // The card shows the sunflower the child actually has, not a fixed promise.
+  const stage = growthStage(useStore((s) => careCount(s)));
   const [cheer] = useState(() => cheerOf(hero));
   useEffect(() => {
     sfx("complete");
@@ -145,6 +148,18 @@ export function DoneCard({
         ))}
       </div>
       <CharacterSay who={hero} night={night} mood="cheer" size="lg" text={`${t(cheer)} ${text}`} />
+      <p
+        className={`mt-3 flex items-center justify-center gap-2 text-base ${night ? "opacity-80" : "text-muted-foreground"}`}
+      >
+        <span aria-hidden className="text-2xl">
+          {growthGlyph(stage)}
+        </span>
+        <span>
+          {stage === FINAL_GROWTH_STAGE
+            ? t("Твій соняшник розквіт! 🌻")
+            : t("Твоя стадія: {n} з 5", { n: stage })}
+        </span>
+      </p>
       <div className="mt-4">
         <MagicStage
           theme={pathname.split("/")[1] ?? "meadow"}
@@ -153,9 +168,6 @@ export function DoneCard({
           label={t("Святкове небо: торкайся, щоб засвітити")}
         />
       </div>
-      <p className={`mt-4 text-base ${night ? "opacity-80" : "text-muted-foreground"}`}>
-        {t("🌻 Твій соняшник у саду трохи підріс.")}
-      </p>
       <div className="mt-5 flex flex-wrap justify-center gap-2">
         {again && (
           <Btn variant="soft" onClick={again}>

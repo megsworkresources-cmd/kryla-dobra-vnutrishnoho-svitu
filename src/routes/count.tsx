@@ -91,8 +91,8 @@ function Count() {
             {L(msg)}
           </p>
         )}
-        <>
-          <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft [@media(max-height:600px)]:max-h-[32dvh]">
+        <div className="play-split flex flex-col gap-3">
+          <div className="play-media relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft [@media(max-height:600px)]:max-h-[32dvh]">
             <img src={placeImage("meadow")} alt="" className="h-full w-full object-cover" />
             {items.map((it, k) => (
               <span
@@ -105,20 +105,22 @@ function Count() {
               </span>
             ))}
           </div>
-          <p className="text-center font-display text-xl font-bold" aria-live="polite">
-            {L(COUNT.ask).replace("{x}", `${round.icon} ${L(round.name)}`)}
-          </p>
-          <div className="flex justify-center gap-3">
-            {countChoices(round.n).map((v) => (
-              <Btn key={v} variant="honey" className="min-w-16 text-xl" onClick={() => answer(v)}>
-                {v}
-              </Btn>
-            ))}
+          <div className="space-y-3">
+            <p className="text-center font-display text-xl font-bold" aria-live="polite">
+              {L(COUNT.ask).replace("{x}", `${round.icon} ${L(round.name)}`)}
+            </p>
+            <div className="flex justify-center gap-3">
+              {countChoices(round.n).map((v) => (
+                <Btn key={v} variant="honey" className="min-w-16 text-xl" onClick={() => answer(v)}>
+                  {v}
+                </Btn>
+              ))}
+            </div>
+            <p className="text-center text-sm">
+              {t("Раунд {n} із {m}", { n: i + 1, m: totalRounds })}
+            </p>
           </div>
-          <p className="text-center text-sm">
-            {t("Раунд {n} із {m}", { n: i + 1, m: totalRounds })}
-          </p>
-        </>
+        </div>
         {!started && <CharacterSay who="taras" text={L(COUNT.intro)} mood="talk" />}
       </div>
     </Scene>

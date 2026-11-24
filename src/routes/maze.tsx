@@ -98,80 +98,82 @@ function Maze() {
             {bump ? L(MAZE.bump) : ""}
           </p>
         )}
-        <div
-          role="grid"
-          aria-label={t("Лабіринт")}
-          className="paper-card mx-auto grid w-full max-w-md gap-px p-0 [@media(max-height:700px)]:max-w-[clamp(11rem,calc(100dvh_-_23rem),17rem)]"
-          style={{ gridTemplateColumns: `repeat(${n}, 1fr)` }}
-        >
-          {grid.map((row, r) => (
-            <div key={r} role="row" className="contents">
-              {[...row].map((ch, c) => {
-                const here = pos[0] === r && pos[1] === c;
-                const adj = Math.abs(pos[0] - r) + Math.abs(pos[1] - c) === 1;
-                return (
-                  <div key={`${r}-${c}`} role="gridcell" className="contents">
-                    <button
-                      type="button"
-                      aria-label={
-                        here
-                          ? t("Ліхтарик тут")
-                          : ch === "E"
-                            ? t("Хатинка")
-                            : ch === "#"
-                              ? t("Кущик")
-                              : t("Стежка")
-                      }
-                      onClick={() => adj && move(r - pos[0], c - pos[1])}
-                      className={`flex aspect-square items-center justify-center rounded-lg text-lg sm:text-2xl ${ch === "#" ? "bg-primary/70" : "bg-secondary"} ${adj && ch !== "#" && !done ? "ring-2 ring-accent" : ""}`}
-                    >
-                      {here ? "🦔" : ch === "E" ? "🏡" : ch === "#" ? "🌳" : ""}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-        </div>
-        {/* One row of four arrows stays reachable on every phone; the maze narrows
-            below 700px of height so both still fit above the fixed nav. */}
-        <>
-          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-4 gap-2">
-            <Btn
-              variant="soft"
-              className="w-full px-0"
-              aria-label={L(MAZE.up)}
-              onClick={() => move(-1, 0)}
-            >
-              ↑
-            </Btn>
-            <Btn
-              variant="soft"
-              className="w-full px-0"
-              aria-label={L(MAZE.left)}
-              onClick={() => move(0, -1)}
-            >
-              ←
-            </Btn>
-            <Btn
-              variant="soft"
-              className="w-full px-0"
-              aria-label={L(MAZE.down)}
-              onClick={() => move(1, 0)}
-            >
-              ↓
-            </Btn>
-            <Btn
-              variant="soft"
-              className="w-full px-0"
-              aria-label={L(MAZE.right)}
-              onClick={() => move(0, 1)}
-            >
-              →
-            </Btn>
+        <div className="play-split flex flex-col gap-3">
+          <div
+            role="grid"
+            aria-label={t("Лабіринт")}
+            className="play-media paper-card mx-auto grid w-full max-w-md gap-px p-0 [@media(max-height:700px)]:max-w-[clamp(9rem,calc(100dvh_-_23rem),17rem)]"
+            style={{ gridTemplateColumns: `repeat(${n}, 1fr)` }}
+          >
+            {grid.map((row, r) => (
+              <div key={r} role="row" className="contents">
+                {[...row].map((ch, c) => {
+                  const here = pos[0] === r && pos[1] === c;
+                  const adj = Math.abs(pos[0] - r) + Math.abs(pos[1] - c) === 1;
+                  return (
+                    <div key={`${r}-${c}`} role="gridcell" className="contents">
+                      <button
+                        type="button"
+                        aria-label={
+                          here
+                            ? t("Ліхтарик тут")
+                            : ch === "E"
+                              ? t("Хатинка")
+                              : ch === "#"
+                                ? t("Кущик")
+                                : t("Стежка")
+                        }
+                        onClick={() => adj && move(r - pos[0], c - pos[1])}
+                        className={`flex aspect-square items-center justify-center rounded-lg text-lg sm:text-2xl ${ch === "#" ? "bg-primary/70" : "bg-secondary"} ${adj && ch !== "#" && !done ? "ring-2 ring-accent" : ""}`}
+                      >
+                        {here ? "🦔" : ch === "E" ? "🏡" : ch === "#" ? "🌳" : ""}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
-          {!moved && <p className="text-center text-sm text-muted-foreground">{L(MAZE.hint)}</p>}
-        </>
+          {/* One row of four arrows stays reachable on every phone; the maze narrows
+            below 700px of height so both still fit above the fixed nav. */}
+          <div className="space-y-3">
+            <div className="mx-auto grid w-full max-w-[17rem] grid-cols-4 gap-2">
+              <Btn
+                variant="soft"
+                className="w-full px-0"
+                aria-label={L(MAZE.up)}
+                onClick={() => move(-1, 0)}
+              >
+                ↑
+              </Btn>
+              <Btn
+                variant="soft"
+                className="w-full px-0"
+                aria-label={L(MAZE.left)}
+                onClick={() => move(0, -1)}
+              >
+                ←
+              </Btn>
+              <Btn
+                variant="soft"
+                className="w-full px-0"
+                aria-label={L(MAZE.down)}
+                onClick={() => move(1, 0)}
+              >
+                ↓
+              </Btn>
+              <Btn
+                variant="soft"
+                className="w-full px-0"
+                aria-label={L(MAZE.right)}
+                onClick={() => move(0, 1)}
+              >
+                →
+              </Btn>
+            </div>
+            {!moved && <p className="text-center text-sm text-muted-foreground">{L(MAZE.hint)}</p>}
+          </div>
+        </div>
         {!moved && (
           <div className="space-y-4 pt-1">
             <CharacterSay who="lihtaryk" text={L(MAZE.intro)} mood="talk" />

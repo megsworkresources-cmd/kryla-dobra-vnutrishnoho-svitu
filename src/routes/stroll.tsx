@@ -64,30 +64,36 @@ function Stroll() {
             {spot ? L(spot.text) : ""}
           </p>
         )}
-        <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft [@media(max-height:600px)]:max-h-[32dvh]">
-          <img src={placeImage("meadow")} alt="" className="h-full w-full object-cover" />
-          {STROLL.spots.map((s, k) => (
-            <button
-              key={k}
-              type="button"
-              onClick={() => tap(k)}
-              aria-label={t("Маленьке диво {n}", { n: k + 1 })}
-              aria-pressed={found.includes(k)}
-              style={{ left: `${s.x}%`, top: `${s.y}%` }}
-              className={`absolute flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-card text-2xl transition ${found.includes(k) ? "bg-card" : "bg-card/50"}`}
-            >
-              <span aria-hidden className={found.includes(k) ? "" : "animate-float"}>
-                {found.includes(k) ? s.icon : "✨"}
-              </span>
-            </button>
-          ))}
-        </div>
-        <p className="text-center text-sm" aria-live="polite">
-          {t("Знайдено див: {n} із {m}", { n: found.length, m: STROLL.spots.length })}
-        </p>
-        {found.length === 0 && <CharacterSay who="marko" text={L(STROLL.intro)} action="look" />}
-        <div className="paper-card space-y-2 p-4">
-          <p>{L(STROLL.move)}</p>
+        <div className="play-split flex flex-col gap-3">
+          <div className="play-media relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft [@media(max-height:600px)]:max-h-[32dvh]">
+            <img src={placeImage("meadow")} alt="" className="h-full w-full object-cover" />
+            {STROLL.spots.map((s, k) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => tap(k)}
+                aria-label={t("Маленьке диво {n}", { n: k + 1 })}
+                aria-pressed={found.includes(k)}
+                style={{ left: `${s.x}%`, top: `${s.y}%` }}
+                className={`absolute flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-card text-2xl transition ${found.includes(k) ? "bg-card" : "bg-card/50"}`}
+              >
+                <span aria-hidden className={found.includes(k) ? "" : "animate-float"}>
+                  {found.includes(k) ? s.icon : "✨"}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="space-y-3">
+            <p className="text-center text-sm" aria-live="polite">
+              {t("Знайдено див: {n} із {m}", { n: found.length, m: STROLL.spots.length })}
+            </p>
+            {found.length === 0 && (
+              <CharacterSay who="marko" text={L(STROLL.intro)} action="look" />
+            )}
+            <div className="paper-card space-y-2 p-4">
+              <p>{L(STROLL.move)}</p>
+            </div>
+          </div>
         </div>
       </div>
     </Scene>

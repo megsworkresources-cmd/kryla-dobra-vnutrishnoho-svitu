@@ -768,3 +768,24 @@ textarea:focus-visible {
     animation: none;
   }
 }
+
+/*
+ * Short landscape phones (a rotated phone, not a desktop): the play surface
+ * sits beside its controls instead of above them, so the child still reaches
+ * everything without scrolling past the fixed bottom bar.
+ */
+@media (orientation: landscape) and (max-height: 520px) {
+  .play-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 0.75rem;
+  }
+  .play-split > .play-media {
+    max-height: calc(100dvh - 15rem);
+  }
+  /* A screen with a line of status text above its picture has less room. */
+  .play-split > .play-media-tight {
+    max-height: calc(100dvh - 18rem);
+  }
+}

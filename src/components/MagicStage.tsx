@@ -112,9 +112,18 @@ export function MagicStage({
         // the strip cannot advance the exercise.
         <div
           className="relative h-48 touch-pan-y-zoom select-none overflow-hidden rounded-lg bg-sage/30"
-          onPointerUp={() => (tracing.current = false)}
-          onPointerCancel={() => (tracing.current = false)}
-          onPointerLeave={() => (tracing.current = false)}
+          onPointerUp={(event) => {
+            if (event.isPrimary === false) return;
+            tracing.current = false;
+          }}
+          onPointerCancel={(event) => {
+            if (event.isPrimary === false) return;
+            tracing.current = false;
+          }}
+          onPointerLeave={(event) => {
+            if (event.isPrimary === false) return;
+            tracing.current = false;
+          }}
           onPointerMove={(event) => {
             if (!tracing.current || event.isPrimary === false) return;
             const rect = event.currentTarget.getBoundingClientRect();
@@ -152,7 +161,12 @@ export function MagicStage({
               key={n}
               className="absolute -translate-x-1/2 -translate-y-1/2 touch-none"
               style={{ left: `${x}%`, top: `${y}%` }}
-              onPointerDown={() => (tracing.current = true)}
+              onPointerDown={(event) => {
+                // Only the finger that owns the gesture traces: a second finger
+                // landing on a step must not start or end a stroke.
+                if (event.isPrimary === false) return;
+                tracing.current = true;
+              }}
             >
               <Btn
                 variant={n < progress ? "honey" : "soft"}

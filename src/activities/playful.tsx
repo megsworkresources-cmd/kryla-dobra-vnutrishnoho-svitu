@@ -243,12 +243,14 @@ export function CloudCreatures() {
                     setMoved((map) => ({ ...map, [creature.id]: true }));
                     setOffset((map) => ({ ...map, [creature.id]: { x: 0, y: 0 } }));
                   }}
-                  className={`absolute grid h-24 w-32 place-items-center transition-transform sm:h-28 sm:w-40 ${
+                  className={`absolute grid h-16 w-20 place-items-center transition-transform sm:h-20 sm:w-28 ${
                     isMoved ? "pointer-events-none" : ""
                   }`}
                   style={{
-                    // The cloud is the drag handle, so it claims both axes; the card
-                    // around it still scrolls the page.
+                    // The cloud is the drag handle, so it claims both axes. It is kept
+                    // small on purpose: at 128x96 four clouds covered 57% of the card,
+                    // which left almost nowhere to start a page scroll. At 64x80 they
+                    // cover ~24%, so the card scrolls around them.
                     touchAction: "none",
                     transform: isMoved
                       ? "translate(0, -160%) scale(.9)"

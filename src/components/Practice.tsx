@@ -157,11 +157,13 @@ export function Practice({
     if (!el) return;
     const timer = window.setTimeout(() => {
       const rect = el.getBoundingClientRect();
-      const measured = Number.parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue("--bar-h"),
-      );
+      const root = getComputedStyle(document.documentElement);
+      const measured = Number.parseFloat(root.getPropertyValue("--bar-h"));
       const barClearance = Number.isFinite(measured) && measured > 0 ? measured : 88;
-      const readable = rect.top >= 0 && rect.bottom <= window.innerHeight - barClearance;
+      // The bar sits above the keyboard, so the readable area ends that much higher.
+      const lift = Number.parseFloat(root.getPropertyValue("--kb-inset"));
+      const keyboard = Number.isFinite(lift) && lift > 0 ? lift : 0;
+      const readable = rect.top >= 0 && rect.bottom <= window.innerHeight - keyboard - barClearance;
       if (readable) return;
       el.scrollIntoView({
         block: "center",

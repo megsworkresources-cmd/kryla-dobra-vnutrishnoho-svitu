@@ -2,6 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Map } from "lucide-react";
 import { ORDER, neighbours } from "@/content/sequence";
 import { useT } from "@/lib/i18n";
+import { contentSpacer, useKeyboardInset } from "@/lib/keyboard";
 import { useEffect, useRef, useState } from "react";
 
 /**
@@ -17,6 +18,8 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
   const chips = useRef<HTMLElement>(null);
   const activeChip = useRef<HTMLAnchorElement>(null);
   const [height, setHeight] = useState(96);
+  // 0 unless the on-screen keyboard is up, in which case the bar rides above it.
+  const keyboard = useKeyboardInset();
 
   const path = pathname.replace(/\/+$/, "") || "/";
   const section = path.split("/").filter(Boolean)[0] ?? "";
@@ -62,11 +65,13 @@ export function BottomNav({ night }: { night?: boolean | undefined }) {
   const card = night ? "night-card" : "paper-card";
   return (
     <>
-      {/* Spacer reserves the bar's height so page content never slides underneath it. */}
-      <div aria-hidden className="shrink-0" style={{ height }} />
+      {/* Spacer reserves the bar's height, plus the keyboard while it is up, so the
+          last controls can still be scrolled clear of both. */}
+      <div aria-hidden className="shrink-0" style={{ height: contentSpacer(height, keyboard) }} />
       <div
         ref={bar}
         className={`fixed inset-x-0 bottom-0 z-40 border-t border-border backdrop-blur-md ${night ? "bg-night-bar" : "bg-background/95"}`}
+        style={keyboard > 0 ? { bottom: keyboard } : undefined}
       >
         <div
           className="mx-auto w-full max-w-3xl px-3 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] pt-2"

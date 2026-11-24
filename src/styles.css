@@ -114,10 +114,12 @@
     -webkit-tap-highlight-color: transparent;
   }
   html {
-    /* BottomNav measures the real bar into --bar-h, so a scroll that anchors a
-       heading or a reply never parks it behind the activity chips. */
+    /* BottomNav measures the real bar into --bar-h, and the keyboard lift into
+       --kb-inset, so a scroll that anchors a heading or a reply never parks it
+       behind the activity chips or the on-screen keyboard. */
     scroll-padding-bottom: calc(
-      var(--bar-h, 7rem) + 0.75rem + env(safe-area-inset-bottom, 0px)
+      var(--bar-h, 7rem) + var(--kb-inset, 0px) + 0.75rem +
+        env(safe-area-inset-bottom, 0px)
     );
   }
   input,

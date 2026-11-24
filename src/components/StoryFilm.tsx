@@ -51,6 +51,18 @@ export function StoryFilm({
   const ownerWanted = useRef(playing);
   // Waiting for a gesture outlives the playback effect: a blocked film re-runs it.
   const retryOff = useRef<(() => void) | null>(null);
+  // Our own pause() (cleanup, hand-over) must not read as the story owner's pause.
+  const ownPause = useRef(false);
+  const pauseMedia = (el: HTMLVideoElement | null | undefined) => {
+    if (!el) return;
+    if (!el.paused) {
+      ownPause.current = true;
+      window.setTimeout(() => {
+        ownPause.current = false;
+      }, 0);
+    }
+    el.pause();
+  };
   const wantsVideo = motion || manual;
   const shouldPlay = playing || manual;
 
@@ -119,13 +131,13 @@ export function StoryFilm({
     };
     if (shouldPlay && wantsVideo && !document.hidden) play();
     else {
-      media.pause();
+      pauseMedia(media);
       if (shouldPlay && !wantsVideo) pauseOwner.current();
     }
     return () => {
       active = false;
       playbackGeneration.current += 1;
-      media.pause();
+      pauseMedia(media);
       releaseVideo(media);
     };
     // A hand-started film plays from the click itself, so `manual` stays out of the deps
@@ -212,7 +224,7 @@ export function StoryFilm({
     const pause = () => {
       playbackGeneration.current += 1;
       playingNow.current = false;
-      media?.pause();
+      pauseMedia(media);
       pauseOwner.current();
     };
     const visibility = () => {
@@ -237,6 +249,7 @@ export function StoryFilm({
         poster={poster}
         muted
         onPause={() => {
+          if (ownPause.current) return;
           if (playingNow.current || manualRef.current) pauseOwner.current();
         }}
         onWaiting={() => setStatus("loading")}
@@ -258,7 +271,7 @@ export function StoryFilm({
           if (!media) return;
           const stillWanted =
             (playingNow.current || manualRef.current) && (motion || manualRef.current);
-          if (!stillWanted || document.hidden) media.pause();
+          if (!stillWanted || document.hidden) pauseMedia(media);
           else claimVideo(media);
           setStatus("ready");
         }}

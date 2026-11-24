@@ -46,7 +46,19 @@ function CharacterLoop({
   const manualRef = useRef(false);
   // A blocked loop waits for a gesture even while its own playback state changes.
   const retryOff = useRef<(() => void) | null>(null);
+  // Our own pause() (cleanup, hand-over to another video) must not read as the child's pause.
+  const ownPause = useRef(false);
   const wantsVideo = motion || manual;
+  const pauseMedia = (el: HTMLVideoElement | null | undefined) => {
+    if (!el) return;
+    if (!el.paused) {
+      ownPause.current = true;
+      window.setTimeout(() => {
+        ownPause.current = false;
+      }, 0);
+    }
+    el.pause();
+  };
 
   useEffect(() => {
     setFailed(false);
@@ -77,6 +89,8 @@ function CharacterLoop({
           })
           .catch(() => {
             if (!active) return;
+            // A refusal is not the child's pause: keep the button offering playback.
+            ownPause.current = false;
             setPlaying(false);
             // Safari only accepts the retry inside a real gesture: the child's next touch.
             retryOff.current?.();
@@ -92,17 +106,17 @@ function CharacterLoop({
       } catch {
         if (active) setPlaying(false);
       }
-    } else media.pause();
+    } else pauseMedia(media);
     return () => {
       active = false;
-      media.pause();
+      pauseMedia(media);
       releaseVideo(media);
     };
   }, [playing, who, wantsVideo, failed]);
 
   useEffect(() => {
     const pause = () => {
-      video.current?.pause();
+      pauseMedia(video.current);
       setPlaying(false);
     };
     const visibility = () => {
@@ -167,6 +181,7 @@ function CharacterLoop({
           else claimVideo(media);
         }}
         onPause={() => {
+          if (ownPause.current) return;
           if (playing) setPlaying(false);
         }}
         onError={() => {

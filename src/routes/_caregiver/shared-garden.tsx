@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -43,6 +43,7 @@ function SharedGarden() {
   });
   const [consent, setConsent] = useState(false);
   const [playing, setPlaying] = useState(true);
+  const filmStart = useRef<(() => void) | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [capped, setCapped] = useState(false);
   const mutation = useMutation({
@@ -282,6 +283,7 @@ function SharedGarden() {
               onPause={() => setPlaying(false)}
               part={growthPart(shownStage)}
               label="Запис росту соняшника"
+              startRef={filmStart}
             />
           </div>
           {isFinalGrowthStage(shownStage) && (
@@ -296,7 +298,14 @@ function SharedGarden() {
             </p>
           )}
           <div className="flex flex-wrap justify-center gap-2 p-4">
-            <Btn onClick={() => setPlaying(!playing)}>
+            <Btn
+              onClick={() => {
+                const next = !playing;
+                setPlaying(next);
+                // Start inside the tap, or Safari drops the play() and the label flips back.
+                if (next) filmStart.current?.();
+              }}
+            >
               {playing ? <Pause size={18} /> : <Play size={18} />}
               {t(playing ? "Пауза" : "Дивитися ріст")}
             </Btn>

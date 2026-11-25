@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Pause, Play, Sprout } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GrownUpLink } from "@/components/GrownUpLink";
 import { Btn, Scene } from "@/components/Scene";
 import { StoryFilm } from "@/components/StoryFilm";
@@ -39,6 +39,7 @@ function Garden() {
   const previous = stage > 0 ? (GROWTH_THRESHOLDS[stage - 1] ?? 0) : 0;
   const [grown, setGrown] = useState(0);
   const [playing, setPlaying] = useState(true);
+  const filmStart = useRef<(() => void) | null>(null);
   useEffect(() => {
     const id = requestAnimationFrame(() => setGrown(1));
     return () => cancelAnimationFrame(id);
@@ -73,11 +74,20 @@ function Garden() {
               part={growthPart(stage)}
               label="Запис росту соняшника"
               quiet
+              startRef={filmStart}
             />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 p-4">
             <p className="text-sm font-bold">{t("Твоя стадія: {n} з 5", { n: stage })}</p>
-            <Btn variant="soft" onClick={() => setPlaying(!playing)}>
+            <Btn
+              variant="soft"
+              onClick={() => {
+                const next = !playing;
+                setPlaying(next);
+                // Start inside the tap, or Safari drops the play() and the label flips back.
+                if (next) filmStart.current?.();
+              }}
+            >
               {playing ? <Pause size={18} /> : <Play size={18} />}
               {t(playing ? "Пауза" : "Дивитися ріст")}
             </Btn>

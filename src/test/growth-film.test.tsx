@@ -62,6 +62,27 @@ it("loops only the slice that matches the flower's stage", () => {
   expect(position).toBe(0);
 });
 
+it("hands the page a starter that plays inside the child's own tap", () => {
+  const start: { current: (() => void) | null } = { current: null };
+  vi.mocked(HTMLMediaElement.prototype.play).mockClear();
+  const view = render(
+    <StoryFilm
+      src="/growth.mp4"
+      poster="/poster.jpg"
+      playing={false}
+      onPause={vi.fn()}
+      startRef={start}
+    />,
+  );
+  // The page's "watch it grow" button runs this synchronously: Safari refuses a play()
+  // that arrives after the gesture, which is why the film used to stay paused.
+  expect(typeof start.current).toBe("function");
+  start.current?.();
+  expect(HTMLMediaElement.prototype.play).toHaveBeenCalled();
+  view.unmount();
+  expect(start.current).toBeNull();
+});
+
 it("keeps the whole recording looping when no slice is given", () => {
   const { container } = render(
     <StoryFilm src="/story.mp4" poster="/poster.jpg" playing={false} onPause={vi.fn()} />,

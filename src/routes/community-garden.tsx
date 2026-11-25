@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -59,6 +59,7 @@ function CommunityGarden() {
   const savedNote = saved.at === null ? null : savedGardenNote(saved.at);
   const [picked, setPicked] = useState<number | null>(null);
   const [playing, setPlaying] = useState(true);
+  const filmStart = useRef<(() => void) | null>(null);
   const shownStage = coarseGrowthStage(picked === null ? ownStage : (shared[picked] ?? ownStage));
   const shownName = picked === null || picked >= shared.length ? null : picked + 1;
 
@@ -231,6 +232,7 @@ function CommunityGarden() {
               part={growthPart(shownStage)}
               label="Запис росту соняшника"
               quiet
+              startRef={filmStart}
             />
           </div>
           {isFinalGrowthStage(shownStage) && (
@@ -245,7 +247,14 @@ function CommunityGarden() {
             </p>
           )}
           <div className="flex flex-wrap justify-center gap-2 p-4">
-            <Btn onClick={() => setPlaying(!playing)}>
+            <Btn
+              onClick={() => {
+                const next = !playing;
+                setPlaying(next);
+                // Start inside the tap, or Safari drops the play() and the label flips back.
+                if (next) filmStart.current?.();
+              }}
+            >
               {playing ? <Pause size={18} /> : <Play size={18} />}
               {t(playing ? "Пауза" : "Дивитися ріст")}
             </Btn>

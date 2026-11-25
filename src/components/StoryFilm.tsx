@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MutableRefObject } from "react";
 import { Play } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { Btn } from "./Scene";
@@ -22,6 +22,7 @@ export function StoryFilm({
   quiet,
   onError,
   onProgress,
+  startRef,
 }: {
   src: string;
   poster: string;
@@ -37,6 +38,12 @@ export function StoryFilm({
   quiet?: boolean | undefined;
   /** How far the recording has played (0..1), so captions can follow the footage. */
   onProgress?: ((fraction: number) => void) | undefined;
+  /**
+   * Filled with a starter the page may call inside its own tap. iPhone Safari refuses a
+   * play() that happens after the event, which is why a separate "watch it" button used
+   * to flip back with the film still paused.
+   */
+  startRef?: MutableRefObject<(() => void) | null> | undefined;
 }) {
   const t = useT();
   const motion = useMediaMotion();
@@ -165,6 +172,14 @@ export function StoryFilm({
   };
   const startByHandRef = useRef(startByHand);
   startByHandRef.current = startByHand;
+
+  useEffect(() => {
+    if (!startRef) return;
+    startRef.current = () => startByHandRef.current();
+    return () => {
+      startRef.current = null;
+    };
+  }, [startRef]);
 
   // A new beat starts its own part of the recording.
   useEffect(() => {

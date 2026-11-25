@@ -116,6 +116,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
   const audioReady = useAudioUnlocked();
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const filmStart = useRef<(() => void) | null>(null);
   const [t2, setT] = useState(0);
   const [done, setDone] = useState(false);
   useEffect(() => {
@@ -202,6 +203,7 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
               onPause={() => setPlaying(false)}
               startAt={i / Math.max(1, scenes.length)}
               onProgress={followFilm}
+              startRef={filmStart}
             />
           ) : (
             <img
@@ -331,7 +333,12 @@ export function Story({ id }: { id: keyof typeof STORIES }) {
         </Btn>
         <Btn
           variant="honey"
-          onClick={() => setPlaying(!playing)}
+          onClick={() => {
+            const next = !playing;
+            setPlaying(next);
+            // Start inside the tap, or Safari drops the play() and the film stays paused.
+            if (next) filmStart.current?.();
+          }}
           className="inline-flex items-center gap-2 px-8"
         >
           {playing ? <Pause size={20} /> : <Play size={20} />}

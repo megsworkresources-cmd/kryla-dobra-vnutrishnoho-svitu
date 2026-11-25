@@ -164,7 +164,8 @@ export function StoryFilm({
     if (!media) return;
     primeSilentVideo(media);
     claimVideo(media);
-    setStatus("loading");
+    // A film that is already loaded keeps its picture: only a cold start shows progress.
+    if (media.readyState < 3) setStatus("loading");
     void media.play().catch(() => {
       setStatus("blocked");
       pauseOwner.current();

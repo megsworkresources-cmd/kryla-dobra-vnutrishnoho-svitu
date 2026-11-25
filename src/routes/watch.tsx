@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
 import { CartoonStage } from "@/components/CartoonStage";
@@ -106,6 +106,12 @@ export function Player({
     Math.max(0, Math.min(Math.trunc(initialScene), Math.max(0, clip.shots.length - 1))),
   );
   const [playing, setPlaying] = useState(true);
+  const filmStart = useRef<(() => void) | null>(null);
+  /** Start the footage inside the tap: Safari refuses a play() that arrives after it. */
+  const startFilm = (next: boolean) => {
+    setPlaying(next);
+    if (next) filmStart.current?.();
+  };
   const [failedShot, setFailedShot] = useState<number | null>(null);
   const [filmFailed, setFilmFailed] = useState(false);
   const audioReady = useAudioUnlocked();
@@ -165,6 +171,7 @@ export function Player({
             onError={() => setFilmFailed(true)}
             startAt={i / Math.max(1, clip.shots.length)}
             onProgress={followFilm}
+            startRef={filmStart}
           />
         )}
         {shot ? (
@@ -206,7 +213,7 @@ export function Player({
             variant="soft"
             onClick={() => {
               setFilmFailed(false);
-              setPlaying(true);
+              startFilm(true);
             }}
           >
             {t("Спробувати відео ще")}
@@ -228,7 +235,7 @@ export function Player({
             type="button"
             onClick={() => {
               setI(k);
-              setPlaying(true);
+              startFilm(true);
             }}
             aria-label={t("Сцена {n}", { n: k + 1 })}
             aria-current={k === i ? "step" : undefined}
@@ -246,7 +253,7 @@ export function Player({
           <Btn
             onClick={() => {
               setI(0);
-              setPlaying(true);
+              startFilm(true);
             }}
             className="inline-flex items-center gap-2"
           >
@@ -256,7 +263,7 @@ export function Player({
         ) : (
           <>
             <Btn
-              onClick={() => setPlaying(!playing)}
+              onClick={() => startFilm(!playing)}
               className="inline-flex items-center gap-2"
               aria-label={playing ? t("Пауза") : t("Грати")}
             >

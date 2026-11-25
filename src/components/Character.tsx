@@ -205,7 +205,16 @@ function CharacterLoop({
         type="button"
         aria-label={t(playing ? "Пауза" : "Грати")}
         title={t(playing ? "Пауза" : "Грати")}
-        onClick={() => setPlaying((value) => !value)}
+        onClick={() => {
+          const next = !playing;
+          setPlaying(next);
+          const el = video.current;
+          if (!next || !el) return;
+          // Start inside the tap: Safari refuses a play() that arrives after the gesture.
+          primeSilentVideo(el);
+          claimVideo(el);
+          void el.play().catch(() => {});
+        }}
         className="absolute bottom-1 right-1 flex h-11 w-11 items-center justify-center rounded-full bg-card/90 text-card-foreground shadow-soft"
       >
         {playing ? <Pause size={16} aria-hidden /> : <Play size={16} aria-hidden />}

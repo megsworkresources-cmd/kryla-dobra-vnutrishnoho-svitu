@@ -157,3 +157,42 @@ it("resuming paused device speech never leaves a stuck loading state", () => {
   expect(getSpeechState()).toBe("playing");
   stopSpeaking();
 });
+
+it("never restarts the line that is already being spoken", () => {
+  let queued = 0;
+  let utterance: SpeechSynthesisUtterance | undefined;
+  vi.stubGlobal("speechSynthesis", {
+    cancel: vi.fn(),
+    resume: vi.fn(),
+    getVoices: () => [],
+    speak: (u: SpeechSynthesisUtterance) => {
+      queued += 1;
+      utterance = u;
+    },
+  });
+  vi.stubGlobal(
+    "SpeechSynthesisUtterance",
+    class {
+      constructor(public text: string) {}
+    },
+  );
+  update((s) => ({
+    ...s,
+    sound: true,
+    voice: true,
+    volume: 1,
+    voiceVolume: 1,
+    voiceEngine: "device",
+  }));
+  unlockAudio();
+  // The greeting effect and the speaker button can ask for the same line at once.
+  speak("Привіт", { localOnly: true, who: "olenka" });
+  speak("Привіт", { localOnly: true, who: "olenka" });
+  speak("Привіт", { localOnly: true, who: "olenka", force: true });
+  expect(queued).toBe(1);
+  // Once the line has finished, asking again plays it again.
+  utterance?.onend?.({} as SpeechSynthesisEvent);
+  speak("Привіт", { localOnly: true, who: "olenka" });
+  expect(queued).toBe(2);
+  stopSpeaking();
+});

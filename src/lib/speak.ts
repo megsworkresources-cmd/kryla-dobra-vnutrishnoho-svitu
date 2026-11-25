@@ -30,6 +30,8 @@ const cache = new Map<string, string>(); // in-memory only; values are audio dat
 let audio: HTMLAudioElement | null = null;
 let primedPlayer: HTMLAudioElement | null = null;
 let naturalPaused = false;
+/** The line currently starting or playing, so an identical request does not restart it. */
+let speakingLine: string | null = null;
 /** Reuse the element unlocked synchronously by a real gesture, including on Safari. */
 let synthPrimed = false;
 let deferredDevice: (() => void) | null = null;
@@ -153,7 +155,13 @@ export function speak(
     (!s.voice && !opts.force)
   )
     return;
+  // The same line asked for again while it is still starting or playing is the line the
+  // child is already hearing (the greeting effect and the speaker button can overlap).
+  // Restarting it there cut the voice off and made narration sound doubled on a phone.
+  const line = `${opts.who ?? "narrator"}|${s.lang}|${text}`;
+  if (line === speakingLine && (speechState === "loading" || speechState === "playing")) return;
   stopSpeaking();
+  speakingLine = line;
   const c = opts.who ? CAST[opts.who] : null;
   const pitch = opts.pitch ?? c?.pitch ?? 1.05;
   if (opts.localOnly || s.voiceEngine !== "natural") return deviceSpeak(text, pitch);
@@ -291,6 +299,7 @@ export function resumeSpeaking() {
 export function stopSpeaking() {
   token++;
   deferredDevice = null;
+  speakingLine = null;
   setSpeechState("idle");
   duckMusic(false);
   if (audio) {

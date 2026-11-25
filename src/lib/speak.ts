@@ -40,9 +40,12 @@ let deferredDevice: (() => void) | null = null;
 const SPEECH_GESTURES: GestureType[] = ["touchend", "click", "keydown"];
 /** The line kept for the next touch after Safari accepted it but never started it. */
 let cancelStartRetry: (() => void) | null = null;
+let startWatchdog: ReturnType<typeof setTimeout> | null = null;
 function clearStartRetry() {
   cancelStartRetry?.();
   cancelStartRetry = null;
+  if (startWatchdog) clearTimeout(startWatchdog);
+  startWatchdog = null;
 }
 // 0.1 s of real silence: iOS refuses to "play" a one-sample clip, which left no gesture-primed player.
 const SILENT_WAV =
@@ -158,6 +161,14 @@ function deviceSpeak(text: string, pitch: number, attempt = 0) {
     duckMusic(false);
     return;
   }
+  // A line the phone never starts must not keep the controls on "Stop" while it is silent;
+  // it stays kept for the next touch, and starting it later reports itself again.
+  startWatchdog = setTimeout(() => {
+    startWatchdog = null;
+    if (started || mine !== token) return;
+    setSpeechState("idle");
+    duckMusic(false);
+  }, 1200);
   // A line requested from an effect (a character's greeting) is queued outside the touch
   // itself, and Safari can then leave it silent forever. Keep it for the next real touch
   // and speak it from inside that gesture, exactly once.

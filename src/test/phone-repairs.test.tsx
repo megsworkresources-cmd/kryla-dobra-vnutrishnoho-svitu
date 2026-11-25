@@ -271,6 +271,37 @@ it("does not re-speak a character line that really started", () => {
   stopSpeaking();
 });
 
+it("does not claim a line is playing while the phone keeps it silent", () => {
+  vi.useFakeTimers();
+  vi.stubGlobal("speechSynthesis", {
+    cancel: vi.fn(),
+    resume: vi.fn(),
+    getVoices: () => [],
+    speak: vi.fn(),
+  });
+  vi.stubGlobal(
+    "SpeechSynthesisUtterance",
+    class {
+      constructor(public text: string) {}
+    },
+  );
+  update((s) => ({
+    ...s,
+    sound: true,
+    voice: true,
+    volume: 1,
+    voiceVolume: 1,
+    voiceEngine: "device",
+  }));
+  unlockAudio();
+  speak("Привіт", { localOnly: true, who: "olenka" });
+  expect(getSpeechState()).toBe("loading");
+  vi.advanceTimersByTime(1300);
+  expect(getSpeechState()).toBe("idle");
+  vi.useRealTimers();
+  stopSpeaking();
+});
+
 it("does not cancel an idle synthesiser before speaking", () => {
   const cancel = vi.fn();
   const speakNow = vi.fn();

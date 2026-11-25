@@ -344,9 +344,9 @@ export const EXTRAS: Record<string, string> = {
     "A tall sunflower stood in the field. A girl with a long braid walked up to it.",
   "Вона сіла поруч. Небо стало рожевим, і соняшник засвітився теплим світлом.":
     "She sat beside it. The sky turned pink, and the sunflower began to glow with warm light.",
-  "Зібралися сірі хмарки, прийшов хлопчик у синій куртці — і вони обійняли соняшник разом.":
-    "Grey clouds gathered and a boy in a blue jacket arrived — and together they hugged the sunflower.",
-  "Надвечір двоє друзів дивилися на село: білі хатки, вітряк і ціле поле соняшників.":
+  "Зібралися сірі хмарки, прийшла дівчинка в синій куртці — і вони обійняли соняшник разом.":
+    "Grey clouds gathered and a girl in a blue jacket arrived — and together they hugged the sunflower.",
+  "Надвечір дві подружки дивилися на село: білі хатки, вітряк і ціле поле соняшників.":
     "Towards evening the two friends looked at the village: white cottages, a windmill and a whole field of sunflowers.",
   "Під великим соняшником сидів їжачок із ліхтариком, а потім вирушив стежкою.":
     "A hedgehog with a little lantern sat under a big sunflower, then set off along the path.",
@@ -406,9 +406,9 @@ export const EXTRAS: Record<string, string> = {
     "A girl with a long braid came over and sat beside it.",
   "Небо стало рожевим, і соняшник засвітився теплим світлом.":
     "The sky turned pink and the sunflower glowed with warm light.",
-  "Прийшов хлопчик у синій куртці, і вони обійняли соняшник разом.":
-    "A boy in a blue jacket arrived, and together they hugged the sunflower.",
-  "Увечері над селом і вітряком двоє друзів дивилися на поле соняшників.":
+  "Прийшла дівчинка в синій куртці, і вони обійняли соняшник разом.":
+    "A girl in a blue jacket arrived, and together they hugged the sunflower.",
+  "Увечері над селом і вітряком дві подружки дивилися на поле соняшників.":
     "In the evening, under the village and the windmill, the two friends looked at the sunflower field.",
   "Лисичка сиділа на підвіконні й дивилася на дощ.":
     "The little fox sat on the windowsill watching the rain.",

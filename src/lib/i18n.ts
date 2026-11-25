@@ -321,7 +321,6 @@ const EN: Record<string, string> = {
   "Зачекайте…": "Please wait…",
   Наліпки: "Stickers",
   Наліпка: "Sticker",
-  "🌈 Веселковий пензлик": "🌈 Rainbow brush",
   "Торкнись аркуша, щоб поставити наліпку": "Tap the page to place the sticker",
   "Твій соняшник розквіт! 🌻": "Your sunflower is in bloom! 🌻",
   "Розфарбовано: {n} з {m}": "Coloured: {n} of {m}",
@@ -1288,7 +1287,6 @@ const EN: Record<string, string> = {
   // ---- settings ----
   "Звук, голоси персонажів, музика, розмір тексту й рух на екрані.":
     "Sound, character voices, music, text size and on-screen motion.",
-  "🔊 Звук": "🔊 Sound",
   "Увесь звук": "All sound",
   "Головний вимикач": "The master switch",
   Гучність: "Volume",
@@ -1309,7 +1307,6 @@ const EN: Record<string, string> = {
   "Звуки кнопок": "Button sounds",
   "М’які сигнали при натисканні й завершенні": "Soft signals when you tap and finish",
   "Перевірити звук": "Test the sound",
-  "🗣 Голоси персонажів": "🗣 Character voices",
   "Читати вголос автоматично": "Read aloud automatically",
   "Персонажі самі промовляють інструкції. Текст завжди видно на екрані.":
     "Characters speak the instructions themselves. The text is always on screen.",
@@ -1320,16 +1317,13 @@ const EN: Record<string, string> = {
   "Привіт! Я Соломія. Так звучить мій голос.":
     "Hi! I'm Solomiya. This is what my voice sounds like.",
   "Послухати голос": "Listen to the voice",
-  "👀 Екран": "👀 Screen",
   "Розмір тексту": "Text size",
   Звичайний: "Normal",
   Більший: "Bigger",
   Великий: "Large",
   "Менше руху на екрані": "Less motion on screen",
-  "🎂 Мій вік": "🎂 My age",
   "Від віку залежать слова в деяких вправах.":
     "Some exercises use different words depending on age.",
-  "📍 Мій шлях": "📍 My path",
   "Вже зроблено маленьких справ: {n}": "Little acts of self-care done: {n}",
 
   // ---- parents ----

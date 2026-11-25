@@ -3,7 +3,7 @@ import { Check, ChevronRight } from "lucide-react";
 import { Scene } from "./Scene";
 import { useStore } from "@/lib/store";
 import { CharacterSay } from "./Character";
-import { Glyph } from "./Glyph";
+import { Glyph, type GlyphName } from "./Glyph";
 import { useT } from "@/lib/i18n";
 import { castFor, CHARACTERS } from "@/content/characters";
 
@@ -14,7 +14,7 @@ export interface HubItem {
   href: string;
   params?: Record<string, string>;
   mins?: string;
-  mark: string; // small symbol for the item
+  mark: GlyphName; // drawn symbol for the item
 }
 
 export function Hub({
@@ -72,7 +72,7 @@ export function Hub({
                   className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${night ? "bg-dusk" : "bg-secondary"}`}
                   aria-hidden
                 >
-                  <Glyph emoji={it.mark} className="h-7 w-7" />
+                  <Glyph name={it.mark} className="h-7 w-7" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2 font-bold">

@@ -21,20 +21,39 @@ export function watchFilmId(value: unknown): string | undefined {
     : undefined;
 }
 
-/** Original animated clips made from the app's own artwork — free of any third-party licence. */
+/**
+ * Original animated clips made from the app's own artwork — free of any third-party licence.
+ * Captions describe the recorded picture: each line is written for the part of the
+ * footage it is shown over, so the words and the screen tell the same story.
+ */
 export const WATCH_CLIPS: WatchClip[] = [
   {
     id: "sunflower",
     title: "Соняшник, що шукав сонце",
     icon: "🌻",
     shots: [
-      { img: welcome, who: "solomiya", text: "Біля білої хатки ріс маленький соняшник.", fx: "🌻" },
-      { img: meadow, who: "solomiya", text: "Щоранку він повертав голівку до сонця.", fx: "☀️" },
-      { img: welcome, who: "daryna", text: "Одного дня хмарка сховала сонечко.", fx: "☁️" },
+      {
+        img: welcome,
+        who: "solomiya",
+        text: "У полі стояв високий соняшник. До нього підійшла дівчинка з довгою косою.",
+        fx: "🌻",
+      },
       {
         img: meadow,
         who: "solomiya",
-        text: "Соняшник зачекав, подихав спокійно — і сонце повернулося.",
+        text: "Вона сіла поруч. Небо стало рожевим, і соняшник засвітився теплим світлом.",
+        fx: "☀️",
+      },
+      {
+        img: clouds,
+        who: "daryna",
+        text: "Зібралися сірі хмарки, прийшов хлопчик у синій куртці — і вони обійняли соняшник разом.",
+        fx: "☁️",
+      },
+      {
+        img: path,
+        who: "solomiya",
+        text: "Надвечір двоє друзів дивилися на село: білі хатки, вітряк і ціле поле соняшників.",
         fx: "🌼",
       },
     ],
@@ -47,34 +66,44 @@ export const WATCH_CLIPS: WatchClip[] = [
       {
         img: forest,
         who: "lihtaryk",
-        text: "У нічному лісі їжачок Ліхтарик засвітив свій ліхтарик.",
+        text: "Під великим соняшником сидів їжачок із ліхтариком, а потім вирушив стежкою.",
         fx: "🏮",
       },
       {
         img: forest,
         who: "lihtaryk",
-        text: "До нього злетілися світлячки — кожен зі своїм почуттям.",
+        text: "На стежці він зустрів білочку й білого зайчика, а далі вийшов до містка.",
         fx: "✨",
       },
-      { img: night, who: "olenka", text: "Разом вони освітили стежку додому.", fx: "🌙" },
+      {
+        img: night,
+        who: "olenka",
+        text: "На містку його чекала дівчинка. Вони сиділи поруч, і долина засвітилася світлячками.",
+        fx: "🌙",
+      },
     ],
   },
   {
     id: "kite",
-    title: "Повітряний змій Тараса",
+    title: "Повітряний змій",
     icon: "🪁",
     shots: [
       {
         img: clouds,
-        who: "taras",
-        text: "Тарас змайстрував повітряного змія у синьо-жовту смужку.",
+        who: "solomiya",
+        text: "Дівчинка стояла серед соняшників і тримала синьо-жовтого змія.",
         fx: "🪁",
       },
-      { img: clouds, who: "taras", text: "Вітер підхопив його високо-високо до хмар.", fx: "💨" },
+      {
+        img: clouds,
+        who: "solomiya",
+        text: "Вітер підхопив змія високо — аж до птахів і вітряка на горбі.",
+        fx: "💨",
+      },
       {
         img: meadow,
-        who: "marko",
-        text: "Марко намалював змія в блокноті, щоб запам'ятати цей день.",
+        who: "solomiya",
+        text: "Надвечір вона стояла в соняшниках і дивилася, як змій танцює в небі.",
         fx: "✏️",
       },
     ],
@@ -84,37 +113,47 @@ export const WATCH_CLIPS: WatchClip[] = [
     title: "Сміливий місток",
     icon: "🌉",
     shots: [
-      { img: path, who: "daryna", text: "Дарина побачила місток над струмком.", fx: "🌉" },
       {
         img: path,
         who: "daryna",
-        text: "Було трохи страшно. Вона зробила один маленький крок.",
-        fx: "👣",
+        text: "Дарина й Тарас підійшли до дерев’яного містка над струмком.",
+        fx: "🌉",
       },
       {
         img: path,
+        who: "daryna",
+        text: "Дарині було страшно. Вона заплющила очі, подихала — і ступила на дошку.",
+        fx: "👣",
+      },
+      {
+        img: meadow,
         who: "taras",
-        text: "А потім ще один. І ось вона вже на іншому березі!",
+        text: "Вони перейшли разом і сіли на пагорбі серед соняшників, де літали метелики.",
         fx: "🎉",
       },
     ],
   },
   {
     id: "paints",
-    title: "Чарівні фарби Марка",
+    title: "Чарівні фарби",
     icon: "🎨",
     shots: [
-      { img: studio, who: "marko", text: "Марко відкрив коробку чарівних фарб.", fx: "🎨" },
       {
         img: studio,
         who: "marko",
-        text: "Синя фарба — для спокою, жовта — для радості.",
+        text: "Під деревом із ліхтариками стояв мольберт, а поруч — двоє дітей.",
+        fx: "🎨",
+      },
+      {
+        img: studio,
+        who: "marko",
+        text: "Хлопчик у жовтому светрі малював на аркуші соняшник і сонце.",
         fx: "💙",
       },
       {
         img: safe,
         who: "olenka",
-        text: "Разом з Оленкою вони розмалювали затишну кімнату.",
+        text: "Малюнок готовий. Дівчинка в бузковій сукні всміхається поруч.",
         fx: "🏡",
       },
     ],
@@ -125,27 +164,27 @@ export const WATCH_CLIPS: WatchClip[] = [
     icon: "🌧️",
     shots: [
       {
-        img: clouds,
+        img: forest,
         who: "olenka",
-        text: "Одного дня над галявиною зібралися сірі хмаринки.",
+        text: "Лисичка сиділа на підвіконні й дивилася, як за вікном іде дощ.",
         fx: "☁️",
       },
       {
         img: forest,
         who: "taras",
-        text: "Краплинки тихенько застукали по листочках, і друзі сховалися під великим деревом.",
+        text: "Прийшов ведмедик і приніс картату ковдру.",
         fx: "🌧️",
       },
       {
-        img: meadow,
-        who: "solomiya",
-        text: "Вони слухали дощик, дихали спокійно й помітили, як свіже повітря пахне травою.",
+        img: path,
+        who: "taras",
+        text: "Він загорнув лисичку в ковдру й сів поруч із нею.",
         fx: "🌿",
       },
       {
-        img: meadow,
-        who: "daryna",
-        text: "Коли хмаринки попливли далі, друзі разом вийшли на сонячну галявину.",
+        img: safe,
+        who: "olenka",
+        text: "Вони пили теплий чай, а дощ тихо стукав по шибці.",
         fx: "🌈",
       },
     ],
@@ -158,11 +197,21 @@ export const WATCH_CLIPS: WatchClip[] = [
       {
         img: night,
         who: "solomiya",
-        text: "Коли настає ніч, Соломія співає зіркам колискову.",
+        text: "Повний місяць світив над галявиною, де сиділи дві подружки.",
         fx: "🌙",
       },
-      { img: night, who: "olenka", text: "Зірки мерехтять повільніше й повільніше.", fx: "⭐" },
-      { img: safe, who: "olenka", text: "На добраніч, Тихе Місце. На добраніч, друже.", fx: "💤" },
+      {
+        img: night,
+        who: "olenka",
+        text: "Вони махали рукою зорям і всміхалися.",
+        fx: "⭐",
+      },
+      {
+        img: safe,
+        who: "olenka",
+        text: "Потім притулилися плечима й заплющили очі. На добраніч.",
+        fx: "💤",
+      },
     ],
   },
 ];

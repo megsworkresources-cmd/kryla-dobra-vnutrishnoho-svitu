@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { CharacterSay } from "@/components/Character";
 import { Btn } from "@/components/Scene";
+import { Glyph, type GlyphName } from "@/components/Glyph";
 import { chime, sfx } from "@/lib/audio";
 import { useT } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
@@ -123,7 +124,7 @@ export function Fireflies() {
                 className="absolute text-lg animate-petal"
                 style={{ left: `${left}%`, top: "-2rem", animationDelay: `${i * 0.3}s` }}
               >
-                ✨
+                <Glyph name="sparkle" className="h-5 w-5" />
               </span>
             ))}
           </div>
@@ -150,11 +151,11 @@ export function Fireflies() {
 }
 
 /* 2. Cloud Creatures — slide a cloud aside and wake whoever lives inside. */
-const CREATURES = [
-  { id: "turtle", face: "🐢", line: "Я черепашка. Мені добре в тишині." },
-  { id: "fox", face: "🦊", line: "Я лисичка. Люблю гратися в хованки." },
-  { id: "bee", face: "🐝", line: "Я бджілка. Люблю квіти й тихе гудіння." },
-  { id: "squirrel", face: "🐿️", line: "Я білочка. Збираю зернятка на зиму." },
+const CREATURES: { id: string; face: GlyphName; line: string }[] = [
+  { id: "turtle", face: "turtle", line: "Я черепашка. Мені добре в тишині." },
+  { id: "fox", face: "fox", line: "Я лисичка. Люблю гратися в хованки." },
+  { id: "bee", face: "bee", line: "Я бджілка. Люблю квіти й тихе гудіння." },
+  { id: "squirrel", face: "squirrel", line: "Я білочка. Збираю зернятка на зиму." },
 ];
 
 export function CloudCreatures() {
@@ -187,11 +188,8 @@ export function CloudCreatures() {
             const isMoved = moved[creature.id];
             return (
               <div key={creature.id} className="relative grid place-items-center">
-                <span
-                  className={`text-5xl sm:text-6xl ${isMoved ? "animate-pop" : "opacity-0"}`}
-                  aria-hidden
-                >
-                  {creature.face}
+                <span className={`block ${isMoved ? "animate-pop" : "opacity-0"}`} aria-hidden>
+                  <Glyph name={creature.face} className="h-14 w-14 sm:h-16 sm:w-16" />
                 </span>
                 {isMoved && (
                   <p className="mt-1 max-w-[10rem] px-2 text-center text-xs font-semibold leading-tight text-ink">

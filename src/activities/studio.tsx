@@ -3,12 +3,22 @@ import { useEffect, useRef, useState } from "react";
 import { Eraser, Trash2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Btn } from "@/components/Scene";
+import { Glyph, type GlyphName } from "@/components/Glyph";
 import { addDrawing, markDone, removeDrawing, useStore } from "@/lib/store";
 import { useT, useLang, localeOf } from "@/lib/i18n";
 import { chime, sfx } from "@/lib/audio";
 import { clearDraft, getDraft, saveDraft } from "@/lib/drafts";
 
-const STAMPS = ["🌻", "⭐", "🦋", "❤️", "🌈", "🐞", "☁️", "🌙"];
+const STAMPS: GlyphName[] = [
+  "sunflower",
+  "star",
+  "butterfly",
+  "heart",
+  "rainbow",
+  "ladybird",
+  "cloud",
+  "moon",
+];
 const STAMP_NAMES = [
   "Соняшник",
   "Зірочка",
@@ -47,6 +57,41 @@ type PaintColor = (typeof COLORS)[number];
 const resolve = (c: string) =>
   getComputedStyle(document.documentElement).getPropertyValue(c.slice(4, -1)).trim() || c;
 
+/**
+ * The sticker on the page is the same drawn art as the palette, so a stamped
+ * drawing never falls back to a phone's emoji font. Palette tokens are resolved
+ * before the SVG is serialised, because an image document has no CSS variables.
+ */
+async function paintGlyph(
+  g: CanvasRenderingContext2D,
+  source: SVGSVGElement,
+  x: number,
+  y: number,
+  px: number,
+) {
+  const copy = source.cloneNode(true) as SVGSVGElement;
+  copy.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  copy.setAttribute("width", String(px));
+  copy.setAttribute("height", String(px));
+  const tokens = getComputedStyle(document.documentElement);
+  for (const el of [copy, ...Array.from(copy.querySelectorAll("*"))]) {
+    for (const attr of ["fill", "stroke"]) {
+      const value = el.getAttribute(attr);
+      if (!value?.startsWith("var(")) continue;
+      const resolved = tokens.getPropertyValue(value.slice(4, -1)).trim();
+      if (resolved) el.setAttribute(attr, resolved);
+    }
+  }
+  const markup = new XMLSerializer().serializeToString(copy);
+  const img = new Image();
+  await new Promise<void>((done) => {
+    img.onload = () => done();
+    img.onerror = () => done();
+    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(markup)}`;
+  });
+  if (img.width > 0) g.drawImage(img, x - px / 2, y - px / 2, px, px);
+}
+
 export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   const t = useT();
   const ref = useRef<HTMLCanvasElement>(null);
@@ -58,10 +103,11 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
   const [eraser, setEraser] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
-  const [stamp, setStamp] = useState<string | null>(null);
+  const [stamp, setStamp] = useState<GlyphName | null>(null);
+  const stampButtons = useRef<Partial<Record<GlyphName, HTMLButtonElement | null>>>({});
   const [rainbow, setRainbow] = useState(false);
   const hue = useRef(0);
-  const [trail, setTrail] = useState<{ id: number; x: number; y: number; g: string }[]>([]);
+  const [trail, setTrail] = useState<{ id: number; x: number; y: number; g: GlyphName }[]>([]);
   const tid = useRef(0);
   const last = useRef(0);
   const [party, setParty] = useState(0);
@@ -102,7 +148,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
     setDraft(null);
     fill();
   };
-  const spark = (e: React.PointerEvent, g: string) => {
+  const spark = (e: React.PointerEvent, g: GlyphName) => {
     const canvas = ref.current;
     if (!canvas) return;
     const r = canvas.getBoundingClientRect();
@@ -138,12 +184,10 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
     const [x, y] = point;
     dirty.current = true;
     if (stamp) {
-      g.font = `${size * 9}px serif`;
-      g.textAlign = "center";
-      g.textBaseline = "middle";
-      g.fillText(stamp, x, y);
+      const g2 = stampButtons.current[stamp]?.querySelector("svg");
+      if (g2 instanceof SVGSVGElement) void paintGlyph(g, g2, x, y, size * 9);
       chime(noteAt(Math.floor(Math.random() * NOTES.length)));
-      spark(e, "✨");
+      spark(e, "sparkle");
       setSaved(false);
       return;
     }
@@ -183,7 +227,7 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
     const now = Date.now();
     if (!eraser && now - last.current > 120) {
       last.current = now;
-      spark(e, rainbow ? "🌈" : "✨");
+      spark(e, rainbow ? "rainbow" : "sparkle");
     }
   };
   return (
@@ -225,20 +269,21 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
           {trail.map((p) => (
             <span
               key={p.id}
-              className="absolute text-lg animate-stagepop"
+              className="absolute animate-stagepop"
               style={{ left: p.x - 10, top: p.y - 10 }}
             >
-              {p.g}
+              <Glyph name={p.g} className="h-5 w-5" />
             </span>
           ))}
           {party > 0 &&
             [8, 20, 34, 50, 64, 78, 90].map((l, k) => (
               <span
                 key={`${party}-${l}`}
-                className="absolute top-0 text-3xl animate-petal"
+                className="absolute top-0 animate-petal"
                 style={{ left: `${l}%`, animationDelay: `${k * 0.12}s` }}
+                aria-hidden
               >
-                {STAMPS[k]}
+                <Glyph name={STAMPS[k % STAMPS.length] ?? "star"} className="h-8 w-8" />
               </span>
             ))}
         </div>
@@ -248,15 +293,18 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
           <button
             key={g}
             type="button"
+            ref={(el) => {
+              stampButtons.current[g] = el;
+            }}
             onClick={() => {
               sfx("select");
               setStamp(stamp === g ? null : g);
             }}
             aria-pressed={stamp === g}
             aria-label={t("Наліпка: {n}", { n: t(STAMP_NAMES[i] ?? g) })}
-            className={`h-11 w-11 rounded-2xl text-2xl transition-transform ${stamp === g ? "scale-125 bg-honey/40 ring-4 ring-ring animate-wiggle" : "bg-secondary active:scale-90"}`}
+            className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-transform ${stamp === g ? "scale-125 bg-honey/40 ring-4 ring-ring animate-wiggle" : "bg-secondary active:scale-90"}`}
           >
-            {g}
+            <Glyph name={g} className="h-6 w-6" />
           </button>
         ))}
         <Btn
@@ -268,7 +316,8 @@ export function Canvas({ id, prompt }: { id: string; prompt: string }) {
             setEraser(false);
           }}
         >
-          {t("🌈 Веселковий пензлик")}
+          <Glyph name="rainbow" className="mr-2 inline h-5 w-5 align-[-3px]" />
+          {t("Веселковий пензлик")}
         </Btn>
       </div>
       {stamp && (

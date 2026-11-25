@@ -333,6 +333,93 @@ export const EXTRAS: Record<string, string> = {
   Екран: "Screen",
   "Мій вік": "My age",
   "Мій шлях": "My path",
+  "Веселковий пензлик": "Rainbow brush",
+  "Чарівні фарби": "Magic Paints",
+
+  // ---- captions that describe the recorded footage ----
+  "У полі стояв високий соняшник. До нього підійшла дівчинка з довгою косою.":
+    "A tall sunflower stood in the field. A girl with a long braid walked up to it.",
+  "Вона сіла поруч. Небо стало рожевим, і соняшник засвітився теплим світлом.":
+    "She sat beside it. The sky turned pink, and the sunflower began to glow with warm light.",
+  "Зібралися сірі хмарки, прийшов хлопчик у синій куртці — і вони обійняли соняшник разом.":
+    "Grey clouds gathered and a boy in a blue jacket arrived — and together they hugged the sunflower.",
+  "Надвечір двоє друзів дивилися на село: білі хатки, вітряк і ціле поле соняшників.":
+    "Towards evening the two friends looked at the village: white cottages, a windmill and a whole field of sunflowers.",
+  "Під великим соняшником сидів їжачок із ліхтариком, а потім вирушив стежкою.":
+    "A hedgehog with a little lantern sat under a big sunflower, then set off along the path.",
+  "На стежці він зустрів білочку й білого зайчика, а далі вийшов до містка.":
+    "On the path he met a squirrel and a white rabbit, and then came out at a little bridge.",
+  "На містку його чекала дівчинка. Вони сиділи поруч, і долина засвітилася світлячками.":
+    "A girl was waiting for him on the bridge. They sat together and the valley lit up with fireflies.",
+  "Повітряний змій": "The Kite",
+  "Дівчинка стояла серед соняшників і тримала синьо-жовтого змія.":
+    "A girl stood among the sunflowers holding a blue-and-yellow kite.",
+  "Вітер підхопив змія високо — аж до птахів і вітряка на горбі.":
+    "The wind carried the kite high — up to the birds and the windmill on the hill.",
+  "Надвечір вона стояла в соняшниках і дивилася, як змій танцює в небі.":
+    "At dusk she stood in the sunflowers and watched the kite dance in the sky.",
+  "Дарина й Тарас підійшли до дерев’яного містка над струмком.":
+    "Daryna and Taras came up to a wooden bridge over a stream.",
+  "Дарині було страшно. Вона заплющила очі, подихала — і ступила на дошку.":
+    "Daryna was scared. She closed her eyes, breathed — and stepped onto the plank.",
+  "Вони перейшли разом і сіли на пагорбі серед соняшників, де літали метелики.":
+    "They crossed together and sat on a hill among sunflowers, where butterflies were flying.",
+  "Під деревом із ліхтариками стояв мольберт, а поруч — двоє дітей.":
+    "An easel stood under a tree hung with lanterns, and beside it were two children.",
+  "Хлопчик у жовтому светрі малював на аркуші соняшник і сонце.":
+    "The boy in the yellow jumper was painting a sunflower and a sun on the sheet.",
+  "Малюнок готовий. Дівчинка в бузковій сукні всміхається поруч.":
+    "The painting is finished. The girl in the lilac dress smiles beside him.",
+  "Лисичка сиділа на підвіконні й дивилася, як за вікном іде дощ.":
+    "The little fox sat on the windowsill watching the rain outside.",
+  "Прийшов ведмедик і приніс картату ковдру.":
+    "The little bear came in carrying a checked blanket.",
+  "Він загорнув лисичку в ковдру й сів поруч із нею.":
+    "He wrapped the fox in the blanket and sat down beside her.",
+  "Вони пили теплий чай, а дощ тихо стукав по шибці.":
+    "They drank warm tea while the rain tapped softly on the glass.",
+  "Повний місяць світив над галявиною, де сиділи дві подружки.":
+    "A full moon shone over the meadow where two friends sat together.",
+  "Вони махали рукою зорям і всміхалися.": "They waved to the stars and smiled.",
+  "Потім притулилися плечима й заплющили очі. На добраніч.":
+    "Then they leaned shoulder to shoulder and closed their eyes. Goodnight.",
+  "Під великим соняшником сидів їжачок і тримав маленький ліхтарик.":
+    "A hedgehog sat under a big sunflower holding a little lantern.",
+  "Він пішов стежкою поміж соняшників — і зустрів білочку та білого зайчика.":
+    "He walked the path between the sunflowers — and met a squirrel and a white rabbit.",
+  "Далі стежка привела його до містка, де чекала дівчинка в жовтій спідничці.":
+    "The path then led him to a bridge, where a girl in a yellow skirt was waiting.",
+  "Дівчинка обійняла їжачка. Навколо них засвітилися світлячки.":
+    "The girl hugged the hedgehog. Fireflies lit up all around them.",
+  "Над долиною з вітряком запалали зорі. Ліхтарик світив тихо й рівно.":
+    "Stars came out over the valley with its windmill. The little lantern glowed quietly.",
+  "Через струмок лежала стара колода.": "An old log lay across the stream.",
+  "З одного боку стояв їжачок із ліхтариком.": "On one side stood a hedgehog with a lantern.",
+  "З другого боку чекала руда білочка.": "On the other side a red squirrel waited.",
+  "Вони ступили на колоду — крок за кроком.": "They stepped onto the log — one step at a time.",
+  "Зустрілися посередині й усміхнулися.": "They met in the middle and smiled.",
+  "У зеленому полі ріс високий соняшник.": "A tall sunflower grew in a green field.",
+  "Дівчинка з довгою косою підійшла й сіла поруч із ним.":
+    "A girl with a long braid came over and sat beside it.",
+  "Небо стало рожевим, і соняшник засвітився теплим світлом.":
+    "The sky turned pink and the sunflower glowed with warm light.",
+  "Прийшов хлопчик у синій куртці, і вони обійняли соняшник разом.":
+    "A boy in a blue jacket arrived, and together they hugged the sunflower.",
+  "Увечері над селом і вітряком двоє друзів дивилися на поле соняшників.":
+    "In the evening, under the village and the windmill, the two friends looked at the sunflower field.",
+  "Лисичка сиділа на підвіконні й дивилася на дощ.":
+    "The little fox sat on the windowsill watching the rain.",
+  "За вікном було сіро, а в кімнаті тихо.":
+    "Outside the window it was grey; inside the room it was quiet.",
+  "Прийшов ведмедик із картатою ковдрою.": "The little bear arrived with a checked blanket.",
+  "Він загорнув лисичку й сів поруч.": "He wrapped the fox up and sat beside her.",
+  "Вони пили теплий чай і слухали дощ.": "They drank warm tea and listened to the rain.",
+  "Повний місяць світив над галявиною.": "The full moon shone over the meadow.",
+  "Дві подружки сиділи на ковдрі серед квітів.": "Two friends sat on a blanket among the flowers.",
+  "Потім притулилися плечима й заплющили очі.":
+    "Then they leaned shoulder to shoulder and closed their eyes.",
+  "Світлячки світили тихо. Долина засинала.":
+    "The fireflies glowed softly. The valley was falling asleep.",
 };
 
 /**

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { RotateCcw, Undo2, Pause } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
-import { Glyph } from "@/components/Glyph";
+import { Glyph, type GlyphName } from "@/components/Glyph";
 import { CHARACTERS, type CharId } from "@/content/characters";
 import { PAIR_IDS, initialCards, deal } from "@/content/game-cards";
 import { pageHead } from "@/content/journeys";
@@ -25,16 +25,16 @@ export const Route = createFileRoute("/games")({
 });
 
 const GAMES = [
-  { id: "bubbles", icon: "🫧", name: "Мильні бульбашки" },
-  { id: "pairs", icon: "🃏", name: "Пари друзів" },
-  { id: "stars", icon: "🌟", name: "Зоряна музика" },
-  { id: "melody", icon: "🎶", name: "Повтори мелодію" },
-  { id: "patterns", icon: "🧩", name: "Тихі візерунки" },
-  { id: "counting", icon: "🌠", name: "Порахуй зірочки" },
-  { id: "fireflies", icon: "✨", name: "Світлячки" },
-  { id: "clouds", icon: "☁️", name: "Хмарні звірята" },
-  { id: "puzzle", icon: "🌻", name: "Соняшникова мозаїка" },
-] as const;
+  { id: "bubbles", icon: "bubble", name: "Мильні бульбашки" },
+  { id: "pairs", icon: "cards", name: "Пари друзів" },
+  { id: "stars", icon: "star", name: "Зоряна музика" },
+  { id: "melody", icon: "music", name: "Повтори мелодію" },
+  { id: "patterns", icon: "puzzle", name: "Тихі візерунки" },
+  { id: "counting", icon: "star", name: "Порахуй зірочки" },
+  { id: "fireflies", icon: "firefly", name: "Світлячки" },
+  { id: "clouds", icon: "cloud", name: "Хмарні звірята" },
+  { id: "puzzle", icon: "sunflower", name: "Соняшникова мозаїка" },
+] as const satisfies readonly { id: string; icon: GlyphName; name: string }[];
 type GameId = (typeof GAMES)[number]["id"];
 
 function Games() {
@@ -77,7 +77,7 @@ function Games() {
                 value={g.id}
                 className={`paper-card flex h-full w-24 shrink-0 flex-col items-center justify-center gap-1 whitespace-normal p-2 text-xs leading-tight font-bold transition active:scale-95 ${game === g.id ? "ring-4 ring-ring" : ""}`}
               >
-                <Glyph emoji={g.icon} className="h-7 w-7 sm:h-8 sm:w-8" />
+                <Glyph name={g.icon} className="h-7 w-7 sm:h-8 sm:w-8" />
                 <span className="text-sm">{t(g.name)}</span>
               </TabsTrigger>
             ))}

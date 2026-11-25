@@ -148,6 +148,33 @@ it("reports a rejected interruption resume instead of silently ignoring it", asy
   audio.stopAmbient();
 });
 
+it("holds a game note until a freshly unlocked context is running instead of dropping it", async () => {
+  const { sources, context } = stubAudio();
+  context.state = "suspended";
+  let release: (() => void) | undefined;
+  Object.assign(context, {
+    resume: vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          release = () => {
+            context.state = "running";
+            resolve();
+          };
+        }),
+    ),
+  });
+  const { update } = await import("@/lib/store");
+  update((s) => ({ ...s, sound: true, sfx: true, volume: 1, effectsVolume: 1 }));
+  const audio = await import("@/lib/audio");
+  audio.unlockAudio();
+  audio.chime(523);
+  expect(sources).toHaveLength(0);
+  release?.();
+  await vi.waitFor(() => expect(sources).toHaveLength(1));
+  expect(sources[0]?.start).toHaveBeenCalledTimes(1);
+  audio.destroyAudio();
+});
+
 it("stops the old nature source before the next selection and clears it on teardown", async () => {
   const { sources, context } = stubAudio();
   const { update } = await import("@/lib/store");

@@ -120,57 +120,82 @@ function Games() {
 
 const SCALE = [392, 440, 523, 587, 659, 784, 880];
 
+/**
+ * A 3×3 set of places keeps bubbles apart. With random spots a bubble's round box
+ * (not just its glass) covered its neighbours, so a finger landed on an invisible
+ * corner and a different bubble popped — or none did.
+ */
+const GRID = 3;
+const SLOTS = GRID * GRID;
+const BUBBLE_MIN = 52;
+const BUBBLE_MAX = 68;
+
+interface Bubble {
+  id: number;
+  slot: number;
+  left: number;
+  top: number;
+  size: number;
+  dur: number;
+  hue: number;
+  note: number;
+  born: number;
+}
+
+function makeBubble(id: number, slot: number, note: number): Bubble {
+  return {
+    id,
+    slot,
+    // A little jitter inside the place, so nine bubbles never look like a table.
+    left: 6 + (slot % GRID) * 30 + Math.random() * 4,
+    top: 6 + Math.floor(slot / GRID) * 28 + Math.random() * 5,
+    size: BUBBLE_MIN + Math.random() * (BUBBLE_MAX - BUBBLE_MIN),
+    dur: 7 + Math.random() * 5,
+    hue: Math.floor(Math.random() * 4),
+    note,
+    born: Date.now(),
+  };
+}
+
 /* 1. Pop drifting bubbles — each pop is a soft note. */
 export function Bubbles() {
   const t = useT();
   const calm = useStore((s) => s.reduceMotion);
-  const [list, setList] = useState<
-    { id: number; x: number; y: number; size: number; dur: number; hue: number; born: number }[]
-  >([]);
+  const [list, setList] = useState<Bubble[]>([]);
   const [popped, setPopped] = useState(0);
   const id = useRef(0);
   const [round, setRound] = useState(0);
   useEffect(() => {
     if (calm) {
       setList(
-        Array.from({ length: 9 }, (_, n) => ({
-          id: ++id.current,
-          x: n,
-          y: 0,
+        Array.from({ length: SLOTS }, (_, slot) => ({
+          ...makeBubble(++id.current, slot, slot % SCALE.length),
           size: 64,
           dur: 0,
-          hue: n % 4,
-          born: 0,
         })),
       );
       return;
     }
+    setList(
+      Array.from({ length: SLOTS }, (_, slot) =>
+        makeBubble(++id.current, slot, slot % SCALE.length),
+      ),
+    );
+    // A popped bubble is replaced in the place that just emptied: there is always
+    // something to catch, and breathing places never pile up into one another.
     const spawn = () => {
       if (document.hidden) return;
-      setList((l) => [
-        ...l.filter((b) => Date.now() - b.born < b.dur * 1000).slice(-14),
-        {
-          id: ++id.current,
-          x: 5 + Math.random() * 65,
-          y: 15 + Math.random() * 60,
-          size: 48 + Math.random() * 40,
-          dur: 7 + Math.random() * 5,
-          hue: Math.floor(Math.random() * 4),
-          born: Date.now(),
-        },
-      ]);
+      const now = Date.now();
+      setList((live) => {
+        const alive = live.filter((b) => now - b.born < b.dur * 1000);
+        const taken = new Set(alive.map((b) => b.slot));
+        const fresh = Array.from({ length: SLOTS }, (_, slot) => slot)
+          .filter((slot) => !taken.has(slot))
+          .map((slot) => makeBubble(++id.current, slot, Math.floor(Math.random() * SCALE.length)));
+        if (!fresh.length && alive.length === live.length) return live;
+        return [...alive, ...fresh];
+      });
     };
-    setList(
-      Array.from({ length: 9 }, (_, n) => ({
-        id: ++id.current,
-        x: 5 + (n % 3) * 28,
-        y: 15 + Math.floor(n / 3) * 25,
-        size: 56,
-        dur: 9 + (n % 3),
-        hue: n % 4,
-        born: Date.now(),
-      })),
-    );
     const iv = window.setInterval(spawn, 900);
     return () => window.clearInterval(iv);
   }, [calm, round]);
@@ -182,48 +207,60 @@ export function Bubbles() {
         size="sm"
         text={t("Лови бульбашки пальчиком! Кожна співає свою ноту.")}
       />
-      <div
-        className={`paper-card relative h-[min(60svh,34rem)] min-h-80 overflow-hidden bg-gradient-to-b from-sky/30 to-sage/30 ${calm ? "grid grid-cols-3 place-items-center gap-3 p-6 pt-14" : "p-0"}`}
-        data-no-tap
-      >
-        {list.map((b) => (
-          <Btn
-            key={b.id}
-            aria-label={t("Бульбашка")}
-            onClick={() => {
-              chime(SCALE[b.id % SCALE.length] ?? 523);
-              setPopped((p) => p + 1);
-              setList((l) =>
-                calm
-                  ? l.map((x) =>
-                      x.id === b.id ? { ...x, id: ++id.current, hue: (x.hue + 1) % 4 } : x,
-                    )
-                  : l.filter((x) => x.id !== b.id),
-              );
-            }}
-            variant="soft"
-            className={`${calm ? "relative" : "absolute"} rounded-full border-2 border-primary bg-transparent p-0 shadow-soft`}
-            style={{
-              ...(calm ? {} : { left: `${b.x}%`, top: `${b.y}%` }),
-              width: b.size,
-              height: b.size,
-              animationDuration: `${b.dur}s`,
-            }}
-          >
-            <span
-              aria-hidden
-              className={`pointer-events-none absolute inset-0 rounded-full ${calm ? "" : "animate-float"} ${tints[b.hue]}`}
-            >
-              <span className="absolute left-[22%] top-[18%] h-1/4 w-1/4 rounded-full bg-card/80" />
-            </span>
-          </Btn>
-        ))}
-        <p
-          role="status"
-          className="absolute right-3 top-3 rounded-full bg-card/80 px-3 py-1 text-sm font-bold text-card-foreground"
-        >
-          <Glyph name="ball" className="inline h-4 w-4 align-[-2px]" /> {popped}
+      {/* The score sits in its own strip: on the glass it covered the top-right
+          bubble, so that one could not be popped at all. */}
+      <div className="paper-card relative flex h-[min(60svh,34rem)] min-h-80 flex-col overflow-hidden bg-gradient-to-b from-sky/30 to-sage/30">
+        <p role="status" className="flex justify-end px-3 pt-2">
+          <span className="flex items-center gap-1 rounded-full bg-card/85 px-3 py-1 text-sm font-bold text-card-foreground">
+            <Glyph name="ball" className="h-4 w-4" /> {popped}
+          </span>
         </p>
+        <div
+          className={`relative min-h-0 flex-1 ${calm ? "grid grid-cols-3 place-items-center gap-3 p-4" : ""}`}
+          data-no-tap
+        >
+          {list.map((b) => (
+            <span
+              key={b.id}
+              className={calm ? "relative" : "absolute animate-float"}
+              style={{
+                // Places and sizes are bounded so even a 288px-wide phone keeps
+                // every glass whole inside the card, never half behind the edge.
+                ...(calm ? {} : { left: `${b.left}%`, top: `${b.top}%` }),
+                width: b.size,
+                height: b.size,
+                animationDuration: `${b.dur}s`,
+                animationDelay: `-${(b.id % 5) * 0.9}s`,
+              }}
+            >
+              {/* The drift lives on this wrapper, so the tap target travels with the
+                  glass instead of staying behind while the bubble bobs away. */}
+              <Btn
+                aria-label={t("Бульбашка")}
+                onClick={() => {
+                  chime(SCALE[b.note] ?? 523);
+                  setPopped((p) => p + 1);
+                  setList((l) =>
+                    calm
+                      ? l.map((x) =>
+                          x.id === b.id ? { ...x, id: ++id.current, hue: (x.hue + 1) % 4 } : x,
+                        )
+                      : l.filter((x) => x.id !== b.id),
+                  );
+                }}
+                variant="soft"
+                className="relative h-full w-full rounded-full border-2 border-primary bg-transparent p-0 shadow-soft"
+              >
+                <span
+                  aria-hidden
+                  className={`pointer-events-none absolute inset-0 rounded-full ${tints[b.hue]}`}
+                >
+                  <span className="absolute left-[22%] top-[18%] h-1/4 w-1/4 rounded-full bg-card/80" />
+                </span>
+              </Btn>
+            </span>
+          ))}
+        </div>
       </div>
       <div className="text-center">
         <Btn

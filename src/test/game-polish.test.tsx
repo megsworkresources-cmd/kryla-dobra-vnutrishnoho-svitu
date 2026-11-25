@@ -50,6 +50,23 @@ it("starts with several bubbles and replay resets score and notes", () => {
   expect(screen.getAllByRole("button", { name: "Бульбашка" }).length).toBeGreaterThanOrEqual(6);
 });
 
+it("drifts the whole bubble, so the glass and its tap target stay together", () => {
+  update((s) => ({ ...s, reduceMotion: false }));
+  render(<Bubbles />);
+  const bubbles = screen.getAllByRole("button", { name: "Бульбашка" });
+  expect(bubbles).toHaveLength(9);
+  for (const bubble of bubbles) {
+    const glass = bubble.parentElement;
+    expect(glass?.className).toContain("animate-float");
+    expect(glass?.style.left).not.toBe("");
+    expect(glass?.style.top).not.toBe("");
+    expect(bubble.className).not.toContain("animate-float");
+    expect(bubble.closest("[data-no-tap]")).not.toBeNull();
+  }
+  // The score keeps its own strip: on the glass it hid the corner bubble from every tap.
+  expect(screen.getByRole("status").closest("[data-no-tap]")).toBeNull();
+});
+
 it("reset cancels a pending memory match", () => {
   vi.spyOn(Math, "random").mockReturnValue(0.999);
   render(<Pairs />);

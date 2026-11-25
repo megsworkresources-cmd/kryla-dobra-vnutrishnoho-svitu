@@ -77,6 +77,32 @@ function ensureRunning(c: AudioContext) {
 }
 
 /**
+ * Play an interface sound once the context is really running. The very first touch
+ * on an iPhone can leave it suspended for a moment; scheduling a note then either
+ * drops it or lets it arrive with the next tap, which is what made the games sound
+ * broken. A refused interruption resume still surfaces on the music status.
+ */
+function whenSounding(play: (c: AudioContext, out: GainNode) => void) {
+  const c = ac();
+  const out = master;
+  if (!c || !out) return;
+  if (c.state === "running") {
+    play(c, out);
+    return;
+  }
+  const generation = audioGeneration;
+  void c.resume().then(
+    () => {
+      if (c !== ctx || generation !== audioGeneration || c.state !== "running" || !master) return;
+      play(c, master);
+    },
+    () => {
+      if (musicStatus !== "idle") setMusicStatus("error");
+    },
+  );
+}
+
+/**
  * iPhone mutes Web Audio (music, taps) when the side switch is on silent unless the
  * page asks for a "playback" session (Safari 16.4+). Voices then also share it.
  */
@@ -237,33 +263,30 @@ export type Sfx = "tap" | "select" | "confirm" | "page" | "complete" | "soft";
 export function sfx(kind: Sfx) {
   const s = getState();
   if (!s.sound || !s.sfx || s.volume === 0 || s.effectsVolume === 0) return;
-  const c = ac();
-  if (!c || !master) return;
-  ensureRunning(c);
-  const t = c.currentTime;
-  switch (kind) {
-    case "tap":
-      tone(520, 0, 0.12, "sine", 0.035);
-      break;
-    case "soft":
-      tone(392, 0, 0.25, "sine", 0.03);
-      break;
-    case "select":
-      pluck(587, t, 0.12, master, 0.25, 0.8);
-      break;
-    case "page":
-      pluck(440, t, 0.08, master, 0.2, 0.8);
-      break;
-    case "confirm":
-      pluck(440, t, 0.12, master, 0.3, 1.2);
-      pluck(659, t + 0.1, 0.1, master, 0.3, 1.2);
-      break;
-    case "complete": {
-      const output = master;
-      [440, 523, 659, 880].forEach((f, i) => pluck(f, t + i * 0.16, 0.14, output, 0.35, 2));
-      break;
+  whenSounding((c, out) => {
+    const t = c.currentTime;
+    switch (kind) {
+      case "tap":
+        tone(520, 0, 0.12, "sine", 0.035);
+        break;
+      case "soft":
+        tone(392, 0, 0.25, "sine", 0.03);
+        break;
+      case "select":
+        pluck(587, t, 0.12, out, 0.25, 0.8);
+        break;
+      case "page":
+        pluck(440, t, 0.08, out, 0.2, 0.8);
+        break;
+      case "confirm":
+        pluck(440, t, 0.12, out, 0.3, 1.2);
+        pluck(659, t + 0.1, 0.1, out, 0.3, 1.2);
+        break;
+      case "complete":
+        [440, 523, 659, 880].forEach((f, i) => pluck(f, t + i * 0.16, 0.14, out, 0.35, 2));
+        break;
     }
-  }
+  });
 }
 
 /* ---------- Ambient soundscapes ---------- */
@@ -676,8 +699,5 @@ export function ambientFor(pathname: string): Ambient | null {
 export function chime(freq: number) {
   const s = getState();
   if (!s.sound || !s.sfx || s.volume === 0 || s.effectsVolume === 0) return;
-  const c = ac();
-  if (!c || !master) return;
-  ensureRunning(c);
-  pluck(freq, c.currentTime, 0.12, master, 0.3, 1.5);
+  whenSounding((c, out) => pluck(freq, c.currentTime, 0.12, out, 0.3, 1.5));
 }

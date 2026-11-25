@@ -63,7 +63,8 @@ it("does not construct an audio context before a gesture or while muted", async 
 
 it("clears speech when the saved voice preference is switched off", async () => {
   const cancel = vi.fn();
-  vi.stubGlobal("speechSynthesis", { cancel, getVoices: () => [], speak: vi.fn() });
+  // A real synthesiser with a line in progress, which is the case stopSpeaking interrupts.
+  vi.stubGlobal("speechSynthesis", { cancel, speaking: true, getVoices: () => [], speak: vi.fn() });
   update((s) => ({ ...s, sound: true, voice: false, volume: 1, voiceVolume: 1 }));
   syncSpeechVolume();
   expect(cancel).toHaveBeenCalled();
@@ -194,5 +195,108 @@ it("never restarts the line that is already being spoken", () => {
   utterance?.onend?.({} as SpeechSynthesisEvent);
   speak("Привіт", { localOnly: true, who: "olenka" });
   expect(queued).toBe(2);
+  stopSpeaking();
+});
+
+it("speaks a line Safari accepted but never started on the child's next touch", () => {
+  const spoken: SpeechSynthesisUtterance[] = [];
+  vi.stubGlobal("speechSynthesis", {
+    cancel: vi.fn(),
+    resume: vi.fn(),
+    getVoices: () => [],
+    speak: (u: SpeechSynthesisUtterance) => {
+      spoken.push(u);
+    },
+  });
+  vi.stubGlobal(
+    "SpeechSynthesisUtterance",
+    class {
+      constructor(public text: string) {}
+    },
+  );
+  update((s) => ({
+    ...s,
+    sound: true,
+    voice: true,
+    volume: 1,
+    voiceVolume: 1,
+    voiceEngine: "device",
+  }));
+  unlockAudio();
+  // A character's greeting comes from an effect, outside the touch itself.
+  speak("Привіт", { localOnly: true, who: "olenka" });
+  expect(spoken).toHaveLength(1);
+  // Safari never fires onstart: the child touches the screen and hears the line.
+  window.dispatchEvent(new Event("pointerdown"));
+  expect(spoken).toHaveLength(1);
+  window.dispatchEvent(new Event("touchend"));
+  expect(spoken).toHaveLength(2);
+  spoken[1]?.onstart?.({} as SpeechSynthesisEvent);
+  expect(getSpeechState()).toBe("playing");
+  // One retry only: a child who keeps tapping must not re-hear the same line.
+  window.dispatchEvent(new Event("touchend"));
+  expect(spoken).toHaveLength(2);
+  stopSpeaking();
+});
+
+it("does not re-speak a character line that really started", () => {
+  const spoken: SpeechSynthesisUtterance[] = [];
+  vi.stubGlobal("speechSynthesis", {
+    cancel: vi.fn(),
+    resume: vi.fn(),
+    getVoices: () => [],
+    speak: (u: SpeechSynthesisUtterance) => {
+      spoken.push(u);
+    },
+  });
+  vi.stubGlobal(
+    "SpeechSynthesisUtterance",
+    class {
+      constructor(public text: string) {}
+    },
+  );
+  update((s) => ({
+    ...s,
+    sound: true,
+    voice: true,
+    volume: 1,
+    voiceVolume: 1,
+    voiceEngine: "device",
+  }));
+  unlockAudio();
+  speak("Привіт", { localOnly: true, who: "olenka" });
+  spoken[0]?.onstart?.({} as SpeechSynthesisEvent);
+  window.dispatchEvent(new Event("touchend"));
+  expect(spoken).toHaveLength(1);
+  stopSpeaking();
+});
+
+it("does not cancel an idle synthesiser before speaking", () => {
+  const cancel = vi.fn();
+  const speakNow = vi.fn();
+  vi.stubGlobal("speechSynthesis", {
+    cancel,
+    resume: vi.fn(),
+    getVoices: () => [],
+    speak: speakNow,
+  });
+  vi.stubGlobal(
+    "SpeechSynthesisUtterance",
+    class {
+      constructor(public text: string) {}
+    },
+  );
+  update((s) => ({
+    ...s,
+    sound: true,
+    voice: true,
+    volume: 1,
+    voiceVolume: 1,
+    voiceEngine: "device",
+  }));
+  unlockAudio();
+  speak("Привіт", { localOnly: true });
+  expect(speakNow).toHaveBeenCalledTimes(1);
+  expect(cancel).not.toHaveBeenCalled();
   stopSpeaking();
 });

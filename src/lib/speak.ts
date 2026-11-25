@@ -1,6 +1,7 @@
 import { getState } from "./store";
 import type { CharId } from "@/content/characters";
 import { duckMusic, isAudioUnlocked } from "./audio";
+import { whenTouched, type GestureType } from "./media-unlock";
 import { useSyncExternalStore } from "react";
 
 /**
@@ -35,6 +36,14 @@ let speakingLine: string | null = null;
 /** Reuse the element unlocked synchronously by a real gesture, including on Safari. */
 let synthPrimed = false;
 let deferredDevice: (() => void) | null = null;
+/** Safari only counts these as activation for speech; pointerdown is too early. */
+const SPEECH_GESTURES: GestureType[] = ["touchend", "click", "keydown"];
+/** The line kept for the next touch after Safari accepted it but never started it. */
+let cancelStartRetry: (() => void) | null = null;
+function clearStartRetry() {
+  cancelStartRetry?.();
+  cancelStartRetry = null;
+}
 // 0.1 s of real silence: iOS refuses to "play" a one-sample clip, which left no gesture-primed player.
 const SILENT_WAV =
   "data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==";
@@ -85,7 +94,7 @@ export function useSpeechState() {
   );
 }
 
-function deviceSpeak(text: string, pitch: number) {
+function deviceSpeak(text: string, pitch: number, attempt = 0) {
   if (
     typeof window === "undefined" ||
     !("speechSynthesis" in window) ||
@@ -96,8 +105,13 @@ function deviceSpeak(text: string, pitch: number) {
   }
   const s = getState();
   if (!s.sound || s.volume === 0 || s.voiceVolume === 0) return;
-  window.speechSynthesis.cancel();
+  // Cancelling an idle synthesiser immediately before speak() makes iPhone Safari drop
+  // the new line, which is why a character's first line went missing.
+  const synth = window.speechSynthesis;
+  if (synth.speaking || synth.pending || synth.paused) synth.cancel();
+  clearStartRetry();
   const mine = token;
+  let started = false;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = s.lang === "uk" ? "uk-UA" : "en-US";
   u.rate = 0.85;
@@ -108,6 +122,8 @@ function deviceSpeak(text: string, pitch: number) {
   const v = (s.voiceURI && sameLang.find((x) => x.voiceURI === s.voiceURI)) ?? sameLang[0];
   if (v) u.voice = v;
   u.onstart = () => {
+    started = true;
+    clearStartRetry();
     if (mine === token) setSpeechState("playing");
   };
   u.onresume = () => {
@@ -122,23 +138,37 @@ function deviceSpeak(text: string, pitch: number) {
   };
   u.onend = () => {
     if (mine !== token) return;
+    clearStartRetry();
     setSpeechState("idle");
     duckMusic(false);
   };
   u.onerror = () => {
     if (mine !== token) return;
+    clearStartRetry();
     setSpeechState("unavailable");
     duckMusic(false);
   };
   setSpeechState("loading");
   duckMusic(true);
   try {
-    window.speechSynthesis.resume();
-    window.speechSynthesis.speak(u);
+    synth.resume();
+    synth.speak(u);
   } catch {
     setSpeechState("unavailable");
     duckMusic(false);
+    return;
   }
+  // A line requested from an effect (a character's greeting) is queued outside the touch
+  // itself, and Safari can then leave it silent forever. Keep it for the next real touch
+  // and speak it from inside that gesture, exactly once.
+  if (started || attempt > 0 || mine !== token) return;
+  cancelStartRetry = whenTouched(() => {
+    cancelStartRetry = null;
+    if (started || mine !== token) return;
+    const live = window.speechSynthesis;
+    if (live.speaking || live.pending) return;
+    deviceSpeak(text, pitch, attempt + 1);
+  }, SPEECH_GESTURES);
 }
 
 export function speak(
@@ -299,6 +329,7 @@ export function resumeSpeaking() {
 export function stopSpeaking() {
   token++;
   deferredDevice = null;
+  clearStartRetry();
   speakingLine = null;
   setSpeechState("idle");
   duckMusic(false);
@@ -309,7 +340,11 @@ export function stopSpeaking() {
     audio.pause();
     audio = null;
   }
-  if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
+  // Only interrupt a synthesiser that really has a line: an unconditional cancel()
+  // right before the next speak() makes iPhone Safari drop that next line.
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  const synth = window.speechSynthesis;
+  if (synth.speaking || synth.pending || synth.paused) synth.cancel();
 }
 
 export function syncSpeechVolume() {

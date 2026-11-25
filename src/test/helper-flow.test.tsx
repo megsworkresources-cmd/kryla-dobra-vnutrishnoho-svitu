@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { Helper } from "@/routes/helper";
+import { Helper } from "@/activities/helper";
 import { askHelper } from "@/lib/suggest.functions";
 
 vi.mock("@/integrations/supabase/client", () => ({

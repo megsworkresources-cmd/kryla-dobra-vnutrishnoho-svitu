@@ -68,6 +68,7 @@ export type GlyphName =
   | "frame"
   | "pause"
   | "retry"
+  | "spark"
   | "heart-sky"
   | "heart-honey"
   | "heart-sage"
@@ -287,6 +288,8 @@ const SKY = "var(--sky)";
 const MOON = "var(--moon)";
 const LAVENDER = "var(--lavender)";
 const ROSE = "var(--rose)";
+const DUSK = "var(--dusk)";
+const BERRY = "var(--destructive)";
 
 const HEART =
   "M16 27C8 21 4 17.6 4 12.8 4 9 7 6.4 10.4 6.4c2.4 0 4.4 1.3 5.6 3.3 1.2-2 3.2-3.3 5.6-3.3C25 6.4 28 9 28 12.8c0 4.8-4 8.2-12 14.2z";
@@ -314,11 +317,11 @@ const ART: Record<GlyphName, React.ReactNode> = {
       <path
         d="M20 5a11 11 0 1 0 0 22 8.6 8.6 0 0 1 0-22z"
         fill={MOON}
-        stroke={LAVENDER}
-        strokeWidth="1.6"
+        stroke={DUSK}
+        strokeWidth="1.8"
         transform="rotate(12 16 16)"
       />
-      <circle cx="24" cy="8" r="1.4" fill={MOON} opacity=".7" />
+      <circle cx="24" cy="8" r="1.4" fill={DUSK} opacity=".45" />
     </>
   ),
   star: (
@@ -332,6 +335,19 @@ const ART: Record<GlyphName, React.ReactNode> = {
       <path d="M16 4l2.6 7.4L26 14l-7.4 2.6L16 24l-2.6-7.4L6 14l7.4-2.6z" fill={HONEY} />
       <circle cx="25" cy="25" r="2" fill={MOON} />
       <circle cx="7" cy="24" r="1.5" fill={MOON} opacity=".8" />
+    </>
+  ),
+  /** A bolder spark for tap targets, where the soft `sparkle` disappears on pale discs. */
+  spark: (
+    <>
+      <path
+        d="M16 3.4l2.8 7.8L26.6 14l-7.8 2.8L16 24.6l-2.8-7.8L5.4 14l7.8-2.8z"
+        fill={HONEY}
+        stroke={DUSK}
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <circle cx="25.4" cy="25.6" r="1.9" fill={HONEY} stroke={DUSK} strokeWidth="1.2" />
     </>
   ),
   cloud: (
@@ -492,7 +508,7 @@ const ART: Record<GlyphName, React.ReactNode> = {
   ),
   home: (
     <>
-      <path d="M4 15L16 4l12 11z" fill={ROSE} />
+      <path d="M4 15L16 4l12 11z" fill={BERRY} />
       <rect
         x="7.5"
         y="15"
@@ -501,9 +517,18 @@ const ART: Record<GlyphName, React.ReactNode> = {
         rx="2.5"
         fill={PETAL}
         stroke={SAGE}
-        strokeWidth="1.3"
+        strokeWidth="1.5"
       />
-      <rect x="13.5" y="20" width="5" height="8" rx="1.6" fill={HONEY} />
+      <rect
+        x="13.5"
+        y="20"
+        width="5"
+        height="8"
+        rx="1.6"
+        fill={HONEY}
+        stroke={SAGE}
+        strokeWidth="1.1"
+      />
     </>
   ),
   map: (
@@ -889,11 +914,11 @@ const ART: Record<GlyphName, React.ReactNode> = {
         <path
           key={y}
           d={`M5 ${y}q5 -4 10 0t10 0`}
-          stroke={SKY}
+          stroke={DUSK}
           strokeWidth="2.2"
           fill="none"
           strokeLinecap="round"
-          opacity={i === 1 ? 1 : 0.6}
+          opacity={i === 1 ? 1 : 0.65}
         />
       ))}
     </>
@@ -957,9 +982,9 @@ const ART: Record<GlyphName, React.ReactNode> = {
     <>
       <path
         d="M4 19c0-4.6 4.4-8 10-8s10 3.4 10 8c0 3.8-4 6.4-9 6.4C9 25.4 4 22.8 4 19z"
-        fill={SKY}
+        fill={DUSK}
       />
-      <path d="M23 13l7-4v14l-7-4z" fill={SKY} opacity=".7" />
+      <path d="M23 13l7-4v14l-7-4z" fill={DUSK} opacity=".8" />
       <path
         d="M12 11c0-3 1.6-5 4-6"
         stroke={SKY}
@@ -979,8 +1004,8 @@ const ART: Record<GlyphName, React.ReactNode> = {
   ),
   balloon: (
     <>
-      <ellipse cx="16" cy="12.5" rx="8" ry="9.5" fill={ROSE} />
-      <path d="M16 22l-2 3h4z" fill={ROSE} />
+      <ellipse cx="16" cy="12.5" rx="8" ry="9.5" fill={BERRY} />
+      <path d="M16 22l-2 3h4z" fill={BERRY} />
       <path
         d="M16 25c2.4 2-2.4 4 0 6.5"
         stroke={SAGE}
@@ -1133,17 +1158,17 @@ const ART: Record<GlyphName, React.ReactNode> = {
   ),
   bird: (
     <>
-      <ellipse cx="14.5" cy="18.5" rx="7.4" ry="5.6" fill={SKY} />
-      <circle cx="22" cy="13.6" r="4.2" fill={SKY} />
+      <ellipse cx="14.5" cy="18.5" rx="7.4" ry="5.6" fill={DUSK} />
+      <circle cx="22" cy="13.6" r="4.2" fill={DUSK} />
       <path d="M26 13.4l5 1.8-5 1.8z" fill={HONEY} />
-      <circle cx="23" cy="12.6" r="1.1" fill={BODY} />
-      <path d="M12 15.4c-2.6-1-4.4-3-4.6-5.6 3.2.6 5.4 2.4 6.4 4.8z" fill={SKY} opacity=".7" />
+      <circle cx="23" cy="12.6" r="1.1" fill={PETAL} />
+      <path d="M12 15.4c-2.6-1-4.4-3-4.6-5.6 3.2.6 5.4 2.4 6.4 4.8z" fill={SKY} opacity=".9" />
       <path
         d="M8 20.6l-4 3M10 22.4l-2.6 4"
-        stroke={SKY}
+        stroke={DUSK}
         strokeWidth="1.6"
         strokeLinecap="round"
-        opacity=".8"
+        opacity=".85"
       />
     </>
   ),

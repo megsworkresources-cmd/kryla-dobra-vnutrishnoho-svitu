@@ -1,5 +1,5 @@
 /**
- * Five original, app-written adventures (bilingual source). Each is a short
+ * Six original, app-written adventures (bilingual source). Each is a short
  * illustrated journey: three chapters, each with things to discover, and a
  * gentle closing choice. No book characters, plots or wording are used.
  */
@@ -32,7 +32,7 @@ export interface Quest {
   closing: Bi;
   choices: { icon: string; text: Bi }[];
 }
-export type QuestId = "dreams" | "wonders" | "raindrop" | "trails" | "island";
+export type QuestId = "dreams" | "wonders" | "raindrop" | "trails" | "morning" | "island";
 
 export const QUESTS: Record<QuestId, Quest> = {
   dreams: {
@@ -465,6 +465,129 @@ export const QUESTS: Record<QuestId, Quest> = {
       { icon: "🪶", text: b("Пір’їнку", "A feather") },
       { icon: "🍃", text: b("Шепіт листя", "Whispering leaves") },
       { icon: "🧭", text: b("Компас", "A compass") },
+    ],
+  },
+  morning: {
+    id: "morning",
+    title: "Теплий ранок",
+    blurb: "Прокинься разом із долиною — тихо й без поспіху.",
+    img: "meadow",
+    mood: "meadow",
+    chapters: [
+      {
+        who: "solomiya",
+        img: "meadow",
+        text: b(
+          "Сонце тільки визирнуло з-за пагорба, а роса вже блищить на траві. Долина прокидається повільно. Соломія показує три квіти — привітайся з ними.",
+          "The sun has just peeped over the hill, and dew already shines on the grass. The valley wakes slowly. Solomiya points to three flowers — say good morning to them.",
+        ),
+        task: b(
+          "Торкнися трьох квітів, що прокидаються.",
+          "Tap the three flowers that are waking up.",
+        ),
+        spots: [
+          {
+            icon: "🌼",
+            x: 28,
+            y: 62,
+            text: b(
+              "Ромашка розплющила пелюстки: «Доброго ранку!»",
+              "The daisy opened its petals: “Good morning!”",
+            ),
+          },
+          {
+            icon: "🌻",
+            x: 62,
+            y: 72,
+            text: b(
+              "Соняшник повернув голівку до сонця.",
+              "The sunflower turned its head to the sun.",
+            ),
+          },
+          {
+            icon: "🌷",
+            x: 78,
+            y: 38,
+            text: b("Тюльпан розкривається зовсім повільно.", "The tulip opens very slowly."),
+          },
+        ],
+      },
+      {
+        who: "taras",
+        img: "garden",
+        text: b(
+          "Тарас приніс лійку. Поливати треба повільно, щоб вода дійшла до коріння, а не стекла повз. Допоможеш?",
+          "Taras brought a watering can. Watering has to be slow, so the water reaches the roots instead of running past them. Will you help?",
+        ),
+        task: b("Напої три рослини.", "Give three plants a drink."),
+        spots: [
+          {
+            icon: "💧",
+            x: 30,
+            y: 40,
+            text: b(
+              "Крапля падає на листок і котиться вниз.",
+              "A drop lands on a leaf and rolls down.",
+            ),
+          },
+          {
+            icon: "🌱",
+            x: 55,
+            y: 65,
+            text: b(
+              "Паросток п’є воду й випростовується.",
+              "The sprout drinks the water and straightens up.",
+            ),
+          },
+          {
+            icon: "🍃",
+            x: 76,
+            y: 55,
+            text: b(
+              "Листочок блищить — водичка дійшла.",
+              "The leaf is shining — the water arrived.",
+            ),
+          },
+        ],
+      },
+      {
+        who: "olenka",
+        img: "sky",
+        text: b(
+          "Надвечір Оленка засвічує ліхтарик і сідає на ґанок. У долині стає тихо. Можна просто посидіти й подивитися, як загоряються вогники.",
+          "In the evening Olenka lights a lantern and sits on the porch. The valley goes quiet. You can simply sit and watch the lights come on.",
+        ),
+        task: b("Засвіти три тихі вогники.", "Light three quiet lights."),
+        spots: [
+          {
+            icon: "🏮",
+            x: 24,
+            y: 65,
+            text: b("Ліхтарик світить рівно й спокійно.", "The lantern glows evenly and calmly."),
+          },
+          {
+            icon: "⭐",
+            x: 55,
+            y: 25,
+            text: b("Перша зоря над дахом.", "The first star above the roof."),
+          },
+          {
+            icon: "🌙",
+            x: 78,
+            y: 18,
+            text: b("Місяць виходить із-за хмаринки.", "The moon slips out from behind a cloud."),
+          },
+        ],
+      },
+    ],
+    closing: b(
+      "Ранок був теплий, а вечір — тихий. Що ти забереш із цього дня?",
+      "The morning was warm and the evening quiet. What will you take from this day?",
+    ),
+    choices: [
+      { icon: "🌻", text: b("Тепло сонця", "The sun's warmth") },
+      { icon: "🏮", text: b("Тихе світло", "A quiet light") },
+      { icon: "💧", text: b("Свіжість роси", "The freshness of dew") },
     ],
   },
   island: {

@@ -334,6 +334,9 @@ export const EXTRAS: Record<string, string> = {
   "Мій вік": "My age",
   "Мій шлях": "My path",
   "Веселковий пензлик": "Rainbow brush",
+  "Теплий ранок": "A Warm Morning",
+  "Прокинься разом із долиною — тихо й без поспіху.":
+    "Wake up with the valley — quietly and without rushing.",
   "Чарівні фарби": "Magic Paints",
 
   // ---- captions that describe the recorded footage ----

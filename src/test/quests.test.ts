@@ -3,8 +3,8 @@ import { QUESTS, QUEST_IDS } from "@/content/quests.i18n";
 import { neighbours, ORDER } from "@/content/sequence";
 
 describe("original adventures", () => {
-  it("has the five requested adventures", () => {
-    expect(QUEST_IDS).toEqual(["dreams", "wonders", "raindrop", "trails", "island"]);
+  it("has the six adventures in order", () => {
+    expect(QUEST_IDS).toEqual(["dreams", "wonders", "raindrop", "trails", "morning", "island"]);
   });
   it.each(QUEST_IDS)("%s has three complete bilingual chapters and choices", (id) => {
     const q = QUESTS[id];

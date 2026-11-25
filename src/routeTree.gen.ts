@@ -23,6 +23,7 @@ import { Route as GardenRouteImport } from './routes/garden'
 import { Route as HelperRouteImport } from './routes/helper'
 import { Route as IslandRouteImport } from './routes/island'
 import { Route as MazeRouteImport } from './routes/maze'
+import { Route as MorningRouteImport } from './routes/morning'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PuddlesRouteImport } from './routes/puddles'
 import { Route as RaindropRouteImport } from './routes/raindrop'
@@ -124,6 +125,11 @@ const IslandRoute = IslandRouteImport.update({
 const MazeRoute = MazeRouteImport.update({
   id: '/maze',
   path: '/maze',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MorningRoute = MorningRouteImport.update({
+  id: '/morning',
+  path: '/morning',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -307,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/helper': typeof HelperRoute
   '/island': typeof IslandRoute
   '/maze': typeof MazeRoute
+  '/morning': typeof MorningRoute
   '/privacy': typeof PrivacyRoute
   '/puddles': typeof PuddlesRoute
   '/raindrop': typeof RaindropRoute
@@ -355,6 +362,7 @@ export interface FileRoutesByTo {
   '/helper': typeof HelperRoute
   '/island': typeof IslandRoute
   '/maze': typeof MazeRoute
+  '/morning': typeof MorningRoute
   '/privacy': typeof PrivacyRoute
   '/puddles': typeof PuddlesRoute
   '/raindrop': typeof RaindropRoute
@@ -405,6 +413,7 @@ export interface FileRoutesById {
   '/helper': typeof HelperRoute
   '/island': typeof IslandRoute
   '/maze': typeof MazeRoute
+  '/morning': typeof MorningRoute
   '/privacy': typeof PrivacyRoute
   '/puddles': typeof PuddlesRoute
   '/raindrop': typeof RaindropRoute
@@ -455,6 +464,7 @@ export interface FileRouteTypes {
     | '/helper'
     | '/island'
     | '/maze'
+    | '/morning'
     | '/privacy'
     | '/puddles'
     | '/raindrop'
@@ -503,6 +513,7 @@ export interface FileRouteTypes {
     | '/helper'
     | '/island'
     | '/maze'
+    | '/morning'
     | '/privacy'
     | '/puddles'
     | '/raindrop'
@@ -552,6 +563,7 @@ export interface FileRouteTypes {
     | '/helper'
     | '/island'
     | '/maze'
+    | '/morning'
     | '/privacy'
     | '/puddles'
     | '/raindrop'
@@ -602,6 +614,7 @@ export interface RootRouteChildren {
   HelperRoute: typeof HelperRoute
   IslandRoute: typeof IslandRoute
   MazeRoute: typeof MazeRoute
+  MorningRoute: typeof MorningRoute
   PrivacyRoute: typeof PrivacyRoute
   PuddlesRoute: typeof PuddlesRoute
   RaindropRoute: typeof RaindropRoute
@@ -733,6 +746,13 @@ declare module '@tanstack/react-router' {
       path: '/maze'
       fullPath: '/maze'
       preLoaderRoute: typeof MazeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/morning': {
+      id: '/morning'
+      path: '/morning'
+      fullPath: '/morning'
+      preLoaderRoute: typeof MorningRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -998,6 +1018,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelperRoute: HelperRoute,
   IslandRoute: IslandRoute,
   MazeRoute: MazeRoute,
+  MorningRoute: MorningRoute,
   PrivacyRoute: PrivacyRoute,
   PuddlesRoute: PuddlesRoute,
   RaindropRoute: RaindropRoute,

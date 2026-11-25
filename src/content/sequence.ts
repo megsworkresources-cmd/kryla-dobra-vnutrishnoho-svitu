@@ -29,6 +29,7 @@ export const ORDER: Stop[] = (() => {
     { to: "/wonders", label: "Світ маленьких див" },
     { to: "/raindrop", label: "Пригоди дощової краплинки" },
     { to: "/trails", label: "Дослідники стежинок" },
+    { to: "/morning", label: "Теплий ранок" },
     { to: "/island", label: "Мій острівець спокою" },
   ];
   for (const p of PLACES) {

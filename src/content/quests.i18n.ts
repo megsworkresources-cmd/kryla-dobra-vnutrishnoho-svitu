@@ -3,6 +3,7 @@
  * illustrated journey: three chapters, each with things to discover, and a
  * gentle closing choice. No book characters, plots or wording are used.
  */
+import type { GlyphName } from "@/components/Glyph";
 import type { CharId } from "./characters";
 type PlaceId = string;
 import type { Bi } from "./adventures.i18n";
@@ -10,7 +11,8 @@ import type { Bi } from "./adventures.i18n";
 const b = (uk: string, en: string): Bi => ({ uk, en });
 
 export interface QuestSpot {
-  icon: string;
+  /** Drawn symbol from the shared glyph set, so discoveries match the scenes. */
+  icon: GlyphName;
   x: number;
   y: number;
   text: Bi;
@@ -30,7 +32,7 @@ export interface Quest {
   mood: "night" | "meadow" | "clouds" | "forest" | "cozy";
   chapters: QuestChapter[];
   closing: Bi;
-  choices: { icon: string; text: Bi }[];
+  choices: { icon: GlyphName; text: Bi }[];
 }
 export type QuestId = "dreams" | "wonders" | "raindrop" | "trails" | "morning" | "island";
 
@@ -52,19 +54,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Торкнися трьох іскор.", "Tap the three sparks."),
         spots: [
           {
-            icon: "💙",
+            icon: "heart-sky",
             x: 22,
             y: 30,
             text: b("Синій — колір спокійного моря.", "Blue — the colour of a calm sea."),
           },
           {
-            icon: "💛",
+            icon: "heart-honey",
             x: 70,
             y: 22,
             text: b("Жовтий — тепле сонечко ранку.", "Yellow — the warm morning sun."),
           },
           {
-            icon: "💚",
+            icon: "heart-sage",
             x: 50,
             y: 62,
             text: b("Зелений — м’яка трава під ногами.", "Green — soft grass under your feet."),
@@ -81,13 +83,13 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Торкнися хмаринок-снів.", "Tap the dream clouds."),
         spots: [
           {
-            icon: "🐋",
+            icon: "whale",
             x: 25,
             y: 40,
             text: b("Сон про кита, що співає колискову.", "A dream of a whale singing a lullaby."),
           },
           {
-            icon: "🎈",
+            icon: "balloon",
             x: 72,
             y: 35,
             text: b(
@@ -96,7 +98,7 @@ export const QUESTS: Record<QuestId, Quest> = {
             ),
           },
           {
-            icon: "🏡",
+            icon: "home",
             x: 48,
             y: 70,
             text: b(
@@ -119,13 +121,13 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         spots: [
           {
-            icon: "🌙",
+            icon: "moon",
             x: 78,
             y: 18,
             text: b("Місяць тихо світить на дорогу.", "The moon gently lights the road."),
           },
           {
-            icon: "🕯️",
+            icon: "lantern",
             x: 30,
             y: 55,
             text: b(
@@ -134,7 +136,7 @@ export const QUESTS: Record<QuestId, Quest> = {
             ),
           },
           {
-            icon: "⭐",
+            icon: "star",
             x: 60,
             y: 40,
             text: b("Зірочка підморгує: добраніч.", "A little star winks: good night."),
@@ -147,9 +149,9 @@ export const QUESTS: Record<QuestId, Quest> = {
       "Your dreams are ready. Which colour will you take into sleep?",
     ),
     choices: [
-      { icon: "💙", text: b("Синій спокій", "Blue calm") },
-      { icon: "💛", text: b("Жовте тепло", "Yellow warmth") },
-      { icon: "💚", text: b("Зелену м’якість", "Green softness") },
+      { icon: "heart-sky", text: b("Синій спокій", "Blue calm") },
+      { icon: "heart-honey", text: b("Жовте тепло", "Yellow warmth") },
+      { icon: "heart-sage", text: b("Зелену м’якість", "Green softness") },
     ],
   },
   wonders: {
@@ -169,7 +171,7 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Знайди трьох крихітних сусідів.", "Find three tiny neighbours."),
         spots: [
           {
-            icon: "🐞",
+            icon: "ladybird",
             x: 30,
             y: 65,
             text: b(
@@ -178,7 +180,7 @@ export const QUESTS: Record<QuestId, Quest> = {
             ),
           },
           {
-            icon: "🐌",
+            icon: "snail",
             x: 65,
             y: 75,
             text: b(
@@ -187,7 +189,7 @@ export const QUESTS: Record<QuestId, Quest> = {
             ),
           },
           {
-            icon: "🐝",
+            icon: "bee",
             x: 55,
             y: 30,
             text: b("Бджілка ділиться пилком з квіткою.", "A bee shares pollen with a flower."),
@@ -204,19 +206,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Торкнися росинок.", "Tap the dewdrops."),
         spots: [
           {
-            icon: "💧",
+            icon: "drop",
             x: 25,
             y: 45,
             text: b("У цій росинці — сонце.", "In this dewdrop — the sun."),
           },
           {
-            icon: "💧",
+            icon: "drop",
             x: 50,
             y: 60,
             text: b("У цій — пташка, що пролітає.", "In this one — a passing bird."),
           },
           {
-            icon: "💧",
+            icon: "drop",
             x: 75,
             y: 40,
             text: b("А в цій — твоя усмішка.", "And in this one — your smile."),
@@ -233,19 +235,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Знайди помічників у лісі.", "Find the helpers in the forest."),
         spots: [
           {
-            icon: "🐜",
+            icon: "ant",
             x: 35,
             y: 70,
             text: b("Мурашки працюють дружно.", "The ants work as a team."),
           },
           {
-            icon: "🍄",
+            icon: "mushroom",
             x: 65,
             y: 65,
             text: b("Грибочок — парасолька для жучка.", "A mushroom is an umbrella for a beetle."),
           },
           {
-            icon: "🦔",
+            icon: "hedgehog",
             x: 50,
             y: 45,
             text: b("Їжачок показує стежку додому.", "A hedgehog shows the path home."),
@@ -258,9 +260,9 @@ export const QUESTS: Record<QuestId, Quest> = {
       "Which tiny wonder did you like most?",
     ),
     choices: [
-      { icon: "🐞", text: b("Сонечко", "Ladybird") },
-      { icon: "💧", text: b("Росинка", "Dewdrop") },
-      { icon: "🐜", text: b("Мурашки-друзі", "Ant friends") },
+      { icon: "ladybird", text: b("Сонечко", "Ladybird") },
+      { icon: "drop", text: b("Росинка", "Dewdrop") },
+      { icon: "ant", text: b("Мурашки-друзі", "Ant friends") },
     ],
   },
   raindrop: {
@@ -282,10 +284,15 @@ export const QUESTS: Record<QuestId, Quest> = {
           "Help the raindrop: tap her raindrop friends.",
         ),
         spots: [
-          { icon: "💧", x: 30, y: 35, text: b("«Ми полетимо разом!»", "“We will fly together!”") },
-          { icon: "💧", x: 55, y: 25, text: b("«Тримайся за мене».", "“Hold on to me.”") },
           {
-            icon: "💧",
+            icon: "drop",
+            x: 30,
+            y: 35,
+            text: b("«Ми полетимо разом!»", "“We will fly together!”"),
+          },
+          { icon: "drop", x: 55, y: 25, text: b("«Тримайся за мене».", "“Hold on to me.”") },
+          {
+            icon: "drop",
             x: 75,
             y: 45,
             text: b("«Внизу нас чекають квіти».", "“The flowers are waiting below.”"),
@@ -302,19 +309,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Напої рослини в саду.", "Water the plants in the garden."),
         spots: [
           {
-            icon: "🌻",
+            icon: "sunflower",
             x: 30,
             y: 50,
             text: b("Соняшник підняв голівку.", "The sunflower lifted its head."),
           },
           {
-            icon: "🌷",
+            icon: "tulip",
             x: 60,
             y: 65,
             text: b("Тюльпан розкрив пелюстки.", "The tulip opened its petals."),
           },
           {
-            icon: "🌱",
+            icon: "sprout",
             x: 75,
             y: 40,
             text: b("Паросток сказав: «Дякую!»", "The sprout said: “Thank you!”"),
@@ -331,7 +338,7 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Проведи краплинку річкою.", "Guide the raindrop down the river."),
         spots: [
           {
-            icon: "🪨",
+            icon: "pebble",
             x: 25,
             y: 70,
             text: b(
@@ -339,9 +346,14 @@ export const QUESTS: Record<QuestId, Quest> = {
               "A pebble — Drip flows gently around it.",
             ),
           },
-          { icon: "🐟", x: 55, y: 60, text: b("Рибка махає хвостиком.", "A fish waves its tail.") },
           {
-            icon: "☀️",
+            icon: "fish",
+            x: 55,
+            y: 60,
+            text: b("Рибка махає хвостиком.", "A fish waves its tail."),
+          },
+          {
+            icon: "sun",
             x: 78,
             y: 20,
             text: b(
@@ -357,9 +369,9 @@ export const QUESTS: Record<QuestId, Quest> = {
       "Drip made a big journey, even though she was nervous. What helps you when you feel scared?",
     ),
     choices: [
-      { icon: "🌬️", text: b("Повільний видих", "A slow breath out") },
-      { icon: "🤝", text: b("Хтось поруч", "Someone beside me") },
-      { icon: "🧸", text: b("Улюблена іграшка", "A favourite toy") },
+      { icon: "wind", text: b("Повільний видих", "A slow breath out") },
+      { icon: "hand", text: b("Хтось поруч", "Someone beside me") },
+      { icon: "teddy", text: b("Улюблена іграшка", "A favourite toy") },
     ],
   },
   trails: {
@@ -379,19 +391,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Знайди три дороговкази.", "Find three trail signs."),
         spots: [
           {
-            icon: "🪧",
+            icon: "sign",
             x: 25,
             y: 60,
             text: b("Дороговказ: «До лісу — 100 кроків».", "A sign: “Forest — 100 steps.”"),
           },
           {
-            icon: "🧭",
+            icon: "compass",
             x: 60,
             y: 70,
             text: b("Компас показує на північ.", "The compass points north."),
           },
           {
-            icon: "🪶",
+            icon: "feather",
             x: 72,
             y: 35,
             text: b("Пір’їнка — тут пролітала сойка.", "A feather — a jay flew by here."),
@@ -408,19 +420,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Знайди, хто видає звуки.", "Find who is making the sounds."),
         spots: [
           {
-            icon: "🐦",
+            icon: "bird",
             x: 30,
             y: 30,
             text: b("Синичка співає: «Цінь-цінь».", "A tit sings: “Tsin-tsin.”"),
           },
           {
-            icon: "🪵",
+            icon: "log",
             x: 55,
             y: 65,
             text: b("Дятел стукає: тук-тук.", "A woodpecker taps: tok-tok."),
           },
           {
-            icon: "🍃",
+            icon: "leaf",
             x: 75,
             y: 45,
             text: b("Листя шепоче на вітрі.", "Leaves whisper in the wind."),
@@ -437,19 +449,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Знайди сліди звірят.", "Find the animal tracks."),
         spots: [
           {
-            icon: "🐾",
+            icon: "footprint",
             x: 30,
             y: 70,
             text: b("Лисичка пробігла до нори.", "A fox ran to its den."),
           },
           {
-            icon: "🐇",
+            icon: "hare",
             x: 60,
             y: 60,
             text: b("Зайчик стрибав між кущами.", "A hare hopped between the bushes."),
           },
           {
-            icon: "🦌",
+            icon: "deer",
             x: 75,
             y: 35,
             text: b("Олениця пила воду зі струмка.", "A doe drank from the stream."),
@@ -462,9 +474,9 @@ export const QUESTS: Record<QuestId, Quest> = {
       "You are a real explorer! What will you put in your calm backpack?",
     ),
     choices: [
-      { icon: "🪶", text: b("Пір’їнку", "A feather") },
-      { icon: "🍃", text: b("Шепіт листя", "Whispering leaves") },
-      { icon: "🧭", text: b("Компас", "A compass") },
+      { icon: "feather", text: b("Пір’їнку", "A feather") },
+      { icon: "leaf", text: b("Шепіт листя", "Whispering leaves") },
+      { icon: "compass", text: b("Компас", "A compass") },
     ],
   },
   morning: {
@@ -487,7 +499,7 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         spots: [
           {
-            icon: "🌼",
+            icon: "flower",
             x: 28,
             y: 62,
             text: b(
@@ -496,7 +508,7 @@ export const QUESTS: Record<QuestId, Quest> = {
             ),
           },
           {
-            icon: "🌻",
+            icon: "sunflower",
             x: 62,
             y: 72,
             text: b(
@@ -505,7 +517,7 @@ export const QUESTS: Record<QuestId, Quest> = {
             ),
           },
           {
-            icon: "🌷",
+            icon: "tulip",
             x: 78,
             y: 38,
             text: b("Тюльпан розкривається зовсім повільно.", "The tulip opens very slowly."),
@@ -522,7 +534,7 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Напої три рослини.", "Give three plants a drink."),
         spots: [
           {
-            icon: "💧",
+            icon: "drop",
             x: 30,
             y: 40,
             text: b(
@@ -531,7 +543,7 @@ export const QUESTS: Record<QuestId, Quest> = {
             ),
           },
           {
-            icon: "🌱",
+            icon: "sprout",
             x: 55,
             y: 65,
             text: b(
@@ -540,7 +552,7 @@ export const QUESTS: Record<QuestId, Quest> = {
             ),
           },
           {
-            icon: "🍃",
+            icon: "leaf",
             x: 76,
             y: 55,
             text: b(
@@ -560,19 +572,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Засвіти три тихі вогники.", "Light three quiet lights."),
         spots: [
           {
-            icon: "🏮",
+            icon: "lantern",
             x: 24,
             y: 65,
             text: b("Ліхтарик світить рівно й спокійно.", "The lantern glows evenly and calmly."),
           },
           {
-            icon: "⭐",
+            icon: "star",
             x: 55,
             y: 25,
             text: b("Перша зоря над дахом.", "The first star above the roof."),
           },
           {
-            icon: "🌙",
+            icon: "moon",
             x: 78,
             y: 18,
             text: b("Місяць виходить із-за хмаринки.", "The moon slips out from behind a cloud."),
@@ -585,9 +597,9 @@ export const QUESTS: Record<QuestId, Quest> = {
       "The morning was warm and the evening quiet. What will you take from this day?",
     ),
     choices: [
-      { icon: "🌻", text: b("Тепло сонця", "The sun's warmth") },
-      { icon: "🏮", text: b("Тихе світло", "A quiet light") },
-      { icon: "💧", text: b("Свіжість роси", "The freshness of dew") },
+      { icon: "sunflower", text: b("Тепло сонця", "The sun's warmth") },
+      { icon: "lantern", text: b("Тихе світло", "A quiet light") },
+      { icon: "drop", text: b("Свіжість роси", "The freshness of dew") },
     ],
   },
   island: {
@@ -607,14 +619,14 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Обери, що буде на березі.", "Choose what will be on the shore."),
         spots: [
           {
-            icon: "🐚",
+            icon: "shell",
             x: 25,
             y: 70,
             text: b("Мушля, що шумить морем.", "A shell that hums like the sea."),
           },
-          { icon: "🏖️", x: 55, y: 60, text: b("Теплий м’який пісок.", "Warm, soft sand.") },
+          { icon: "sand", x: 55, y: 60, text: b("Теплий м’який пісок.", "Warm, soft sand.") },
           {
-            icon: "🌊",
+            icon: "wave",
             x: 78,
             y: 45,
             text: b("Хвилі, що дихають разом із тобою.", "Waves that breathe along with you."),
@@ -631,19 +643,19 @@ export const QUESTS: Record<QuestId, Quest> = {
         task: b("Посади рослини.", "Plant the island garden."),
         spots: [
           {
-            icon: "🌴",
+            icon: "palm",
             x: 30,
             y: 40,
             text: b("Дерево дає прохолодну тінь.", "A tree gives cool shade."),
           },
           {
-            icon: "🌻",
+            icon: "sunflower",
             x: 55,
             y: 65,
             text: b("Соняшник повертається до тебе.", "A sunflower turns towards you."),
           },
           {
-            icon: "🌸",
+            icon: "blossom",
             x: 75,
             y: 50,
             text: b("Квіти тихенько пахнуть.", "Flowers smell gently sweet."),
@@ -659,9 +671,9 @@ export const QUESTS: Record<QuestId, Quest> = {
         ),
         task: b("Засвіти зорі над острівцем.", "Light the stars over the island."),
         spots: [
-          { icon: "⭐", x: 25, y: 25, text: b("Зірка сміливості.", "A star of courage.") },
-          { icon: "🌟", x: 55, y: 18, text: b("Зірка тепла.", "A star of warmth.") },
-          { icon: "✨", x: 78, y: 32, text: b("Зірка спокою.", "A star of calm.") },
+          { icon: "star", x: 25, y: 25, text: b("Зірка сміливості.", "A star of courage.") },
+          { icon: "star", x: 55, y: 18, text: b("Зірка тепла.", "A star of warmth.") },
+          { icon: "sparkle", x: 78, y: 32, text: b("Зірка спокою.", "A star of calm.") },
         ],
       },
     ],
@@ -670,9 +682,9 @@ export const QUESTS: Record<QuestId, Quest> = {
       "Your island is ready and lives only in your imagination. How do you feel here?",
     ),
     choices: [
-      { icon: "😌", text: b("Спокійно", "Calm") },
-      { icon: "🤗", text: b("Тепло", "Warm") },
-      { icon: "😊", text: b("Радісно", "Happy") },
+      { icon: "calm", text: b("Спокійно", "Calm") },
+      { icon: "hug", text: b("Тепло", "Warm") },
+      { icon: "smile", text: b("Радісно", "Happy") },
     ],
   },
 };

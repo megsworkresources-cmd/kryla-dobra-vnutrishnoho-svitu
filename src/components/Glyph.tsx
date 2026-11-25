@@ -67,7 +67,30 @@ export type GlyphName =
   | "brush"
   | "frame"
   | "pause"
-  | "retry";
+  | "retry"
+  | "heart-sky"
+  | "heart-honey"
+  | "heart-sage"
+  | "whale"
+  | "balloon"
+  | "snail"
+  | "ant"
+  | "pebble"
+  | "fish"
+  | "teddy"
+  | "sign"
+  | "compass"
+  | "feather"
+  | "bird"
+  | "log"
+  | "hare"
+  | "deer"
+  | "shell"
+  | "sand"
+  | "palm"
+  | "calm"
+  | "hug"
+  | "smile";
 
 const BY_EMOJI: Record<string, GlyphName> = {
   "☀": "sun",
@@ -107,11 +130,11 @@ const BY_EMOJI: Record<string, GlyphName> = {
   "🧒": "body",
   "🤗": "heart",
   "🌰": "seed",
-  "💛": "heart",
+  "💛": "heart-honey",
   "❤": "heart",
   "❤️": "heart",
-  "💙": "heart",
-  "💚": "heart",
+  "💙": "heart-sky",
+  "💚": "heart-sage",
   "💜": "heart",
   "🧡": "heart",
   "🤍": "heart",
@@ -142,7 +165,7 @@ const BY_EMOJI: Record<string, GlyphName> = {
   "♪": "music",
   "💨": "wind",
   "👣": "footprint",
-  "🐰": "friend",
+  "🐰": "hare",
   "🐿": "squirrel",
   "🐿️": "squirrel",
   "🦊": "fox",
@@ -197,6 +220,30 @@ const BY_EMOJI: Record<string, GlyphName> = {
   "◇": "chat",
   "▢": "square",
   "⌒": "bridge",
+  "🐋": "whale",
+  "🐳": "whale",
+  "🎈": "balloon",
+  "🐌": "snail",
+  "🐜": "ant",
+  "🪨": "pebble",
+  "🐟": "fish",
+  "🐠": "fish",
+  "🧸": "teddy",
+  "🪧": "sign",
+  "🧭": "compass",
+  "🪶": "feather",
+  "🐦": "bird",
+  "🪵": "log",
+  "🐇": "hare",
+  "🦌": "deer",
+  "🐚": "shell",
+  "🏖": "sand",
+  "🏖️": "sand",
+  "🌴": "palm",
+  "😌": "calm",
+  "😊": "smile",
+  "🌬": "wind",
+  "🌬️": "wind",
 };
 
 /** The drawn symbol for an emoji used as an icon; unknown ones become a sparkle. */
@@ -240,6 +287,9 @@ const SKY = "var(--sky)";
 const MOON = "var(--moon)";
 const LAVENDER = "var(--lavender)";
 const ROSE = "var(--rose)";
+
+const HEART =
+  "M16 27C8 21 4 17.6 4 12.8 4 9 7 6.4 10.4 6.4c2.4 0 4.4 1.3 5.6 3.3 1.2-2 3.2-3.3 5.6-3.3C25 6.4 28 9 28 12.8c0 4.8-4 8.2-12 14.2z";
 
 const ART: Record<GlyphName, React.ReactNode> = {
   sun: (
@@ -350,12 +400,10 @@ const ART: Record<GlyphName, React.ReactNode> = {
       <circle cx="16" cy="16" r="5.2" fill={BODY} opacity=".82" />
     </>
   ),
-  heart: (
-    <path
-      d="M16 27C8 21 4 17.6 4 12.8 4 9 7 6.4 10.4 6.4c2.4 0 4.4 1.3 5.6 3.3 1.2-2 3.2-3.3 5.6-3.3C25 6.4 28 9 28 12.8c0 4.8-4 8.2-12 14.2z"
-      fill={ROSE}
-    />
-  ),
+  heart: <path d={HEART} fill={ROSE} />,
+  "heart-sky": <path d={HEART} fill={SKY} />,
+  "heart-honey": <path d={HEART} fill={HONEY} />,
+  "heart-sage": <path d={HEART} fill={SAGE} />,
   book: (
     <>
       <path
@@ -900,6 +948,391 @@ const ART: Record<GlyphName, React.ReactNode> = {
         fill="none"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </>
+  ),
+  whale: (
+    <>
+      <path
+        d="M4 19c0-4.6 4.4-8 10-8s10 3.4 10 8c0 3.8-4 6.4-9 6.4C9 25.4 4 22.8 4 19z"
+        fill={SKY}
+      />
+      <path d="M23 13l7-4v14l-7-4z" fill={SKY} opacity=".7" />
+      <path
+        d="M12 11c0-3 1.6-5 4-6"
+        stroke={SKY}
+        strokeWidth="1.8"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <circle cx="9.5" cy="17.5" r="1.4" fill={PETAL} />
+      <path
+        d="M12 22c2 1.6 4.6 1.6 6.6 0"
+        stroke={PETAL}
+        strokeWidth="1.5"
+        fill="none"
+        strokeLinecap="round"
+      />
+    </>
+  ),
+  balloon: (
+    <>
+      <ellipse cx="16" cy="12.5" rx="8" ry="9.5" fill={ROSE} />
+      <path d="M16 22l-2 3h4z" fill={ROSE} />
+      <path
+        d="M16 25c2.4 2-2.4 4 0 6.5"
+        stroke={SAGE}
+        strokeWidth="1.4"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <ellipse
+        cx="12.5"
+        cy="8.5"
+        rx="2"
+        ry="3.2"
+        fill={PETAL}
+        opacity=".65"
+        transform="rotate(-18 12.5 8.5)"
+      />
+    </>
+  ),
+  snail: (
+    <>
+      <path
+        d="M4 26c1.6-4 5-6 9-6h6"
+        stroke={SAGE}
+        strokeWidth="3.2"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <circle cx="18" cy="16" r="7.2" fill={HONEY} />
+      <path
+        d="M18 16a3.2 3.2 0 1 1 3 2.6"
+        stroke={PETAL}
+        strokeWidth="1.5"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <circle cx="8.6" cy="14.4" r="3.4" fill={SAGE} />
+      <circle cx="9.6" cy="13.6" r="1.1" fill={BODY} />
+      <path
+        d="M7 11.4l-1.6-3M10.4 11.4l1.6-3"
+        stroke={SAGE}
+        strokeWidth="1.3"
+        strokeLinecap="round"
+      />
+    </>
+  ),
+  ant: (
+    <>
+      <ellipse cx="8" cy="18" rx="3.2" ry="2.6" fill={BODY} />
+      <ellipse cx="15" cy="18.6" rx="2.8" ry="2.4" fill={BODY} opacity=".92" />
+      <ellipse cx="23" cy="19.4" rx="4.6" ry="3.4" fill={BODY} opacity=".8" />
+      <path d="M6 16l-2.6-4M9.6 16l1.4-4.4" stroke={BODY} strokeWidth="1.3" strokeLinecap="round" />
+      <path
+        d="M13 20.6l-2.4 5M15 21v5M18 20.6l2.4 5M21 21.4l3 4.4"
+        stroke={BODY}
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        opacity=".7"
+      />
+    </>
+  ),
+  pebble: (
+    <>
+      <path
+        d="M7 21c-1.6-4.6 1.4-8 5.6-8 3.4 0 4.4 2.4 7.4 2.4 3 0 5.6 1.8 5.6 5.6H7z"
+        fill={LAVENDER}
+      />
+      <path
+        d="M11 15.4c1.4-1.2 3.4-1.2 4.8 0"
+        stroke={PETAL}
+        strokeWidth="1.4"
+        fill="none"
+        strokeLinecap="round"
+        opacity=".85"
+      />
+      <path
+        d="M4 25q4 2.2 8 0t8 0 8 0"
+        stroke={SKY}
+        strokeWidth="2"
+        fill="none"
+        strokeLinecap="round"
+        opacity=".85"
+      />
+    </>
+  ),
+  fish: (
+    <>
+      <path d="M4 16c4.4-5.4 13-5.4 17.4 0C17 21.4 8.4 21.4 4 16z" fill={SKY} />
+      <path d="M21 16l7-4.4v8.8z" fill={SKY} opacity=".75" />
+      <circle cx="9.6" cy="14.4" r="1.3" fill={PETAL} />
+      <path
+        d="M14 11.6c1.4 2.8 1.4 6 0 8.8"
+        stroke={PETAL}
+        strokeWidth="1.2"
+        fill="none"
+        opacity=".6"
+      />
+    </>
+  ),
+  teddy: (
+    <>
+      <circle cx="8.6" cy="8.6" r="3.4" fill={HONEY} />
+      <circle cx="23.4" cy="8.6" r="3.4" fill={HONEY} />
+      <circle cx="16" cy="11.6" r="7" fill={HONEY} />
+      <ellipse cx="16" cy="22.4" rx="8" ry="7.6" fill={HONEY} />
+      <ellipse cx="16" cy="23" rx="4" ry="4.4" fill={PETAL} />
+      <circle cx="13" cy="10.8" r="1.2" fill={BODY} />
+      <circle cx="19" cy="10.8" r="1.2" fill={BODY} />
+      <circle cx="16" cy="14.4" r="1.6" fill={BODY} />
+    </>
+  ),
+  sign: (
+    <>
+      <rect x="14.6" y="9" width="2.8" height="21" rx="1.4" fill={BODY} opacity=".65" />
+      <path d="M5 5h17.5l5 4-5 4H5z" fill={PETAL} stroke={SAGE} strokeWidth="1.4" />
+      <path d="M9 9h10.5" stroke={SAGE} strokeWidth="1.5" strokeLinecap="round" opacity=".7" />
+    </>
+  ),
+  compass: (
+    <>
+      <circle cx="16" cy="16" r="12" fill={PETAL} stroke={SAGE} strokeWidth="2" />
+      <path d="M21.4 10.6l-2.8 7.2-7.2 2.8 2.8-7.2z" fill={ROSE} />
+      <circle cx="16" cy="16" r="1.7" fill={BODY} />
+      <path
+        d="M16 1.6v2M16 28.4v2M1.6 16h2M28.4 16h2"
+        stroke={SAGE}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        opacity=".55"
+      />
+    </>
+  ),
+  feather: (
+    <>
+      <path d="M26 5C15.4 5.4 8.6 11 7.4 21L6 27l6-1.4C21.6 24 26 16.4 26 5z" fill={LAVENDER} />
+      <path
+        d="M11.4 24C14.6 17 19.4 12 25 7.6"
+        stroke={PETAL}
+        strokeWidth="1.3"
+        fill="none"
+        strokeLinecap="round"
+        opacity=".9"
+      />
+      <path
+        d="M14 19l5.4 1.6M16.6 15l4.2 1.2"
+        stroke={PETAL}
+        strokeWidth="1.1"
+        fill="none"
+        opacity=".7"
+      />
+    </>
+  ),
+  bird: (
+    <>
+      <ellipse cx="14.5" cy="18.5" rx="7.4" ry="5.6" fill={SKY} />
+      <circle cx="22" cy="13.6" r="4.2" fill={SKY} />
+      <path d="M26 13.4l5 1.8-5 1.8z" fill={HONEY} />
+      <circle cx="23" cy="12.6" r="1.1" fill={BODY} />
+      <path d="M12 15.4c-2.6-1-4.4-3-4.6-5.6 3.2.6 5.4 2.4 6.4 4.8z" fill={SKY} opacity=".7" />
+      <path
+        d="M8 20.6l-4 3M10 22.4l-2.6 4"
+        stroke={SKY}
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        opacity=".8"
+      />
+    </>
+  ),
+  log: (
+    <>
+      <rect
+        x="5"
+        y="11"
+        width="24"
+        height="12"
+        rx="6"
+        fill={BODY}
+        opacity=".5"
+        transform="rotate(-6 17 17)"
+      />
+      <ellipse
+        cx="8.6"
+        cy="17"
+        rx="4.2"
+        ry="5.2"
+        fill={PETAL}
+        stroke={SAGE}
+        strokeWidth="1.3"
+        transform="rotate(-6 8.6 17)"
+      />
+      <ellipse
+        cx="8.6"
+        cy="17"
+        rx="1.7"
+        ry="2.1"
+        fill="none"
+        stroke={SAGE}
+        strokeWidth="1"
+        opacity=".7"
+        transform="rotate(-6 8.6 17)"
+      />
+      <rect
+        x="19"
+        y="8.6"
+        width="4.4"
+        height="3.2"
+        rx="1.6"
+        fill={SAGE}
+        transform="rotate(-8 21 10)"
+      />
+    </>
+  ),
+  hare: (
+    <>
+      <ellipse cx="16" cy="23" rx="7.6" ry="5.6" fill={PETAL} stroke={SAGE} strokeWidth="1.3" />
+      <circle cx="16" cy="14.4" r="5" fill={PETAL} stroke={SAGE} strokeWidth="1.3" />
+      <ellipse
+        cx="13"
+        cy="6"
+        rx="2"
+        ry="5"
+        fill={PETAL}
+        stroke={SAGE}
+        strokeWidth="1.2"
+        transform="rotate(-12 13 6)"
+      />
+      <ellipse
+        cx="19.4"
+        cy="6"
+        rx="2"
+        ry="5"
+        fill={PETAL}
+        stroke={SAGE}
+        strokeWidth="1.2"
+        transform="rotate(12 19.4 6)"
+      />
+      <circle cx="14" cy="14" r="1.1" fill={BODY} />
+      <circle cx="18" cy="14" r="1.1" fill={BODY} />
+      <circle cx="16" cy="17" r="1.2" fill={ROSE} />
+    </>
+  ),
+  deer: (
+    <>
+      <path
+        d="M10.6 12.4L7.6 5M10.6 9.6l-4-1.8M21.4 12.4l3-7.4M21.4 9.6l4-1.8"
+        stroke={BODY}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        opacity=".8"
+      />
+      <ellipse cx="16" cy="19.4" rx="6.6" ry="8" fill={HONEY} />
+      <ellipse cx="16" cy="25.6" rx="4.4" ry="3" fill={PETAL} />
+      <circle cx="13.2" cy="17.4" r="1.3" fill={BODY} />
+      <circle cx="18.8" cy="17.4" r="1.3" fill={BODY} />
+      <circle cx="16" cy="25" r="1.5" fill={BODY} opacity=".85" />
+    </>
+  ),
+  shell: (
+    <>
+      <path d="M16 27.6C6.6 26 4.4 13 16 6.4 27.6 13 25.4 26 16 27.6z" fill={ROSE} />
+      <path
+        d="M16 26.4V7.6M11 25.4c-1.4-5.6-2.2-10-2.4-13.4M21 25.4c1.4-5.6 2.2-10 2.4-13.4"
+        stroke={PETAL}
+        strokeWidth="1.3"
+        fill="none"
+        opacity=".85"
+      />
+      <path d="M12.4 27.4c.4-2.4 1.8-3.6 3.6-3.6s3.2 1.2 3.6 3.6" fill={PETAL} opacity=".55" />
+    </>
+  ),
+  sand: (
+    <>
+      <circle cx="24" cy="8.4" r="3.6" fill={HONEY} />
+      <path
+        d="M3 14.6q4.2-4.2 8.4 0t8.4 0 8.4 0"
+        stroke={SKY}
+        strokeWidth="2.2"
+        fill="none"
+        strokeLinecap="round"
+        opacity=".8"
+      />
+      <path d="M2 21q7-6 14 0t14 0v9H2z" fill={HONEY} opacity=".45" />
+      <path
+        d="M9 25.4h3M18 27h3"
+        stroke={PETAL}
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        opacity=".9"
+      />
+    </>
+  ),
+  palm: (
+    <>
+      <path
+        d="M13.6 28.6c.4-8 2.8-13 6.4-16"
+        stroke={BODY}
+        strokeWidth="3"
+        fill="none"
+        strokeLinecap="round"
+        opacity=".75"
+      />
+      <path d="M20 12.6c-5-3.4-9.6-2.6-13 1 4.6 1.4 9.4 1 13-1z" fill={SAGE} />
+      <path d="M20 12.6c1.4-5.6-.6-9-4-10.6 1.2 4.4 1.2 7.8 4 10.6z" fill={SAGE} />
+      <path d="M20 12.6c4.4-3.2 9-2.4 12.4 1.2-4.6 1.4-9.2 1-12.4-1.2z" fill={SAGE} />
+      <path d="M20 12.6c3.4 4.2 3.6 8 1.4 11.6-1.4-4.4-2.6-8-1.4-11.6z" fill={SAGE} opacity=".85" />
+      <circle cx="18.6" cy="15.4" r="1.7" fill={HONEY} />
+    </>
+  ),
+  calm: (
+    <>
+      <circle cx="16" cy="16" r="12" fill={PETAL} stroke={SAGE} strokeWidth="1.8" />
+      <path
+        d="M10.4 15.4q2.2-2.4 4.4 0M17.2 15.4q2.2-2.4 4.4 0"
+        stroke={BODY}
+        strokeWidth="1.7"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M13 20.6q3 2.4 6 0"
+        stroke={ROSE}
+        strokeWidth="1.7"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <circle cx="8.6" cy="19.6" r="2.2" fill={ROSE} opacity=".35" />
+      <circle cx="23.4" cy="19.6" r="2.2" fill={ROSE} opacity=".35" />
+    </>
+  ),
+  hug: (
+    <>
+      <path
+        d="M3.6 11.6c1.2 8 5 12.6 12.4 14.6 7.4-2 11.2-6.6 12.4-14.6"
+        stroke={SAGE}
+        strokeWidth="3.2"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M16 22.4c-3.4-2.6-5-4.4-5-6.6a3 3 0 0 1 5-2.4 3 3 0 0 1 5 2.4c0 2.2-1.6 4-5 6.6z"
+        fill={ROSE}
+      />
+    </>
+  ),
+  smile: (
+    <>
+      <circle cx="16" cy="16" r="12" fill={PETAL} stroke={SAGE} strokeWidth="1.8" />
+      <circle cx="12" cy="13.4" r="1.9" fill={BODY} />
+      <circle cx="20" cy="13.4" r="1.9" fill={BODY} />
+      <path
+        d="M10.4 19.4q5.6 5.6 11.2 0"
+        stroke={BODY}
+        strokeWidth="1.9"
+        fill="none"
+        strokeLinecap="round"
       />
     </>
   ),

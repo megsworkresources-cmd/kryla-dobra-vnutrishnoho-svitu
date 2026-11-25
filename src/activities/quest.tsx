@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Btn, Scene } from "@/components/Scene";
 import { CharacterSay } from "@/components/Character";
+import { Glyph } from "@/components/Glyph";
 import { placeImage } from "@/content/places";
 import { itemAtOr } from "@/content/list";
 import type { Bi } from "@/content/adventures.i18n";
@@ -81,11 +82,12 @@ export function QuestView({ id }: { id: QuestId }) {
                     aria-label={done ? L(s.text) : t("Маленьке диво {n}", { n: k + 1 })}
                     aria-pressed={done}
                     style={{ left: `${s.x}%`, top: `${s.y}%` }}
-                    className={`absolute flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-card text-3xl shadow-soft transition-transform focus-visible:ring-4 focus-visible:ring-ring ${done ? "scale-110 bg-card" : "bg-card/60"}`}
+                    className={`absolute flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-card p-2 shadow-soft transition-transform focus-visible:ring-4 focus-visible:ring-ring ${done ? "scale-110 bg-card" : "bg-card/60"}`}
                   >
-                    <span aria-hidden className={done ? "" : "animate-float"}>
-                      {done ? s.icon : "✨"}
-                    </span>
+                    <Glyph
+                      name={done ? s.icon : "sparkle"}
+                      className={`h-8 w-8 ${done ? "" : "animate-float"}`}
+                    />
                   </button>
                 );
               })}
@@ -123,9 +125,7 @@ export function QuestView({ id }: { id: QuestId }) {
                     aria-pressed={choice === k}
                     className={`flex min-h-16 items-center justify-center gap-2 rounded-2xl border-2 px-4 py-3 text-lg font-bold transition focus-visible:ring-4 focus-visible:ring-ring ${choice === k ? "border-primary bg-primary/15" : "border-border bg-card"}`}
                   >
-                    <span aria-hidden className="text-2xl">
-                      {c.icon}
-                    </span>
+                    <Glyph name={c.icon} className="h-7 w-7 shrink-0" />
                     {L(c.text)}
                   </button>
                 ))}

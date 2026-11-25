@@ -1045,17 +1045,18 @@ const ART: Record<GlyphName, React.ReactNode> = {
     <>
       <path
         d="M6 22.6c-1.8 0-3.2-1.6-3.2-3.6 0-4.4 3.6-8 8-8 3.6 0 5.4 2.2 8.4 2.2 3.6 0 6.4 2.4 6.4 5.6 0 2.2-1.6 3.8-3.8 3.8z"
-        fill={LAVENDER}
-        stroke={SAGE}
-        strokeWidth="1.3"
+        fill={SAGE}
+        stroke={BODY}
+        strokeOpacity=".35"
+        strokeWidth="1.2"
       />
       <path
         d="M11.4 12.8c1.8-1 3.8-.8 5 .4"
         stroke={PETAL}
-        strokeWidth="1.6"
+        strokeWidth="1.8"
         fill="none"
         strokeLinecap="round"
-        opacity=".9"
+        opacity=".95"
       />
       <path
         d="M4 25q4 2.2 8 0t8 0 8 0"
@@ -1173,16 +1174,16 @@ const ART: Record<GlyphName, React.ReactNode> = {
   ),
   hare: (
     <>
-      <ellipse cx="16" cy="23" rx="7.6" ry="5.6" fill={PETAL} stroke={SAGE} strokeWidth="1.4" />
-      <circle cx="16" cy="14.4" r="5.2" fill={PETAL} stroke={SAGE} strokeWidth="1.4" />
+      <ellipse cx="16" cy="23" rx="7.6" ry="5.6" fill={HONEY} stroke={SAGE} strokeWidth="1.5" />
+      <circle cx="16" cy="14.4" r="5.2" fill={HONEY} stroke={SAGE} strokeWidth="1.5" />
       <ellipse
         cx="13"
         cy="6"
         rx="2.1"
         ry="5"
-        fill={PETAL}
+        fill={HONEY}
         stroke={SAGE}
-        strokeWidth="1.3"
+        strokeWidth="1.4"
         transform="rotate(-12 13 6)"
       />
       <ellipse
@@ -1190,9 +1191,9 @@ const ART: Record<GlyphName, React.ReactNode> = {
         cy="6"
         rx="2.1"
         ry="5"
-        fill={PETAL}
+        fill={HONEY}
         stroke={SAGE}
-        strokeWidth="1.3"
+        strokeWidth="1.4"
         transform="rotate(12 19.4 6)"
       />
       <ellipse
@@ -1213,12 +1214,13 @@ const ART: Record<GlyphName, React.ReactNode> = {
         opacity=".55"
         transform="rotate(12 19.4 6.2)"
       />
+      <ellipse cx="16" cy="17.8" rx="3.1" ry="2.3" fill={PETAL} opacity=".85" />
+      <ellipse cx="16" cy="24.6" rx="4" ry="3" fill={PETAL} opacity=".45" />
       <circle cx="14" cy="14" r="1.2" fill={BODY} />
       <circle cx="18" cy="14" r="1.2" fill={BODY} />
-      <circle cx="16" cy="17.2" r="1.3" fill={ROSE} />
-      <circle cx="10.6" cy="17" r="1.6" fill={ROSE} opacity=".3" />
-      <circle cx="21.4" cy="17" r="1.6" fill={ROSE} opacity=".3" />
-      <ellipse cx="16" cy="24.4" rx="4" ry="3.2" fill={HONEY} opacity=".28" />
+      <circle cx="16" cy="17.6" r="1.1" fill={ROSE} />
+      <circle cx="10.8" cy="17" r="1.6" fill={ROSE} opacity=".4" />
+      <circle cx="21.2" cy="17" r="1.6" fill={ROSE} opacity=".4" />
     </>
   ),
   deer: (
@@ -1242,39 +1244,41 @@ const ART: Record<GlyphName, React.ReactNode> = {
       <path
         d="M16 27.2C7.8 25.8 4 19 5.8 12.2 6.8 8.2 10.4 5 16 5s9.2 3.2 10.2 7.2C28 19 24.2 25.8 16 27.2z"
         fill={ROSE}
+        stroke={SAGE}
+        strokeWidth="1.4"
       />
       <path
         d="M16 26.2V6.4M16 26.2L8.8 8.4M16 26.2l7.2-17.8M16 26.2L6.2 18.6M16 26.2l9.8-7.6"
         stroke={PETAL}
-        strokeWidth="1.3"
+        strokeWidth="1.5"
         strokeLinecap="round"
-        opacity=".85"
+        opacity=".9"
       />
-      <path d="M12.2 27c.6-2.4 2-3.8 3.8-3.8s3.2 1.4 3.8 3.8" fill={PETAL} opacity=".7" />
+      <path d="M12.2 27c.6-2.4 2-3.8 3.8-3.8s3.2 1.4 3.8 3.8" fill={PETAL} opacity=".75" />
     </>
   ),
   sand: (
     <>
-      <circle cx="24.4" cy="7.6" r="3.6" fill={HONEY} />
-      <path d="M2 19.4q7-4.6 14 0t14 0V30H2z" fill={HONEY} opacity=".75" />
+      <circle cx="24.4" cy="7.6" r="3.6" fill={HONEY} stroke={SAGE} strokeWidth="1.2" />
+      <path d="M2 19.4q7-4.6 14 0t14 0V30H2z" fill={HONEY} />
       <path
         d="M2 19.4q7-4.6 14 0t14 0"
-        stroke={HONEY}
-        strokeWidth="2.4"
+        stroke={SAGE}
+        strokeWidth="2"
         fill="none"
         strokeLinecap="round"
       />
       <path
         d="M5.4 22.6q3.4 2 6.8 0M19.8 23.4q3.4 2 6.8 0"
-        stroke={SKY}
-        strokeWidth="1.6"
+        stroke={BODY}
+        strokeWidth="1.4"
         fill="none"
         strokeLinecap="round"
-        opacity=".55"
+        opacity=".25"
       />
-      <circle cx="9.6" cy="26.6" r="1.2" fill={ROSE} opacity=".8" />
-      <circle cx="16" cy="28" r="1" fill={SAGE} opacity=".75" />
-      <circle cx="22.6" cy="26.2" r="1.1" fill={LAVENDER} opacity=".9" />
+      <circle cx="9.6" cy="26.6" r="1.2" fill={ROSE} />
+      <circle cx="16" cy="28" r="1" fill={PETAL} opacity=".9" />
+      <circle cx="22.6" cy="26.2" r="1.1" fill={LAVENDER} />
     </>
   ),
   palm: (

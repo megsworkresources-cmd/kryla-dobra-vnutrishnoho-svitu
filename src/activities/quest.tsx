@@ -82,7 +82,7 @@ export function QuestView({ id }: { id: QuestId }) {
                     aria-label={done ? L(s.text) : t("Маленьке диво {n}", { n: k + 1 })}
                     aria-pressed={done}
                     style={{ left: `${s.x}%`, top: `${s.y}%` }}
-                    className={`absolute flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-card p-2 shadow-soft transition-transform focus-visible:ring-4 focus-visible:ring-ring ${done ? "scale-110 bg-card" : "bg-card/60"}`}
+                    className={`absolute flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-card p-2 shadow-soft transition-transform focus-visible:ring-4 focus-visible:ring-ring ${done ? "scale-110 bg-paper" : "bg-card/60"}`}
                   >
                     <Glyph
                       name={done ? s.icon : "sparkle"}

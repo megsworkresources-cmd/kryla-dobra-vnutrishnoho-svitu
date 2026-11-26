@@ -298,7 +298,7 @@ export function MyStar() {
                 {isPicked && (
                   <span
                     className={`pointer-events-none absolute whitespace-nowrap rounded-full bg-night/70 px-2 text-xs font-bold text-moon ${
-                      slot.y > 55 ? "bottom-full" : "top-full"
+                      slot.y > 55 ? "top-full" : "bottom-full"
                     } ${
                       slot.x < 30 ? "left-0" : slot.x > 70 ? "right-0" : "left-1/2 -translate-x-1/2"
                     }`}

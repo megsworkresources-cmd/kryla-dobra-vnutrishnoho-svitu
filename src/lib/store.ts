@@ -6,6 +6,9 @@ import { clearSavedGarden } from "@/lib/community-cache";
  */
 export type AgeBand = "young" | "mid" | "older";
 export type Lang = "uk" | "en";
+export type StarShape = "classic" | "round" | "flower";
+export type StarColor = "honey" | "moon" | "rose" | "sky" | "lavender";
+export type StarGlow = "soft" | "warm" | "bright";
 
 export interface AppState {
   age: AgeBand;
@@ -37,6 +40,10 @@ export interface AppState {
   starWish: string;
   starX: number; // percent position inside the sky
   starY: number;
+  starShape: StarShape; // the child's own star look, kept on this device only
+  starColor: StarColor;
+  starGlow: StarGlow;
+  starLinks: string[]; // story stars joined into the child's constellation
 }
 
 const KEY = "tyhe-mistse-v1";
@@ -70,6 +77,10 @@ const DEFAULTS: AppState = {
   starWish: "",
   starX: 50,
   starY: 46,
+  starShape: "classic",
+  starColor: "honey",
+  starGlow: "warm",
+  starLinks: [],
 };
 
 /** Read current state outside React (audio engine). */
@@ -177,6 +188,23 @@ function load() {
         typeof saved.wateredOn === "string" && /^\d{4}-\d{2}-\d{2}$/.test(saved.wateredOn)
           ? saved.wateredOn
           : DEFAULTS.wateredOn;
+      state.starShape = ["classic", "round", "flower"].includes(String(saved.starShape))
+        ? (saved.starShape as StarShape)
+        : DEFAULTS.starShape;
+      state.starColor = ["honey", "moon", "rose", "sky", "lavender"].includes(
+        String(saved.starColor),
+      )
+        ? (saved.starColor as StarColor)
+        : DEFAULTS.starColor;
+      state.starGlow = ["soft", "warm", "bright"].includes(String(saved.starGlow))
+        ? (saved.starGlow as StarGlow)
+        : DEFAULTS.starGlow;
+      state.starLinks = Array.isArray(saved.starLinks)
+        ? [...new Set(saved.starLinks.filter((id): id is string => typeof id === "string"))].slice(
+            0,
+            5,
+          )
+        : DEFAULTS.starLinks;
     }
   } catch {
     state = DEFAULTS;
@@ -263,6 +291,21 @@ export const setStarWish = (wish: string) => update((s) => ({ ...s, starWish: wi
 
 export const moveStar = (x: number, y: number) =>
   update((s) => ({ ...s, starX: clamped(x, 8, 92), starY: clamped(y, 8, 92) }));
+
+export const setStarShape = (shape: StarShape) => update((s) => ({ ...s, starShape: shape }));
+
+export const setStarColor = (color: StarColor) => update((s) => ({ ...s, starColor: color }));
+
+export const setStarGlow = (glow: StarGlow) => update((s) => ({ ...s, starGlow: glow }));
+
+/** Constellation lines are device-only too: nothing about them is ever sent away. */
+export const toggleStarLink = (id: string) =>
+  update((s) => ({
+    ...s,
+    starLinks: s.starLinks.includes(id)
+      ? s.starLinks.filter((link) => link !== id)
+      : [...s.starLinks, id].slice(0, 5),
+  }));
 
 /** Wipes only progress records (not settings or drawings). */
 export const resetProgress = () => {

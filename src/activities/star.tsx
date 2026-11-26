@@ -3,7 +3,21 @@ import { Link } from "@tanstack/react-router";
 import { CharacterSay } from "@/components/Character";
 import { Btn } from "@/components/Scene";
 import { TypedExamples } from "@/components/TypeOwn";
-import { careCount, growthStage, moveStar, setStarName, setStarWish, useStore } from "@/lib/store";
+import {
+  careCount,
+  growthStage,
+  moveStar,
+  setStarColor,
+  setStarGlow,
+  setStarName,
+  setStarShape,
+  setStarWish,
+  toggleStarLink,
+  useStore,
+  type StarColor,
+  type StarGlow,
+  type StarShape,
+} from "@/lib/store";
 import { FINAL_GROWTH_STAGE } from "@/content/growth";
 import { JOURNEYS } from "@/content/journeys";
 import { chime, sfx } from "@/lib/audio";
@@ -66,12 +80,97 @@ const SLOTS = [
   { x: 58, y: 84 },
 ];
 
+/** A five-point star from fixed points, so the server and browser draw the same shape. */
+const STAR_POINTS = Array.from({ length: 10 }, (_, i) => {
+  const angle = (Math.PI / 5) * i - Math.PI / 2;
+  const radius = i % 2 === 0 ? 48 : 20;
+  return `${(50 + radius * Math.cos(angle)).toFixed(2)},${(50 + radius * Math.sin(angle)).toFixed(2)}`;
+}).join(" ");
+
+const STAR_COLORS: Record<StarColor, string> = {
+  honey: "--honey",
+  moon: "--moon",
+  rose: "--rose",
+  sky: "--sky",
+  lavender: "--lavender",
+};
+
+const STAR_GLOW: Record<StarGlow, number> = { soft: 10, warm: 22, bright: 36 };
+
+const SHAPES: { id: StarShape; label: string }[] = [
+  { id: "classic", label: "Зірочка" },
+  { id: "round", label: "Кружечок" },
+  { id: "flower", label: "Квіточка" },
+];
+
+const COLORS: { id: StarColor; label: string }[] = [
+  { id: "honey", label: "Медовий" },
+  { id: "moon", label: "Місячний" },
+  { id: "rose", label: "Рожевий" },
+  { id: "sky", label: "Небесний" },
+  { id: "lavender", label: "Бузковий" },
+];
+
+const GLOWS: { id: StarGlow; label: string }[] = [
+  { id: "soft", label: "Тихе" },
+  { id: "warm", label: "Тепле" },
+  { id: "bright", label: "Яскраве" },
+];
+
+/** The child's own star, drawn here so a colour or shape change needs no image. */
+function StarGlyph({
+  shape,
+  color,
+  glow,
+  size,
+}: {
+  shape: StarShape;
+  color: StarColor;
+  glow: StarGlow;
+  size: number;
+}) {
+  const fill = `var(${STAR_COLORS[color]})`;
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 100 100"
+      width={size}
+      height={size}
+      style={{
+        filter: `drop-shadow(0 0 ${STAR_GLOW[glow]}px color-mix(in srgb, ${fill} 70%, transparent))`,
+      }}
+    >
+      {shape === "round" && <circle cx="50" cy="50" r="36" fill={fill} />}
+      {shape === "flower" && (
+        <g fill={fill}>
+          {[0, 60, 120, 180, 240, 300].map((angle) => (
+            <ellipse
+              key={angle}
+              cx="50"
+              cy="24"
+              rx="16"
+              ry="25"
+              transform={`rotate(${angle} 50 50)`}
+            />
+          ))}
+          <circle cx="50" cy="50" r="14" fill="var(--paper)" fillOpacity={0.5} />
+        </g>
+      )}
+      {shape === "classic" && <polygon points={STAR_POINTS} fill={fill} />}
+    </svg>
+  );
+}
+
 export function MyStar() {
   const t = useT();
   const name = useStore((s) => s.starName);
   const wish = useStore((s) => s.starWish);
   const x = useStore((s) => s.starX);
   const y = useStore((s) => s.starY);
+  const shape = useStore((s) => s.starShape);
+  const color = useStore((s) => s.starColor);
+  const glow = useStore((s) => s.starGlow);
+  const links = useStore((s) => s.starLinks);
   const completed = useStore((s) => s.completed);
   const stage = growthStage(useStore((s) => careCount(s)));
   const myLight = Math.max(15, Math.round((stage / FINAL_GROWTH_STAGE) * 100));
@@ -86,6 +185,13 @@ export function MyStar() {
     () => STORIES.filter((story) => (completed[`sky-${story.id}`] ?? 0) > 0),
     [completed],
   );
+  /** Every story star's current place, so a constellation line can end on it. */
+  const placed = STORIES.map((item, index) => ({
+    ...item,
+    slot: SLOTS[(index + seed) % SLOTS.length] ?? { x: 50, y: 50 },
+    isLit: (completed[`sky-${item.id}`] ?? 0) > 0,
+  }));
+  const joined = placed.filter((item) => links.includes(item.id));
   const story = STORIES.find((s) => s.id === picked);
   const storyReads = story ? (completed[`sky-${story.id}`] ?? 0) : 0;
   const light = story ? Math.min(100, 45 + 15 * storyReads) : myLight;
@@ -107,6 +213,11 @@ export function MyStar() {
     <div className="space-y-4">
       <p className="text-center text-sm font-bold text-moon">
         {t("Тягни свою зорю пальцем. Торкнись будь-якої — побачиш її світло.")}
+      </p>
+      <p className="text-center text-sm font-semibold text-moon/75">
+        {links.length > 0
+          ? t("Ліній у сузір’ї: {n}", { n: links.length })
+          : t("З’єднай зорі лініями — і вийде твоє сузір’я. Воно теж тільки на цьому пристрої.")}
       </p>
 
       <div className="play-split flex flex-col gap-3">
@@ -132,9 +243,33 @@ export function MyStar() {
             />
           ))}
 
-          {STORIES.map((item, index) => {
-            const slot = SLOTS[(index + seed) % SLOTS.length] ?? { x: 50, y: 50 };
-            const isLit = (completed[`sky-${item.id}`] ?? 0) > 0;
+          {joined.length > 0 && (
+            <svg
+              aria-hidden
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              className="pointer-events-none absolute inset-0 h-full w-full"
+            >
+              {joined.map((item) => (
+                <line
+                  key={item.id}
+                  x1={x}
+                  y1={y}
+                  x2={item.slot.x}
+                  y2={item.slot.y}
+                  stroke={`var(${STAR_COLORS[color]})`}
+                  strokeOpacity={0.55}
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                  vectorEffect="non-scaling-stroke"
+                />
+              ))}
+            </svg>
+          )}
+
+          {placed.map((item) => {
+            const slot = item.slot;
+            const isLit = item.isLit;
             const isPicked = picked === item.id;
             return (
               <button
@@ -162,8 +297,10 @@ export function MyStar() {
                 />
                 {isPicked && (
                   <span
-                    className={`pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-night/70 px-2 text-xs font-bold text-moon ${
+                    className={`pointer-events-none absolute whitespace-nowrap rounded-full bg-night/70 px-2 text-xs font-bold text-moon ${
                       slot.y > 55 ? "bottom-full" : "top-full"
+                    } ${
+                      slot.x < 30 ? "left-0" : slot.x > 70 ? "right-0" : "left-1/2 -translate-x-1/2"
                     }`}
                   >
                     {t(item.title)}
@@ -228,14 +365,11 @@ export function MyStar() {
           >
             <span
               aria-hidden
-              className="block rounded-full bg-honey transition-transform"
-              style={{
-                width: 26,
-                height: 26,
-                transform: drag ? `translate(${drag.dx}px, ${drag.dy}px)` : undefined,
-                boxShadow: `0 0 34px ${Math.round(8 + myLight / 4)}px color-mix(in srgb, var(--honey) 60%, transparent)`,
-              }}
-            />
+              className="block transition-transform"
+              style={{ transform: drag ? `translate(${drag.dx}px, ${drag.dy}px)` : undefined }}
+            >
+              <StarGlyph shape={shape} color={color} glow={glow} size={34} />
+            </span>
             <span
               className={`pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-night/70 px-2 text-xs font-bold text-moon ${
                 y > 55 ? "bottom-full" : "top-full"
@@ -305,6 +439,16 @@ export function MyStar() {
               >
                 {storyReads > 0 ? t("Повернутись до казки") : t("Послухати казку")}
               </Link>
+              <Btn
+                variant={links.includes(story.id) ? "ghost" : "honey"}
+                aria-pressed={links.includes(story.id)}
+                onClick={() => {
+                  toggleStarLink(story.id);
+                  chime(links.includes(story.id) ? 494 : 880);
+                }}
+              >
+                {links.includes(story.id) ? t("Прибрати лінію") : t("З’єднати з моєю зорею")}
+              </Btn>
             </div>
           )}
           {story && litSent.includes(story.id) && (
@@ -314,6 +458,82 @@ export function MyStar() {
       </div>
 
       <div className="night-card space-y-3 p-4">
+        <div className="space-y-2">
+          <p className="text-xs font-extrabold uppercase tracking-wide text-honey">
+            {t("Вигляд зорі")}
+          </p>
+          <p className="text-sm text-moon/75">
+            {t("Вибери форму, колір і світіння — так твоя зоря сяє.")}
+          </p>
+          <div role="group" aria-label={t("Форма зорі")} className="space-y-1">
+            <span className="block text-sm font-bold text-moon">{t("Форма зорі")}</span>
+            <div className="flex flex-wrap gap-2">
+              {SHAPES.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  aria-pressed={shape === option.id}
+                  onClick={() => {
+                    setStarShape(option.id);
+                    chime(587);
+                  }}
+                  className={`press min-h-11 rounded-full px-4 text-sm font-bold ${
+                    shape === option.id ? "bg-moon text-night" : "bg-night/60 text-moon"
+                  }`}
+                >
+                  {t(option.label)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div role="group" aria-label={t("Колір зорі")} className="space-y-1">
+            <span className="block text-sm font-bold text-moon">{t("Колір зорі")}</span>
+            <div className="flex flex-wrap gap-2">
+              {COLORS.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  aria-pressed={color === option.id}
+                  onClick={() => {
+                    setStarColor(option.id);
+                    chime(659);
+                  }}
+                  className={`press inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-bold ${
+                    color === option.id ? "bg-moon text-night" : "bg-night/60 text-moon"
+                  }`}
+                >
+                  <span
+                    aria-hidden
+                    className="h-4 w-4 rounded-full"
+                    style={{ background: `var(${STAR_COLORS[option.id]})` }}
+                  />
+                  {t(option.label)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div role="group" aria-label={t("Світіння")} className="space-y-1">
+            <span className="block text-sm font-bold text-moon">{t("Світіння")}</span>
+            <div className="flex flex-wrap gap-2">
+              {GLOWS.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  aria-pressed={glow === option.id}
+                  onClick={() => {
+                    setStarGlow(option.id);
+                    chime(523);
+                  }}
+                  className={`press min-h-11 rounded-full px-4 text-sm font-bold ${
+                    glow === option.id ? "bg-moon text-night" : "bg-night/60 text-moon"
+                  }`}
+                >
+                  {t(option.label)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
         <label className="block space-y-1">
           <span className="block text-sm font-bold text-moon">{t("Ім’я зорі")}</span>
           <input

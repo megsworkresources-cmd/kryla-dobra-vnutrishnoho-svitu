@@ -191,6 +191,8 @@ function SharedGarden() {
                   onClick={() => {
                     setSelected(null);
                     setPlaying(true);
+                    // Start inside the tap, or Safari drops the play() and the label flips back.
+                    filmStart.current?.();
                   }}
                   className="h-full w-full flex-col rounded-lg px-2 py-3"
                 >
@@ -216,6 +218,8 @@ function SharedGarden() {
                       onClick={() => {
                         setSelected(flower.flower_id);
                         setPlaying(true);
+                        // Start inside the tap, or Safari drops the play() and the label flips back.
+                        filmStart.current?.();
                       }}
                       className="h-full w-full flex-col rounded-lg px-2 py-3"
                     >
@@ -275,8 +279,8 @@ function SharedGarden() {
             </p>
           </div>
           <div className="relative mx-auto mt-3 aspect-[440/768] w-full max-w-64 overflow-hidden rounded-lg bg-secondary sm:max-w-72">
+            {/* Kept mounted across flowers: a remount would discard the start the tap did. */}
             <StoryFilm
-              key={`${shown?.flower_id ?? "own"}-${shownStage}`}
               src={recorded.url}
               poster={meadow}
               playing={playing}

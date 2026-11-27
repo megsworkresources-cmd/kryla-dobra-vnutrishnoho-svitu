@@ -37,7 +37,9 @@ jobs:
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ftqdpebplmucvnzyltry.supabase.co' }}
           # Lovable Cloud owns the backend; keep its published auth fallback valid too.
           LOVABLE_PUBLISHED_URL: https://kryla-dobra-vnutrishnoho-svitu.lovable.app
-        run: node scripts/verify-deploy.mjs
+        # The build writes the commit it came from to /version.json, so this confirms the
+        # live site is running the same commit this run checked out.
+        run: node scripts/verify-deploy.mjs --expect "${{ github.sha }}"
       - name: Report failure
         # Runs even when checkout or setup failed, using GH_REPO instead of a worktree.
         if: failure()

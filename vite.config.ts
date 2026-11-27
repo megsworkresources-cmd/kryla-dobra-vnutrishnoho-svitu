@@ -11,6 +11,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import { assertNoServiceRoleClientImports } from "./scripts/no-service-role-client-guard.mjs";
 import { clientOutputDirectory, finalizePwa } from "./scripts/pwa-build";
 import { pwaWorkboxOptions } from "./scripts/pwa-workbox";
+import { writeDeployVersion } from "./scripts/deploy-version";
 
 // The framework's dev asset proxy serves recorded films and images from Lovable,
 // but it reads LOVABLE_PREVIEW_HOST from process.env. Vite only exposes VITE_*
@@ -52,6 +53,8 @@ export default defineConfig({
         workbox: pwaWorkboxOptions(),
       }),
       finalizePwa(),
+      // After the service worker, so the version file is never precached as an old build.
+      writeDeployVersion(),
     ],
   },
   tanstackStart: {

@@ -107,7 +107,8 @@ try {
   } else {
     pass("page responds 200");
     const html = await response.text();
-    deployed = html.match(/data-commit-sha="([0-9a-f]{7,40})"/i)?.[1] ?? null;
+    deployed = (await deployedCommitFromVersionFile()) ?? null;
+    deployed ??= html.match(/data-commit-sha="([0-9a-f]{7,40})"/i)?.[1] ?? null;
   }
 } catch (error) {
   fail(`page: ${error.message}`);
@@ -116,9 +117,9 @@ try {
 if (!values["skip-commit"]) {
   if (!deployed) {
     if (expectExplicit) {
-      fail("deployed commit: --expect was given but this host exposes no data-commit-sha marker");
+      fail("deployed commit: --expect was given but this host exposes no commit marker");
     } else {
-      console.log("• deployed commit marker not exposed by this host; skipping commit check");
+      console.log("• no commit marker at /version.json; skipping commit check");
     }
   } else if (expected && deployed === expected) {
     pass(`deployed commit ${deployed.slice(0, 7)} matches HEAD`);
@@ -134,6 +135,26 @@ if (!values["skip-commit"]) {
 function parseRedirect(location) {
   try {
     return new URL(location);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The build writes version.json beside the deployed files, naming the commit it came
+ * from. It is fetched with a cache-buster so a cached copy cannot report an old commit.
+ */
+async function deployedCommitFromVersionFile() {
+  try {
+    const response = await fetch(`${base}/version.json?deploy-check=${Date.now()}`, {
+      headers: { "cache-control": "no-cache" },
+      redirect: "follow",
+    });
+    if (!response.ok) return null;
+    const payload = JSON.parse(await response.text());
+    return typeof payload?.commit === "string" && /^[0-9a-f]{7,40}$/i.test(payload.commit)
+      ? payload.commit
+      : null;
   } catch {
     return null;
   }

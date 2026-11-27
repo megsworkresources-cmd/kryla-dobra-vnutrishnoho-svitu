@@ -1,4 +1,11 @@
 import "@testing-library/jest-dom/vitest";
+import { configure } from "@testing-library/react";
+
+// Queries wait 1s by default for UI that settles over a few frames. On a loaded
+// machine that ceiling expires while the component is behaving correctly, which is
+// how a green suite turns red without a code change; waiting longer only delays a
+// real failure.
+configure({ asyncUtilTimeout: 5_000 });
 
 Object.defineProperty(window, "scrollTo", {
   writable: true,

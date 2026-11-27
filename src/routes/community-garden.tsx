@@ -88,6 +88,8 @@ function CommunityGarden() {
                 sfx("soft");
                 setPicked(null);
                 setPlaying(true);
+                // Start inside the tap, or Safari drops the play() and the label flips back.
+                filmStart.current?.();
               }}
             >
               <Droplets size={18} />
@@ -129,6 +131,8 @@ function CommunityGarden() {
                   onClick={() => {
                     setPicked(null);
                     setPlaying(true);
+                    // Start inside the tap, or Safari drops the play() and the label flips back.
+                    filmStart.current?.();
                   }}
                   className="w-full flex-col rounded-lg px-2 py-3"
                 >
@@ -152,6 +156,8 @@ function CommunityGarden() {
                     onClick={() => {
                       setPicked(i);
                       setPlaying(true);
+                      // Start inside the tap, or Safari drops the play() and the label flips back.
+                      filmStart.current?.();
                     }}
                     className="w-full flex-col rounded-lg px-2 py-3"
                   >
@@ -223,8 +229,8 @@ function CommunityGarden() {
             </p>
           </div>
           <div className="relative mx-auto mt-3 aspect-[440/768] w-full max-w-64 overflow-hidden rounded-lg bg-secondary sm:max-w-72">
+            {/* Kept mounted across flowers: a remount would discard the start the tap did. */}
             <StoryFilm
-              key={`${picked ?? "own"}-${shownStage}`}
               src={recorded.url}
               poster={meadow}
               playing={playing}

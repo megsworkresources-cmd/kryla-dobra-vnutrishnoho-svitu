@@ -30,8 +30,11 @@ jobs:
           package-manager-cache: false
       - name: Check production
         env:
-          # Public project URL; override with a repository variable if it changes.
-          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://pahlmmtskmlrhcuevdyc.supabase.co' }}
+          # The app's own backend, as recorded in supabase/config.toml. A different
+          # project answers these probes happily, which is how a stale Site URL went
+          # unnoticed; keep this value and that file in step, or set the repository
+          # variable when the project really changes.
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ftqdpebplmucvnzyltry.supabase.co' }}
           # Lovable Cloud owns the backend; keep its published auth fallback valid too.
           LOVABLE_PUBLISHED_URL: https://kryla-dobra-vnutrishnoho-svitu.lovable.app
         run: node scripts/verify-deploy.mjs

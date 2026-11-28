@@ -179,11 +179,9 @@ test.describe("iPhone WebKit film smoke", () => {
     await pauseAndResume(page, video, /^Грати$/);
 
     const source = await video.getAttribute("src");
-    // The speech bubble has a "listen" button of its own, so choose a friend who is not
-    // already on screen instead of counting matching buttons in DOM order.
-    const friend = page
-      .getByRole("button", { name: /^Послухати, що каже/, pressed: false })
-      .first();
+    // Only the friend picker carries aria-pressed; the bubble's listen button does not, so
+    // counting role matches by name picked the character already on screen.
+    const friend = page.locator("button[aria-pressed]").nth(1);
     await friend.click();
     await expect(friend).toHaveAttribute("aria-pressed", "true");
     await expect.poll(async () => video.getAttribute("src")).not.toBe(source);

@@ -179,9 +179,9 @@ test.describe("iPhone WebKit film smoke", () => {
     await pauseAndResume(page, video, /^Грати$/);
 
     const source = await video.getAttribute("src");
-    // Only the friend picker carries aria-pressed; the bubble's listen button does not, so
-    // counting role matches by name picked the character already on screen.
-    const friend = page.locator("button[aria-pressed]").nth(1);
+    // The header language switch also sets aria-pressed, so scope to the friend picker's
+    // list; its second entry is always a different friend than the one already featured.
+    const friend = page.locator("ul button[aria-pressed]").nth(1);
     await friend.click();
     await expect(friend).toHaveAttribute("aria-pressed", "true");
     await expect.poll(async () => video.getAttribute("src")).not.toBe(source);

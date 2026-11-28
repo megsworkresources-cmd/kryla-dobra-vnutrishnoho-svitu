@@ -66,7 +66,7 @@ const PLAY_CONTROL = /^(Грати відео|Грати|Дивитися|Див
  * Wait for real playback. iOS may refuse the autoplay, which is exactly why the app has
  * its own tap-to-play control; when it does, the test takes that path instead of failing.
  */
-async function expectPlaying(page: Page, video: Locator) {
+async function expectPlaying(page: Page, video: Locator, options: { loops?: boolean } = {}) {
   await expect(video).toBeVisible();
   // Metadata first: a blocked autoplay stops at HAVE_METADATA, so wait for 2 only after
   // the tap below, or a refused autoplay would look like a broken file.
@@ -100,12 +100,23 @@ async function expectPlaying(page: Page, video: Locator) {
   const first = (await read(video)).time;
   await page.waitForTimeout(1200);
   const second = await read(video);
-  expect(second.time, "the picture should still be moving a moment later").toBeGreaterThan(first);
+  if (options.loops) {
+    // A stage shows one slice of the recording on repeat, so the clock wraps back to the
+    // slice start instead of only ever growing; movement is the proof, not a bigger number.
+    expect(second.time, "the repeating slice stopped moving").not.toBe(first);
+  } else {
+    expect(second.time, "the picture should still be moving a moment later").toBeGreaterThan(first);
+  }
   expect(second.paused, "the film stopped on its own").toBe(false);
 }
 
 /** Pause through the visible control, resume through the visible control, and check the picture followed. */
-async function pauseAndResume(page: Page, video: Locator, playLabel: RegExp) {
+async function pauseAndResume(
+  page: Page,
+  video: Locator,
+  playLabel: RegExp,
+  options: { loops?: boolean } = {},
+) {
   await page.getByRole("button", { name: "Пауза" }).first().click();
   await expect
     .poll(async () => (await read(video)).paused, { message: "Pause should stop the film" })
@@ -118,7 +129,13 @@ async function pauseAndResume(page: Page, video: Locator, playLabel: RegExp) {
 
   const started = (await read(video)).time;
   await page.waitForTimeout(1000);
-  expect((await read(video)).time, "the resumed film is not advancing").toBeGreaterThan(started);
+  const resumed = await read(video);
+  if (options.loops) {
+    // Resuming a stage slice can land on a wrap, so require movement, not a later frame.
+    expect(resumed.time, "the resumed film is not moving").not.toBe(started);
+  } else {
+    expect(resumed.time, "the resumed film is not advancing").toBeGreaterThan(started);
+  }
 }
 
 test.describe("iPhone WebKit film smoke", () => {
@@ -162,10 +179,13 @@ test.describe("iPhone WebKit film smoke", () => {
     await pauseAndResume(page, video, /^Грати$/);
 
     const source = await video.getAttribute("src");
-    await page
-      .getByRole("button", { name: /^Послухати, що каже/ })
-      .nth(1)
-      .click();
+    // The speech bubble has a "listen" button of its own, so choose a friend who is not
+    // already on screen instead of counting matching buttons in DOM order.
+    const friend = page
+      .getByRole("button", { name: /^Послухати, що каже/, pressed: false })
+      .first();
+    await friend.click();
+    await expect(friend).toHaveAttribute("aria-pressed", "true");
     await expect.poll(async () => video.getAttribute("src")).not.toBe(source);
     await expectPlaying(page, video);
 
@@ -179,7 +199,7 @@ test.describe("iPhone WebKit film smoke", () => {
     const group = page.getByRole("group", { name: "Запис росту соняшника" });
     await expect(group).toBeVisible();
     const video = group.locator("video");
-    await expectPlaying(page, video);
+    await expectPlaying(page, video, { loops: true });
 
     const { duration } = await read(video);
     if (duration > 2) {
@@ -187,7 +207,7 @@ test.describe("iPhone WebKit film smoke", () => {
       await page.waitForTimeout(2500);
       expect((await read(video)).time).toBeLessThan(duration - 0.2);
     }
-    await pauseAndResume(page, video, /^Дивитися ріст$/);
+    await pauseAndResume(page, video, /^Дивитися ріст$/, { loops: true });
 
     expect(problems).toEqual([]);
   });

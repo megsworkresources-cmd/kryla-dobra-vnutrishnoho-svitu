@@ -33,7 +33,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: isCi,
   retries: isCi ? 1 : 0,
-  reporter: isCi ? [["list"], ["html", { open: "never" }]] : "list",
+  // The GitHub reporter turns a failed assertion into a check annotation, so a CI run
+  // says which line of which film broke instead of only that the job went red.
+  reporter: isCi ? [["github"], ["list"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL,
     // The films are deliberately withheld from reduced-motion users; the smoke test

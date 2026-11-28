@@ -1,0 +1,66 @@
+# Compares the deployed Supabase schema with supabase/migrations and
+# supabase/schema-contract.json. The schema was built in the dashboard, so this
+# check is what stops a policy or RPC from being changed without a migration.
+#
+# Needs the repository secret SUPABASE_DB_URL (Supabase dashboard → Project
+# Settings → Database → Connection string → URI). Without it the check fails
+# loudly with instructions instead of passing silently.
+
+name: Schema drift
+
+on:
+  schedule:
+    # Daily at 05:43 UTC, before the deploy health check at 06:17.
+    - cron: "43 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+          package-manager-cache: false
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Compare the deployed schema with the migrations
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/schema-drift.mjs --require
+      - name: Report failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ASSIGNEE: ${{ github.repository_owner }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          title="[schema-drift] Deployed schema differs from the migrations"
+          body="$(printf '%s\n' \
+            'The deployed Supabase schema no longer matches supabase/migrations and supabase/schema-contract.json.' \
+            '' \
+            "- Run: $RUN_URL" \
+            "- Trigger: $EVENT" \
+            '' \
+            'Open the run log for the exact table, policy, grant or function that differs, then either add the change to a migration or run `bun run db:drift --write` after reviewing the live schema.')"
+          existing="$(gh issue list --state open --search 'schema-drift in:title' --json number,title --jq '.[] | select(.title == "[schema-drift] Deployed schema differs from the migrations") | .number' | head -n 1)"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body" --assignee "$ASSIGNEE"
+          fi

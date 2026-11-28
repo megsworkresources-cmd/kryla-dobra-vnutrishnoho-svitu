@@ -12,6 +12,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "db:drift": "node scripts/schema-drift.mjs",
+    "db:drift:write": "node scripts/schema-drift.mjs --write",
     "verify:deploy": "node scripts/verify-deploy.mjs"
   },
   "overrides": {

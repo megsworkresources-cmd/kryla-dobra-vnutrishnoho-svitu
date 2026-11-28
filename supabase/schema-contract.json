@@ -1,0 +1,132 @@
+{
+  "$comment": "Expected shape of the deployed public schema. `bun run db:drift` compares the live database against this file and against supabase/migrations/20261127180000_baseline_public_schema.sql, and fails when a policy, grant, column or function has drifted. Expressions are compared after normalisation (case, whitespace, parentheses and casts are ignored), so formatting alone is not drift. Only the security-relevant surface is listed: RLS, policies, table grants, function identity/returns/security/search_path/grants, and a few required body fragments of each RPC.",
+  "tables": {
+    "public.shared_sunflowers": {
+      "rls": true,
+      "columns": {
+        "owner_id": { "type": "uuid", "nullable": false, "default": null },
+        "flower_id": { "type": "uuid", "nullable": false, "default": "gen_random_uuid()" },
+        "stage": { "type": "smallint", "nullable": false, "default": "0" },
+        "sharing": { "type": "boolean", "nullable": false, "default": "false" },
+        "stage_updated_at": {
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        }
+      },
+      "grants": {
+        "anon": [],
+        "authenticated": ["SELECT", "DELETE"]
+      },
+      "policies": {
+        "sunflower_owner_read": {
+          "command": "SELECT",
+          "roles": ["authenticated"],
+          "permissive": true,
+          "using": "owner_id = auth.uid() and coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false) = false",
+          "check": null
+        },
+        "sunflower_owner_insert": {
+          "command": "INSERT",
+          "roles": ["authenticated"],
+          "permissive": true,
+          "using": null,
+          "check": "owner_id = auth.uid() and coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false) = false"
+        },
+        "sunflower_owner_update": {
+          "command": "UPDATE",
+          "roles": ["authenticated"],
+          "permissive": true,
+          "using": "owner_id = auth.uid() and coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false) = false",
+          "check": "owner_id = auth.uid() and coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false) = false"
+        },
+        "sunflower_owner_delete": {
+          "command": "DELETE",
+          "roles": ["authenticated"],
+          "permissive": true,
+          "using": "owner_id = auth.uid() and coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false) = false",
+          "check": null
+        }
+      }
+    },
+    "public.ai_reports": {
+      "rls": true,
+      "columns": {
+        "id": { "type": "uuid", "nullable": false, "default": "gen_random_uuid()" },
+        "user_id": { "type": "uuid", "nullable": false, "default": null },
+        "kind": { "type": "text", "nullable": false, "default": null },
+        "content": { "type": "text", "nullable": false, "default": null },
+        "created_at": {
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        }
+      },
+      "grants": {
+        "anon": [],
+        "authenticated": ["INSERT"]
+      },
+      "policies": {
+        "Grown-ups can report their own AI answers": {
+          "command": "INSERT",
+          "roles": ["authenticated"],
+          "permissive": true,
+          "using": null,
+          "check": "auth.uid() = user_id"
+        }
+      }
+    }
+  },
+  "functions": {
+    "public.grow_sunflower(integer,boolean)": {
+      "returns": "TABLE(stage smallint, capped boolean)",
+      "security": "DEFINER",
+      "volatility": "VOLATILE",
+      "config": ["search_path=public"],
+      "grants": { "anon": [], "authenticated": ["EXECUTE"] },
+      "bodyMustInclude": [
+        "new_stage not between 0 and 5",
+        "least new_stage 1",
+        "interval 20 hours",
+        "for update",
+        "where s.owner_id = auth.uid()"
+      ]
+    },
+    "public.delete_my_account()": {
+      "returns": "void",
+      "security": "DEFINER",
+      "volatility": "VOLATILE",
+      "config": ["search_path="],
+      "grants": { "anon": [], "authenticated": ["EXECUTE"] },
+      "bodyMustInclude": [
+        "coalesce auth.jwt ->> is_anonymous boolean false",
+        "delete from public.shared_sunflowers where owner_id = uid",
+        "delete from auth.users where id = uid"
+      ]
+    },
+    "public.read_shared_sunflowers()": {
+      "returns": "TABLE(flower_id uuid, stage smallint)",
+      "security": "DEFINER",
+      "volatility": "VOLATILE",
+      "config": ["search_path=public"],
+      "grants": { "anon": [], "authenticated": ["EXECUTE"] },
+      "bodyMustInclude": ["where s.sharing = true", "limit 100"]
+    },
+    "public.read_public_sunflower_stages()": {
+      "returns": "TABLE(stage smallint)",
+      "security": "DEFINER",
+      "volatility": "STABLE",
+      "config": ["search_path=public"],
+      "grants": { "anon": ["EXECUTE"], "authenticated": ["EXECUTE"] },
+      "bodyMustInclude": ["select s.stage", "where s.sharing = true", "limit 100"]
+    },
+    "public.publish_sunflower(integer,boolean)": {
+      "returns": "void",
+      "security": "INVOKER",
+      "volatility": "VOLATILE",
+      "config": ["search_path=public"],
+      "grants": { "anon": [], "authenticated": [] },
+      "bodyMustInclude": ["on conflict owner_id do update set stage"]
+    }
+  }
+}

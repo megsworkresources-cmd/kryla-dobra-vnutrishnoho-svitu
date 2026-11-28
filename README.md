@@ -78,3 +78,14 @@ bun run lint
 bun run test
 bun run verify:deploy
 ```
+
+### Browser smoke test (WebKit / iPhone)
+
+jsdom cannot answer the Safari questions this app keeps running into — whether a muted film really starts, whether pausing and resuming leaves the label and the picture agreeing, whether the inline attributes that keep iOS from taking the film fullscreen are actually set. `e2e/video-smoke.spec.ts` runs the app in Playwright's WebKit at an iPhone 14 viewport and covers the four recorded surfaces: the cartoon player (`/watch`), the sky story (`/sky/lantern`), the character loop (`/friends`) and the garden growth film (`/garden`).
+
+```sh
+bun run test:e2e:install   # once: downloads WebKit and its system libraries
+bun run test:e2e
+```
+
+The config starts the dev server on port 5199 unless `E2E_BASE_URL` points at one that is already running. Each check waits for metadata, uses the app's own tap-to-play control when WebKit refuses autoplay, then asserts that `currentTime` advances, that `playsinline` and `muted` are set, that no `/media/video/` request failed, and that no media error reached the console. Run it against the deployed site with `E2E_BASE_URL=https://kryla-dobra-vnutrishnoho-svitu.vercel.app bun run test:e2e`.

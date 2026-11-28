@@ -7,6 +7,27 @@ import { useStore } from "./store";
  * Ukrainian stays the source language; these are the translations shown in EN mode.
  */
 export const EXTRAS: Record<string, string> = {
+  "Зберегти прогрес": "Save progress",
+  "Safari може очистити збережене на сайті, який не відкривали близько тижня. Копія й головний екран захищають малюнки, зірочку й сад.":
+    "Safari can clear what a site saved if it isn't opened for about a week. A copy and the Home Screen protect the drawings, the star and the garden.",
+  "Копія — це файл на цьому пристрої. Нічого не надсилається в інтернет.":
+    "The copy is a file on this device. Nothing is sent to the internet.",
+  "Завантажити копію": "Download a copy",
+  "Відновити з копії": "Restore from a copy",
+  "Файл копії": "Backup file",
+  "Копію збережено у файл. Тримайте його там, де не загубиться.":
+    "Copy saved to a file. Keep it somewhere it won't get lost.",
+  "Відновлено. Нічого не видалено — додано те, чого бракувало.":
+    "Restored. Nothing was deleted — whatever was missing has been added.",
+  "Це не файл копії «Тихого Місця».": "This isn't a Quiet Place backup file.",
+  "Не вдалося записати на пристрій. Перевірте вільне місце.":
+    "Couldn't write to this device. Check the free space.",
+  "Щоб малюнки, зірочка й сад не зникали, додайте «Тихе Місце» на головний екран.":
+    "So the drawings, the star and the garden don't disappear, add Quiet Place to the Home Screen.",
+  "На iPhone: кнопка «Поділитися» → «На головний екран» → «Додати».":
+    "On iPhone: the Share button → Add to Home Screen → Add.",
+  "Як це зробити?": "How do I do that?",
+  Зрозуміло: "Got it",
   "Організації, гарячі лінії та поради для українських родин. Актуальні умови уточнюйте в організації.":
     "Organizations, helplines and guidance for Ukrainian families. Confirm current arrangements with the organization.",
   "Немає інтернету. Турботу збережено на пристрої; поширення недоступне. Після повернення зв’язку натисніть потрібну дію ще раз.":

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import welcome from "@/assets/welcome.jpg";
+import { AddToHomeScreen } from "@/components/AddToHomeScreen";
 import { BottomNav } from "@/components/BottomNav";
 import { LangToggle } from "@/components/LangToggle";
 import { t, useT } from "@/lib/i18n";
@@ -77,6 +78,9 @@ function Welcome() {
           >
             {t("Для дорослих")}
           </Link>
+        </div>
+        <div className="mx-auto mt-3 max-w-sm">
+          <AddToHomeScreen />
         </div>
       </div>
       <BottomNav />

@@ -44,6 +44,7 @@ export interface AppState {
   starColor: StarColor;
   starGlow: StarGlow;
   starLinks: string[]; // story stars joined into the child's constellation
+  homeTipDismissed: boolean; // the grown-up closed the "add to Home Screen" hint
 }
 
 const KEY = "tyhe-mistse-v1";
@@ -81,6 +82,7 @@ const DEFAULTS: AppState = {
   starColor: "honey",
   starGlow: "warm",
   starLinks: [],
+  homeTipDismissed: false,
 };
 
 /** Read current state outside React (audio engine). */
@@ -113,7 +115,14 @@ function load() {
         if (!value || typeof value !== "object" || Array.isArray(value))
           Object.assign(state, { [key]: DEFAULTS[key] });
       }
-      for (const key of ["sound", "music", "sfx", "voice", "reduceMotion"] as const) {
+      for (const key of [
+        "sound",
+        "music",
+        "sfx",
+        "voice",
+        "reduceMotion",
+        "homeTipDismissed",
+      ] as const) {
         if (typeof saved[key] !== "boolean") state[key] = DEFAULTS[key];
       }
       state.volume =
@@ -219,6 +228,34 @@ function persist() {
     /* storage full or unavailable — app keeps working in memory */
     return false;
   }
+}
+
+export const dismissHomeTip = () => update((s) => ({ ...s, homeTipDismissed: true }));
+
+/** A grown-up's local copy of everything this device saved. Never sent anywhere. */
+export function exportDeviceState(): AppState {
+  load();
+  return JSON.parse(JSON.stringify(state)) as AppState;
+}
+
+/**
+ * Write a restored store and re-read it through the same normalisation the app uses on
+ * load, so a backup can never put unusable values into the app. Storage that refuses the
+ * write leaves the current store untouched.
+ */
+export function importDeviceState(value: unknown): boolean {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(value));
+  } catch {
+    return false;
+  }
+  loaded = false;
+  touched = false;
+  state = DEFAULTS;
+  load();
+  listeners.forEach((l) => l());
+  return true;
 }
 
 export function update(fn: (s: AppState) => AppState) {

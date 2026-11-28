@@ -3,6 +3,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Compass, Image as ImageIcon, ListChecks, Sparkles } from "lucide-react";
 import { Btn, Scene } from "@/components/Scene";
+import { AddToHomeScreen } from "@/components/AddToHomeScreen";
+import { DeviceBackup } from "@/components/DeviceBackup";
 import { PLACES } from "@/content/places";
 import { CATALOG } from "@/content/catalog";
 import { resetProgress, totalDone, useStore } from "@/lib/store";
@@ -157,6 +159,19 @@ function Parents() {
             "Місцеві записи залишаються приватними. Лише у спільному саду дорослий може окремо поширити анонімну стадію соняшника.",
           )}
         </p>
+        <section aria-labelledby="save-progress" className="paper-card space-y-3 p-4">
+          <h2 id="save-progress" className="font-display text-2xl font-bold">
+            {t("Зберегти прогрес")}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {t(
+              "Safari може очистити збережене на сайті, який не відкривали близько тижня. Копія й головний екран захищають малюнки, зірочку й сад.",
+            )}
+          </p>
+          <DeviceBackup />
+          <AddToHomeScreen mode="instructions" />
+        </section>
+
         <Link to="/shared-garden" className="paper-card block p-4 font-bold text-primary underline">
           🌻 {t("Спільний сад")}
         </Link>
